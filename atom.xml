@@ -8,9 +8,10 @@
     
       
       <item>
-        <title>Backend - Django 기본</title>
+        <title>Pipenv, Nginx, Gunicorn 서버 운영하기</title>
         
-          <description>&lt;h1 id=&quot;jekyll-test&quot;&gt;jekyll test&lt;/h1&gt;
+          <description>&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;
+
 </description>
         
         <pubDate>Mon, 04 Jan 2021 00:40:00 +0000</pubDate>
