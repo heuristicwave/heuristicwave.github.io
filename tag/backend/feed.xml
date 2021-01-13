@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/backend/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2021-01-12T05:11:57+00:00</updated>
+  <updated>2021-01-13T04:28:55+00:00</updated>
   <id>https://heuristicwave.github.io/tag/backend/feed.xml</id>
 
   
@@ -33,11 +33,11 @@
   
     <entry>
       <title type="html">Pipenv, Nginx, Gunicorn 서버 운영하기</title>
-      <link href="https://heuristicwave.github.io/test" rel="alternate" type="text/html" title="Pipenv, Nginx, Gunicorn 서버 운영하기" />
+      <link href="https://heuristicwave.github.io/pipenv01" rel="alternate" type="text/html" title="Pipenv, Nginx, Gunicorn 서버 운영하기" />
       <published>2021-01-04T00:40:00+00:00</published>
       <updated>2021-01-04T00:40:00+00:00</updated>
-      <id>https://heuristicwave.github.io/test</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/test">&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;
+      <id>https://heuristicwave.github.io/pipenv01</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/pipenv01">&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 

@@ -183,12 +183,12 @@ into the {body} of the default.hbs template -->
 <script>
     window.store = {
     
-    "test": {
+    "pipenv01": {
         "title": "Pipenv, Nginx, Gunicorn 서버 운영하기",
             "author": "HeuristicWave",
             "category": "",
             "content": "Virtualenv 환경이 아닌 Pipenv를 사용하며 만난 에러 해결 과정 정리사전 작업자세한 방법은 하단 참고자료를 통해 확인 할 수 있다      gunicorn, nginx 설치          ec2에서 nginx 설치하기 : CentOS 7 Nginx 설치 방법            gunicorn 작동확인  Gunicorn 🦄서비스 등록 스크립트 생성/etc/systemd/system/gunicorn.service 파일을 아래와 같은 내용으로 생성.pipenv는 venv와 ExecStart 경로가 다르다는 점을 유념해 작성하자[Unit]Description=gunicorn daemonAfter=network.target[Service]User=ec2-userGroup=ec2-userWorkingDirectory=/home/ec2-user/django/repoExecStart=/usr/local/bin/pipenv run gunicorn --workers 3 \\        &lt;wsgi가 위치한 폴더&gt;.wsgi:application --bind 0.0.0.0:8000[Install]WantedBy=multi-user.target  본래 --bind부분에 unix:/home/ec2-user/django/gunicorn.sock 를 넣어 구동하면 repo의 상위 폴더에  gunicorn.sock가 생긴다.nginx의 proxy_pass 부분도 http://unix:/{$PATH}/gunicorn.sock을 기재해 sock로 구성하는 것이 맞는 방법 같은데… 이 부분에 대해서는 학습이 필요하다.서비스 등록sudo systemctl start gunicornsudo systemctl enable gunicorn서비스 구동 확인sudo systemctl status gunicornNginx사이트 설정 추가ec2에 nginx를 받았을 때, etc/nginx/sites-enabled 와 etc/nginx/sites-availabe 이 존재하지 않는다. 해당 경로에 없다면 만들어주고 있으면 default 파일을 삭제하자.server {        listen 80;        server_name &lt;IP or 도메인&gt;;        charset utf-8;        location / {                include proxy_params;                proxy_pass http://0.0.0.0:8000        }        location /static/ {                root /home/ec2-user/django/repo;        }                location /media/ {                root /home/ec2-user/django/repo;        }}  nginx 주요 개념, nginx : root vs aliasinclude proxy_params의 경우 /etc/nginx/proxy_params 에 프록시 헤더를 기재 해야 한다. (다음 링크 참고) nginx &amp; aws사이트 추가sudo ln -s /etc/nginx/sites-available/django_test /etc/nginx/sites-enabled기동sudo systemctl start nginx기타 도움이 되는 명령어sudo systemctl daemon-reloadsudo systemctl stop, restart nginxps -efpspkill gunicorn  dotenv 관련 에러 해결하기            gunicorn 을 활용해 연결 할 경우      $ pip uninstall dotenv$ pip install python-dotenv                     docker + nginx + gunicorn 을 활용할 경우      $ pip uninstall dotenv$ pip install python-dotenv             참고자료  gunicorn 사전작업  Nginx, Gunicorn, Django 연동하기",
-        "url": "/test"
+        "url": "/pipenv01"
     }
     
     
