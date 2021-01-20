@@ -3,20 +3,20 @@
     xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9 http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd"
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
-    <url>
-        <loc>https://heuristicwave.github.io/pipenv01.html</loc>
-        
-        <lastmod>2021-01-04T00:40:00+00:00</lastmod>
-        
+        <url>
+            <loc>https://heuristicwave.github.io/pipenv01.html</loc>
+            
+                <lastmod>2021-01-04T00:40:00+00:00</lastmod>
+            
 
-        
-        <changefreq>weekly</changefreq>
-        
+            
+                <changefreq>weekly</changefreq>
+            
 
-        
-        <priority>0.5</priority>
-        
+            
+                <priority>0.5</priority>
+            
 
-    </url>
+        </url>
     
 </urlset>
