@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>3-Tier VPC Architecture with Terraform</title>
+        
+          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Wed, 27 Jan 2021 18:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/3Tier</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/3Tier</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Pipenv, Nginx, Gunicorn 서버 운영하기</title>
         
           <description>&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;

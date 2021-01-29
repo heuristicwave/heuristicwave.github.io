@@ -11,7 +11,7 @@
 
 
 
-    <title>Pipenv, Nginx, Gunicorn 서버 운영하기</title>
+    <title>3-Tier VPC Architecture with Terraform</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="I wanna be a technical writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/pipenv01" />
+    <link rel="canonical" href="https://heuristicwave.github.io/3Tier" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Pipenv, Nginx, Gunicorn 서버 운영하기" />
-    <meta property="og:description" content="Virtualenv 환경이 아닌 Pipenv를 사용하며 만난 에러 해결 과정 정리 사전 작업 자세한 방법은 하단 참고자료를 통해 확인 할 수 있다 gunicorn, nginx 설치 ec2에서 nginx 설치하기 : CentOS 7 Nginx 설치 방법 gunicorn 작동확인 Gunicorn 🦄 서비스 등록 스크립트 생성 /etc/systemd/system/gunicorn.service 파일을 아래와 같은 내용으로 생성. pipenv는 venv와 ExecStart" />
-    <meta property="og:url" content="https://heuristicwave.github.io/pipenv01" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/soap-bubble.jpg" />
+    <meta property="og:title" content="3-Tier VPC Architecture with Terraform" />
+    <meta property="og:description" content="본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층" />
+    <meta property="og:url" content="https://heuristicwave.github.io/3Tier" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-01-04T00:40:00+00:00" />
-    <meta property="article:modified_time" content="2021-01-04T00:40:00+00:00" />
-    <meta property="article:tag" content="Backend" />
+    <meta property="article:published_time" content="2021-01-27T18:00:00+00:00" />
+    <meta property="article:modified_time" content="2021-01-27T18:00:00+00:00" />
+    <meta property="article:tag" content="Devops" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Pipenv, Nginx, Gunicorn 서버 운영하기" />
-    <meta name="twitter:description" content="Virtualenv 환경이 아닌 Pipenv를 사용하며 만난 에러 해결 과정 정리 사전 작업 자세한 방법은 하단 참고자료를 통해 확인 할 수 있다 gunicorn, nginx 설치 ec2에서 nginx 설치하기 : CentOS 7 Nginx 설치 방법 gunicorn 작동확인 Gunicorn 🦄 서비스 등록 스크립트 생성 /etc/systemd/system/gunicorn.service 파일을 아래와 같은 내용으로 생성. pipenv는 venv와 ExecStart" />
+    <meta name="twitter:title" content="3-Tier VPC Architecture with Terraform" />
+    <meta name="twitter:description" content="본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/soap-bubble.jpg" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Backend" />
+    <meta name="twitter:data2" content="Devops" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/pipenv01",
+    "url": "https://heuristicwave.github.io/3Tier",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/soap-bubble.jpg",
+        "url": "https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/pipenv01"
+        "@id": "https://heuristicwave.github.io/3Tier"
     },
-    "description": "Virtualenv 환경이 아닌 Pipenv를 사용하며 만난 에러 해결 과정 정리 사전 작업 자세한 방법은 하단 참고자료를 통해 확인 할 수 있다 gunicorn, nginx 설치 ec2에서 nginx 설치하기 : CentOS 7 Nginx 설치 방법 gunicorn 작동확인 Gunicorn 🦄 서비스 등록 스크립트 생성 /etc/systemd/system/gunicorn.service 파일을 아래와 같은 내용으로 생성. pipenv는 venv와 ExecStart"
+    "description": "본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층"
 }
     </script>
 
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Pipenv, Nginx, Gunicorn 서버 운영하기" href="/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="3-Tier VPC Architecture with Terraform" href="/feed.xml" />
 
 
 </head>
@@ -171,184 +171,139 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-backend post tag-backend ">
+        <article class="post-full  tag-devops tag-aws post tag-devops ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 4 January 2021"> 4 January 2021</time>
+                    <time class="post-full-meta-date" datetime="27 January 2021">27 January 2021</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/backend/'>BACKEND</a>
+                               <a href='/tag/devops/'>DEVOPS</a>,
+                            
+                        
+                            
+                               <a href='/tag/aws/'>AWS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Pipenv, Nginx, Gunicorn 서버 운영하기</h1>
+                <h1 class="post-full-title">3-Tier VPC Architecture with Terraform</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/soap-bubble.jpg)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/vpc-step5.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p><strong>Virtualenv</strong> 환경이 아닌 <strong>Pipenv</strong>를 사용하며 만난 에러 해결 과정 정리</p>
-
-<p><br /></p>
-
-<h3 id="사전-작업">사전 작업</h3>
-
-<p><em>자세한 방법은 하단 참고자료를 통해 확인 할 수 있다</em></p>
-
-<ol>
-  <li>
-    <p>gunicorn, nginx 설치</p>
-
-    <blockquote>
-      <p>ec2에서 nginx 설치하기 : <a href="https://holjjack.tistory.com/114">CentOS 7 Nginx 설치 방법</a></p>
-    </blockquote>
-  </li>
-  <li>
-    <p>gunicorn 작동확인</p>
-  </li>
-</ol>
-
-<p><br /></p>
-
-<h2 id="gunicorn-">Gunicorn 🦄</h2>
-
-<h3 id="서비스-등록-스크립트-생성">서비스 등록 스크립트 생성</h3>
-
-<p><code class="language-plaintext highlighter-rouge">/etc/systemd/system/gunicorn.service</code> 파일을 아래와 같은 내용으로 생성.
-pipenv는 venv와 <strong>ExecStart</strong> 경로가 다르다는 점을 유념해 작성하자</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>[Unit]
-Description=gunicorn daemon
-After=network.target
-
-[Service]
-User=ec2-user
-Group=ec2-user
-WorkingDirectory=/home/ec2-user/django/repo
-ExecStart=/usr/local/bin/pipenv run gunicorn --workers 3 \
-        &lt;wsgi가 위치한 폴더&gt;.wsgi:application --bind 0.0.0.0:8000
-
-[Install]
-WantedBy=multi-user.target
-</code></pre></div></div>
-
-<blockquote>
-  <p>본래 <code class="language-plaintext highlighter-rouge">--bind</code>부분에 <code class="language-plaintext highlighter-rouge">unix:/home/ec2-user/django/gunicorn.sock</code> 를 넣어 구동하면 repo의 상위 폴더에  <code class="language-plaintext highlighter-rouge">gunicorn.sock</code>가 생긴다.
-<br />
-nginx의 proxy_pass 부분도 <code class="language-plaintext highlighter-rouge">http://unix:/{$PATH}/gunicorn.sock</code>을 기재해 sock로 구성하는 것이 맞는 방법 같은데… 이 부분에 대해서는 학습이 필요하다.</p>
-</blockquote>
-
-<h3 id="서비스-등록">서비스 등록</h3>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl start gunicorn
-<span class="nb">sudo </span>systemctl <span class="nb">enable </span>gunicorn
-</code></pre></div></div>
-
-<h3 id="서비스-구동-확인">서비스 구동 확인</h3>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl status gunicorn
-</code></pre></div></div>
-
-<p><br /></p>
-
-<h2 id="nginx">Nginx</h2>
-
-<h3 id="사이트-설정-추가">사이트 설정 추가</h3>
-
-<p>ec2에 nginx를 받았을 때, <code class="language-plaintext highlighter-rouge">etc/nginx/sites-enabled</code> 와 <code class="language-plaintext highlighter-rouge">etc/nginx/sites-availabe</code> 이 존재하지 않는다. 해당 경로에 없다면 만들어주고 있으면 default 파일을 삭제하자.</p>
-
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>server {
-        listen 80;
-        server_name &lt;IP or 도메인&gt;;
-        charset utf-8;
-
-        location / {
-                include proxy_params;
-                proxy_pass http://0.0.0.0:8000
-        }
-
-        location /static/ {
-                root /home/ec2-user/django/repo;
-        }
-        
-        location /media/ {
-                root /home/ec2-user/django/repo;
-        }
-}
-</code></pre></div></div>
-
-<blockquote>
-  <p><a href="https://velog.io/@yvvyoon/flask-nginx-gunicorn-1">nginx 주요 개념</a>, nginx : <a href="https://ohgyun.com/556">root vs alias</a>
-<br />
-<code class="language-plaintext highlighter-rouge">include proxy_params</code>의 경우 <code class="language-plaintext highlighter-rouge">/etc/nginx/proxy_params</code> 에 프록시 헤더를 기재 해야 한다. (다음 링크 참고) 
-<a href="https://m.blog.naver.com/PostView.nhn?blogId=93immm&amp;logNo=221304593384&amp;proxyReferer=https:%2F%2Fwww.google.com%2F">nginx &amp; aws</a></p>
-</blockquote>
-
-<h3 id="사이트-추가">사이트 추가</h3>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo ln</span> <span class="nt">-s</span> /etc/nginx/sites-available/django_test /etc/nginx/sites-enabled
-</code></pre></div></div>
-
-<h3 id="기동">기동</h3>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl start nginx
-</code></pre></div></div>
-
-<p><br /></p>
-
-<h4 id="기타-도움이-되는-명령어">기타 도움이 되는 명령어</h4>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">sudo </span>systemctl daemon-reload
-<span class="nb">sudo </span>systemctl stop, restart nginx
-ps <span class="nt">-ef</span>
-ps
-pkill gunicorn
-</code></pre></div></div>
+                    <p>본 글은 <a href="https://www.aws.training/Details/eLearning?id=61799">Configure and Deploying VPCs with Multiple Subnets</a> 에서 다루는 <code class="language-plaintext highlighter-rouge">Production-Ready: The 3-Tier VPC</code> 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.</p>
 
 <p><br /></p>
 
 <details>
-  <summary>dotenv 관련 에러 해결하기</summary>
+  <summary>Multi-Tier VPC 란?</summary>
+  <p><br />
+VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로
+다중 계층 VPC 아키텍처를 만들어 방어 계층을 이룰 수 있습니다.</p>
 
-  <ul>
-    <li>
-      <p>gunicorn 을 활용해 연결 할 경우</p>
+  <p><img src="../../assets/built/images/post/Multi-tier VPC.png" alt="multiTier" /></p>
+</details>
 
-      <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip uninstall dotenv
-<span class="nv">$ </span>pip <span class="nb">install </span>python-dotenv 
-</code></pre></div>      </div>
-    </li>
-    <li>
-      <p>docker + nginx + gunicorn 을 활용할 경우</p>
+<p><br /></p>
 
-      <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>pip uninstall dotenv
-<span class="nv">$ </span>pip <span class="nb">install </span>python-dotenv 
-</code></pre></div>      </div>
-    </li>
-  </ul>
+<h1 id="디자인-패턴--3-tier-vpc-architecture">디자인 패턴 : 3 Tier VPC Architecture</h1>
+
+<p><em>테라폼으로 3-tier VPC 아키텍처를 계별로 구축해 봅시다</em></p>
+
+<p><br /></p>
+
+<details>
+  <summary>Step 0 (테라폼을 활용하실 줄 안다면 넘어가세요)</summary>
+
+  <h2 id="step-0">Step 0</h2>
+  <p>아키텍처를 구성할 폴더를 만들고 <code class="language-plaintext highlighter-rouge">provider</code>를 주입합니다.</p>
+  <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>architecture
+<span class="nb">cd </span>architecture
+terraform init
+<span class="nb">touch </span>threeTierVPC.tf
+</code></pre></div>  </div>
+  <p><code class="language-plaintext highlighter-rouge">threeTierVPC.tf</code>에 벤더 정보를 작성합니다.</p>
+  <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
+  <span class="nx">region</span> <span class="p">=</span> <span class="s2">"ap-northeast-2"</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+  <p>명령어<code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code>를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 PASS!</p>
 
 </details>
 
 <p><br /></p>
 
+<p><strong>💡각 소제목 링크에 첨부된 코드를 활용해 Step 0 에서 만든 <code class="language-plaintext highlighter-rouge">threeTierVPC.tf</code>에 이어서 작성하거나, 따로 새로운 파일을 만들어 <code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code> 명령어를 차례로 작성하며 계층을 쌓아 올립니다.</strong></p>
+
 <p><br /></p>
 
-<hr />
+<h2 id="step-1">Step 1</h2>
+<h3 id="layer-1️⃣--public-subnet">Layer 1️⃣ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step1.tf">Public subnet</a></h3>
 
-<h4 id="참고자료">참고자료</h4>
+<p>하나의 VPC에 2개의 AZ를 만들고 각각의 Public 서브넷을 위치시킵니다.</p>
 
-<ul>
-  <li>gunicorn <a href="https://wikidocs.net/6601#_7">사전작업</a></li>
-  <li><a href="https://velog.io/@y1andyu/Nginx-gunicorn-Django-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0#3-%EC%8B%9C%EC%9E%91">Nginx, Gunicorn, Django 연동하기</a></li>
-</ul>
+<p><img src="../../assets/built/images/post/vpc-step1.png" alt="step1" /></p>
+
+<blockquote>
+  <p>퍼블릭 서브넷은 프라이빗 서브넷 보다 적은 수의 IP 예약하는 것이 좋습니다.</p>
+</blockquote>
+
+<h2 id="step-2">Step 2</h2>
+<h3 id="layer-1️⃣--internet-access-resources">Layer 1️⃣ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step2.tf">Internet access resources</a></h3>
+
+<p>외부 인터넷과의 노출을 제한하고 나가는 트래픽을 위해 NAT Gateway를 활용합니다. 또한 들어오는 트래픽을 위해 ALB를 위치시켰습니다.
+로드밸런서와 NAT Gateway는 가용성이 높은 관리형 서비스로 병목 현상에 대해 걱정할 필요가 없습니다.</p>
+
+<details>
+  <summary>💡Nat Gateway 알아보기</summary>
+  <p><br />
+NAT(네트워크 주소 변환) 게이트웨이를 사용하면 프라이빗 서브넷의 인스턴스를 인터넷 또는 기타 AWS 서비스에 연결하는 한편, 인터넷에서 해당 인스턴스와의 연결을 시작하지 못하게 할 수 있습니다.
+NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서브넷을 지정해야 하기 때문에 Step2에서 우선적으로 생성합니다.</p>
+
+  <p><a href="https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-nat-gateway.html">도큐먼트로 더 알아보기</a></p>
+
+</details>
+
+<p><img src="../../assets/built/images/post/vpc-step2.png" alt="step2" /></p>
+
+<blockquote>
+  <p>그림에서는 보이지 않지만, VPC에는 암시적 라우터가 있으며 라우팅 테이블을 사용하여 네트워크 트래픽이 전달되는 위치를 제어합니다.
+VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다(서브넷 라우팅 테이블).</p>
+</blockquote>
+
+<h2 id="step-3">Step 3</h2>
+<h3 id="layer-2️⃣️--apps-in-a-private-subnet">Layer 2️⃣️ : Apps in a private subnet</h3>
+
+<p>두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.</p>
+
+<p><img src="../../assets/built/images/post/vpc-step3.png" alt="step3" /></p>
+
+<h2 id="step-4">Step 4</h2>
+<h3 id="layer-3️⃣--data-in-a-second-private-subnet">Layer 3️⃣ : Data in a second private subnet</h3>
+
+<p>첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다.
+장애가 발생할 경우를 대비해 read-replica 혹은 standby 구성으로 배치합니다.</p>
+
+<p><img src="../../assets/built/images/post/vpc-step4.png" alt="step4" /></p>
+
+<blockquote>
+  <p>데이터 리소스(/23)보다를 앱 리소스(/22)를 확장할 가능성이 커, 더 큰 서브넷 마스크를 할당합니다.</p>
+</blockquote>
+
+<h2 id="step-5">Step 5</h2>
+<h3 id="leave-extra-ips-available">Leave extra IPs available</h3>
+
+<p>배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/vpc-step5.png" alt="step5" /></p>
 
                 </div>
             </section>
@@ -390,9 +345,9 @@ pkill gunicorn
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/pipenv01';
-                            this.page.identifier = '/pipenv01';
-                            this.page.title = 'Pipenv, Nginx, Gunicorn 서버 운영하기';
+                            this.page.url = 'https://heuristicwave.github.io/3Tier';
+                            this.page.identifier = '/3Tier';
+                            this.page.title = '3-Tier VPC Architecture with Terraform';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -422,30 +377,29 @@ pkill gunicorn
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
                 
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/3Tier">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/vpc-step5.png)"></div>
+            <a class="post-card-image-link" href="/pipenv01">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/soap-bubble.jpg)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/3Tier">
+            <a class="post-card-content-link" href="/pipenv01">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Devops</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Aws</span>
+                                <span class="post-card-tags">Backend</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">3-Tier VPC Architecture with Terraform</h2>
+                    <h2 class="post-card-title">Pipenv, Nginx, Gunicorn 서버 운영하기</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -469,9 +423,6 @@ pkill gunicorn
 
             
 
-            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
-            
-
         </div>
     </div>
 </aside>
@@ -485,18 +436,18 @@ pkill gunicorn
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Pipenv, Nginx, Gunicorn 서버 운영하기</div>
+    <div class="floating-header-title">3-Tier VPC Architecture with Terraform</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Pipenv%2C+Nginx%2C+Gunicorn+%EC%84%9C%EB%B2%84+%EC%9A%B4%EC%98%81%ED%95%98%EA%B8%B0&amp;url=https://heuristicwave.github.iopipenv01"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=3-Tier+VPC+Architecture+with+Terraform&amp;url=https://heuristicwave.github.io3Tier"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.iopipenv01"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.io3Tier"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

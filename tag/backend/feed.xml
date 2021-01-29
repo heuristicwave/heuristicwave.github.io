@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/backend/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2021-01-20T03:52:58+00:00</updated>
+  <updated>2021-01-29T05:11:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/backend/feed.xml</id>
 
   
@@ -88,15 +88,11 @@ WantedBy=multi-user.target
 nginx의 proxy_pass 부분도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://unix:/{$PATH}/gunicorn.sock&lt;/code&gt;을 기재해 sock로 구성하는 것이 맞는 방법 같은데… 이 부분에 대해서는 학습이 필요하다.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;h3 id=&quot;서비스-등록&quot;&gt;서비스 등록&lt;/h3&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start gunicorn
 &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;gunicorn
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;서비스-구동-확인&quot;&gt;서비스 구동 확인&lt;/h3&gt;
 
@@ -137,8 +133,6 @@ nginx의 proxy_pass 부분도 &lt;code class=&quot;language-plaintext highlighte
 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;include proxy_params&lt;/code&gt;의 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/proxy_params&lt;/code&gt; 에 프록시 헤더를 기재 해야 한다. (다음 링크 참고) 
 &lt;a href=&quot;https://m.blog.naver.com/PostView.nhn?blogId=93immm&amp;amp;logNo=221304593384&amp;amp;proxyReferer=https:%2F%2Fwww.google.com%2F&quot;&gt;nginx &amp;amp; aws&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;사이트-추가&quot;&gt;사이트 추가&lt;/h3&gt;
 

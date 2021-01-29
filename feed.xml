@@ -1,4 +1,108 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://heuristicwave.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" /><updated>2021-01-20T03:52:58+00:00</updated><id>https://heuristicwave.github.io/feed.xml</id><title type="html">Heuristic Wave Blog</title><subtitle>I wanna be a technical writer</subtitle><entry><title type="html">Pipenv, Nginx, Gunicorn 서버 운영하기</title><link href="https://heuristicwave.github.io/pipenv01" rel="alternate" type="text/html" title="Pipenv, Nginx, Gunicorn 서버 운영하기" /><published>2021-01-04T00:40:00+00:00</published><updated>2021-01-04T00:40:00+00:00</updated><id>https://heuristicwave.github.io/pipenv01</id><content type="html" xml:base="https://heuristicwave.github.io/pipenv01">&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://heuristicwave.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" /><updated>2021-01-29T05:11:22+00:00</updated><id>https://heuristicwave.github.io/feed.xml</id><title type="html">Heuristic Wave Blog</title><subtitle>I wanna be a technical writer</subtitle><entry><title type="html">3-Tier VPC Architecture with Terraform</title><link href="https://heuristicwave.github.io/3Tier" rel="alternate" type="text/html" title="3-Tier VPC Architecture with Terraform" /><published>2021-01-27T18:00:00+00:00</published><updated>2021-01-27T18:00:00+00:00</updated><id>https://heuristicwave.github.io/3Tier</id><content type="html" xml:base="https://heuristicwave.github.io/3Tier">&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;Multi-Tier VPC 란?&lt;/summary&gt;
+  &lt;p&gt;&lt;br /&gt;
+VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로
+다중 계층 VPC 아키텍처를 만들어 방어 계층을 이룰 수 있습니다.&lt;/p&gt;
+
+  &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/Multi-tier VPC.png&quot; alt=&quot;multiTier&quot; /&gt;&lt;/p&gt;
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;디자인-패턴--3-tier-vpc-architecture&quot;&gt;디자인 패턴 : 3 Tier VPC Architecture&lt;/h1&gt;
+
+&lt;p&gt;&lt;em&gt;테라폼으로 3-tier VPC 아키텍처를 계별로 구축해 봅시다&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;Step 0 (테라폼을 활용하실 줄 안다면 넘어가세요)&lt;/summary&gt;
+
+  &lt;h2 id=&quot;step-0&quot;&gt;Step 0&lt;/h2&gt;
+  &lt;p&gt;아키텍처를 구성할 폴더를 만들고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;를 주입합니다.&lt;/p&gt;
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;architecture
+&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;architecture
+terraform init
+&lt;span class=&quot;nb&quot;&gt;touch &lt;/span&gt;threeTierVPC.tf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;threeTierVPC.tf&lt;/code&gt;에 벤더 정보를 작성합니다.&lt;/p&gt;
+  &lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ap-northeast-2&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+  &lt;p&gt;명령어&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 PASS!&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;💡각 소제목 링크에 첨부된 코드를 활용해 Step 0 에서 만든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;threeTierVPC.tf&lt;/code&gt;에 이어서 작성하거나, 따로 새로운 파일을 만들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt; 명령어를 차례로 작성하며 계층을 쌓아 올립니다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-1&quot;&gt;Step 1&lt;/h2&gt;
+&lt;h3 id=&quot;layer-1️⃣--public-subnet&quot;&gt;Layer 1️⃣ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step1.tf&quot;&gt;Public subnet&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;하나의 VPC에 2개의 AZ를 만들고 각각의 Public 서브넷을 위치시킵니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step1.png&quot; alt=&quot;step1&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;퍼블릭 서브넷은 프라이빗 서브넷 보다 적은 수의 IP 예약하는 것이 좋습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;step-2&quot;&gt;Step 2&lt;/h2&gt;
+&lt;h3 id=&quot;layer-1️⃣--internet-access-resources&quot;&gt;Layer 1️⃣ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step2.tf&quot;&gt;Internet access resources&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;외부 인터넷과의 노출을 제한하고 나가는 트래픽을 위해 NAT Gateway를 활용합니다. 또한 들어오는 트래픽을 위해 ALB를 위치시켰습니다.
+로드밸런서와 NAT Gateway는 가용성이 높은 관리형 서비스로 병목 현상에 대해 걱정할 필요가 없습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;💡Nat Gateway 알아보기&lt;/summary&gt;
+  &lt;p&gt;&lt;br /&gt;
+NAT(네트워크 주소 변환) 게이트웨이를 사용하면 프라이빗 서브넷의 인스턴스를 인터넷 또는 기타 AWS 서비스에 연결하는 한편, 인터넷에서 해당 인스턴스와의 연결을 시작하지 못하게 할 수 있습니다.
+NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서브넷을 지정해야 하기 때문에 Step2에서 우선적으로 생성합니다.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-nat-gateway.html&quot;&gt;도큐먼트로 더 알아보기&lt;/a&gt;&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step2.png&quot; alt=&quot;step2&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;그림에서는 보이지 않지만, VPC에는 암시적 라우터가 있으며 라우팅 테이블을 사용하여 네트워크 트래픽이 전달되는 위치를 제어합니다.
+VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다(서브넷 라우팅 테이블).&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;step-3&quot;&gt;Step 3&lt;/h2&gt;
+&lt;h3 id=&quot;layer-2️⃣️--apps-in-a-private-subnet&quot;&gt;Layer 2️⃣️ : Apps in a private subnet&lt;/h3&gt;
+
+&lt;p&gt;두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step3.png&quot; alt=&quot;step3&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-4&quot;&gt;Step 4&lt;/h2&gt;
+&lt;h3 id=&quot;layer-3️⃣--data-in-a-second-private-subnet&quot;&gt;Layer 3️⃣ : Data in a second private subnet&lt;/h3&gt;
+
+&lt;p&gt;첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다.
+장애가 발생할 경우를 대비해 read-replica 혹은 standby 구성으로 배치합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step4.png&quot; alt=&quot;step4&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;데이터 리소스(/23)보다를 앱 리소스(/22)를 확장할 가능성이 커, 더 큰 서브넷 마스크를 할당합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;step-5&quot;&gt;Step 5&lt;/h2&gt;
+&lt;h3 id=&quot;leave-extra-ips-available&quot;&gt;Leave extra IPs available&lt;/h3&gt;
+
+&lt;p&gt;배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step5.png&quot; alt=&quot;step5&quot; /&gt;&lt;/p&gt;</content><author><name>Heuristic Wave</name></author><category term="devops" /><category term="aws" /><summary type="html">본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.</summary></entry><entry><title type="html">Pipenv, Nginx, Gunicorn 서버 운영하기</title><link href="https://heuristicwave.github.io/pipenv01" rel="alternate" type="text/html" title="Pipenv, Nginx, Gunicorn 서버 운영하기" /><published>2021-01-04T00:40:00+00:00</published><updated>2021-01-04T00:40:00+00:00</updated><id>https://heuristicwave.github.io/pipenv01</id><content type="html" xml:base="https://heuristicwave.github.io/pipenv01">&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
@@ -49,15 +153,11 @@ WantedBy=multi-user.target
 nginx의 proxy_pass 부분도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://unix:/{$PATH}/gunicorn.sock&lt;/code&gt;을 기재해 sock로 구성하는 것이 맞는 방법 같은데… 이 부분에 대해서는 학습이 필요하다.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;h3 id=&quot;서비스-등록&quot;&gt;서비스 등록&lt;/h3&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start gunicorn
 &lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;gunicorn
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;서비스-구동-확인&quot;&gt;서비스 구동 확인&lt;/h3&gt;
 
@@ -98,8 +198,6 @@ nginx의 proxy_pass 부분도 &lt;code class=&quot;language-plaintext highlighte
 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;include proxy_params&lt;/code&gt;의 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/proxy_params&lt;/code&gt; 에 프록시 헤더를 기재 해야 한다. (다음 링크 참고) 
 &lt;a href=&quot;https://m.blog.naver.com/PostView.nhn?blogId=93immm&amp;amp;logNo=221304593384&amp;amp;proxyReferer=https:%2F%2Fwww.google.com%2F&quot;&gt;nginx &amp;amp; aws&lt;/a&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;사이트-추가&quot;&gt;사이트 추가&lt;/h3&gt;
 
