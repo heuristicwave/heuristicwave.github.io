@@ -235,7 +235,7 @@ terraform init
   <span class="nx">region</span> <span class="p">=</span> <span class="s2">"ap-northeast-2"</span>
 <span class="p">}</span>
 </code></pre></div>  </div>
-  <p>명령어<code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code>를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 PASS!</p>
+  <p>명령어<code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code>를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 🚀</p>
 
 </details>
 
@@ -255,6 +255,28 @@ terraform init
 <blockquote>
   <p>퍼블릭 서브넷은 프라이빗 서브넷 보다 적은 수의 IP 예약하는 것이 좋습니다.</p>
 </blockquote>
+
+<p>Step 1 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
+data.aws_availability_zones.available
+aws_internet_gateway.igw
+aws_subnet.pub_sub_1
+aws_subnet.pub_sub_2
+aws_vpc.main
+</code></pre></div></div>
+
+<details>
+  <summary>생성한 인프라가 위와 같지 않을 경우</summary>
+
+  <p>실수 의도치 않은 인프라가 프로비저닝 되었다면 <code class="language-plaintext highlighter-rouge">terraform destroy</code> 명령어로 원 상태로 복구 할 수 있습니다.
+뿐만 아니라 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, <code class="language-plaintext highlighter-rouge">-target</code> 옵션과 함께 resource 명으로 명령어를 작성합니다.</p>
+
+  <p><em>예시) terraform apply -target aws_vpc.main</em> <br />
+<em>예시) terraform destory -target aws_vpc.main</em></p>
+
+</details>
+
+<p><br /></p>
 
 <h2 id="step-2">Step 2</h2>
 <h3 id="layer-1️⃣--internet-access-resources">Layer 1️⃣ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step2.tf">Internet access resources</a></h3>
@@ -279,12 +301,16 @@ NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서�
 VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다(서브넷 라우팅 테이블).</p>
 </blockquote>
 
+<p><br /></p>
+
 <h2 id="step-3">Step 3</h2>
 <h3 id="layer-2️⃣️--apps-in-a-private-subnet">Layer 2️⃣️ : Apps in a private subnet</h3>
 
 <p>두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.</p>
 
 <p><img src="../../assets/built/images/post/vpc-step3.png" alt="step3" /></p>
+
+<p><br /></p>
 
 <h2 id="step-4">Step 4</h2>
 <h3 id="layer-3️⃣--data-in-a-second-private-subnet">Layer 3️⃣ : Data in a second private subnet</h3>
@@ -298,12 +324,23 @@ VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블
   <p>데이터 리소스(/23)보다를 앱 리소스(/22)를 확장할 가능성이 커, 더 큰 서브넷 마스크를 할당합니다.</p>
 </blockquote>
 
+<p><br /></p>
+
 <h2 id="step-5">Step 5</h2>
 <h3 id="leave-extra-ips-available">Leave extra IPs available</h3>
 
 <p>배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다.</p>
 
 <p><img src="../../assets/built/images/post/vpc-step5.png" alt="step5" /></p>
+
+<hr />
+
+<p><span class="table-of-contents-list">Terraform Courses</span></p>
+<ul class="table-of-contents-list">
+    <li><a href="./3Tier">3-Tier VPC Architecture with Terraform</a></li>
+</ul>
+
+<p><br /></p>
 
                 </div>
             </section>
