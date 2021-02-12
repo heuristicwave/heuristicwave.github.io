@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2021-01-30T09:15:50+00:00</updated>
+  <updated>2021-02-12T15:16:10+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -54,7 +54,7 @@ VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트�
 
 &lt;h1 id=&quot;디자인-패턴--3-tier-vpc-architecture&quot;&gt;디자인 패턴 : 3 Tier VPC Architecture&lt;/h1&gt;
 
-&lt;p&gt;&lt;em&gt;테라폼으로 3-tier VPC 아키텍처를 계별로 구축해 봅시다&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;테라폼 코드는 모듈로 관리하는 것을 권장하지만, 이번 포스팅에서는 3-tier 아키텍처 중 네트워크와 관련된 부분만을 다뤄 하나의 파일에서 코드를 관리합니다.&lt;/em&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
@@ -62,6 +62,7 @@ VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트�
   &lt;summary&gt;Step 0 (테라폼을 활용하실 줄 안다면 넘어가세요)&lt;/summary&gt;
 
   &lt;h2 id=&quot;step-0&quot;&gt;Step 0&lt;/h2&gt;
+
   &lt;p&gt;아키텍처를 구성할 폴더를 만들고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;를 주입합니다.&lt;/p&gt;
   &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;architecture
 &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;architecture
@@ -73,8 +74,11 @@ terraform init
   &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ap-northeast-2&quot;&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-  &lt;p&gt;명령어&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 🚀&lt;/p&gt;
-
+  &lt;p&gt;명령어&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 🚀
+&lt;br /&gt;&lt;/p&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;로 인프라를 반영 할때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-auto-approve&lt;/code&gt;옵션을 주면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;입력 없이 진행 할 수 있습니다. 그러나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;를 입력하기 전, 한번 더 검토할 수 있는 기회가 있으므로 권장하지 않습니다.&lt;/p&gt;
+  &lt;/blockquote&gt;
 &lt;/details&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
@@ -106,11 +110,12 @@ aws_vpc.main
 &lt;details&gt;
   &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우&lt;/summary&gt;
 
-  &lt;p&gt;실수 의도치 않은 인프라가 프로비저닝 되었다면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 원 상태로 복구 할 수 있습니다.
-뿐만 아니라 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-target&lt;/code&gt; 옵션과 함께 resource 명으로 명령어를 작성합니다.&lt;/p&gt;
-
-  &lt;p&gt;&lt;em&gt;예시) terraform apply -target aws_vpc.main&lt;/em&gt; &lt;br /&gt;
-&lt;em&gt;예시) terraform destory -target aws_vpc.main&lt;/em&gt;&lt;/p&gt;
+  &lt;p&gt;실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.&lt;/p&gt;
+  &lt;ol&gt;
+    &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-target&lt;/code&gt; 옵션과 함께 resource 명으로 명령어를 작성합니다. &lt;br /&gt;
+&lt;em&gt;예시) terraform destory -target aws_vpc.main&lt;/em&gt;&lt;/li&gt;
+    &lt;li&gt;잘못 작성한 코드를 수정 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하여 최신 상태의 인프라를 반영합니다.&lt;/li&gt;
+  &lt;/ol&gt;
 
 &lt;/details&gt;
 
@@ -136,25 +141,81 @@ NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서�
 
 &lt;blockquote&gt;
   &lt;p&gt;그림에서는 보이지 않지만, VPC에는 암시적 라우터가 있으며 라우팅 테이블을 사용하여 네트워크 트래픽이 전달되는 위치를 제어합니다.
-VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다(서브넷 라우팅 테이블).&lt;/p&gt;
+VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;p&gt;Step 2 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
+data.aws_availability_zones.available
+aws_eip.nat_1
+aws_eip.nat_2
+aws_internet_gateway.igw
+aws_nat_gateway.nat_gateway_1
+aws_nat_gateway.nat_gateway_2
+aws_route_table.route_table_pub
+aws_route_table_association.route_table_association_1
+aws_route_table_association.route_table_association_2
+aws_subnet.pub_sub_1
+aws_subnet.pub_sub_2
+aws_vpc.main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;em&gt;이번 포스팅에서 ALB와 인스턴스는 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;step-3&quot;&gt;Step 3&lt;/h2&gt;
-&lt;h3 id=&quot;layer-2️⃣️--apps-in-a-private-subnet&quot;&gt;Layer 2️⃣️ : Apps in a private subnet&lt;/h3&gt;
+&lt;h3 id=&quot;layer-2️⃣️--apps-in-a-private-subnet&quot;&gt;Layer 2️⃣️ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step3.tf&quot;&gt;Apps in a private subnet&lt;/a&gt;&lt;/h3&gt;
 
-&lt;p&gt;두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.&lt;/p&gt;
+&lt;p&gt;2개의 프라이빗 서브넷에 각각의 인스턴스를 놓습니다. 이후, 두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;❗️예제 그림에서는 Private subnet의 cidr block을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.2.0/22&lt;/code&gt;로 가이드 하지만, 이는 앞서 만든 서브넷과 범위가 겹치므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.4.0/22&lt;/code&gt;로 바꿔 진행합니다.&lt;/strong&gt;
+&lt;a href=&quot;https://www.ipaddressguide.com/cidr&quot;&gt;CIDR 계산기&lt;/a&gt; 에서 정확하게 확인해 볼 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step3.png&quot; alt=&quot;step3&quot; /&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+  &lt;p&gt;Step3에서도 Step2와 같이 그림에서는 보이지 않는 라우트 테이블을 만들고 NAT 게이트웨이와 프라이빗 서브넷을 연결해 줍니다.
+프라이빗 서브넷의 요청이 외부로 나갈때는 NAT 게이트웨이의 고정 IP를 사용합니다.
+(프라이빗 서브넷의 라우트 테이블은 퍼블릭과 달리 2개를 만들어 각각 연결해 주었습니다.)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Step 3 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
+data.aws_availability_zones.available
+aws_eip.nat_1
+aws_eip.nat_2
+aws_internet_gateway.igw
+aws_nat_gateway.nat_gateway_1
+aws_nat_gateway.nat_gateway_2
+aws_route.private_nat_1
+aws_route.private_nat_2
+aws_route_table.route_table_pri_1
+aws_route_table.route_table_pri_2
+aws_route_table.route_table_pub
+aws_route_table_association.route_table_association_1
+aws_route_table_association.route_table_association_2
+aws_route_table_association.route_table_pri_association_1
+aws_route_table_association.route_table_pri_association_2
+aws_subnet.pri_sub_1
+aws_subnet.pri_sub_2
+aws_subnet.pub_sub_1
+aws_subnet.pub_sub_2
+aws_vpc.main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;em&gt;이번 포스팅에서 DB와 인스턴스 연결은 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;step-4&quot;&gt;Step 4&lt;/h2&gt;
 &lt;h3 id=&quot;layer-3️⃣--data-in-a-second-private-subnet&quot;&gt;Layer 3️⃣ : Data in a second private subnet&lt;/h3&gt;
 
-&lt;p&gt;첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다.
+&lt;p&gt;첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다. (코드 생략) &lt;br /&gt;
 장애가 발생할 경우를 대비해 read-replica 혹은 standby 구성으로 배치합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;❗Step4의 서브넷 작성법은 Step3의 방법과 동일합니다. 아래 사진은 CIDR의 범위가 겹치므로, Private subnet의 cidr block을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.8.0/23&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.12.0/23&lt;/code&gt;로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.10.0/23&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.14.0/23&lt;/code&gt;으로 바꿔 진행하세요.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step4.png&quot; alt=&quot;step4&quot; /&gt;&lt;/p&gt;
 
@@ -167,9 +228,15 @@ VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블
 &lt;h2 id=&quot;step-5&quot;&gt;Step 5&lt;/h2&gt;
 &lt;h3 id=&quot;leave-extra-ips-available&quot;&gt;Leave extra IPs available&lt;/h3&gt;
 
-&lt;p&gt;배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다.&lt;/p&gt;
+&lt;p&gt;배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다. (코드 생략)&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step5.png&quot; alt=&quot;step5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;위와 같은 단계들을 통해 &lt;strong&gt;3 Tier VPC Architecture&lt;/strong&gt;를 학습해보았습니다.
+Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destory&lt;/code&gt;명령어를 통해 학습을 시작하기 전 상태로 되돌리세요.
+다음 포스팅에서는 이번 포스팅에서 생략했던 인스턴스, DB, LB 등을 모듈로 관리하며 다뤄 보겠습니다.&lt;/p&gt;
 
 &lt;hr /&gt;
 
