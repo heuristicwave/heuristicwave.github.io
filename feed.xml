@@ -1,4 +1,126 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://heuristicwave.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" /><updated>2021-03-20T12:32:11+00:00</updated><id>https://heuristicwave.github.io/feed.xml</id><title type="html">Heuristic Wave Blog</title><subtitle>I wanna be a technical writer</subtitle><entry><title type="html">3-Tier VPC Architecture with Terraform</title><link href="https://heuristicwave.github.io/3Tier" rel="alternate" type="text/html" title="3-Tier VPC Architecture with Terraform" /><published>2021-01-27T18:00:00+00:00</published><updated>2021-01-27T18:00:00+00:00</updated><id>https://heuristicwave.github.io/3Tier</id><content type="html" xml:base="https://heuristicwave.github.io/3Tier">&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://heuristicwave.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" /><updated>2021-04-08T07:07:23+00:00</updated><id>https://heuristicwave.github.io/feed.xml</id><title type="html">Heuristic Wave Blog</title><subtitle>I wanna be a technical writer</subtitle><entry><title type="html">ECR CodePipeline with Terraform Ⅰ</title><link href="https://heuristicwave.github.io/CodeCommit" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅰ" /><published>2021-04-07T18:00:00+00:00</published><updated>2021-04-07T18:00:00+00:00</updated><id>https://heuristicwave.github.io/CodeCommit</id><content type="html" xml:base="https://heuristicwave.github.io/CodeCommit">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)&lt;/p&gt;
+
+&lt;h1 id=&quot;overview&quot;&gt;Overview&lt;/h1&gt;
+
+&lt;p&gt;이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다.
+AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다.
+&lt;img src=&quot;../../assets/built/images/post/CodePipeline.png&quot; alt=&quot;CodePipeline&quot; /&gt;
+1편에서는 &lt;strong&gt;CodeCommit&lt;/strong&gt; 구축과 &lt;strong&gt;terraform의 Output, Variables, tfvars&lt;/strong&gt; 등을 배워 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;준비-작업&quot;&gt;준비 작업&lt;/h2&gt;
+&lt;p&gt;이번 포스팅의 작업공간(~/terraform)을 생성하고 해당 위치에서 아래 코드 블럭을 터미널에 복사합니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; provider.tf
+provider &quot;aws&quot; {
+  region  = var.aws_region
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform init&lt;/code&gt; 명령어를 실행시켜주세요.&lt;/p&gt;
+
+&lt;h2 id=&quot;codecommit&quot;&gt;CodeCommit&lt;/h2&gt;
+&lt;p&gt;CodeCommit을 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
+링크의 Example Usage를 활용해 코드를 작성할 수도 있지만, 이번 포스팅에서는 제 방식대로아래 코드를 활용해 작성해보겠습니다.
+링크에서 소개하는 코드와 다른 부분은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variable&lt;/code&gt;의 사용 여부입니다.&lt;/p&gt;
+
+&lt;p&gt;✅ 아래 코드와 도큐먼트의 코드가 어떻게 다른지 꼭 확인해보세요!&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codecommit.tf
+resource &quot;aws_codecommit_repository&quot; &quot;test&quot; {
+  repository_name = var.source_repo_name
+  description     = &quot;This is the Sample App Repository&quot;
+}
+
+output &quot;source_repo_clone_url_http&quot; {
+  value = aws_codecommit_repository.test.clone_url_http
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Output&lt;/code&gt;은 향후 clone할 원격 저장소의 위치를 파악하기 위해 넣어줍니다. 또한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용해 보다 유연한 코드를 작성해 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;준비 작업에 정의한 리전과 CodeCommit Repo 이름에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용하겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; variables.tf
+variable &quot;aws_region&quot; {
+  description = &quot;The AWS region&quot;
+  default     = &quot;ap-northeast-2&quot;
+}
+
+variable &quot;source_repo_name&quot; {
+  description = &quot;Source repo name&quot;
+  type        = string
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;위 코드를 복사한 후, terraform plan 명령어로 아래와 같은 화면을 확인 할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/plan.png&quot; alt=&quot;terraform plan&quot; /&gt;
+앞서 작성한 variables.tf의 region은 default 값이 있지만, repository는 variable의 형식만 정의되어 있기 때문에 인프라를 생성할 때 필수적으로 이름을 입력받습니다.&lt;/p&gt;
+
+&lt;p&gt;✅ variable의 input값을 수기로 작성하는 것을 피하고 싶으면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;를 사용합니다. 편의상 이번 프로젝트에서 사용할 값들을 미리 작성하겠습니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; terraform.tfvars
+aws_ecr=&quot;my-image&quot;
+source_repo_name=&quot;my-pipeline&quot;
+source_repo_branch=&quot;master&quot;
+image_repo_name=&quot;my-pipeline&quot;
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;는 위와 같이 변수의 값을 지정하기도 하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.env&lt;/code&gt;처럼 &lt;strong&gt;외부로 노출하면 안되는 값을 넣어두고 git에 ignore시켜 사용&lt;/strong&gt;하기도 합니다.&lt;/p&gt;
+
+&lt;p&gt;위 작업을 진행 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하면 “Apply complete”과 함께 Outputs 값이 나옵니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어 이외에도, &lt;a href=&quot;https://console.aws.amazon.com/codecommit&quot;&gt;콘솔&lt;/a&gt; 로 이동하면 생성된 인프라를 확인 할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;생성된 원격저장소를 사용하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output&lt;/code&gt;을 활용해 &lt;strong&gt;export 환경 변수&lt;/strong&gt;를 지정합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;tf_source_repo_clone_url_http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;terraform output source_repo_clone_url_http&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# 확인&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;git-setting&quot;&gt;Git Setting&lt;/h2&gt;
+
+&lt;p&gt;CodeCommit의 Repo 활용법은 아래 2가지 방법이 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;1-로컬에-위치한-코드를-codecommit에-push하기-원격저장소가-비어있음&quot;&gt;1. 로컬에 위치한 코드를 CodeCommit에 push하기 (원격저장소가 비어있음)&lt;/h3&gt;
+
+&lt;p&gt;로컬의 빈공간에서 CodeCommit Repo 사용을 위한 git remote 지정&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git init
+git remote add origin &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
+git remote &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# 원격 저장소 확인&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;코드를 작성하고 CodeCommit에 Push하기&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;First commit&quot;&lt;/span&gt;
+git status
+git push origin &lt;span class=&quot;c&quot;&gt;# master branch로 push&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;자격 증명 문제가 있다면 아래 명령어로 해결합니다. &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html&quot;&gt;자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.helper &lt;span class=&quot;s1&quot;&gt;'!aws codecommit credential-helper $@'&lt;/span&gt;
+git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.UseHttpPath &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-로컬에-원격저장소의-코드를-clone하기-원격저장소가-비어있지-않음&quot;&gt;2. 로컬에 원격저장소의 코드를 clone하기 (원격저장소가 비어있지 않음)&lt;/h3&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;지금까지 도큐먼트를 활용해 코드를 작성하고, variable, output, tfvars의 활용법을 배워보았습니다.&lt;/p&gt;
+
+&lt;p&gt;앞서 작성된 작업들이 정상적으로 커밋과 clone이 가능하면, 다음 단계로 🚀&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (CodeBuild, CodePipeLine)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content><author><name>Heuristic Wave</name></author><category term="aws" /><category term="devops" /><summary type="html">Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)</summary></entry><entry><title type="html">3-Tier VPC Architecture with Terraform</title><link href="https://heuristicwave.github.io/3Tier" rel="alternate" type="text/html" title="3-Tier VPC Architecture with Terraform" /><published>2021-01-27T18:00:00+00:00</published><updated>2021-01-27T18:00:00+00:00</updated><id>https://heuristicwave.github.io/3Tier</id><content type="html" xml:base="https://heuristicwave.github.io/3Tier">&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
@@ -204,6 +326,8 @@ Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext h
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (CodeBuild, CodePipeLine)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content><author><name>Heuristic Wave</name></author><category term="devops" /><category term="aws" /><summary type="html">본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.</summary></entry><entry><title type="html">Pipenv, Nginx, Gunicorn 서버 운영하기</title><link href="https://heuristicwave.github.io/pipenv01" rel="alternate" type="text/html" title="Pipenv, Nginx, Gunicorn 서버 운영하기" /><published>2021-01-04T00:40:00+00:00</published><updated>2021-01-04T00:40:00+00:00</updated><id>https://heuristicwave.github.io/pipenv01</id><content type="html" xml:base="https://heuristicwave.github.io/pipenv01">&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;

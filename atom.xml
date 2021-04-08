@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>ECR CodePipeline with Terraform Ⅰ</title>
+        
+          <description>&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Wed, 07 Apr 2021 18:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/CodeCommit</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/CodeCommit</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>3-Tier VPC Architecture with Terraform</title>
         
           <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
