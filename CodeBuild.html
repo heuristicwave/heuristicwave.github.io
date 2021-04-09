@@ -11,7 +11,7 @@
 
 
 
-    <title>ECR CodePipeline with Terraform Ⅰ</title>
+    <title>ECR CodePipeline with Terraform Ⅱ</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,24 +49,24 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="I wanna be a technical writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/CodeCommit" />
+    <link rel="canonical" href="https://heuristicwave.github.io/CodeBuild" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="ECR CodePipeline with Terraform Ⅰ" />
-    <meta property="og:description" content="Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit) Overview 이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다. AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다. 1편에서는 CodeCommit 구축과 terraform의 Output, Variables, tfvars 등을 배워 보겠습니다. 준비 작업 이번" />
-    <meta property="og:url" content="https://heuristicwave.github.io/CodeCommit" />
+    <meta property="og:title" content="ECR CodePipeline with Terraform Ⅱ" />
+    <meta property="og:description" content="Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서 에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo"" />
+    <meta property="og:url" content="https://heuristicwave.github.io/CodeBuild" />
     <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-04-07T18:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-04-07T18:00:00+00:00" />
+    <meta property="article:published_time" content="2021-04-08T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2021-04-08T00:00:00+00:00" />
     <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ECR CodePipeline with Terraform Ⅰ" />
-    <meta name="twitter:description" content="Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit) Overview 이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다. AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다. 1편에서는 CodeCommit 구축과 terraform의 Output, Variables, tfvars 등을 배워 보겠습니다. 준비 작업 이번" />
+    <meta name="twitter:title" content="ECR CodePipeline with Terraform Ⅱ" />
+    <meta name="twitter:description" content="Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서 에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo"" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
     <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png" />
     <meta name="twitter:label1" content="Written by" />
@@ -87,7 +87,7 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/CodeCommit",
+    "url": "https://heuristicwave.github.io/CodeBuild",
     "image": {
         "@type": "ImageObject",
         "url": "https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png",
@@ -96,9 +96,9 @@
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/CodeCommit"
+        "@id": "https://heuristicwave.github.io/CodeBuild"
     },
-    "description": "Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit) Overview 이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다. AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다. 1편에서는 CodeCommit 구축과 terraform의 Output, Variables, tfvars 등을 배워 보겠습니다. 준비 작업 이번"
+    "description": "Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서 에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo""
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="ECR CodePipeline with Terraform Ⅰ" href="/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="ECR CodePipeline with Terraform Ⅱ" href="/feed.xml" />
 
 
 </head>
@@ -175,7 +175,7 @@ into the {body} of the default.hbs template -->
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 7 April 2021"> 7 April 2021</time>
+                    <time class="post-full-meta-date" datetime=" 8 April 2021"> 8 April 2021</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -189,7 +189,7 @@ into the {body} of the default.hbs template -->
                         
                     
                 </section>
-                <h1 class="post-full-title">ECR CodePipeline with Terraform Ⅰ</h1>
+                <h1 class="post-full-title">ECR CodePipeline with Terraform Ⅱ</h1>
             </header>
 
             
@@ -199,118 +199,237 @@ into the {body} of the default.hbs template -->
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)</p>
+                    <p>Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</p>
 
-<h1 id="overview">Overview</h1>
+<p>2편에서는 <strong>ECR</strong>과 <strong>CodeBuild</strong>를 생성하고 <strong>IAM 역할, 정책을 부여</strong>하는 법을 학습합니다.</p>
 
-<p>이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다.
-AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다.
-<img src="../../assets/built/images/post/CodePipeline.png" alt="CodePipeline" />
-1편에서는 <strong>CodeCommit</strong> 구축과 <strong>terraform의 Output, Variables, tfvars</strong> 등을 배워 보겠습니다.</p>
+<h2 id="ecr">ECR</h2>
+<p>ECR 역시 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository">공식 문서</a> 에서 사용방법을 확인합니다.
+공식문서에서 <code class="language-plaintext highlighter-rouge">image_scanning_configuration</code> config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다.
+더불어, output도 함께 작성하겠습니다.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; ecr.tf
+resource "aws_ecr_repository" "image_repo" {
+  name                 = var.image_repo_name
+  image_tag_mutability = "MUTABLE"
+}
 
-<p><br /></p>
+output "image_repo_url" {
+  value = aws_ecr_repository.image_repo.repository_url
+}
 
-<h2 id="준비-작업">준비 작업</h2>
-<p>이번 포스팅의 작업공간(~/terraform)을 생성하고 해당 위치에서 아래 코드 블럭을 터미널에 복사합니다.</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; provider.tf
-provider "aws" {
-  region  = var.aws_region
+output "image_repo_arn" {
+  value = aws_ecr_repository.image_repo.arn
 }
 </span><span class="no">EOF
 </span></code></pre></div></div>
-<p>이후, <code class="language-plaintext highlighter-rouge">terraform init</code> 명령어를 실행시켜주세요.</p>
+<p>이어서 <code class="language-plaintext highlighter-rouge">ecr.tf</code>에서 변수로 사용하기 위한 <strong>var.image_repo_name</strong> 부분이 작동하도록 1편에서 작성한 <code class="language-plaintext highlighter-rouge">variables.tf</code> 아래 값을 추가합니다.</p>
 
-<h2 id="codecommit">CodeCommit</h2>
-<p>CodeCommit을 사용하기 위해 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository">Terraform 도큐먼트</a> 에서 사용법을 확인합니다.
-링크의 Example Usage를 활용해 코드를 작성할 수도 있지만, 이번 포스팅에서는 제 방식대로아래 코드를 활용해 작성해보겠습니다.
-링크에서 소개하는 코드와 다른 부분은 <code class="language-plaintext highlighter-rouge">output</code>과 <code class="language-plaintext highlighter-rouge">variable</code>의 사용 여부입니다.</p>
-
-<p>✅ 아래 코드와 도큐먼트의 코드가 어떻게 다른지 꼭 확인해보세요!</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; codecommit.tf
-resource "aws_codecommit_repository" "test" {
-  repository_name = var.source_repo_name
-  description     = "This is the Sample App Repository"
-}
-
-output "source_repo_clone_url_http" {
-  value = aws_codecommit_repository.test.clone_url_http
-}
-</span><span class="no">EOF
-</span></code></pre></div></div>
-<p><code class="language-plaintext highlighter-rouge">Output</code>은 향후 clone할 원격 저장소의 위치를 파악하기 위해 넣어줍니다. 또한 <code class="language-plaintext highlighter-rouge">Variable</code>을 사용해 보다 유연한 코드를 작성해 보겠습니다.</p>
-
-<p>준비 작업에 정의한 리전과 CodeCommit Repo 이름에 <code class="language-plaintext highlighter-rouge">Variable</code>을 사용하겠습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; variables.tf
-variable "aws_region" {
-  description = "The AWS region"
-  default     = "ap-northeast-2"
-}
-
-variable "source_repo_name" {
-  description = "Source repo name"
+<p>✅ 편의상 이번 단계에 필요한 variable을 함께 포함했습니다.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>variable "image_repo_name" {
+  description = "Image repo name"
   type        = string
 }
-</span><span class="no">EOF
-</span></code></pre></div></div>
-<p>위 코드를 복사한 후, terraform plan 명령어로 아래와 같은 화면을 확인 할 수 있습니다.
-<img src="../../assets/built/images/post/plan.png" alt="terraform plan" />
-앞서 작성한 variables.tf의 region은 default 값이 있지만, repository는 variable의 형식만 정의되어 있기 때문에 인프라를 생성할 때 필수적으로 이름을 입력받습니다.</p>
 
-<p>✅ variable의 input값을 수기로 작성하는 것을 피하고 싶으면 <code class="language-plaintext highlighter-rouge">tfvars</code>를 사용합니다. 편의상 이번 프로젝트에서 사용할 값들을 미리 작성하겠습니다.</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; terraform.tfvars
-aws_ecr="my-image"
-source_repo_name="my-pipeline"
-source_repo_branch="master"
-image_repo_name="my-pipeline"
-</span><span class="no">EOF
-</span></code></pre></div></div>
-<p><code class="language-plaintext highlighter-rouge">tfvars</code>는 위와 같이 변수의 값을 지정하기도 하지만, <code class="language-plaintext highlighter-rouge">.env</code>처럼 <strong>외부로 노출하면 안되는 값을 넣어두고 git에 ignore시켜 사용</strong>하기도 합니다.</p>
+variable "container_name" {
+  description = "Container Name"
+  default     = "my-container"
+}
 
-<p>위 작업을 진행 후, <code class="language-plaintext highlighter-rouge">terraform apply</code>명령어를 적용하면 “Apply complete”과 함께 Outputs 값이 나옵니다.
-<code class="language-plaintext highlighter-rouge">terraform state list</code>명령어 이외에도, <a href="https://console.aws.amazon.com/codecommit">콘솔</a> 로 이동하면 생성된 인프라를 확인 할 수 있습니다.</p>
-
-<p>생성된 원격저장소를 사용하기 위해 <code class="language-plaintext highlighter-rouge">terraform output</code>을 활용해 <strong>export 환경 변수</strong>를 지정합니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">tf_source_repo_clone_url_http</span><span class="o">=</span><span class="si">$(</span>terraform output source_repo_clone_url_http<span class="si">)</span>
-<span class="nb">echo</span> <span class="nv">$tf_source_repo_clone_url_http</span>	<span class="c"># 확인</span>
+variable "source_repo_branch" {
+  description = "Source repo branch"
+  type        = string
+}
 </code></pre></div></div>
+<p>ecr 작성을 완료햇으니 <code class="language-plaintext highlighter-rouge">plan, apply</code> 명령어를 차례로 입력해 인프라를 생성하고 <code class="language-plaintext highlighter-rouge">terraform state list</code>명령어나 <a href="https://console.aws.amazon.com/ecr/home">콘솔</a> 에서 생성된 인프라를 확인합니다.</p>
+
+<h2 id="codebuild">CodeBuild</h2>
+<p>CodeBuild를 사용하기 위해 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project">Terraform 도큐먼트</a> 에서 사용법을 확인합니다.
+기존까지의 작업과는 달리 상당히 어려워 보입니다. 그러나 쓱 훝어보면 크게 4가지(bucket, IAM Role과 Policy, Codebuild)로 정리됩니다.</p>
+
+<h3 id="bucket">Bucket</h3>
+<p>도큐먼트와 같이 우선적으로 S3를 생성합니다. bucket의 이름은 선택이지만, 여러개의 버킷을 가지고 있는 저는 식별을 위해 이름을 부여했습니다.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; codebuild.tf
+resource "aws_s3_bucket" "artifact_bucket" {
+  bucket = "ecr-pipeline"
+}
+</span><span class="no">EOF
+</span></code></pre></div></div>
+
+<h3 id="iam-role">IAM Role</h3>
+<p>도큐먼트를 따라 AssumeRole을 사용합시다. <br />
+➕ S3을 만들때 사용한 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 아래 코드를 추가합니다.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_iam_role" "codebuild_role" {
+  name = "terraform-codebuild",
+  assume_role_policy = &lt;&lt;EOF
+{
+   "Version": "2012-10-17",
+   "Statement": [
+      {
+         "Effect": "Allow",
+         "Principal": {
+            "Service": "codebuild.amazonaws.com"
+         },
+         "Action": "sts:AssumeRole"
+      }
+   ]
+}
+EOF
+}
+</code></pre></div></div>
+
+<h3 id="iam-policy">IAM Policy</h3>
+<p>정책은 IAM 콘솔에서 기존에 만들어진 정책을 사용할 수도 있지만, 아래와 같이 직접 작성할 수도 있습니다.
+도큐먼트에서 EC2에 대한 정책을 사용하지만, 우리는 ECR을 사용하므로 아래와 같은 정책을 사용하겠습니다.</p>
+<noscript>
+  <pre>resource &quot;aws_iam_policy&quot; &quot;codebuild_policy&quot; {
+  description = &quot;CodeBuild Execution Policy&quot;
+  policy      = &lt;&lt;EOF
+{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Action&quot;: [
+        &quot;logs:CreateLogGroup&quot;, &quot;logs:CreateLogStream&quot;, &quot;logs:PutLogEvents&quot;,
+        &quot;ecr:GetAuthorizationToken&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: &quot;*&quot;
+    },
+    {
+      &quot;Action&quot;: [
+        &quot;s3:GetObject&quot;, &quot;s3:GetObjectVersion&quot;, &quot;s3:PutObject&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: &quot;${aws_s3_bucket.artifact_bucket.arn}/*&quot;
+    },
+    {
+      &quot;Action&quot;: [
+        &quot;ecr:GetDownloadUrlForLayer&quot;, &quot;ecr:BatchGetImage&quot;,
+        &quot;ecr:BatchCheckLayerAvailability&quot;, &quot;ecr:PutImage&quot;,
+        &quot;ecr:InitiateLayerUpload&quot;, &quot;ecr:UploadLayerPart&quot;,
+        &quot;ecr:CompleteLayerUpload&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: &quot;${aws_ecr_repository.image_repo.arn}&quot;
+    }
+  ]
+}
+EOF
+}</pre>
+</noscript>
+<script src="https://gist.github.com/heuristicwave/09103b88af041153ccd206ec6d51b7c1.js"> </script>
+
+<p>20, 30라인에서 앞서 생성한 리소스를 <code class="language-plaintext highlighter-rouge">${채움참조}</code> 문법으로 유연한 코드를 작성합니다.</p>
+
+<p>🚩 이어서 생성한 <strong>Policy를 Role에 부여</strong>합니다. 이것 역시 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 추가합니다.</p>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_iam_role_policy_attachment" "codebuild-attach" {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = aws_iam_policy.codebuild_policy.arn
+}
+</code></pre></div></div>
+
+<h3 id="codebuild-1">CodeBuild</h3>
+<p><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project">Terraform 도큐먼트</a> 를 보아도 어떻게 해야 ECR에 적용시킬 수 있는지 알기 어렵습니다.
+우선 CodeBuild를 이해하기 위해 <a href="https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/sample-docker.html">AWS docs</a> 를 읽어봅시다.
+대략 리소스 이름을 정하고, 환경을 구성하고 빌드를 하기 위한 방법을 정의해야 한다는 사실을 알 수 있습니다.
+CodeBuild가 정의된 아래 코드를 활용해 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 추가합니다.</p>
+<noscript>
+  <pre>resource &quot;aws_codebuild_project&quot; &quot;codebuild&quot; {
+  name         = &quot;codebuild-${var.source_repo_name}-${var.source_repo_branch}&quot;
+  service_role = aws_iam_role.codebuild_role.arn
+
+  artifacts {
+    type = &quot;CODEPIPELINE&quot;
+  }
+  
+  environment {
+    compute_type                = &quot;BUILD_GENERAL1_MEDIUM&quot;
+    image                       = &quot;aws/codebuild/standard:3.0&quot;
+    type                        = &quot;LINUX_CONTAINER&quot;
+    privileged_mode             = true
+    image_pull_credentials_type = &quot;CODEBUILD&quot;
+    environment_variable {
+      name  = &quot;REPOSITORY_URI&quot;
+      value = aws_ecr_repository.image_repo.repository_url
+    }
+    environment_variable {
+      name  = &quot;AWS_DEFAULT_REGION&quot;
+      value = var.aws_region
+    }
+    environment_variable {
+      name  = &quot;CONTAINER_NAME&quot;
+      value = var.container_name
+    }
+  }
+  source {
+    type      = &quot;CODEPIPELINE&quot;
+    buildspec = &lt;&lt;BUILDSPEC
+${file(&quot;buildspec.yml&quot;)}
+BUILDSPEC
+  }
+}</pre>
+</noscript>
+<script src="https://gist.github.com/heuristicwave/2ebf79ce3cbdf4a87657b272f9e1d994.js"> </script>
+
+<p>31라인이 참조하는 <code class="language-plaintext highlighter-rouge">buildspec.yml</code>을 pre_build, build, post_build에 맞춰 작성합니다.</p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">cat &lt;&lt;EOF &gt; buildspec.yml</span>
+<span class="na">version</span><span class="pi">:</span> <span class="m">0.2</span>
+
+<span class="na">phases</span><span class="pi">:</span>
+  <span class="na">install</span><span class="pi">:</span>
+    <span class="na">runtime-versions</span><span class="pi">:</span>
+      <span class="na">docker</span><span class="pi">:</span> <span class="m">18</span>
+  <span class="na">pre_build</span><span class="pi">:</span>
+    <span class="na">commands</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">echo Logging in to Amazon ECR...</span>
+      <span class="pi">-</span> <span class="s">$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)</span>
+      <span class="pi">-</span> <span class="s">COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)</span>
+      <span class="pi">-</span> <span class="s">IMAGE_TAG=${COMMIT_HASH:=latest}</span>
+  <span class="na">build</span><span class="pi">:</span>
+    <span class="na">commands</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">echo Build started on `date`</span>
+      <span class="pi">-</span> <span class="s">echo Building the Docker image...</span>
+      <span class="pi">-</span> <span class="s">docker build -t $REPOSITORY_URI:latest .</span>
+      <span class="pi">-</span> <span class="s">docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG</span>
+  <span class="na">post_build</span><span class="pi">:</span>
+    <span class="na">commands</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="s">echo Build completed on `date`</span>
+      <span class="pi">-</span> <span class="s">echo Pushing the Docker image...</span>
+      <span class="pi">-</span> <span class="s">docker push $REPOSITORY_URI:latest</span>
+      <span class="pi">-</span> <span class="s">docker push $REPOSITORY_URI:$IMAGE_TAG</span>
+      <span class="pi">-</span> <span class="s">echo Writing image definitions file...</span>
+      <span class="pi">-</span> <span class="s">printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &gt; imagedefinitions.json</span>
+<span class="na">artifacts</span><span class="pi">:</span>
+  <span class="na">files</span><span class="pi">:</span> <span class="s">imagedefinitions.json</span>
+<span class="s">EOF</span>
+</code></pre></div></div>
+
+<p>지금까지 작성된 인프라를 <code class="language-plaintext highlighter-rouge">terraform stae list</code>명령어를 통해 확인하면 아래와 같습니다.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>❯ terraform state list
+aws_codebuild_project.codebuild
+aws_codecommit_repository.test
+aws_ecr_repository.image_repo
+aws_iam_policy.codebuild_policy
+aws_iam_role.codebuild_role
+aws_iam_role_policy_attachment.codebuild-attach
+aws_s3_bucket.artifact_bucket
+</code></pre></div></div>
+
+<details>
+  <summary>생성한 인프라가 위와 같지 않을 경우</summary>
+
+  <p>실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.</p>
+  <ol>
+    <li><code class="language-plaintext highlighter-rouge">terraform destroy</code> 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, <code class="language-plaintext highlighter-rouge">-target</code> 옵션과 함께 resource 명으로 명령어를 작성합니다. <br />
+<em>예시) terraform destory -target aws_vpc.main</em></li>
+    <li>잘못 작성한 코드를 수정 후, <code class="language-plaintext highlighter-rouge">terraform apply</code>명령어를 적용하여 최신 상태의 인프라를 반영합니다.</li>
+  </ol>
+
+</details>
 
 <p><br /></p>
 
-<h2 id="git-setting">Git Setting</h2>
-
-<p>CodeCommit의 Repo 활용법은 아래 2가지 방법이 있습니다.</p>
-
-<h3 id="1-로컬에-위치한-코드를-codecommit에-push하기-원격저장소가-비어있음">1. 로컬에 위치한 코드를 CodeCommit에 push하기 (원격저장소가 비어있음)</h3>
-
-<p>로컬의 빈공간에서 CodeCommit Repo 사용을 위한 git remote 지정</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git init
-git remote add origin <span class="nv">$tf_source_repo_clone_url_http</span>
-git remote <span class="nt">-v</span>   <span class="c"># 원격 저장소 확인</span>
-</code></pre></div></div>
-<p>코드를 작성하고 CodeCommit에 Push하기</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add <span class="nb">.</span>
-git commit <span class="nt">-m</span> <span class="s2">"First commit"</span>
-git status
-git push origin <span class="c"># master branch로 push</span>
-</code></pre></div></div>
-
-<p>자격 증명 문제가 있다면 아래 명령어로 해결합니다. <a href="https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html">자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결</a></p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git config <span class="nt">--global</span> credential.helper <span class="s1">'!aws codecommit credential-helper $@'</span>
-git config <span class="nt">--global</span> credential.UseHttpPath <span class="nb">true</span>
-</code></pre></div></div>
-
-<h3 id="2-로컬에-원격저장소의-코드를-clone하기-원격저장소가-비어있지-않음">2. 로컬에 원격저장소의 코드를 clone하기 (원격저장소가 비어있지 않음)</h3>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git clone <span class="nv">$tf_source_repo_clone_url_http</span>
-</code></pre></div></div>
-
 <p><br /></p>
-
-<p>지금까지 도큐먼트를 활용해 코드를 작성하고, variable, output, tfvars의 활용법을 배워보았습니다.</p>
-
-<p>앞서 작성된 작업들이 정상적으로 커밋과 clone이 가능하면, 다음 단계로 🚀</p>
 
 <hr />
 
@@ -364,9 +483,9 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/CodeCommit';
-                            this.page.identifier = '/CodeCommit';
-                            this.page.title = 'ECR CodePipeline with Terraform Ⅰ';
+                            this.page.url = 'https://heuristicwave.github.io/CodeBuild';
+                            this.page.identifier = '/CodeBuild';
+                            this.page.title = 'ECR CodePipeline with Terraform Ⅱ';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -411,14 +530,14 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/CodeBuild">ECR CodePipeline with Terraform Ⅱ</a></li>
-                                        
-                                    
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                            <li><a href="/CodeCommit">ECR CodePipeline with Terraform Ⅰ</a></li>
+                                        
                                     
                                   
                                 
@@ -448,16 +567,19 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
                 
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/CodeBuild">
+            <a class="post-card-image-link" href="/CodeCommit">
                 <div class="post-card-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/CodeBuild">
+            <a class="post-card-content-link" href="/CodeCommit">
                 <header class="post-card-header">
                     
                         
@@ -471,56 +593,7 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
                         
                     
 
-                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅱ</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
-
-            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
-            
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/3Tier">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/vpc-step5.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/3Tier">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Devops</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Aws</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">3-Tier VPC Architecture with Terraform</h2>
+                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅰ</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -557,18 +630,18 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">ECR CodePipeline with Terraform Ⅰ</div>
+    <div class="floating-header-title">ECR CodePipeline with Terraform Ⅱ</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=ECR+CodePipeline+with+Terraform+%E2%85%A0&amp;url=https://heuristicwave.github.ioCodeCommit"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=ECR+CodePipeline+with+Terraform+%E2%85%A1&amp;url=https://heuristicwave.github.ioCodeBuild"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioCodeCommit"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioCodeBuild"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
