@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://heuristicwave.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" /><updated>2021-04-10T17:49:22+00:00</updated><id>https://heuristicwave.github.io/feed.xml</id><title type="html">Heuristic Wave Blog</title><subtitle>I wanna be a technical writer</subtitle><entry><title type="html">ECR CodePipeline with Terraform Ⅲ</title><link href="https://heuristicwave.github.io/CodePipeline" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅲ" /><published>2021-04-09T00:00:00+00:00</published><updated>2021-04-09T00:00:00+00:00</updated><id>https://heuristicwave.github.io/CodePipeline</id><content type="html" xml:base="https://heuristicwave.github.io/CodePipeline">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)&lt;/p&gt;
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator><link href="https://heuristicwave.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" /><updated>2021-04-12T01:20:35+00:00</updated><id>https://heuristicwave.github.io/feed.xml</id><title type="html">Heuristic Wave Blog</title><subtitle>I wanna be a technical writer</subtitle><entry><title type="html">ECR CodePipeline with Terraform Ⅲ</title><link href="https://heuristicwave.github.io/CodePipeline" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅲ" /><published>2021-04-09T00:00:00+00:00</published><updated>2021-04-09T00:00:00+00:00</updated><id>https://heuristicwave.github.io/CodePipeline</id><content type="html" xml:base="https://heuristicwave.github.io/CodePipeline">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)&lt;/p&gt;
 
 &lt;h1 id=&quot;preview&quot;&gt;Preview&lt;/h1&gt;
 
@@ -129,7 +129,7 @@ EOF
 &lt;p&gt;1편에서 작성한 CodeCommit을 Stage의 Source, 2편에서 작성한 CodeBuild를 Build단계 지정했습니다.
 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply, plan&lt;/code&gt; 명령어를 차례로 반영해 오류가 없는지 확인합니다.&lt;/p&gt;
 
-&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform stae list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
+&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
 aws_codebuild_project.codebuild
 aws_codecommit_repository.test
@@ -196,17 +196,17 @@ resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-at
 &lt;/noscript&gt;
 &lt;script src=&quot;https://gist.github.com/heuristicwave/5b566b2cc70337501a4d60b71215930f.js&quot;&gt; &lt;/script&gt;
 
+&lt;h2 id=&quot;result&quot;&gt;Result&lt;/h2&gt;
+&lt;p&gt;Trigger 까지 정상적으로 적용하고 테스트용으로 활용할 아무 Dockerfile을 CodeCommit에 Push합니다.
+다시 &lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipeline 콘솔&lt;/a&gt; 에 접속해 우상단에 위치한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;변경사항 릴리스&lt;/code&gt;를 누르면,
+아래와 같이 정상적으로 코드 파이프라인이 작동하여 운영되는 것을 확인 할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/ecr_terraform_demo.png&quot; alt=&quot;terraform_demo&quot; /&gt;&lt;/p&gt;
+
 &lt;h2 id=&quot;cleanup&quot;&gt;Cleanup&lt;/h2&gt;
 &lt;p&gt;S3 bucket은 빈상태여야 제거가 가능하기에 &lt;a href=&quot;https://console.aws.amazon.com/s3/home&quot;&gt;S3 콘솔&lt;/a&gt; 에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecr-pipeline&lt;/code&gt;의 데이터를 모두 삭제합니다.
 이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destory&lt;/code&gt; 명령어로 모든 리소스를 회수합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;result&quot;&gt;Result&lt;/h2&gt;
-&lt;p&gt;Trigger 까지 정상적으로 적용하고 아무 Dockerfile을 CodeCommit에 Push합니다.
-다시 &lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipeline 콘솔&lt;/a&gt; 에 접속해 우상단에 위치한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;변경사항 릴리스&lt;/code&gt;를 누르면,
-아래와 같이 정상적으로 코드 파이프라인이 작동하여 운영되는 것을 확인 할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/ecr_terraform_demo.png&quot; alt=&quot;terraform_demo&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;총 3편에 걸쳐서 테라폼으로 &lt;strong&gt;최소한의 리소스&lt;/strong&gt;로 ECR Pipeline 구축법을 알아보았습니다. (CloudWatch 기능을 추가해 CodePipeline을 구축해보세요 👍)
 해당 과정을 통해 AWS 인프라 생성법과, IAM 활용법, Variable, Output, tfvars 등을 활용해 코드를 작성하는 법을 공부했습니다.
@@ -429,7 +429,7 @@ BUILDSPEC
 &lt;span class=&quot;s&quot;&gt;EOF&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform stae list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
+&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
 aws_codebuild_project.codebuild
 aws_codecommit_repository.test
@@ -441,7 +441,7 @@ aws_s3_bucket.artifact_bucket
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;details&gt;
-  &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우&lt;/summary&gt;
+  &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우, 👉 Click&lt;/summary&gt;
 
   &lt;p&gt;실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.&lt;/p&gt;
   &lt;ol&gt;
@@ -451,8 +451,6 @@ aws_s3_bucket.artifact_bucket
   &lt;/ol&gt;
 
 &lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 

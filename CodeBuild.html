@@ -404,7 +404,7 @@ BUILDSPEC
 <span class="s">EOF</span>
 </code></pre></div></div>
 
-<p>지금까지 작성된 인프라를 <code class="language-plaintext highlighter-rouge">terraform stae list</code>명령어를 통해 확인하면 아래와 같습니다.</p>
+<p>지금까지 작성된 인프라를 <code class="language-plaintext highlighter-rouge">terraform state list</code>명령어를 통해 확인하면 아래와 같습니다.</p>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>❯ terraform state list
 aws_codebuild_project.codebuild
 aws_codecommit_repository.test
@@ -416,7 +416,7 @@ aws_s3_bucket.artifact_bucket
 </code></pre></div></div>
 
 <details>
-  <summary>생성한 인프라가 위와 같지 않을 경우</summary>
+  <summary>생성한 인프라가 위와 같지 않을 경우, 👉 Click</summary>
 
   <p>실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.</p>
   <ol>
@@ -426,8 +426,6 @@ aws_s3_bucket.artifact_bucket
   </ol>
 
 </details>
-
-<p><br /></p>
 
 <p><br /></p>
 
