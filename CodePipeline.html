@@ -434,16 +434,17 @@ resource &quot;aws_iam_role_policy_attachment&quot; &quot;trigger-attach&quot; {
             
                 <section class="subscribe-form">
                     <h3 class="subscribe-form-title">Subscribe to Heuristic Wave Blog</h3>
-                    <p>Get the latest posts delivered right to your inbox</p>
+                    <p>Get the latest posts delivered right via RSS</p>
                     <form method="post" action="/subscribe/" class="">
     <input class="confirm" type="hidden" name="confirm"  />
     <input class="location" type="hidden" name="location"  />
     <input class="referrer" type="hidden" name="referrer"  />
 
     <div class="form-group">
-        <input class="subscribe-email" type="email" name="email" placeholder="youremail@example.com" />
+        <input class="subscribe-email" type="url" name="rss url" value="https://heuristicwave.github.io" readonly />
     </div>
-    <button class="" type="submit" disabled><span>Subscribe</span></button>
+    <!--To Do Rss Web Font <i class="fas fa-rss"></i> -->
+    <button class="" type="submit" disabled><span>Copy</span></button>
     <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
 </form>
 
@@ -702,19 +703,6 @@ resource &quot;aws_iam_role_policy_attachment&quot; &quot;trigger-attach&quot; {
     </script>
 </span>
                 <br>
-                <p class="subscribe-overlay-description">구독기능 테스트 중...</p>
-                <form method="post" action="/subscribe/" class="">
-    <input class="confirm" type="hidden" name="confirm"  />
-    <input class="location" type="hidden" name="location"  />
-    <input class="referrer" type="hidden" name="referrer"  />
-
-    <div class="form-group">
-        <input class="subscribe-email" type="email" name="email" placeholder="youremail@example.com" />
-    </div>
-    <button class="" type="submit" disabled><span>Subscribe</span></button>
-    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
-</form>
-
             </div>
         </div>
     
