@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Look into EKS max pods</title>
+        
+          <description>&lt;p&gt;EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까?&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 19 Jun 2021 18:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/EKS_Max_Pods</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/EKS_Max_Pods</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>ECR CodePipeline with Terraform Ⅲ</title>
         
           <description>&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)&lt;/p&gt;
