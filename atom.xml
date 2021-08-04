@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Provision Infrastructure with Packer</title>
+        
+          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;HashiCorp Learn - Provision Infrastructure with Packer&lt;/a&gt; 에서 다루는 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Mon, 02 Aug 2021 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/Packer</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/Packer</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Look into EKS max pods</title>
         
           <description>&lt;p&gt;EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까?&lt;/p&gt;

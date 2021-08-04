@@ -1,0 +1,1017 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Provision Infrastructure with Packer</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- Custom.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- webfont -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/nanumgothic.css">
+
+    <!-- syntax.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="I wanna be a technical writer" />
+    <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
+    <link rel="canonical" href="https://heuristicwave.github.io/Packer" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Heuristic Wave Blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Provision Infrastructure with Packer" />
+    <meta property="og:description" content="본 글은 HashiCorp Learn - Provision Infrastructure with Packer 에서 다루는 내용을 기반으로 작성한 글 입니다. Packer를 사용해 AWS AMI를 만들고 Terraform과 연계하여 활용하는 방법에 약간의 설명과 팁을 담아 한국어로 재작성해 보았습니다. (설치와 관련된 준비사항은 생략되어 있으므로 원문을 확인해주세요.) 프로젝트 구조 먼저, 해당 튜토리얼을 진행하기 위한 프로젝트 구조는 아래와 같습니다." />
+    <meta property="og:url" content="https://heuristicwave.github.io/Packer" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/packer&terraform.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/" />
+    <meta property="article:author" content="https://www.facebook.com/" />
+    <meta property="article:published_time" content="2021-08-02T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2021-08-02T00:00:00+00:00" />
+    <meta property="article:tag" content="Devops" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Provision Infrastructure with Packer" />
+    <meta name="twitter:description" content="본 글은 HashiCorp Learn - Provision Infrastructure with Packer 에서 다루는 내용을 기반으로 작성한 글 입니다. Packer를 사용해 AWS AMI를 만들고 Terraform과 연계하여 활용하는 방법에 약간의 설명과 팁을 담아 한국어로 재작성해 보았습니다. (설치와 관련된 준비사항은 생략되어 있으므로 원문을 확인해주세요.) 프로젝트 구조 먼저, 해당 튜토리얼을 진행하기 위한 프로젝트 구조는 아래와 같습니다." />
+    <meta name="twitter:url" content="https://heuristicwave.github.io/" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/packer&terraform.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Heuristic Wave Blog" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:site" content="@" />
+    <meta name="twitter:creator" content="@" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Heuristic Wave Blog",
+        "logo": "https://heuristicwave.github.io/"
+    },
+    "url": "https://heuristicwave.github.io/Packer",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/packer&terraform.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://heuristicwave.github.io/Packer"
+    },
+    "description": "본 글은 HashiCorp Learn - Provision Infrastructure with Packer 에서 다루는 내용을 기반으로 작성한 글 입니다. Packer를 사용해 AWS AMI를 만들고 Terraform과 연계하여 활용하는 방법에 약간의 설명과 팁을 담아 한국어로 재작성해 보았습니다. (설치와 관련된 준비사항은 생략되어 있으므로 원문을 확인해주세요.) 프로젝트 구조 먼저, 해당 튜토리얼을 진행하기 위한 프로젝트 구조는 아래와 같습니다."
+}
+    </script>
+    <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Provision Infrastructure with Packer" href="https://heuristicwave.github.io/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://heuristicwave.github.io/">Heuristic Wave Blog</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-projects" role="menuitem"><a href="/tag/projects/">Projects</a></li>
+    <li class="nav-devops" role="menuitem"><a href="/tag/devops/">DevOps</a></li>
+    <li class="nav-aws" role="menuitem"><a href="/tag/aws/">AWS</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/backend/">Back-end</a></li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/archive">All Posts</a>
+    </li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/author_archive.html">Tag별 Posts</a>
+    </li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+        </div>
+        
+            <a class="subscribe-button" href="#subscribe">Search</a>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-devops tag-aws post tag-devops ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 2 August 2021"> 2 August 2021</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/devops/'>DEVOPS</a>,
+                            
+                        
+                            
+                               <a href='/tag/aws/'>AWS</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Provision Infrastructure with Packer</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/packer&terraform.png)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>본 글은 <a href="https://learn.hashicorp.com/tutorials/terraform/packer">HashiCorp Learn - Provision Infrastructure with Packer</a> 에서 다루는 내용을 기반으로 작성한 글 입니다.</p>
+
+<p><br /></p>
+
+<blockquote>
+  <p>Packer를 사용해 AWS AMI를 만들고 Terraform과 연계하여 활용하는 방법에 약간의 설명과 팁을 담아 한국어로 재작성해 보았습니다. (설치와 관련된 준비사항은 생략되어 있으므로 원문을 확인해주세요.)</p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="프로젝트-구조">프로젝트 구조</h2>
+
+<p>먼저, 해당 튜토리얼을 진행하기 위한 프로젝트 구조는 아래와 같습니다. 아래와 폴더와 파일을 준비해주세요.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">.</span>
+└── provision-infra-with-packer
+    ├── images
+    │   └── image.pkr.hcl
+    ├── instances
+    │   ├── main.tf
+    │   └── variables.tf
+    └── scripts
+        └── setup.sh
+</code></pre></div></div>
+
+<p><br /></p>
+
+<h2 id="local-ssh-key-생성하기">Local SSH key 생성하기</h2>
+
+<p><code class="language-plaintext highlighter-rouge">provision-infra-with-packer</code> 폴더 안에서 AWS AMI로 만들 인스턴스에 접속하기 위한 SSH 키를 생성합니다.
+필자는 사용할 공개키를 Mac OS에서 <code class="language-plaintext highlighter-rouge">ssh-keygen</code>으로 생성하였습니다. 각자 환경에 맞는 방법으로 SSH 공개키를 생성하세요.
+암호화 타입(<code class="language-plaintext highlighter-rouge">-t</code>)을 RSA로 주석(<code class="language-plaintext highlighter-rouge">-C</code>)을 이메일로 생성되는 공개키의 위치(<code class="language-plaintext highlighter-rouge">-f</code>)를 현재 directory로 설정하고 공개키의 이름을 <code class="language-plaintext highlighter-rouge">tf-packer</code>로 설정했습니다.
+명령어를 입력하고 비밀번호를 입력하면 되지만 편의상 공백으로 두겠습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>ssh-keygen <span class="nt">-t</span> rsa <span class="nt">-C</span> <span class="s2">"your_email@example.com"</span> <span class="nt">-f</span> ./tf-packer
+</code></pre></div></div>
+
+<p>이후 <code class="language-plaintext highlighter-rouge">tf-packer</code>와 <code class="language-plaintext highlighter-rouge">tf-packer.pub</code> 2가지 파일이 생성되었다면 다음 단계 🚀</p>
+
+<p><br /></p>
+
+<h2 id="packer-코드-작성하기">Packer 코드 작성하기</h2>
+
+<p><em><code class="language-plaintext highlighter-rouge">image.pkr.hcl</code> 파일에서 진행합니다.</em> <br /></p>
+
+<h3 id="1️⃣-ami-구축에-필요한-config-작성">1️⃣ AMI 구축에 필요한 config 작성</h3>
+
+<p>packer가 빌드한 이미지가 저장될 리전의 정보와 AMI에 timestamp 정보를 넣기 위한 config를 차례로 작성합니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>variable <span class="s2">"region"</span> <span class="o">{</span>
+  <span class="nb">type</span>    <span class="o">=</span> string
+  default <span class="o">=</span> <span class="s2">"us-east-1"</span>
+<span class="o">}</span>
+
+locals <span class="o">{</span> timestamp <span class="o">=</span> regex_replace<span class="o">(</span>timestamp<span class="o">()</span>, <span class="s2">"[- TZ:]"</span>, <span class="s2">""</span><span class="o">)</span> <span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="2️⃣️-base-ami에-대한-source-ami-config-작성">2️⃣️ Base AMI에 대한 Source AMI config 작성</h3>
+
+<p>packer가 이미지를 만들기 위해 기본으로 사용되는 Base AMI에 대한 정보를 <code class="language-plaintext highlighter-rouge">source</code> 블록에 정의합니다.
+1단계에서 작성한 config 값을 활용해 리전과 timestamp를 넣어주는 코드와 Packer Builder로 사용할 <strong>인스턴스 타입을 지정</strong>합니다.
+이후, AWS에 존재하는 수많은 AMI 중에서 source로 활용할 이미지를 <strong>filter</strong> 코드로 작성합니다.
+(<code class="language-plaintext highlighter-rouge">name</code> 부분에 직접 ami 번호를 명시적으로 기재 할 수도 있습니다.)</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> <span class="s2">"amazon-ebs"</span> <span class="s2">"example"</span> <span class="o">{</span>
+  ami_name      <span class="o">=</span> <span class="s2">"learn-terraform-packer-</span><span class="k">${</span><span class="nv">local</span><span class="p">.timestamp</span><span class="k">}</span><span class="s2">"</span>
+  instance_type <span class="o">=</span> <span class="s2">"t2.micro"</span>
+  region        <span class="o">=</span> var.region
+  source_ami_filter <span class="o">{</span>
+    filters <span class="o">=</span> <span class="o">{</span>
+      name                <span class="o">=</span> <span class="s2">"ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*"</span>
+      root-device-type    <span class="o">=</span> <span class="s2">"ebs"</span>
+      virtualization-type <span class="o">=</span> <span class="s2">"hvm"</span>
+    <span class="o">}</span>
+    most_recent <span class="o">=</span> <span class="nb">true
+    </span>owners      <span class="o">=</span> <span class="o">[</span><span class="s2">"099720109477"</span><span class="o">]</span>
+  <span class="o">}</span>
+  ssh_username <span class="o">=</span> <span class="s2">"ubuntu"</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h3 id="3️⃣-packer-build-config-작성">3️⃣ Packer build config 작성</h3>
+
+<p>build 부분에서는 <a href="https://learn.hashicorp.com/tutorials/packer/aws-get-started-provision?in=packer/aws-get-started#add-provisioner-to-template">환경변수 세팅이나 명령어를 inline 형태</a>로 기입 할 수 있지만,
+아래와 같은 간단한 기능만 수행하도록 코드를 작성합니다. <code class="language-plaintext highlighter-rouge">hcl</code> 문법에 따라 <strong>source를 지정</strong>하고, 프로비저닝을 위한 <strong>공개키의 위치를 명세</strong>합니다. <code class="language-plaintext highlighter-rouge">source</code>는 로컬 머신, <code class="language-plaintext highlighter-rouge">destination</code>은 원격 머신 입니다.
+마지막으로 Packer로 빌드한 이미지에서 Application Setup이 담긴 <strong>script를 지정</strong>합니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>build <span class="o">{</span>
+  sources <span class="o">=</span> <span class="o">[</span><span class="s2">"source.amazon-ebs.example"</span><span class="o">]</span>
+
+  provisioner <span class="s2">"file"</span> <span class="o">{</span>
+    <span class="nb">source</span>      <span class="o">=</span> <span class="s2">"../tf-packer.pub"</span>
+    destination <span class="o">=</span> <span class="s2">"/tmp/tf-packer.pub"</span>
+  <span class="o">}</span>
+  provisioner <span class="s2">"shell"</span> <span class="o">{</span>
+    script <span class="o">=</span> <span class="s2">"../scripts/setup.sh"</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p><br /></p>
+
+<h2 id="4️⃣-shell-script-작성">4️⃣ Shell script 작성</h2>
+
+<p><em>해당 작업은 <code class="language-plaintext highlighter-rouge">scripts</code> 폴더의 <code class="language-plaintext highlighter-rouge">setup.sh</code>에서 진행합니다.</em> <br /></p>
+
+<p>이 부분은 Terraform으로 프로비저닝 한 인프라를 웹페이지에서 확인하기 위해 간단한 샘플을 띄우는 코드가 담겨있습니다.
+아래 Script에 필요한 종속성 설치, <code class="language-plaintext highlighter-rouge">terraform</code>을 user에 추가, 생성한 SSH키 설치, 샘플 Go App 설치가 단계가 작성되어 있습니다.</p>
+
+<noscript>
+  <pre>#!/bin/bash
+set -e
+
+# Install necessary dependencies
+sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=&quot;--force-confdef&quot; -o Dpkg::Options::=&quot;--force-confold&quot; dist-upgrade
+sudo apt-get -y -qq install curl wget git vim apt-transport-https ca-certificates
+sudo add-apt-repository ppa:longsleep/golang-backports -y
+sudo apt -y -qq install golang-go
+
+# Setup sudo to allow no-password sudo for &quot;hashicorp&quot; group and adding &quot;terraform&quot; user
+sudo groupadd -r hashicorp
+sudo useradd -m -s /bin/bash terraform
+sudo usermod -a -G hashicorp terraform
+sudo cp /etc/sudoers /etc/sudoers.orig
+echo &quot;terraform ALL=(ALL) NOPASSWD:ALL&quot; | sudo tee /etc/sudoers.d/terraform
+
+# Installing SSH key
+sudo mkdir -p /home/terraform/.ssh
+sudo chmod 700 /home/terraform/.ssh
+sudo cp /tmp/tf-packer.pub /home/terraform/.ssh/authorized_keys
+sudo chmod 600 /home/terraform/.ssh/authorized_keys
+sudo chown -R terraform /home/terraform/.ssh
+sudo usermod --shell /bin/bash terraform
+
+# Create GOPATH for Terraform user &amp; download the webapp from GitHub
+sudo -H -i -u terraform -- env bash &lt;&lt; EOF
+whoami
+echo ~terraform
+
+cd /home/terraform
+
+export GOROOT=/usr/lib/go
+export GOPATH=/home/terraform/go
+export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
+go get -d github.com/hashicorp/learn-go-webapp-demo
+EOF
+</pre>
+</noscript>
+<script src="https://gist.github.com/heuristicwave/3c0d9afefb5e04d7b69700f11918e9a0.js"> </script>
+
+<p>1 ~ 4단계를 마쳤다면 <code class="language-plaintext highlighter-rouge">images</code> 폴더 위치에 <code class="language-plaintext highlighter-rouge">packer build image.pkr.hcl</code> 명령어로 이미지를 빌드합니다.</p>
+
+<p><br /></p>
+
+<p>이미지 빌드 후, 콘솔 <strong>Images</strong> 탭의 <strong>AMIs</strong>을 확인하면 빌드한 이미지가 존재합니다.
+또한, 인스턴스 탭을 확인하면 아래와 같이 Base AMI를 만들기 위한 Packer Builder의 흔적을 볼 수 있습니다.
+<img src="/assets/built/images/post/packerBuilder.png" alt="Packer_Builder" />
+해당 화면의 Instance ID를 눌러 설정들을 확인해보면 source 블록에 정의한 값을 바탕으로 만들어진 모습을 확인할 수 있습니다.</p>
+
+<p><br /></p>
+
+<h2 id="terraform으로-packer-이미지-배포">Terraform으로 Packer 이미지 배포</h2>
+
+<p><em>해당 작업은 <code class="language-plaintext highlighter-rouge">instances</code> 폴더에서 진행합니다.</em> <br /></p>
+
+<h3 id="sample-app-infra-code-작성하기">Sample App Infra Code 작성하기</h3>
+
+<p>아래 🛠 이모티콘을 클릭하여 <code class="language-plaintext highlighter-rouge">main.tf</code>와 <code class="language-plaintext highlighter-rouge">varaiables.tf</code>를 작성합니다.</p>
+
+<details>
+  <summary>🔨 <code class="language-plaintext highlighter-rouge">main.tf</code> 🔨</summary>
+  <p><br /></p>
+
+  <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">terraform</span> <span class="p">{</span>
+  <span class="nx">required_providers</span> <span class="p">{</span>
+    <span class="nx">aws</span> <span class="p">=</span> <span class="p">{</span>
+      <span class="nx">source</span>  <span class="p">=</span> <span class="s2">"hashicorp/aws"</span>
+      <span class="nx">version</span> <span class="p">=</span> <span class="s2">"~&gt; 3.26.0"</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="nx">required_version</span> <span class="p">=</span> <span class="s2">"~&gt; 1.0.2"</span>
+<span class="p">}</span>
+
+<span class="k">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
+  <span class="nx">region</span> <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">region</span>
+<span class="p">}</span>
+
+<span class="k">resource</span> <span class="s2">"aws_vpc"</span> <span class="s2">"vpc"</span> <span class="p">{</span>
+  <span class="nx">cidr_block</span>           <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">cidr_vpc</span>
+  <span class="nx">enable_dns_support</span>   <span class="p">=</span> <span class="kc">true</span>
+  <span class="nx">enable_dns_hostnames</span> <span class="p">=</span> <span class="kc">true</span>
+<span class="p">}</span>
+
+<span class="k">resource</span> <span class="s2">"aws_internet_gateway"</span> <span class="s2">"igw"</span> <span class="p">{</span>
+  <span class="nx">vpc_id</span> <span class="p">=</span> <span class="nx">aws_vpc</span><span class="p">.</span><span class="nx">vpc</span><span class="p">.</span><span class="nx">id</span>
+<span class="p">}</span>
+
+<span class="k">resource</span> <span class="s2">"aws_subnet"</span> <span class="s2">"subnet_public"</span> <span class="p">{</span>
+  <span class="nx">vpc_id</span>     <span class="p">=</span> <span class="nx">aws_vpc</span><span class="p">.</span><span class="nx">vpc</span><span class="p">.</span><span class="nx">id</span>
+  <span class="nx">cidr_block</span> <span class="p">=</span> <span class="kd">var</span><span class="p">.</span><span class="nx">cidr_subnet</span>
+<span class="p">}</span>
+
+<span class="k">resource</span> <span class="s2">"aws_route_table"</span> <span class="s2">"rtb_public"</span> <span class="p">{</span>
+  <span class="nx">vpc_id</span> <span class="p">=</span> <span class="nx">aws_vpc</span><span class="p">.</span><span class="nx">vpc</span><span class="p">.</span><span class="nx">id</span>
+
+  <span class="nx">route</span> <span class="p">{</span>
+    <span class="nx">cidr_block</span> <span class="p">=</span> <span class="s2">"0.0.0.0/0"</span>
+    <span class="nx">gateway_id</span> <span class="p">=</span> <span class="nx">aws_internet_gateway</span><span class="p">.</span><span class="nx">igw</span><span class="p">.</span><span class="nx">id</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">resource</span> <span class="s2">"aws_route_table_association"</span> <span class="s2">"rta_subnet_public"</span> <span class="p">{</span>
+  <span class="nx">subnet_id</span>      <span class="p">=</span> <span class="nx">aws_subnet</span><span class="p">.</span><span class="nx">subnet_public</span><span class="p">.</span><span class="nx">id</span>
+  <span class="nx">route_table_id</span> <span class="p">=</span> <span class="nx">aws_route_table</span><span class="p">.</span><span class="nx">rtb_public</span><span class="p">.</span><span class="nx">id</span>
+<span class="p">}</span>
+
+<span class="k">resource</span> <span class="s2">"aws_security_group"</span> <span class="s2">"sg_22_80"</span> <span class="p">{</span>
+  <span class="nx">name</span>   <span class="p">=</span> <span class="s2">"sg_22"</span>
+  <span class="nx">vpc_id</span> <span class="p">=</span> <span class="nx">aws_vpc</span><span class="p">.</span><span class="nx">vpc</span><span class="p">.</span><span class="nx">id</span>
+
+  <span class="c1"># SSH access from the VPC</span>
+  <span class="nx">ingress</span> <span class="p">{</span>
+    <span class="nx">from_port</span>   <span class="p">=</span> <span class="mi">22</span>
+    <span class="nx">to_port</span>     <span class="p">=</span> <span class="mi">22</span>
+    <span class="nx">protocol</span>    <span class="p">=</span> <span class="s2">"tcp"</span>
+    <span class="nx">cidr_blocks</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+  <span class="p">}</span>
+
+  <span class="nx">ingress</span> <span class="p">{</span>
+    <span class="nx">from_port</span>   <span class="p">=</span> <span class="mi">8080</span>
+    <span class="nx">to_port</span>     <span class="p">=</span> <span class="mi">8080</span>
+    <span class="nx">protocol</span>    <span class="p">=</span> <span class="s2">"tcp"</span>
+    <span class="nx">cidr_blocks</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+  <span class="p">}</span>
+
+  <span class="nx">ingress</span> <span class="p">{</span>
+    <span class="nx">from_port</span>   <span class="p">=</span> <span class="mi">80</span>
+    <span class="nx">to_port</span>     <span class="p">=</span> <span class="mi">80</span>
+    <span class="nx">protocol</span>    <span class="p">=</span> <span class="s2">"tcp"</span>
+    <span class="nx">cidr_blocks</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+  <span class="p">}</span>
+
+  <span class="nx">egress</span> <span class="p">{</span>
+    <span class="nx">from_port</span>   <span class="p">=</span> <span class="mi">0</span>
+    <span class="nx">to_port</span>     <span class="p">=</span> <span class="mi">0</span>
+    <span class="nx">protocol</span>    <span class="p">=</span> <span class="s2">"-1"</span>
+    <span class="nx">cidr_blocks</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"0.0.0.0/0"</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"web"</span> <span class="p">{</span>
+  <span class="nx">ami</span>                         <span class="p">=</span> <span class="s2">"ami-YOUR-AMI-ID"</span>
+  <span class="nx">instance_type</span>               <span class="p">=</span> <span class="s2">"t2.micro"</span>
+  <span class="nx">subnet_id</span>                   <span class="p">=</span> <span class="nx">aws_subnet</span><span class="p">.</span><span class="nx">subnet_public</span><span class="p">.</span><span class="nx">id</span>
+  <span class="nx">vpc_security_group_ids</span>      <span class="p">=</span> <span class="p">[</span><span class="nx">aws_security_group</span><span class="p">.</span><span class="nx">sg_22_80</span><span class="p">.</span><span class="nx">id</span><span class="p">]</span>
+  <span class="nx">associate_public_ip_address</span> <span class="p">=</span> <span class="kc">true</span>
+
+  <span class="nx">tags</span> <span class="p">=</span> <span class="p">{</span>
+    <span class="nx">Name</span> <span class="p">=</span> <span class="s2">"Learn-Packer"</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">output</span> <span class="s2">"public_ip"</span> <span class="p">{</span>
+  <span class="nx">value</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">public_ip</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+
+</details>
+
+<details>
+  <summary>🔧 <code class="language-plaintext highlighter-rouge">varaiables.tf</code> 🔧</summary>
+  <p><br /></p>
+
+  <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">variable</span> <span class="s2">"cidr_vpc"</span> <span class="p">{</span>
+  <span class="nx">description</span> <span class="p">=</span> <span class="s2">"CIDR block for the VPC"</span>
+  <span class="nx">default</span>     <span class="p">=</span> <span class="s2">"10.1.0.0/16"</span>
+<span class="p">}</span>
+<span class="k">variable</span> <span class="s2">"cidr_subnet"</span> <span class="p">{</span>
+  <span class="nx">description</span> <span class="p">=</span> <span class="s2">"CIDR block for the subnet"</span>
+  <span class="nx">default</span>     <span class="p">=</span> <span class="s2">"10.1.0.0/24"</span>
+<span class="p">}</span>
+
+<span class="k">variable</span> <span class="s2">"environment_tag"</span> <span class="p">{</span>
+  <span class="nx">description</span> <span class="p">=</span> <span class="s2">"Environment tag"</span>
+  <span class="nx">default</span>     <span class="p">=</span> <span class="s2">"Learn"</span>
+<span class="p">}</span>
+
+<span class="k">variable</span> <span class="s2">"region"</span><span class="p">{</span>
+  <span class="nx">description</span> <span class="p">=</span> <span class="s2">"The region Terraform deploys your instance"</span>
+  <span class="nx">default</span>     <span class="p">=</span> <span class="s2">"us-east-1"</span>
+<span class="p">}</span>
+
+</code></pre></div>  </div>
+</details>
+<p><br /></p>
+
+<blockquote>
+  <p>인프라 코드에 대한 설명은 생략하겠습니다. <br />
+인프라에 대한 테라폼 코드가 궁금하시다면 다른 게시글이나 <a href="https://heuristicwave.github.io/3Tier">제 포스팅</a>을 읽어보세요!</p>
+</blockquote>
+
+<p><br /></p>
+
+<h3 id="ami-query-하기">AMI Query 하기</h3>
+
+<p><a href="https://learn.hashicorp.com/tutorials/terraform/packer">본문</a>에는 소개되지 않았지만, Packer와 Terraform의 통합을 위해 필자가 작성한 부분입니다.
+Terraform의 <code class="language-plaintext highlighter-rouge">Data Sources</code>를 활용해 빌드된 AMI를 Query하여 샘플 앱을 프로비저닝 해봅시다.
+선행 작업에서 진행한 <code class="language-plaintext highlighter-rouge">main.tf</code> 하단에 아래 코드를 추가합니다.</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">data</span> <span class="s2">"aws_ami_ids"</span> <span class="s2">"myami"</span> <span class="p">{</span>
+  <span class="nx">owners</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"YOUR Account ID"</span><span class="p">]</span>
+  <span class="c1"># sort_ascending = true</span>
+  
+  <span class="nx">filter</span> <span class="p">{</span>
+    <span class="nx">name</span>   <span class="p">=</span> <span class="s2">"name"</span>
+    <span class="nx">values</span> <span class="p">=</span> <span class="p">[</span><span class="s2">"learn-terraform-packer-*"</span><span class="p">]</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Packer로 이미지를 빌드했으므로, ami owner가 되었습니다!
+<code class="language-plaintext highlighter-rouge">owners</code> 부분에 자신의 계정 ID를 작성하고 <code class="language-plaintext highlighter-rouge">filter</code>에 packer build를 할 떄 사용한 ami_name을 value 값으로 넣습니다.</p>
+
+<blockquote>
+  <p><strong>sort_ascending</strong> default 값이 false</p>
+
+  <p>sort_ascending = false : list의 0번째 요소가 latest <br />
+sort_ascending = true : 만들어진 순서대로 리스트 생성 (가장 먼저 생성된 ami가 0번)</p>
+</blockquote>
+
+<p>이어서 <code class="language-plaintext highlighter-rouge">main.tf</code>에 인스턴스 리소스를 정의한 부분의 <code class="language-plaintext highlighter-rouge">ami = "ami-YOUR-AMI-ID"</code> 코드를 아래와 같이 대체합니다.
+<code class="language-plaintext highlighter-rouge">data</code> 객체에 필터링한 결과 값들이 빌드된 AMI들이 리스트 형식으로 들어가는데 <strong>latest</strong> 버전을 사용하기 위해 0번째 이미지를 명시합니다.
+편의상 사용된 ami 번호를 터미널에서 확인 할 수 있도록 <code class="language-plaintext highlighter-rouge">output</code>에 대한 코드도 함께 작성합니다.</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"web"</span> <span class="p">{</span>
+  <span class="nx">ami</span> <span class="p">=</span> <span class="k">data</span><span class="p">.</span><span class="nx">aws_ami_ids</span><span class="p">.</span><span class="nx">myami</span><span class="p">.</span><span class="nx">ids</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="c1"># "ami-YOUR-AMI-ID"</span>
+  <span class="c1"># Skip Other Config</span>
+<span class="p">}</span>
+
+<span class="k">output</span> <span class="s2">"my_ami"</span> <span class="p">{</span>
+  <span class="nx">value</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">web</span><span class="p">.</span><span class="nx">ami</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>코드를 작성하고 테라폼 코드가 위치한 폴더에서(<code class="language-plaintext highlighter-rouge">instances</code> 폴더 하위) 다음 명령어를 실행합니다.
+<code class="language-plaintext highlighter-rouge">terraform init &amp;&amp; terraform apply</code> 인스턴스를 생성하기 위해 <code class="language-plaintext highlighter-rouge">yes</code>를 기입합니다. <br /></p>
+
+<p>명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
+data.aws_ami_ids.myami
+aws_instance.web
+aws_internet_gateway.igw
+aws_route_table.rtb_public
+aws_route_table_association.rta_subnet_public
+aws_security_group.sg_22_80
+aws_subnet.subnet_public
+aws_vpc.vpc
+</code></pre></div></div>
+
+<blockquote>
+  <p>data object에 담긴 정보가 확인하고 싶다면? <br />
+<code class="language-plaintext highlighter-rouge">$ terraform state show data.aws_ami_ids.myami.ids</code></p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="인스턴스-확인하기">인스턴스 확인하기</h2>
+
+<p>SSH를 통해 인스턴스에 연결합니다. <br />
+<code class="language-plaintext highlighter-rouge">ssh terraform@$(terraform output -raw public_ip) -i ../tf-packer</code></p>
+
+<p>Go 디렉토리로 이동하세요. <br />
+<code class="language-plaintext highlighter-rouge">cd go/src/github.com/hashicorp/learn-go-webapp-demo</code></p>
+
+<p>데모 앱을 실행합니다. <br />
+<code class="language-plaintext highlighter-rouge">go run webapp.go</code></p>
+
+<p>배포한 앱 확인을 위해 <code class="language-plaintext highlighter-rouge">terraform output public_ip</code>로 얻은 IP에 8080 포트로 접속하면 간단한 테트리스 게임 앱을 확인할 수 있습니다.</p>
+
+<h2 id="인스턴스-리소스-회수">인스턴스 리소스 회수</h2>
+
+<p><code class="language-plaintext highlighter-rouge">terraform destroy</code> 명령어로 상기 프로젝트에서 사용한 인프라를 리소스를 회수합니다. Packer로 작성한 이미지는 파괴되지 않습니다.</p>
+
+<p><br /></p>
+
+<p>위와 같은 단계들을 통해 패커로 이미지를 만들고 테라폼과 통합하는 방법을 학습해보았습니다.
+이번 포스팅에서 다뤘던 내용은 <strong>Immutable Servers</strong>를 유지하기 위한 방법 중 하나입니다.
+오늘 포스팅에 추가로 <strong>Ansible</strong>을 통합한다면, <strong>Immutable Infrastructure</strong>를 구축할 수도 있습니다.</p>
+
+<hr />
+
+<p><span class="table-of-contents-list">Terraform Courses</span></p>
+<ul class="table-of-contents-list">
+    <li><a href="./3Tier">3-Tier VPC Architecture with Terraform</a></li>
+    <li><a href="./CodeCommit">ECR Pipeline with Terraform Ⅰ (CodeCommit)</a></li>
+    <li><a href="./CodeBuild">ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)</a></li>
+    <li><a href="./CodePipeline">ECR Pipeline with Terraform Ⅲ (CodePipeline)</a></li>
+    <li><a href="./Packer">Provision Infrastructure with Packer</a></li>
+</ul>
+
+<p><br /></p>
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+                <section class="subscribe-form">
+                    <h3 class="subscribe-form-title">Subscribe to Heuristic Wave Blog</h3>
+                    <p>Get the latest posts delivered right via RSS</p>
+                    <form method="post" action="/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" type="url" name="rss url" value="https://heuristicwave.github.io" readonly />
+    </div>
+    <!--To Do Rss Web Font <i class="fas fa-rss"></i> -->
+    <button class="" type="submit" disabled><span>Copy</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+                </section>
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://heuristicwave.github.io/Packer';
+                            this.page.identifier = '/Packer';
+                            this.page.title = 'Provision Infrastructure with Packer';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://xxxxxxxx.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/built/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/EKS_Max_Pods">Look into EKS max pods</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/CodePipeline">ECR CodePipeline with Terraform Ⅲ</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/CodeBuild">ECR CodePipeline with Terraform Ⅱ</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/devops/">
+                                
+                                    See all 5 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/EKS_Max_Pods">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/eks.png)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/EKS_Max_Pods">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Aws</span>
+                            
+                        
+                            
+                               <span class="post-card-tags">Devops</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Backend</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Look into EKS max pods</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p></p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      1 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://heuristicwave.github.io/">
+            
+            <span>Heuristic Wave Blog</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Provision Infrastructure with Packer</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Provision+Infrastructure+with+Packer&amp;url=https://heuristicwave.github.ioPacker"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioPacker"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://heuristicwave.github.io/">Heuristic Wave Blog</a> &copy; 2021</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+        <div id="subscribe" class="subscribe-overlay">
+            <a class="subscribe-overlay-close" href="#"></a>
+            <div class="subscribe-overlay-content">
+                
+                <h1 class="subscribe-overlay-title">Search on Heuristic Wave Blog</h1>
+                <p class="subscribe-overlay-description">lunr.js를 이용한 posts 검색</p>
+                <span id="searchform" method="post" action="/search/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" onkeyup="myFunc()"
+               id="searchtext" type="text" name="searchtext"
+               placeholder="Search..." />
+    </div>
+    <script type="text/javascript">
+        function myFunc() {
+            if(event.keyCode == 13) {
+                var url = encodeURIComponent($("#searchtext").val());
+                location.href = "/search.html?query=" + url;
+            }
+        }
+    </script>
+</span>
+                <br>
+            </div>
+        </div>
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-xxxxxxxx-x', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>
