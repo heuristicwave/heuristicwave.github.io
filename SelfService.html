@@ -11,7 +11,7 @@
 
 
 
-    <title>ECR CodePipeline with Terraform Ⅱ</title>
+    <title>Self-service Infrastructure</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="I wanna be a technical writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/CodeBuild" />
+    <link rel="canonical" href="https://heuristicwave.github.io/SelfService" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="ECR CodePipeline with Terraform Ⅱ" />
-    <meta property="og:description" content="Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서 에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo"" />
-    <meta property="og:url" content="https://heuristicwave.github.io/CodeBuild" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png" />
+    <meta property="og:title" content="Self-service Infrastructure" />
+    <meta property="og:description" content="본 글은 Kief Morris의 Infrastructure as Code 를 읽고 학습한 내용을 기반으로 작성한 글 입니다. 서문 IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 Self-service Infra라는 말을 자주 만나게 됩니다. 몇 개월째 와닿지 않는 개념이였지만, 최근 키프 모리스의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에 대한" />
+    <meta property="og:url" content="https://heuristicwave.github.io/SelfService" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/self.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-04-08T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-04-08T00:00:00+00:00" />
-    <meta property="article:tag" content="Aws" />
+    <meta property="article:published_time" content="2021-10-25T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2021-10-25T00:00:00+00:00" />
+    <meta property="article:tag" content="Devops" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ECR CodePipeline with Terraform Ⅱ" />
-    <meta name="twitter:description" content="Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서 에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo"" />
+    <meta name="twitter:title" content="Self-service Infrastructure" />
+    <meta name="twitter:description" content="본 글은 Kief Morris의 Infrastructure as Code 를 읽고 학습한 내용을 기반으로 작성한 글 입니다. 서문 IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 Self-service Infra라는 말을 자주 만나게 됩니다. 몇 개월째 와닿지 않는 개념이였지만, 최근 키프 모리스의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에 대한" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/self.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Aws" />
+    <meta name="twitter:data2" content="Devops" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/CodeBuild",
+    "url": "https://heuristicwave.github.io/SelfService",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/self.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/CodeBuild"
+        "@id": "https://heuristicwave.github.io/SelfService"
     },
-    "description": "Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서 에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo""
+    "description": "본 글은 Kief Morris의 Infrastructure as Code 를 읽고 학습한 내용을 기반으로 작성한 글 입니다. 서문 IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 Self-service Infra라는 말을 자주 만나게 됩니다. 몇 개월째 와닿지 않는 개념이였지만, 최근 키프 모리스의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에 대한"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="ECR CodePipeline with Terraform Ⅱ" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Self-service Infrastructure" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -171,17 +171,13 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-aws tag-devops post tag-aws ">
+        <article class="post-full  tag-devops post tag-devops ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 8 April 2021"> 8 April 2021</time>
+                    <time class="post-full-meta-date" datetime="25 October 2021">25 October 2021</time>
                     
                         <span class="date-divider">/</span>
-                        
-                            
-                               <a href='/tag/aws/'>AWS</a>,
-                            
                         
                             
                                <a href='/tag/devops/'>DEVOPS</a>
@@ -189,258 +185,136 @@ into the {body} of the default.hbs template -->
                         
                     
                 </section>
-                <h1 class="post-full-title">ECR CodePipeline with Terraform Ⅱ</h1>
+                <h1 class="post-full-title">Self-service Infrastructure</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/self.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</p>
-
-<p>2편에서는 <strong>ECR</strong>과 <strong>CodeBuild</strong>를 생성하고 <strong>IAM 역할, 정책을 부여</strong>하는 법을 학습합니다.</p>
-
-<h2 id="ecr">ECR</h2>
-<p>ECR 역시 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository">공식 문서</a> 에서 사용방법을 확인합니다.
-공식문서에서 <code class="language-plaintext highlighter-rouge">image_scanning_configuration</code> config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다.
-더불어, output도 함께 작성하겠습니다.</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; ecr.tf
-resource "aws_ecr_repository" "image_repo" {
-  name                 = var.image_repo_name
-  image_tag_mutability = "MUTABLE"
-}
-
-output "image_repo_url" {
-  value = aws_ecr_repository.image_repo.repository_url
-}
-
-output "image_repo_arn" {
-  value = aws_ecr_repository.image_repo.arn
-}
-</span><span class="no">EOF
-</span></code></pre></div></div>
-<p>이어서 <code class="language-plaintext highlighter-rouge">ecr.tf</code>에서 변수로 사용하기 위한 <strong>var.image_repo_name</strong> 부분이 작동하도록 1편에서 작성한 <code class="language-plaintext highlighter-rouge">variables.tf</code> 아래 값을 추가합니다.</p>
-
-<p>✅ 편의상 이번 단계에 필요한 variable을 함께 포함했습니다.</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>variable "image_repo_name" {
-  description = "Image repo name"
-  type        = string
-}
-
-variable "container_name" {
-  description = "Container Name"
-  default     = "my-container"
-}
-
-variable "source_repo_branch" {
-  description = "Source repo branch"
-  type        = string
-}
-</code></pre></div></div>
-<p>ecr 작성을 완료햇으니 <code class="language-plaintext highlighter-rouge">plan, apply</code> 명령어를 차례로 입력해 인프라를 생성하고 <code class="language-plaintext highlighter-rouge">terraform state list</code>명령어나 <a href="https://console.aws.amazon.com/ecr/home">콘솔</a> 에서 생성된 인프라를 확인합니다.</p>
-
-<h2 id="codebuild">CodeBuild</h2>
-<p>CodeBuild를 사용하기 위해 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project">Terraform 도큐먼트</a> 에서 사용법을 확인합니다.
-기존까지의 작업과는 달리 상당히 어려워 보입니다. 그러나 쓱 훝어보면 크게 4가지(bucket, IAM Role과 Policy, Codebuild)로 정리됩니다.</p>
-
-<h3 id="bucket">Bucket</h3>
-<p>도큐먼트와 같이 우선적으로 S3를 생성합니다. bucket의 이름은 선택이지만, 여러개의 버킷을 가지고 있는 저는 식별을 위해 이름을 부여했습니다.</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; codebuild.tf
-resource "aws_s3_bucket" "artifact_bucket" {
-  bucket = "ecr-pipeline"
-}
-</span><span class="no">EOF
-</span></code></pre></div></div>
-
-<h3 id="iam-role">IAM Role</h3>
-<p>도큐먼트를 따라 AssumeRole을 사용합시다. <br />
-➕ S3을 만들때 사용한 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 아래 코드를 추가합니다.</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_iam_role" "codebuild_role" {
-  name = "terraform-codebuild",
-  assume_role_policy = &lt;&lt;EOF
-{
-   "Version": "2012-10-17",
-   "Statement": [
-      {
-         "Effect": "Allow",
-         "Principal": {
-            "Service": "codebuild.amazonaws.com"
-         },
-         "Action": "sts:AssumeRole"
-      }
-   ]
-}
-EOF
-}
-</code></pre></div></div>
-
-<h3 id="iam-policy">IAM Policy</h3>
-<p>정책은 IAM 콘솔에서 기존에 만들어진 정책을 사용할 수도 있지만, 아래와 같이 직접 작성할 수도 있습니다.
-도큐먼트에서 EC2에 대한 정책을 사용하지만, 우리는 ECR을 사용하므로 아래와 같은 정책을 사용하겠습니다.</p>
-<noscript>
-  <pre>resource &quot;aws_iam_policy&quot; &quot;codebuild_policy&quot; {
-  description = &quot;CodeBuild Execution Policy&quot;
-  policy      = &lt;&lt;EOF
-{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Action&quot;: [
-        &quot;logs:CreateLogGroup&quot;, &quot;logs:CreateLogStream&quot;, &quot;logs:PutLogEvents&quot;,
-        &quot;ecr:GetAuthorizationToken&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;*&quot;
-    },
-    {
-      &quot;Action&quot;: [
-        &quot;s3:GetObject&quot;, &quot;s3:GetObjectVersion&quot;, &quot;s3:PutObject&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_s3_bucket.artifact_bucket.arn}/*&quot;
-    },
-    {
-      &quot;Action&quot;: [
-        &quot;ecr:GetDownloadUrlForLayer&quot;, &quot;ecr:BatchGetImage&quot;,
-        &quot;ecr:BatchCheckLayerAvailability&quot;, &quot;ecr:PutImage&quot;,
-        &quot;ecr:InitiateLayerUpload&quot;, &quot;ecr:UploadLayerPart&quot;,
-        &quot;ecr:CompleteLayerUpload&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_ecr_repository.image_repo.arn}&quot;
-    }
-  ]
-}
-EOF
-}</pre>
-</noscript>
-<script src="https://gist.github.com/heuristicwave/09103b88af041153ccd206ec6d51b7c1.js"> </script>
-
-<p>20, 30라인에서 앞서 생성한 리소스를 <code class="language-plaintext highlighter-rouge">${채움참조}</code> 문법으로 유연한 코드를 작성합니다.</p>
-
-<p>🚩 이어서 생성한 <strong>Policy를 Role에 부여</strong>합니다. 이것 역시 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 추가합니다.</p>
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_iam_role_policy_attachment" "codebuild-attach" {
-  role       = aws_iam_role.codebuild_role.name
-  policy_arn = aws_iam_policy.codebuild_policy.arn
-}
-</code></pre></div></div>
-
-<h3 id="codebuild-1">CodeBuild</h3>
-<p><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project">Terraform 도큐먼트</a> 를 보아도 어떻게 해야 ECR에 적용시킬 수 있는지 알기 어렵습니다.
-우선 CodeBuild를 이해하기 위해 <a href="https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/sample-docker.html">AWS docs</a> 를 읽어봅시다.
-대략 리소스 이름을 정하고, 환경을 구성하고 빌드를 하기 위한 방법을 정의해야 한다는 사실을 알 수 있습니다.
-CodeBuild가 정의된 아래 코드를 활용해 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 추가합니다.</p>
-<noscript>
-  <pre>resource &quot;aws_codebuild_project&quot; &quot;codebuild&quot; {
-  name         = &quot;codebuild-${var.source_repo_name}-${var.source_repo_branch}&quot;
-  service_role = aws_iam_role.codebuild_role.arn
-
-  artifacts {
-    type = &quot;CODEPIPELINE&quot;
-  }
-  
-  environment {
-    compute_type                = &quot;BUILD_GENERAL1_MEDIUM&quot;
-    image                       = &quot;aws/codebuild/standard:3.0&quot;
-    type                        = &quot;LINUX_CONTAINER&quot;
-    privileged_mode             = true
-    image_pull_credentials_type = &quot;CODEBUILD&quot;
-    environment_variable {
-      name  = &quot;REPOSITORY_URI&quot;
-      value = aws_ecr_repository.image_repo.repository_url
-    }
-    environment_variable {
-      name  = &quot;AWS_DEFAULT_REGION&quot;
-      value = var.aws_region
-    }
-    environment_variable {
-      name  = &quot;CONTAINER_NAME&quot;
-      value = var.container_name
-    }
-  }
-  source {
-    type      = &quot;CODEPIPELINE&quot;
-    buildspec = &lt;&lt;BUILDSPEC
-${file(&quot;buildspec.yml&quot;)}
-BUILDSPEC
-  }
-}</pre>
-</noscript>
-<script src="https://gist.github.com/heuristicwave/2ebf79ce3cbdf4a87657b272f9e1d994.js"> </script>
-
-<p>31라인이 참조하는 <code class="language-plaintext highlighter-rouge">buildspec.yml</code>을 pre_build, build, post_build에 맞춰 작성합니다.</p>
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s">cat &lt;&lt;EOF &gt; buildspec.yml</span>
-<span class="na">version</span><span class="pi">:</span> <span class="m">0.2</span>
-
-<span class="na">phases</span><span class="pi">:</span>
-  <span class="na">install</span><span class="pi">:</span>
-    <span class="na">runtime-versions</span><span class="pi">:</span>
-      <span class="na">docker</span><span class="pi">:</span> <span class="m">18</span>
-  <span class="na">pre_build</span><span class="pi">:</span>
-    <span class="na">commands</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">echo Logging in to Amazon ECR...</span>
-      <span class="pi">-</span> <span class="s">$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)</span>
-      <span class="pi">-</span> <span class="s">COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)</span>
-      <span class="pi">-</span> <span class="s">IMAGE_TAG=${COMMIT_HASH:=latest}</span>
-  <span class="na">build</span><span class="pi">:</span>
-    <span class="na">commands</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">echo Build started on `date`</span>
-      <span class="pi">-</span> <span class="s">echo Building the Docker image...</span>
-      <span class="pi">-</span> <span class="s">docker build -t $REPOSITORY_URI:latest .</span>
-      <span class="pi">-</span> <span class="s">docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG</span>
-  <span class="na">post_build</span><span class="pi">:</span>
-    <span class="na">commands</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">echo Build completed on `date`</span>
-      <span class="pi">-</span> <span class="s">echo Pushing the Docker image...</span>
-      <span class="pi">-</span> <span class="s">docker push $REPOSITORY_URI:latest</span>
-      <span class="pi">-</span> <span class="s">docker push $REPOSITORY_URI:$IMAGE_TAG</span>
-      <span class="pi">-</span> <span class="s">echo Writing image definitions file...</span>
-      <span class="pi">-</span> <span class="s">printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &gt; imagedefinitions.json</span>
-<span class="na">artifacts</span><span class="pi">:</span>
-  <span class="na">files</span><span class="pi">:</span> <span class="s">imagedefinitions.json</span>
-<span class="s">EOF</span>
-</code></pre></div></div>
-
-<p>지금까지 작성된 인프라를 <code class="language-plaintext highlighter-rouge">terraform state list</code>명령어를 통해 확인하면 아래와 같습니다.</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>❯ terraform state list
-aws_codebuild_project.codebuild
-aws_codecommit_repository.test
-aws_ecr_repository.image_repo
-aws_iam_policy.codebuild_policy
-aws_iam_role.codebuild_role
-aws_iam_role_policy_attachment.codebuild-attach
-aws_s3_bucket.artifact_bucket
-</code></pre></div></div>
-
-<details>
-  <summary>생성한 인프라가 위와 같지 않을 경우, 👉 Click</summary>
-
-  <p>실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.</p>
-  <ol>
-    <li><code class="language-plaintext highlighter-rouge">terraform destroy</code> 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, <code class="language-plaintext highlighter-rouge">-target</code> 옵션과 함께 resource 명으로 명령어를 작성합니다. <br />
-<em>예시) terraform destory -target aws_vpc.main</em></li>
-    <li>잘못 작성한 코드를 수정 후, <code class="language-plaintext highlighter-rouge">terraform apply</code>명령어를 적용하여 최신 상태의 인프라를 반영합니다.</li>
-  </ol>
-
-</details>
+                    <p>본 글은 <a href="https://www.oreilly.com/library/view/infrastructure-as-code/9781491924334/">Kief Morris의 Infrastructure as Code</a> 를 읽고 학습한 내용을 기반으로 작성한 글 입니다.</p>
 
 <p><br /></p>
 
-<hr />
+<h2 id="서문">서문</h2>
 
-<p><span class="table-of-contents-list">Terraform Courses</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./3Tier">3-Tier VPC Architecture with Terraform</a></li>
-    <li><a href="./CodeCommit">ECR Pipeline with Terraform Ⅰ (CodeCommit)</a></li>
-    <li><a href="./CodeBuild">ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)</a></li>
-    <li><a href="./CodePipeline">ECR Pipeline with Terraform Ⅲ (CodePipeline)</a></li>
-    <li><a href="./Packer">Provision Infrastructure with Packer</a></li>
+<p>IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 <strong>Self-service Infra</strong>라는 말을 자주 만나게 됩니다.
+몇 개월째 와닿지 않는 개념이였지만, 최근 <strong>키프 모리스</strong>의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에 대한 자료들을 바탕으로 작성해 보았습니다.</p>
+
+<p><strong>Self-service Infra</strong>에 관한 배경지식을 넓히는 데 도움이 되었으면 좋겠습니다.</p>
+
+<p><br /></p>
+
+<h2 id="dynamic-infrastructure">Dynamic Infrastructure</h2>
+
+<p><strong>동적 인프라</strong>는 서버, 스토리지, 네트워크와 같은 인프라 자원을 관리할 수 있는 시스템을 말합니다.
+동적 인프라의 종류로는 Public/Private 클라우드, 오픈스택을 활용하는 사설 클라우드, 베어메탈 등이 있습니다.</p>
+
+<p>앞선 정의만 보면 동적 인프라는 클라우드와 굉장히 유사하지만, <strong>키프 모리스</strong>는 동적 인프라가 클라우드보다 범위가 더 넓다고 합니다.</p>
+
+<p>📣 <em>동적 인프라를 소개하며 알려드리고 싶은 문장이 있습니다.</em></p>
+
+<p><strong>클라우드로의 전환</strong>이라는 의미에 대해 많은 사람들이 여러 측면에서 설명을 하지만,
+저는 HashiCorp의 <a href="https://www.hashicorp.com/resources/unlocking-the-cloud-operating-model-provisioning">Unlocking the Cloud Operating Model: Provisioning</a>
+백서에 소개된 다음 표현에 참 공감이 갑니다.</p>
+
+<blockquote>
+  <p>클라우드로의 전환의 본질적인 의미는 “정적” 인프라에서 “동적” 인프라로의 전환입니다.</p>
+
+  <p>The essential implications of the transition to the cloud is the shift from “static” infrastructure to “dynamic” infrastructure</p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="동적-인프라-플랫폼-요구-사항">동적 인프라 플랫폼 요구 사항</h2>
+
+<p>동적 인프라 플랫폼은 다음과 같은 특성이 있습니다.</p>
+
+<ul>
+  <li>Programmable</li>
+  <li>On-Demand</li>
+  <li>Self-Service</li>
 </ul>
 
+<h3 id="-programmable">💻 Programmable</h3>
+
+<p>동적 인프라 플랫폼은 프로그래밍을 쉽게 할 수 있어야 합니다. 유저 인터페이스 외에도 스크립트, CLI와 같은 도구들과도 상호 작용 할 수 있도록 프로그래밍 API가 필요합니다.
+아래 각 플랫폼 별 SDK를 사용하면 클라우드 내 자원을 생성하고 관리하는 코드를 작성할 수 있습니다.</p>
+
+<ul>
+  <li><a href="https://aws.amazon.com/tools/">AWS SDK</a></li>
+  <li><a href="https://azure.microsoft.com/en-us/downloads/">Azure SDK</a></li>
+  <li><a href="https://cloud.google.com/sdk/">GCP SDK</a></li>
+  <li><a href="https://docs.openstack.org/openstacksdk/latest/">Openstack SDK</a></li>
+</ul>
+
+<h3 id="-on-demand">⏰ On-Demand</h3>
+
+<p>동적 인프라 플랫폼에서 자원을 즉시 생성하고 삭제하는 기능은 필수입니다.
+또한 전통적인 인프라의 과금 정책이 일정 기간 동안의 계약을 기반으로 한다면, 동적 인프라에서는 시간당 과금 체계를 지원합니다.</p>
+
+<p>🎊 <em>드디어 대망의 셀프 서비스가 처음 소개 됩니다!</em></p>
+
+<h3 id="-self-service">🏃🏻 Self-Service</h3>
+
+<p>셀프서비스는 온디맨드 요구 사항을 좀 더 발전시킨 개념입니다. 전통적인 방법에서 인프라를 요구하기 위해서는 세부 요청 양식, 설계 및 명세 문서, 구현 계획 수립 등을 필요로 했습니다.
+셀프서비스는 전통적인 방법에서 더 진화하여 <strong>필요한 인프라를 즉시 프로비저닝하고 쉽게 수정할 수 있는 자동화된 절차</strong>를 의미합니다.</p>
+
+<p>🛠 <em>셀프 서비스는 인프라 템플릿을 운용할 수 있는 IaC 도구를 기반으로 구현합니다.</em></p>
+
+<p>예를 들어 개발자가 로드밸런서로 ALB를 사용하고 있다가 NLB로 바꾸고 싶은 경우, 다음과 같이 정의된 인프라 코드를 재배포 하면 됩니다.</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_lb"</span> <span class="s2">"test"</span> <span class="p">{</span>
+  <span class="nx">name</span>               <span class="p">=</span> <span class="s2">"test-lb-tf"</span>
+  <span class="nx">internal</span>           <span class="p">=</span> <span class="kc">false</span>
+  
+  <span class="c1"># load_balancer_type = "application"</span>
+  <span class="nx">load_balancer_type</span> <span class="p">=</span> <span class="s2">"network"</span>
+  
+  <span class="c1"># Leave out other config ...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
 <p><br /></p>
+
+<p><strong>HashiCorp</strong>가 정의한 <a href="https://www.hashicorp.com/products/terraform/self-service-infrastructure">Self-Service Infrastructure</a> 게시물을 보면,
+Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨부된 링크를 통해 셀프서비스의 점을 꼭 한번 읽어보세요!)</em></p>
+
+<h4 id="기존-방법">기존 방법</h4>
+
+<p>개발자는 인프라 담당자가 인프라를 할당할 때까지 기다려야 합니다.</p>
+
+<p><img src="https://www.hashicorp.com/img/products/terraform/use-cases/self-service-infrastructure/self-service-challenge.png" width="600" height="300" /></p>
+
+<h4 id="셀프-서비스-적용">셀프 서비스 적용</h4>
+
+<p>작성된 인프라 템플릿을 활용해 온디맨드로 프로비저닝 할 수 있습니다.</p>
+
+<p><img src="https://www.hashicorp.com/img/products/terraform/use-cases/self-service-infrastructure/self-service-solution.png" width="600" height="300" /></p>
+
+<p><br /></p>
+
+<h2 id="글을-마치며">글을 마치며</h2>
+<p>저는 테라폼을 공부한 이후, 간단한 웹서비스를 운영하는 토이프로젝트를 진행할 때 다음과 같은 인프라 환경을 자주 사용합니다.</p>
+
+<p><img src="https://github.com/GSNextLevel/neoTerraform/blob/main/image/webserver_cluster.png?raw=true" width="500" height="550" /></p>
+
+<p>미리 코드로 정의한 인프라 덕분에 개발에만 집중할 수 있는 환경과 생산성 향상을 경험했습니다.
+또한 테라폼 모듈 덕분에 제가 원하는 대로 인프라 스펙을 변경하고 각종 클라우드 서비스 추가 혹은 제거가 가능했습니다.</p>
+
+<p>셀프서비스 인프라가 기존 승인 체계(<em>리소스 요청 ➡️ 담당자 승인</em>)를 부정하는 것은 아니라고 생각합니다.
+기존 체계가 갖고 있는 보안적 이점을 포함한 장점들을 유지하며, 유연하고 신속하게 인프라를 운용하는 Self-service 환경이 불러올 장점을 고민해 봐야겠습니다.</p>
+
+<p>마지막으로, DevOps 문화가 정착해가며 <strong>CI/CD</strong> 를 통해 지속적 배포가 가능해지며 더 잦은 서비스 출시가 가능해졌습니다.
+또한, <strong>IaC</strong>를 통해 Immutable Infra를 추구하며 인프라의 일관성과 안정성을 보장하게 되었습니다.
+앞선 두 개의 개념에 더해 <strong>Self-service</strong>를 추구한다면 조직의 민첩성과 생산성 향상에 도움이 될 것이라고 생각합니다.</p>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
+
+<hr />
 
                 </div>
             </section>
@@ -483,9 +357,9 @@ aws_s3_bucket.artifact_bucket
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/CodeBuild';
-                            this.page.identifier = '/CodeBuild';
-                            this.page.title = 'ECR CodePipeline with Terraform Ⅱ';
+                            this.page.url = 'https://heuristicwave.github.io/SelfService';
+                            this.page.identifier = '/SelfService';
+                            this.page.title = 'Self-service Infrastructure';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -519,7 +393,7 @@ aws_s3_bucket.artifact_bucket
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -528,6 +402,8 @@ aws_s3_bucket.artifact_bucket
                             <ul>
                                 
                                 
+                                  
+                                    
                                   
                                 
                                   
@@ -559,6 +435,9 @@ aws_s3_bucket.artifact_bucket
                                 
                                   
                                     
+                                        
+                                        
+                                    
                                   
                                 
                                   
@@ -580,9 +459,9 @@ aws_s3_bucket.artifact_bucket
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/aws/">
+                            <a href="/tag/devops/">
                                 
-                                    See all 5 posts  →
+                                    See all 6 posts  →
                                 
                             </a>
                         </footer>
@@ -592,52 +471,6 @@ aws_s3_bucket.artifact_bucket
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/CodePipeline">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/CodePipeline">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Devops</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅲ</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -645,26 +478,26 @@ aws_s3_bucket.artifact_bucket
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/CodeCommit">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)"></div>
+            <a class="post-card-image-link" href="/Packer">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/packer&terraform.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/CodeCommit">
+            <a class="post-card-content-link" href="/Packer">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Aws</span>
+                               <span class="post-card-tags">Devops</span>
                             
                         
                             
-                                <span class="post-card-tags">Devops</span>
+                                <span class="post-card-tags">Aws</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅰ</h2>
+                    <h2 class="post-card-title">Provision Infrastructure with Packer</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -701,18 +534,18 @@ aws_s3_bucket.artifact_bucket
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">ECR CodePipeline with Terraform Ⅱ</div>
+    <div class="floating-header-title">Self-service Infrastructure</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=ECR+CodePipeline+with+Terraform+%E2%85%A1&amp;url=https://heuristicwave.github.ioCodeBuild"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Self-service+Infrastructure&amp;url=https://heuristicwave.github.ioSelfService"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioCodeBuild"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioSelfService"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

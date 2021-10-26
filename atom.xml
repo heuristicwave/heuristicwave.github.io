@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Self-service Infrastructure</title>
+        
+          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://www.oreilly.com/library/view/infrastructure-as-code/9781491924334/&quot;&gt;Kief Morris의 Infrastructure as Code&lt;/a&gt; 를 읽고 학습한 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Mon, 25 Oct 2021 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/SelfService</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/SelfService</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Provision Infrastructure with Packer</title>
         
           <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;HashiCorp Learn - Provision Infrastructure with Packer&lt;/a&gt; 에서 다루는 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
