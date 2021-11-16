@@ -11,7 +11,7 @@
 
 
 
-    <title>3-Tier VPC Architecture with Terraform</title>
+    <title>Terraform Module Tips 1 - Output</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,26 +49,26 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/3Tier" />
+    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips1" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="3-Tier VPC Architecture with Terraform" />
-    <meta property="og:description" content="본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층" />
-    <meta property="og:url" content="https://heuristicwave.github.io/3Tier" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png" />
+    <meta property="og:title" content="Terraform Module Tips 1 - Output" />
+    <meta property="og:description" content="Terraform Module과 친해지기 1 - Output 서문 Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래" />
+    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips1" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-01-27T18:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-01-27T18:00:00+00:00" />
+    <meta property="article:published_time" content="2021-11-15T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2021-11-15T00:00:00+00:00" />
     <meta property="article:tag" content="Devops" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="3-Tier VPC Architecture with Terraform" />
-    <meta name="twitter:description" content="본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층" />
+    <meta name="twitter:title" content="Terraform Module Tips 1 - Output" />
+    <meta name="twitter:description" content="Terraform Module과 친해지기 1 - Output 서문 Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/3Tier",
+    "url": "https://heuristicwave.github.io/TerraformTips1",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/3Tier"
+        "@id": "https://heuristicwave.github.io/TerraformTips1"
     },
-    "description": "본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층"
+    "description": "Terraform Module과 친해지기 1 - Output 서문 Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="3-Tier VPC Architecture with Terraform" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Terraform Module Tips 1 - Output" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -171,11 +171,11 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-aws post tag-devops ">
+        <article class="post-full  tag-devops tag-terraform post tag-devops ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="27 January 2021">27 January 2021</time>
+                    <time class="post-full-meta-date" datetime="15 November 2021">15 November 2021</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -184,234 +184,111 @@ into the {body} of the default.hbs template -->
                             
                         
                             
-                               <a href='/tag/aws/'>AWS</a>
+                               <a href='/tag/terraform/'>TERRAFORM</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">3-Tier VPC Architecture with Terraform</h1>
+                <h1 class="post-full-title">Terraform Module Tips 1 - Output</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/vpc-step5.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>본 글은 <a href="https://www.aws.training/Details/eLearning?id=61799">Configure and Deploying VPCs with Multiple Subnets</a> 에서 다루는 <code class="language-plaintext highlighter-rouge">Production-Ready: The 3-Tier VPC</code> 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.</p>
+                    <p>Terraform Module과 친해지기 1 - Output</p>
 
 <p><br /></p>
 
-<details>
-  <summary>Multi-Tier VPC 란?</summary>
-  <p><br />
-VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로
-다중 계층 VPC 아키텍처를 만들어 방어 계층을 이룰 수 있습니다.</p>
+<h2 id="서문">서문</h2>
 
-  <p><img src="../../assets/built/images/post/Multi-tier VPC.png" alt="multiTier" /></p>
-</details>
+<p><strong>Terraform Module</strong>을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다.
+레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요,
+이번 포스팅에서는 모듈 내에 작성된 <strong>Output value</strong>들을 활용하는 방법을 알아보겠습니다.</p>
 
-<p><br /></p>
+<p>해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래 링크들을 참고해 주세요!</p>
 
-<h1 id="디자인-패턴--3-tier-vpc-architecture">디자인 패턴 : 3 Tier VPC Architecture</h1>
+<p>🥲 사실, 아래 문서보다 더 잘 설명할 자신이 없어서… 언제나 가장 좋은 교재는 공식 문서입니다!</p>
 
-<p><em>테라폼 코드는 모듈로 관리하는 것을 권장하지만, 이번 포스팅에서는 3-tier 아키텍처 중 네트워크와 관련된 부분만을 다뤄 하나의 파일에서 코드를 관리합니다.</em></p>
-
-<p><br /></p>
-
-<details>
-  <summary>Step 0 (테라폼을 활용하실 줄 안다면 넘어가세요)</summary>
-
-  <h2 id="step-0">Step 0</h2>
-
-  <p>아키텍처를 구성할 폴더를 만들고 <code class="language-plaintext highlighter-rouge">provider</code>를 주입합니다.</p>
-  <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>architecture
-<span class="nb">cd </span>architecture
-terraform init
-<span class="nb">touch </span>threeTierVPC.tf
-</code></pre></div>  </div>
-  <p><code class="language-plaintext highlighter-rouge">threeTierVPC.tf</code>에 벤더 정보를 작성합니다.</p>
-  <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
-  <span class="nx">region</span> <span class="p">=</span> <span class="s2">"ap-northeast-2"</span>
-<span class="p">}</span>
-</code></pre></div>  </div>
-  <p>명령어<code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code>를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 🚀
-<br /></p>
-  <blockquote>
-    <p><code class="language-plaintext highlighter-rouge">terraform apply</code>로 인프라를 반영 할때, <code class="language-plaintext highlighter-rouge">-auto-approve</code>옵션을 주면 <code class="language-plaintext highlighter-rouge">yes</code>입력 없이 진행 할 수 있습니다. 그러나 <code class="language-plaintext highlighter-rouge">yes</code>를 입력하기 전, 한번 더 검토할 수 있는 기회가 있으므로 권장하지 않습니다.</p>
-  </blockquote>
-</details>
-
-<p><br /></p>
-
-<p><strong>💡각 소제목 링크에 첨부된 코드를 활용해 Step 0 에서 만든 <code class="language-plaintext highlighter-rouge">threeTierVPC.tf</code>에 이어서 작성하거나, 따로 새로운 파일을 만들어 <code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code> 명령어를 차례로 작성하며 계층을 쌓아 올립니다.</strong></p>
-
-<p><br /></p>
-
-<h2 id="step-1">Step 1</h2>
-<h3 id="layer-1️⃣--public-subnet">Layer 1️⃣ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step1.tf">Public subnet</a></h3>
-
-<p>하나의 VPC에 2개의 AZ를 만들고 각각의 Public 서브넷을 위치시킵니다.</p>
-
-<p><img src="../../assets/built/images/post/vpc-step1.png" alt="step1" /></p>
-
-<blockquote>
-  <p>퍼블릭 서브넷은 프라이빗 서브넷 보다 적은 수의 IP 예약하는 것이 좋습니다.</p>
-</blockquote>
-
-<p>Step 1 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
-data.aws_availability_zones.available
-aws_internet_gateway.igw
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-</code></pre></div></div>
-
-<details>
-  <summary>생성한 인프라가 위와 같지 않을 경우</summary>
-
-  <p>실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.</p>
-  <ol>
-    <li><code class="language-plaintext highlighter-rouge">terraform destroy</code> 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, <code class="language-plaintext highlighter-rouge">-target</code> 옵션과 함께 resource 명으로 명령어를 작성합니다. <br />
-<em>예시) terraform destory -target aws_vpc.main</em></li>
-    <li>잘못 작성한 코드를 수정 후, <code class="language-plaintext highlighter-rouge">terraform apply</code>명령어를 적용하여 최신 상태의 인프라를 반영합니다.</li>
-  </ol>
-
-</details>
-
-<p><br /></p>
-
-<h2 id="step-2">Step 2</h2>
-<h3 id="layer-1️⃣--internet-access-resources">Layer 1️⃣ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step2.tf">Internet access resources</a></h3>
-
-<p>외부 인터넷과의 노출을 제한하고 나가는 트래픽을 위해 NAT Gateway를 활용합니다. 또한 들어오는 트래픽을 위해 ALB를 위치시켰습니다.
-로드밸런서와 NAT Gateway는 가용성이 높은 관리형 서비스로 병목 현상에 대해 걱정할 필요가 없습니다.</p>
-
-<details>
-  <summary>💡Nat Gateway 알아보기</summary>
-  <p><br />
-NAT(네트워크 주소 변환) 게이트웨이를 사용하면 프라이빗 서브넷의 인스턴스를 인터넷 또는 기타 AWS 서비스에 연결하는 한편, 인터넷에서 해당 인스턴스와의 연결을 시작하지 못하게 할 수 있습니다.
-NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서브넷을 지정해야 하기 때문에 Step2에서 우선적으로 생성합니다.</p>
-
-  <p><a href="https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-nat-gateway.html">도큐먼트로 더 알아보기</a></p>
-
-</details>
-
-<p><img src="../../assets/built/images/post/vpc-step2.png" alt="step2" /></p>
-
-<blockquote>
-  <p>그림에서는 보이지 않지만, VPC에는 암시적 라우터가 있으며 라우팅 테이블을 사용하여 네트워크 트래픽이 전달되는 위치를 제어합니다.
-VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다.</p>
-</blockquote>
-
-<p>Step 2 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
-data.aws_availability_zones.available
-aws_eip.nat_1
-aws_eip.nat_2
-aws_internet_gateway.igw
-aws_nat_gateway.nat_gateway_1
-aws_nat_gateway.nat_gateway_2
-aws_route_table.route_table_pub
-aws_route_table_association.route_table_association_1
-aws_route_table_association.route_table_association_2
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-</code></pre></div></div>
-
-<p><em>이번 포스팅에서 ALB와 인스턴스는 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.</em> <br /></p>
-
-<h2 id="step-3">Step 3</h2>
-<h3 id="layer-2️⃣️--apps-in-a-private-subnet">Layer 2️⃣️ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step3.tf">Apps in a private subnet</a></h3>
-
-<p>2개의 프라이빗 서브넷에 각각의 인스턴스를 놓습니다. 이후, 두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.</p>
-
-<blockquote>
-  <p><strong>❗️예제 그림에서는 Private subnet의 cidr block을 <code class="language-plaintext highlighter-rouge">10.0.2.0/22</code>로 가이드 하지만, 이는 앞서 만든 서브넷과 범위가 겹치므로 <code class="language-plaintext highlighter-rouge">10.0.4.0/22</code>로 바꿔 진행합니다.</strong>
-<a href="https://www.ipaddressguide.com/cidr">CIDR 계산기</a> 에서 정확하게 확인해 볼 수 있습니다.</p>
-</blockquote>
-
-<p><img src="../../assets/built/images/post/vpc-step3.png" alt="step3" /></p>
-
-<blockquote>
-  <p>Step3에서도 Step2와 같이 그림에서는 보이지 않는 라우트 테이블을 만들고 NAT 게이트웨이와 프라이빗 서브넷을 연결해 줍니다.
-프라이빗 서브넷의 요청이 외부로 나갈때는 NAT 게이트웨이의 고정 IP를 사용합니다.
-(프라이빗 서브넷의 라우트 테이블은 퍼블릭과 달리 2개를 만들어 각각 연결해 주었습니다.)</p>
-</blockquote>
-
-<p>Step 3 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
-data.aws_availability_zones.available
-aws_eip.nat_1
-aws_eip.nat_2
-aws_internet_gateway.igw
-aws_nat_gateway.nat_gateway_1
-aws_nat_gateway.nat_gateway_2
-aws_route.private_nat_1
-aws_route.private_nat_2
-aws_route_table.route_table_pri_1
-aws_route_table.route_table_pri_2
-aws_route_table.route_table_pub
-aws_route_table_association.route_table_association_1
-aws_route_table_association.route_table_association_2
-aws_route_table_association.route_table_pri_association_1
-aws_route_table_association.route_table_pri_association_2
-aws_subnet.pri_sub_1
-aws_subnet.pri_sub_2
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-</code></pre></div></div>
-
-<p><em>이번 포스팅에서 DB와 인스턴스 연결은 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.</em> <br /></p>
-
-<h2 id="step-4">Step 4</h2>
-<h3 id="layer-3️⃣--data-in-a-second-private-subnet">Layer 3️⃣ : Data in a second private subnet</h3>
-
-<p>첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다. (코드 생략) <br />
-장애가 발생할 경우를 대비해 read-replica 혹은 standby 구성으로 배치합니다.</p>
-
-<blockquote>
-  <p><strong>❗Step4의 서브넷 작성법은 Step3의 방법과 동일합니다. 아래 사진은 CIDR의 범위가 겹치므로, Private subnet의 cidr block을 <code class="language-plaintext highlighter-rouge">10.0.8.0/23</code>을 <code class="language-plaintext highlighter-rouge">10.0.12.0/23</code>로, <code class="language-plaintext highlighter-rouge">10.0.10.0/23</code>을 <code class="language-plaintext highlighter-rouge">10.0.14.0/23</code>으로 바꿔 진행하세요.</strong></p>
-</blockquote>
-
-<p><img src="../../assets/built/images/post/vpc-step4.png" alt="step4" /></p>
-
-<blockquote>
-  <p>데이터 리소스(/23)보다를 앱 리소스(/22)를 확장할 가능성이 커, 더 큰 서브넷 마스크를 할당합니다.</p>
-</blockquote>
-
-<p><br /></p>
-
-<h2 id="step-5">Step 5</h2>
-<h3 id="leave-extra-ips-available">Leave extra IPs available</h3>
-
-<p>배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다. (코드 생략)</p>
-
-<p><img src="../../assets/built/images/post/vpc-step5.png" alt="step5" /></p>
-
-<p><br /></p>
-
-<p>위와 같은 단계들을 통해 <strong>3 Tier VPC Architecture</strong>를 학습해보았습니다.
-Terraform으로 생성된 자원들은 <code class="language-plaintext highlighter-rouge">terraform destory</code>명령어를 통해 학습을 시작하기 전 상태로 되돌리세요.
-다음 포스팅에서는 이번 포스팅에서 생략했던 인스턴스, DB, LB 등을 모듈로 관리하며 다뤄 보겠습니다.</p>
-
-<hr />
-
-<p><span class="table-of-contents-list">Terraform Courses</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./3Tier">3-Tier VPC Architecture with Terraform</a></li>
-    <li><a href="./CodeCommit">ECR Pipeline with Terraform Ⅰ (CodeCommit)</a></li>
-    <li><a href="./CodeBuild">ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)</a></li>
-    <li><a href="./CodePipeline">ECR Pipeline with Terraform Ⅲ (CodePipeline)</a></li>
-    <li><a href="./Packer">Provision Infrastructure with Packer</a></li>
+<ul>
+  <li><a href="https://www.terraform.io/docs/language/values/outputs.html">Terraform Docs</a></li>
+  <li><a href="https://learn.hashicorp.com/tutorials/terraform/outputs">Tutorial : Output Data from Terraform</a></li>
 </ul>
 
 <p><br /></p>
+
+<h2 id="output-command-option">Output Command Option</h2>
+
+<p>Output은 terraform apply 명령어를 수행하고 난 후, 맨 마지막에 Value 들이 렌더링 되어 나옵니다.
+그러나 테라폼 코드를 작성하는 중간중간 인프라의 value 값들이 필요할 때가 있습니다.</p>
+
+<p>그럴 때, output이 정의된 상황에서 <code class="language-plaintext highlighter-rouge">terraform output {label}</code> 명령어로 Ouput 값을 확인합니다.
+<code class="language-plaintext highlighter-rouge">-raw</code> 옵션을 함께 주면 문자열 형태가 아닌 raw한 텍스트 값만을 얻을 수 있습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform output <span class="nt">-raw</span> security_group_id
+</code></pre></div></div>
+
+<h2 id="accessing-child-module-outputs">Accessing Child Module Outputs</h2>
+
+<p>하위 모듈의 아웃풋에 접근할 경우도 종종 있는데요, 이때는 <code class="language-plaintext highlighter-rouge">module.&lt;모듈 명&gt;.&lt;Output 명&gt;</code> 이런 형식으로 조회가 가능합니다.
+하위 모듈 출력값에 접근하는 것이, 모듈과 모듈은 연계하는 방법이기에 아래 예시에서 알아보겠습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module <span class="s2">"vpc"</span> <span class="o">{</span>
+  <span class="nb">source</span> <span class="o">=</span> <span class="s2">"terraform-aws-modules/vpc/aws"</span>
+  name   <span class="o">=</span> <span class="s2">"sample_vpc"</span>
+
+  cidr <span class="o">=</span> <span class="s2">"10.10.0.0/16"</span>
+
+  azs            <span class="o">=</span> <span class="o">[</span><span class="s2">"us-west-2a"</span><span class="o">]</span>
+  public_subnets <span class="o">=</span> <span class="o">[</span><span class="s2">"10.10.1.0/24"</span><span class="o">]</span>
+
+  tags <span class="o">=</span> <span class="o">{</span>
+    Owner       <span class="o">=</span> <span class="s2">"me"</span>
+    Environment <span class="o">=</span> <span class="s2">"stage"</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>위와 같은 vpc 모듈은 security group 모듈과 거의 단짝 수준으로 함께 움직이는데요,
+security group 모듈을 활용하려면 다음과 같이 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값이 필요합니다.</p>
+
+<p>이 경우, vpc를 먼저 생성하고 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값을 알아내어 사용할 수 있지만, 다음과 같은 방법으로 모듈을 연계합니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module <span class="s2">"security_group"</span> <span class="o">{</span>
+  <span class="nb">source</span>      <span class="o">=</span> <span class="s2">"terraform-aws-modules/security-group/aws"</span>
+  name        <span class="o">=</span> <span class="s2">"ssh"</span>
+  description <span class="o">=</span> <span class="s2">"ssh from workstation"</span>
+  vpc_id      <span class="o">=</span> module.vpc.vpc_id
+
+  ingress_cidr_blocks <span class="o">=</span> <span class="o">[</span><span class="s2">"0.0.0.0/0"</span><span class="o">]</span>
+  ingress_rules       <span class="o">=</span> <span class="o">[</span><span class="s2">"ssh-tcp"</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<h2 id="find-module-output-label">Find Module Output Label</h2>
+
+<p>방금 전, 모듈을 연계하는 방법을 배워 보았습니다. 그런데, 모듈을 연계하기 위해서는 미리 사전에 작성된 모듈의 Output Label을 알아야 합니다.</p>
+
+<p>우선 에디터의 Explorer 탭에서 <code class="language-plaintext highlighter-rouge">.terraform</code> 폴더를 열어봅시다.</p>
+
+<p><img src="../../assets/built/images/post/module.png" alt="module.png" /></p>
+
+<p>apply를 적용한 <em>security-group, vpc</em> 모듈이 내 로컬 머신에 숨어 있습니다.
+해당 모듈 폴더 안에 들어가면 <code class="language-plaintext highlighter-rouge">outputs.tf</code> 가 정의되어 있으므로 해당 파일을 참고하여 Label 값을 얻어오면 됩니다!</p>
+
+<p><br /></p>
+
+<h2 id="글을-마치며">글을 마치며</h2>
+
+<p>이렇게 Module의 Output 값을 활용하는 방법을 알게 되니, 테라폼 모듈 조립에 대한 자신감이 생겼습니다. 
+앞으로도 Module을 활용해 다양한 인프라를 구축하고 오픈소스 툴들을 연계하는 방법들을 시리즈로 연재할 계획인데, 언제 연재가 끝날지 모르겠습니다.</p>
+
+<p>지금까지 테라폼 모듈과 친해지기 Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+
+<hr />
 
                 </div>
             </section>
@@ -454,9 +331,9 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/3Tier';
-                            this.page.identifier = '/3Tier';
-                            this.page.title = '3-Tier VPC Architecture with Terraform';
+                            this.page.url = 'https://heuristicwave.github.io/TerraformTips1';
+                            this.page.identifier = '/TerraformTips1';
+                            this.page.title = 'Terraform Module Tips 1 - Output';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -501,11 +378,6 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/TerraformTips1">Terraform Module Tips 1 - Output</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -532,12 +404,7 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/EKS_Max_Pods">Look into EKS max pods</a></li>
                                         
                                     
                                   
@@ -557,6 +424,16 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                     
                                   
                                 
@@ -577,52 +454,6 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/CodeCommit">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/CodeCommit">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Devops</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅰ</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -630,22 +461,22 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/pipenv01">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/soap-bubble.jpg)"></div>
+            <a class="post-card-image-link" href="/EC2_Clocksource">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/clock.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/pipenv01">
+            <a class="post-card-content-link" href="/EC2_Clocksource">
                 <header class="post-card-header">
                     
                         
                             
-                                <span class="post-card-tags">Backend</span>
+                                <span class="post-card-tags">Aws</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Pipenv, Nginx, Gunicorn 서버 운영하기</h2>
+                    <h2 class="post-card-title">EC2 Clocksource</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -682,18 +513,18 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">3-Tier VPC Architecture with Terraform</div>
+    <div class="floating-header-title">Terraform Module Tips 1 - Output</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=3-Tier+VPC+Architecture+with+Terraform&amp;url=https://heuristicwave.github.io3Tier"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Module+Tips+1+-+Output&amp;url=https://heuristicwave.github.ioTerraformTips1"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.io3Tier"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips1"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

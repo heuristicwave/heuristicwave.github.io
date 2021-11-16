@@ -5,9 +5,113 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 08 Nov 2021 03:44:54 +0000</pubDate>
-        <lastBuildDate>Mon, 08 Nov 2021 03:44:54 +0000</lastBuildDate>
+        <pubDate>Tue, 16 Nov 2021 09:45:03 +0000</pubDate>
+        <lastBuildDate>Tue, 16 Nov 2021 09:45:03 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
+        
+            <item>
+                <title>Terraform Module Tips 1 - Output</title>
+                <description>&lt;p&gt;Terraform Module과 친해지기 1 - Output&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;서문&quot;&gt;서문&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Terraform Module&lt;/strong&gt;을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다.
+레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요,
+이번 포스팅에서는 모듈 내에 작성된 &lt;strong&gt;Output value&lt;/strong&gt;들을 활용하는 방법을 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래 링크들을 참고해 주세요!&lt;/p&gt;
+
+&lt;p&gt;🥲 사실, 아래 문서보다 더 잘 설명할 자신이 없어서… 언제나 가장 좋은 교재는 공식 문서입니다!&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.terraform.io/docs/language/values/outputs.html&quot;&gt;Terraform Docs&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/outputs&quot;&gt;Tutorial : Output Data from Terraform&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;output-command-option&quot;&gt;Output Command Option&lt;/h2&gt;
+
+&lt;p&gt;Output은 terraform apply 명령어를 수행하고 난 후, 맨 마지막에 Value 들이 렌더링 되어 나옵니다.
+그러나 테라폼 코드를 작성하는 중간중간 인프라의 value 값들이 필요할 때가 있습니다.&lt;/p&gt;
+
+&lt;p&gt;그럴 때, output이 정의된 상황에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output {label}&lt;/code&gt; 명령어로 Ouput 값을 확인합니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-raw&lt;/code&gt; 옵션을 함께 주면 문자열 형태가 아닌 raw한 텍스트 값만을 얻을 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform output &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt; security_group_id
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;accessing-child-module-outputs&quot;&gt;Accessing Child Module Outputs&lt;/h2&gt;
+
+&lt;p&gt;하위 모듈의 아웃풋에 접근할 경우도 종종 있는데요, 이때는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;module.&amp;lt;모듈 명&amp;gt;.&amp;lt;Output 명&amp;gt;&lt;/code&gt; 이런 형식으로 조회가 가능합니다.
+하위 모듈 출력값에 접근하는 것이, 모듈과 모듈은 연계하는 방법이기에 아래 예시에서 알아보겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module &lt;span class=&quot;s2&quot;&gt;&quot;vpc&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-aws-modules/vpc/aws&quot;&lt;/span&gt;
+  name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sample_vpc&quot;&lt;/span&gt;
+
+  cidr &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.10.0.0/16&quot;&lt;/span&gt;
+
+  azs            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;us-west-2a&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  public_subnets &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;10.10.1.0/24&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+
+  tags &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    Owner       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;me&quot;&lt;/span&gt;
+    Environment &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;stage&quot;&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위와 같은 vpc 모듈은 security group 모듈과 거의 단짝 수준으로 함께 움직이는데요,
+security group 모듈을 활용하려면 다음과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt; 값이 필요합니다.&lt;/p&gt;
+
+&lt;p&gt;이 경우, vpc를 먼저 생성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt; 값을 알아내어 사용할 수 있지만, 다음과 같은 방법으로 모듈을 연계합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;module &lt;span class=&quot;s2&quot;&gt;&quot;security_group&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-aws-modules/security-group/aws&quot;&lt;/span&gt;
+  name        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ssh&quot;&lt;/span&gt;
+  description &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ssh from workstation&quot;&lt;/span&gt;
+  vpc_id      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; module.vpc.vpc_id
+
+  ingress_cidr_blocks &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  ingress_rules       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ssh-tcp&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;find-module-output-label&quot;&gt;Find Module Output Label&lt;/h2&gt;
+
+&lt;p&gt;방금 전, 모듈을 연계하는 방법을 배워 보았습니다. 그런데, 모듈을 연계하기 위해서는 미리 사전에 작성된 모듈의 Output Label을 알아야 합니다.&lt;/p&gt;
+
+&lt;p&gt;우선 에디터의 Explorer 탭에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.terraform&lt;/code&gt; 폴더를 열어봅시다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/module.png&quot; alt=&quot;module.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;apply를 적용한 &lt;em&gt;security-group, vpc&lt;/em&gt; 모듈이 내 로컬 머신에 숨어 있습니다.
+해당 모듈 폴더 안에 들어가면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;outputs.tf&lt;/code&gt; 가 정의되어 있으므로 해당 파일을 참고하여 Label 값을 얻어오면 됩니다!&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;글을-마치며&quot;&gt;글을 마치며&lt;/h2&gt;
+
+&lt;p&gt;이렇게 Module의 Output 값을 활용하는 방법을 알게 되니, 테라폼 모듈 조립에 대한 자신감이 생겼습니다. 
+앞으로도 Module을 활용해 다양한 인프라를 구축하고 오픈소스 툴들을 연계하는 방법들을 시리즈로 연재할 계획인데, 언제 연재가 끝날지 모르겠습니다.&lt;/p&gt;
+
+&lt;p&gt;지금까지 테라폼 모듈과 친해지기 Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Mon, 15 Nov 2021 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//TerraformTips1</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//TerraformTips1</guid>
+                
+                <category>devops</category>
+                
+                <category>terraform</category>
+                
+                
+            </item>
         
             <item>
                 <title>EC2 Clocksource</title>
