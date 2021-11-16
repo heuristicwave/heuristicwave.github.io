@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2021-11-16T09:45:03+00:00</updated>
+  <updated>2021-11-16T09:51:20+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -988,6 +988,8 @@ resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-at
       
         <category term="devops" />
       
+        <category term="terraform" />
+      
 
       
         <summary type="html">Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)</summary>
@@ -1265,6 +1267,8 @@ aws_s3_bucket.artifact_bucket
       
         <category term="devops" />
       
+        <category term="terraform" />
+      
 
       
         <summary type="html">Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</summary>
@@ -1424,6 +1428,8 @@ git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.Use
         <category term="aws" />
       
         <category term="devops" />
+      
+        <category term="terraform" />
       
 
       
@@ -1672,6 +1678,8 @@ Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext h
         <category term="devops" />
       
         <category term="aws" />
+      
+        <category term="terraform" />
       
 
       

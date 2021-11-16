@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2021-11-16T09:45:03+00:00</updated>
+  <updated>2021-11-16T09:51:20+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -38,8 +38,6 @@
       <updated>2021-11-15T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips1</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips1">&lt;p&gt;Terraform Module과 친해지기 1 - Output&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;서문&quot;&gt;서문&lt;/h2&gt;
 
@@ -122,7 +120,7 @@ security group 모듈을 활용하려면 다음과 같이 &lt;code class=&quot;l
 &lt;h2 id=&quot;글을-마치며&quot;&gt;글을 마치며&lt;/h2&gt;
 
 &lt;p&gt;이렇게 Module의 Output 값을 활용하는 방법을 알게 되니, 테라폼 모듈 조립에 대한 자신감이 생겼습니다. 
-앞으로도 Module을 활용해 다양한 인프라를 구축하고 오픈소스 툴들을 연계하는 방법들을 시리즈로 연재할 계획인데, 언제 연재가 끝날지 모르겠습니다.&lt;/p&gt;
+앞으로도 Module을 활용해 다양한 인프라를 구축하고 오픈소스 툴들을 연계하는 방법을 시리즈로 연재할 계획인데, 언제 끝날지 모르겠습니다. 😑&lt;/p&gt;
 
 &lt;p&gt;지금까지 테라폼 모듈과 친해지기 Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
@@ -150,6 +148,962 @@ security group 모듈을 활용하려면 다음과 같이 &lt;code class=&quot;l
 
       
         <summary type="html">Terraform Module과 친해지기 1 - Output</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">ECR CodePipeline with Terraform Ⅲ</title>
+      <link href="https://heuristicwave.github.io/CodePipeline" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅲ" />
+      <published>2021-04-09T00:00:00+00:00</published>
+      <updated>2021-04-09T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/CodePipeline</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/CodePipeline">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)&lt;/p&gt;
+
+&lt;h1 id=&quot;preview&quot;&gt;Preview&lt;/h1&gt;
+
+&lt;p&gt;3편에서는 CodePipeline을 생성하고 IAM 정책과 역할을 부여하는 법을 배워보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline&quot;&gt;문서&lt;/a&gt;
+를 확인하면 artifact가 담기는 버킷, pipeline을 생성하는 리소스, 관련된 IAM Role과 Policy가 보입니다.
+테라폼은 선언형 언어이므로 Role과 Resource의 작성 순서가 바뀌어도 상관이 없지만, 콘솔에서 작업할 경우 Role을 먼저 작성하고 리소스를 생성하니 3편에서는 IAM을 먼저 작성하겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;iam-role&quot;&gt;IAM Role&lt;/h3&gt;
+&lt;p&gt;아래 Role을 방금전 생성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 작성합니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline_role&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-codepipeline&quot;&lt;/span&gt;
+  assume_role_policy &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;
+{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Action&quot;: &quot;sts:AssumeRole&quot;,
+      &quot;Principal&quot;: {
+        &quot;Service&quot;: &quot;codepipeline.amazonaws.com&quot;
+      },
+      &quot;Effect&quot;: &quot;Allow&quot;
+    }
+  ]
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;iam-policy&quot;&gt;IAM Policy&lt;/h3&gt;
+&lt;p&gt;본래 필요한 정책만을 골라 &lt;a href=&quot;https://awspolicygen.s3.amazonaws.com/policygen.html&quot;&gt;정책생성기&lt;/a&gt; 에서 생생된 정책을 활용하는 방법이 있지만, 어떤 정책이 필요한지 한번에 맞추기는 너무 어렵습니다.
+(저의 경우 인터넷에서 타인이 작성한 정책과 에러메시지를 맞아가며 정책을 작성하고 있습니다 😅)&lt;br /&gt;
+➕ 아래 Policy를 방금전 생성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 아래 코드를 추가합니다.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_policy&quot; &quot;codepipeline_policy&quot; {
+  description = &quot;Codepipeline Execution Policy&quot;
+  policy      = &amp;lt;&amp;lt;EOF
+{
+  &quot;Version&quot;: &quot;2012-10-17&quot;,
+  &quot;Statement&quot;: [
+    {
+      &quot;Action&quot;: [
+        &quot;s3:GetObject&quot;, &quot;s3:GetObjectVersion&quot;, &quot;s3:PutObject&quot;,
+        &quot;s3:GetBucketVersioning&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: &quot;${aws_s3_bucket.artifact_bucket.arn}/*&quot;
+    },
+    {
+      &quot;Action&quot; : [
+        &quot;codebuild:StartBuild&quot;, &quot;codebuild:BatchGetBuilds&quot;,
+        &quot;iam:PassRole&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: &quot;*&quot;
+    },
+    {
+      &quot;Action&quot; : [
+        &quot;codecommit:CancelUploadArchive&quot;,
+        &quot;codecommit:GetBranch&quot;,
+        &quot;codecommit:GetCommit&quot;,
+        &quot;codecommit:GetUploadArchiveStatus&quot;,
+        &quot;codecommit:UploadArchive&quot;
+      ],
+      &quot;Effect&quot;: &quot;Allow&quot;,
+      &quot;Resource&quot;: &quot;${aws_codecommit_repository.test.arn}&quot;
+    }
+  ]
+}
+EOF
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role_policy_attachment&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline-attach&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  role       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_role.codepipeline_role.name
+  policy_arn &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_policy.codepipeline_policy.arn
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;codepipeline&quot;&gt;CodePipeline&lt;/h2&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_codepipeline&lt;/code&gt;리소스의 config에는 artifact store와 암호화 키, Source-Build-Deploy로 이어지는 각 Stage가 선언되어 있습니다.
+리소스 안에 기재된 설정들은 필수가 아니므로 선택하여 사용할 수 있습니다. 이번 포스팅에서는 deploy stage와 암호화 config는 제외하고 진행하겠습니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_codepipeline&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;pipeline&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  name     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.source_repo_name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.source_repo_branch&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-Pipeline&quot;&lt;/span&gt;
+  role_arn &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_role.codepipeline_role.arn
+  artifact_store &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    location &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_s3_bucket.artifact_bucket.bucket
+    &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;S3&quot;&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
+    action &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      name             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
+      category         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
+      owner            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;AWS&quot;&lt;/span&gt;
+      version          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;
+      provider         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CodeCommit&quot;&lt;/span&gt;
+      output_artifacts &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SourceOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+      run_order        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
+      configuration &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        RepositoryName       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.source_repo_name
+        BranchName           &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.source_repo_branch
+        PollForSourceChanges &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;false&quot;&lt;/span&gt;
+      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
+    action &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+      name             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
+      category         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
+      owner            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;AWS&quot;&lt;/span&gt;
+      version          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;
+      provider         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CodeBuild&quot;&lt;/span&gt;
+      input_artifacts  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SourceOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+      output_artifacts &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;BuildOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+      run_order        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
+      configuration &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        ProjectName &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_codebuild_project.codebuild.id
+      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;1편에서 작성한 CodeCommit을 Stage의 Source, 2편에서 작성한 CodeBuild를 Build단계 지정했습니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply, plan&lt;/code&gt; 명령어를 차례로 반영해 오류가 없는지 확인합니다.&lt;/p&gt;
+
+&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
+aws_codebuild_project.codebuild
+aws_codecommit_repository.test
+aws_codepipeline.pipeline
+aws_ecr_repository.image_repo
+aws_iam_policy.codebuild_policy
+aws_iam_policy.codepipeline_policy
+aws_iam_role.codebuild_role
+aws_iam_role.codepipeline_role
+aws_iam_role_policy_attachment.codebuild-attach
+aws_iam_role_policy_attachment.codepipeline-attach
+aws_s3_bucket.artifact_bucket
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipe line 콘솔&lt;/a&gt; 에서 확인하면 권한이 없어 실패한 화면이 나올 것 입니다.
+이를 해결하기 위해 또 다른 권한이 필요합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;codepipeline-trigger&quot;&gt;CodePipeline Trigger&lt;/h2&gt;
+&lt;p&gt;CodeCommit에서 발생한 이벤트가 CodePipeline으로 트리거되기 위해서는 아래 정의된 권한이 필요합니다.&lt;/p&gt;
+
+&lt;p&gt;➕ 아래 코드를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 추가하고 인프라를 생성해주세요.&lt;/p&gt;
+&lt;noscript&gt;
+  &lt;pre&gt;resource &amp;quot;aws_iam_role&amp;quot; &amp;quot;trigger_role&amp;quot; {
+  name               = &amp;quot;terraform-trigger&amp;quot;
+  assume_role_policy = &amp;lt;&amp;lt;EOF
+{
+  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
+  &amp;quot;Statement&amp;quot;: [
+    {
+      &amp;quot;Action&amp;quot;: &amp;quot;sts:AssumeRole&amp;quot;,
+      &amp;quot;Principal&amp;quot;: {
+        &amp;quot;Service&amp;quot;: &amp;quot;events.amazonaws.com&amp;quot;
+      },
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Sid&amp;quot;: &amp;quot;&amp;quot;
+    }
+  ]
+}
+EOF
+}
+
+resource &amp;quot;aws_iam_policy&amp;quot; &amp;quot;trigger_policy&amp;quot; {
+  description = &amp;quot;CodePipeline Trigger Execution Policy&amp;quot;
+  policy      = &amp;lt;&amp;lt;EOF
+{
+  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
+  &amp;quot;Statement&amp;quot;: [
+    {
+      &amp;quot;Action&amp;quot;: [
+        &amp;quot;codepipeline:StartPipelineExecution&amp;quot;
+      ],
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_codepipeline.pipeline.arn}&amp;quot;
+    }
+  ]
+}
+EOF
+}
+
+resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-attach&amp;quot; {
+  role       = aws_iam_role.trigger_role.name
+  policy_arn = aws_iam_policy.trigger_policy.arn
+}&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/heuristicwave/5b566b2cc70337501a4d60b71215930f.js&quot;&gt; &lt;/script&gt;
+
+&lt;h2 id=&quot;result&quot;&gt;Result&lt;/h2&gt;
+&lt;p&gt;Trigger 까지 정상적으로 적용하고 테스트용으로 활용할 아무 Dockerfile을 CodeCommit에 Push합니다.
+다시 &lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipeline 콘솔&lt;/a&gt; 에 접속해 우상단에 위치한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;변경사항 릴리스&lt;/code&gt;를 누르면,
+아래와 같이 정상적으로 코드 파이프라인이 작동하여 운영되는 것을 확인 할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/ecr_terraform_demo.png&quot; alt=&quot;terraform_demo&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;cleanup&quot;&gt;Cleanup&lt;/h2&gt;
+&lt;p&gt;S3 bucket은 빈상태여야 제거가 가능하기에 &lt;a href=&quot;https://console.aws.amazon.com/s3/home&quot;&gt;S3 콘솔&lt;/a&gt; 에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecr-pipeline&lt;/code&gt;의 데이터를 모두 삭제합니다.
+이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destory&lt;/code&gt; 명령어로 모든 리소스를 회수합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;총 3편에 걸쳐서 테라폼으로 &lt;strong&gt;최소한의 리소스&lt;/strong&gt;로 ECR Pipeline 구축법을 알아보았습니다. (CloudWatch 기능을 추가해 CodePipeline을 구축해보세요 👍)
+해당 과정을 통해 AWS 인프라 생성법과, IAM 활용법, Variable, Output, tfvars 등을 활용해 코드를 작성하는 법을 공부했습니다.
+다른 CI/CD 파이프라인 구축법도 이번 포스팅에서 다룬 방법과 크게 다르지 않으니, 해당 포스팅이 도움이 되면 좋겠습니다. 😁&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="devops" />
+      
+        <category term="terraform" />
+      
+
+      
+        <summary type="html">Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">ECR CodePipeline with Terraform Ⅱ</title>
+      <link href="https://heuristicwave.github.io/CodeBuild" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅱ" />
+      <published>2021-04-08T00:00:00+00:00</published>
+      <updated>2021-04-08T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/CodeBuild</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/CodeBuild">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)&lt;/p&gt;
+
+&lt;p&gt;2편에서는 &lt;strong&gt;ECR&lt;/strong&gt;과 &lt;strong&gt;CodeBuild&lt;/strong&gt;를 생성하고 &lt;strong&gt;IAM 역할, 정책을 부여&lt;/strong&gt;하는 법을 학습합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;ecr&quot;&gt;ECR&lt;/h2&gt;
+&lt;p&gt;ECR 역시 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository&quot;&gt;공식 문서&lt;/a&gt; 에서 사용방법을 확인합니다.
+공식문서에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image_scanning_configuration&lt;/code&gt; config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다.
+더불어, output도 함께 작성하겠습니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; ecr.tf
+resource &quot;aws_ecr_repository&quot; &quot;image_repo&quot; {
+  name                 = var.image_repo_name
+  image_tag_mutability = &quot;MUTABLE&quot;
+}
+
+output &quot;image_repo_url&quot; {
+  value = aws_ecr_repository.image_repo.repository_url
+}
+
+output &quot;image_repo_arn&quot; {
+  value = aws_ecr_repository.image_repo.arn
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecr.tf&lt;/code&gt;에서 변수로 사용하기 위한 &lt;strong&gt;var.image_repo_name&lt;/strong&gt; 부분이 작동하도록 1편에서 작성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variables.tf&lt;/code&gt; 아래 값을 추가합니다.&lt;/p&gt;
+
+&lt;p&gt;✅ 편의상 이번 단계에 필요한 variable을 함께 포함했습니다.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;variable &quot;image_repo_name&quot; {
+  description = &quot;Image repo name&quot;
+  type        = string
+}
+
+variable &quot;container_name&quot; {
+  description = &quot;Container Name&quot;
+  default     = &quot;my-container&quot;
+}
+
+variable &quot;source_repo_branch&quot; {
+  description = &quot;Source repo branch&quot;
+  type        = string
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;ecr 작성을 완료햇으니 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan, apply&lt;/code&gt; 명령어를 차례로 입력해 인프라를 생성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어나 &lt;a href=&quot;https://console.aws.amazon.com/ecr/home&quot;&gt;콘솔&lt;/a&gt; 에서 생성된 인프라를 확인합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;codebuild&quot;&gt;CodeBuild&lt;/h2&gt;
+&lt;p&gt;CodeBuild를 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
+기존까지의 작업과는 달리 상당히 어려워 보입니다. 그러나 쓱 훝어보면 크게 4가지(bucket, IAM Role과 Policy, Codebuild)로 정리됩니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;bucket&quot;&gt;Bucket&lt;/h3&gt;
+&lt;p&gt;도큐먼트와 같이 우선적으로 S3를 생성합니다. bucket의 이름은 선택이지만, 여러개의 버킷을 가지고 있는 저는 식별을 위해 이름을 부여했습니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codebuild.tf
+resource &quot;aws_s3_bucket&quot; &quot;artifact_bucket&quot; {
+  bucket = &quot;ecr-pipeline&quot;
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;iam-role&quot;&gt;IAM Role&lt;/h3&gt;
+&lt;p&gt;도큐먼트를 따라 AssumeRole을 사용합시다. &lt;br /&gt;
+➕ S3을 만들때 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 아래 코드를 추가합니다.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_role&quot; &quot;codebuild_role&quot; {
+  name = &quot;terraform-codebuild&quot;,
+  assume_role_policy = &amp;lt;&amp;lt;EOF
+{
+   &quot;Version&quot;: &quot;2012-10-17&quot;,
+   &quot;Statement&quot;: [
+      {
+         &quot;Effect&quot;: &quot;Allow&quot;,
+         &quot;Principal&quot;: {
+            &quot;Service&quot;: &quot;codebuild.amazonaws.com&quot;
+         },
+         &quot;Action&quot;: &quot;sts:AssumeRole&quot;
+      }
+   ]
+}
+EOF
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;iam-policy&quot;&gt;IAM Policy&lt;/h3&gt;
+&lt;p&gt;정책은 IAM 콘솔에서 기존에 만들어진 정책을 사용할 수도 있지만, 아래와 같이 직접 작성할 수도 있습니다.
+도큐먼트에서 EC2에 대한 정책을 사용하지만, 우리는 ECR을 사용하므로 아래와 같은 정책을 사용하겠습니다.&lt;/p&gt;
+&lt;noscript&gt;
+  &lt;pre&gt;resource &amp;quot;aws_iam_policy&amp;quot; &amp;quot;codebuild_policy&amp;quot; {
+  description = &amp;quot;CodeBuild Execution Policy&amp;quot;
+  policy      = &amp;lt;&amp;lt;EOF
+{
+  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
+  &amp;quot;Statement&amp;quot;: [
+    {
+      &amp;quot;Action&amp;quot;: [
+        &amp;quot;logs:CreateLogGroup&amp;quot;, &amp;quot;logs:CreateLogStream&amp;quot;, &amp;quot;logs:PutLogEvents&amp;quot;,
+        &amp;quot;ecr:GetAuthorizationToken&amp;quot;
+      ],
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Resource&amp;quot;: &amp;quot;*&amp;quot;
+    },
+    {
+      &amp;quot;Action&amp;quot;: [
+        &amp;quot;s3:GetObject&amp;quot;, &amp;quot;s3:GetObjectVersion&amp;quot;, &amp;quot;s3:PutObject&amp;quot;
+      ],
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_s3_bucket.artifact_bucket.arn}/*&amp;quot;
+    },
+    {
+      &amp;quot;Action&amp;quot;: [
+        &amp;quot;ecr:GetDownloadUrlForLayer&amp;quot;, &amp;quot;ecr:BatchGetImage&amp;quot;,
+        &amp;quot;ecr:BatchCheckLayerAvailability&amp;quot;, &amp;quot;ecr:PutImage&amp;quot;,
+        &amp;quot;ecr:InitiateLayerUpload&amp;quot;, &amp;quot;ecr:UploadLayerPart&amp;quot;,
+        &amp;quot;ecr:CompleteLayerUpload&amp;quot;
+      ],
+      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
+      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_ecr_repository.image_repo.arn}&amp;quot;
+    }
+  ]
+}
+EOF
+}&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/heuristicwave/09103b88af041153ccd206ec6d51b7c1.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;20, 30라인에서 앞서 생성한 리소스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;${채움참조}&lt;/code&gt; 문법으로 유연한 코드를 작성합니다.&lt;/p&gt;
+
+&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_role_policy_attachment&quot; &quot;codebuild-attach&quot; {
+  role       = aws_iam_role.codebuild_role.name
+  policy_arn = aws_iam_policy.codebuild_policy.arn
+}
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;codebuild-1&quot;&gt;CodeBuild&lt;/h3&gt;
+&lt;p&gt;&lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 를 보아도 어떻게 해야 ECR에 적용시킬 수 있는지 알기 어렵습니다.
+우선 CodeBuild를 이해하기 위해 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/sample-docker.html&quot;&gt;AWS docs&lt;/a&gt; 를 읽어봅시다.
+대략 리소스 이름을 정하고, 환경을 구성하고 빌드를 하기 위한 방법을 정의해야 한다는 사실을 알 수 있습니다.
+CodeBuild가 정의된 아래 코드를 활용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
+&lt;noscript&gt;
+  &lt;pre&gt;resource &amp;quot;aws_codebuild_project&amp;quot; &amp;quot;codebuild&amp;quot; {
+  name         = &amp;quot;codebuild-${var.source_repo_name}-${var.source_repo_branch}&amp;quot;
+  service_role = aws_iam_role.codebuild_role.arn
+
+  artifacts {
+    type = &amp;quot;CODEPIPELINE&amp;quot;
+  }
+  
+  environment {
+    compute_type                = &amp;quot;BUILD_GENERAL1_MEDIUM&amp;quot;
+    image                       = &amp;quot;aws/codebuild/standard:3.0&amp;quot;
+    type                        = &amp;quot;LINUX_CONTAINER&amp;quot;
+    privileged_mode             = true
+    image_pull_credentials_type = &amp;quot;CODEBUILD&amp;quot;
+    environment_variable {
+      name  = &amp;quot;REPOSITORY_URI&amp;quot;
+      value = aws_ecr_repository.image_repo.repository_url
+    }
+    environment_variable {
+      name  = &amp;quot;AWS_DEFAULT_REGION&amp;quot;
+      value = var.aws_region
+    }
+    environment_variable {
+      name  = &amp;quot;CONTAINER_NAME&amp;quot;
+      value = var.container_name
+    }
+  }
+  source {
+    type      = &amp;quot;CODEPIPELINE&amp;quot;
+    buildspec = &amp;lt;&amp;lt;BUILDSPEC
+${file(&amp;quot;buildspec.yml&amp;quot;)}
+BUILDSPEC
+  }
+}&lt;/pre&gt;
+&lt;/noscript&gt;
+&lt;script src=&quot;https://gist.github.com/heuristicwave/2ebf79ce3cbdf4a87657b272f9e1d994.js&quot;&gt; &lt;/script&gt;
+
+&lt;p&gt;31라인이 참조하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yml&lt;/code&gt;을 pre_build, build, post_build에 맞춰 작성합니다.&lt;/p&gt;
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;cat &amp;lt;&amp;lt;EOF &amp;gt; buildspec.yml&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.2&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;phases&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;install&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;runtime-versions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;docker&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;18&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;pre_build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Logging in to Amazon ECR...&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IMAGE_TAG=${COMMIT_HASH:=latest}&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Build started on `date`&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Building the Docker image...&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker build -t $REPOSITORY_URI:latest .&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;post_build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Build completed on `date`&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Pushing the Docker image...&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:latest&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:$IMAGE_TAG&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Writing image definitions file...&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;printf '[{&quot;name&quot;:&quot;%s&quot;,&quot;imageUri&quot;:&quot;%s&quot;}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &amp;gt; imagedefinitions.json&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;artifacts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;imagedefinitions.json&lt;/span&gt;
+&lt;span class=&quot;s&quot;&gt;EOF&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
+aws_codebuild_project.codebuild
+aws_codecommit_repository.test
+aws_ecr_repository.image_repo
+aws_iam_policy.codebuild_policy
+aws_iam_role.codebuild_role
+aws_iam_role_policy_attachment.codebuild-attach
+aws_s3_bucket.artifact_bucket
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우, 👉 Click&lt;/summary&gt;
+
+  &lt;p&gt;실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.&lt;/p&gt;
+  &lt;ol&gt;
+    &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-target&lt;/code&gt; 옵션과 함께 resource 명으로 명령어를 작성합니다. &lt;br /&gt;
+&lt;em&gt;예시) terraform destory -target aws_vpc.main&lt;/em&gt;&lt;/li&gt;
+    &lt;li&gt;잘못 작성한 코드를 수정 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하여 최신 상태의 인프라를 반영합니다.&lt;/li&gt;
+  &lt;/ol&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="devops" />
+      
+        <category term="terraform" />
+      
+
+      
+        <summary type="html">Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">ECR CodePipeline with Terraform Ⅰ</title>
+      <link href="https://heuristicwave.github.io/CodeCommit" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅰ" />
+      <published>2021-04-07T18:00:00+00:00</published>
+      <updated>2021-04-07T18:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/CodeCommit</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/CodeCommit">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)&lt;/p&gt;
+
+&lt;h1 id=&quot;overview&quot;&gt;Overview&lt;/h1&gt;
+
+&lt;p&gt;이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다.
+AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다.
+&lt;img src=&quot;../../assets/built/images/post/CodePipeline.png&quot; alt=&quot;CodePipeline&quot; /&gt;
+1편에서는 &lt;strong&gt;CodeCommit&lt;/strong&gt; 구축과 &lt;strong&gt;terraform의 Output, Variables, tfvars&lt;/strong&gt; 등을 배워 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;준비-작업&quot;&gt;준비 작업&lt;/h2&gt;
+&lt;p&gt;이번 포스팅의 작업공간(~/terraform)을 생성하고 해당 위치에서 아래 코드 블럭을 터미널에 복사합니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; provider.tf
+provider &quot;aws&quot; {
+  region  = var.aws_region
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform init&lt;/code&gt; 명령어를 실행시켜주세요.&lt;/p&gt;
+
+&lt;h2 id=&quot;codecommit&quot;&gt;CodeCommit&lt;/h2&gt;
+&lt;p&gt;CodeCommit을 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
+링크의 Example Usage를 활용해 코드를 작성할 수도 있지만, 이번 포스팅에서는 제 방식대로아래 코드를 활용해 작성해보겠습니다.
+링크에서 소개하는 코드와 다른 부분은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variable&lt;/code&gt;의 사용 여부입니다.&lt;/p&gt;
+
+&lt;p&gt;✅ 아래 코드와 도큐먼트의 코드가 어떻게 다른지 꼭 확인해보세요!&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codecommit.tf
+resource &quot;aws_codecommit_repository&quot; &quot;test&quot; {
+  repository_name = var.source_repo_name
+  description     = &quot;This is the Sample App Repository&quot;
+}
+
+output &quot;source_repo_clone_url_http&quot; {
+  value = aws_codecommit_repository.test.clone_url_http
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Output&lt;/code&gt;은 향후 clone할 원격 저장소의 위치를 파악하기 위해 넣어줍니다. 또한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용해 보다 유연한 코드를 작성해 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;준비 작업에 정의한 리전과 CodeCommit Repo 이름에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용하겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; variables.tf
+variable &quot;aws_region&quot; {
+  description = &quot;The AWS region&quot;
+  default     = &quot;ap-northeast-2&quot;
+}
+
+variable &quot;source_repo_name&quot; {
+  description = &quot;Source repo name&quot;
+  type        = string
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;위 코드를 복사한 후, terraform plan 명령어로 아래와 같은 화면을 확인 할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/plan.png&quot; alt=&quot;terraform plan&quot; /&gt;
+앞서 작성한 variables.tf의 region은 default 값이 있지만, repository는 variable의 형식만 정의되어 있기 때문에 인프라를 생성할 때 필수적으로 이름을 입력받습니다.&lt;/p&gt;
+
+&lt;p&gt;✅ variable의 input값을 수기로 작성하는 것을 피하고 싶으면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;를 사용합니다. 편의상 이번 프로젝트에서 사용할 값들을 미리 작성하겠습니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; terraform.tfvars
+aws_ecr=&quot;my-image&quot;
+source_repo_name=&quot;my-pipeline&quot;
+source_repo_branch=&quot;master&quot;
+image_repo_name=&quot;my-pipeline&quot;
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;는 위와 같이 변수의 값을 지정하기도 하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.env&lt;/code&gt;처럼 &lt;strong&gt;외부로 노출하면 안되는 값을 넣어두고 git에 ignore시켜 사용&lt;/strong&gt;하기도 합니다.&lt;/p&gt;
+
+&lt;p&gt;위 작업을 진행 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하면 “Apply complete”과 함께 Outputs 값이 나옵니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어 이외에도, &lt;a href=&quot;https://console.aws.amazon.com/codecommit&quot;&gt;콘솔&lt;/a&gt; 로 이동하면 생성된 인프라를 확인 할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;생성된 원격저장소를 사용하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output&lt;/code&gt;을 활용해 &lt;strong&gt;export 환경 변수&lt;/strong&gt;를 지정합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;tf_source_repo_clone_url_http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;terraform output source_repo_clone_url_http&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# 확인&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;git-setting&quot;&gt;Git Setting&lt;/h2&gt;
+
+&lt;p&gt;CodeCommit의 Repo 활용법은 아래 2가지 방법이 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;1-로컬에-위치한-코드를-codecommit에-push하기-원격저장소가-비어있음&quot;&gt;1. 로컬에 위치한 코드를 CodeCommit에 push하기 (원격저장소가 비어있음)&lt;/h3&gt;
+
+&lt;p&gt;로컬의 빈공간에서 CodeCommit Repo 사용을 위한 git remote 지정&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git init
+git remote add origin &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
+git remote &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# 원격 저장소 확인&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;코드를 작성하고 CodeCommit에 Push하기&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;First commit&quot;&lt;/span&gt;
+git status
+git push origin &lt;span class=&quot;c&quot;&gt;# master branch로 push&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;자격 증명 문제가 있다면 아래 명령어로 해결합니다. &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html&quot;&gt;자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결&lt;/a&gt;&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.helper &lt;span class=&quot;s1&quot;&gt;'!aws codecommit credential-helper $@'&lt;/span&gt;
+git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.UseHttpPath &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2-로컬에-원격저장소의-코드를-clone하기-원격저장소가-비어있지-않음&quot;&gt;2. 로컬에 원격저장소의 코드를 clone하기 (원격저장소가 비어있지 않음)&lt;/h3&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;지금까지 도큐먼트를 활용해 코드를 작성하고, variable, output, tfvars의 활용법을 배워보았습니다.&lt;/p&gt;
+
+&lt;p&gt;앞서 작성된 작업들이 정상적으로 커밋과 clone이 가능하면, 다음 단계로 🚀&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="devops" />
+      
+        <category term="terraform" />
+      
+
+      
+        <summary type="html">Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">3-Tier VPC Architecture with Terraform</title>
+      <link href="https://heuristicwave.github.io/3Tier" rel="alternate" type="text/html" title="3-Tier VPC Architecture with Terraform" />
+      <published>2021-01-27T18:00:00+00:00</published>
+      <updated>2021-01-27T18:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/3Tier</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/3Tier">&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;Multi-Tier VPC 란?&lt;/summary&gt;
+  &lt;p&gt;&lt;br /&gt;
+VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로
+다중 계층 VPC 아키텍처를 만들어 방어 계층을 이룰 수 있습니다.&lt;/p&gt;
+
+  &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/Multi-tier VPC.png&quot; alt=&quot;multiTier&quot; /&gt;&lt;/p&gt;
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;디자인-패턴--3-tier-vpc-architecture&quot;&gt;디자인 패턴 : 3 Tier VPC Architecture&lt;/h1&gt;
+
+&lt;p&gt;&lt;em&gt;테라폼 코드는 모듈로 관리하는 것을 권장하지만, 이번 포스팅에서는 3-tier 아키텍처 중 네트워크와 관련된 부분만을 다뤄 하나의 파일에서 코드를 관리합니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;Step 0 (테라폼을 활용하실 줄 안다면 넘어가세요)&lt;/summary&gt;
+
+  &lt;h2 id=&quot;step-0&quot;&gt;Step 0&lt;/h2&gt;
+
+  &lt;p&gt;아키텍처를 구성할 폴더를 만들고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;를 주입합니다.&lt;/p&gt;
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;architecture
+&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;architecture
+terraform init
+&lt;span class=&quot;nb&quot;&gt;touch &lt;/span&gt;threeTierVPC.tf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;threeTierVPC.tf&lt;/code&gt;에 벤더 정보를 작성합니다.&lt;/p&gt;
+  &lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ap-northeast-2&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+  &lt;p&gt;명령어&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 🚀
+&lt;br /&gt;&lt;/p&gt;
+  &lt;blockquote&gt;
+    &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;로 인프라를 반영 할때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-auto-approve&lt;/code&gt;옵션을 주면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;입력 없이 진행 할 수 있습니다. 그러나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;를 입력하기 전, 한번 더 검토할 수 있는 기회가 있으므로 권장하지 않습니다.&lt;/p&gt;
+  &lt;/blockquote&gt;
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;💡각 소제목 링크에 첨부된 코드를 활용해 Step 0 에서 만든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;threeTierVPC.tf&lt;/code&gt;에 이어서 작성하거나, 따로 새로운 파일을 만들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt; 명령어를 차례로 작성하며 계층을 쌓아 올립니다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-1&quot;&gt;Step 1&lt;/h2&gt;
+&lt;h3 id=&quot;layer-1️⃣--public-subnet&quot;&gt;Layer 1️⃣ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step1.tf&quot;&gt;Public subnet&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;하나의 VPC에 2개의 AZ를 만들고 각각의 Public 서브넷을 위치시킵니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step1.png&quot; alt=&quot;step1&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;퍼블릭 서브넷은 프라이빗 서브넷 보다 적은 수의 IP 예약하는 것이 좋습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Step 1 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
+data.aws_availability_zones.available
+aws_internet_gateway.igw
+aws_subnet.pub_sub_1
+aws_subnet.pub_sub_2
+aws_vpc.main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우&lt;/summary&gt;
+
+  &lt;p&gt;실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.&lt;/p&gt;
+  &lt;ol&gt;
+    &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-target&lt;/code&gt; 옵션과 함께 resource 명으로 명령어를 작성합니다. &lt;br /&gt;
+&lt;em&gt;예시) terraform destory -target aws_vpc.main&lt;/em&gt;&lt;/li&gt;
+    &lt;li&gt;잘못 작성한 코드를 수정 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하여 최신 상태의 인프라를 반영합니다.&lt;/li&gt;
+  &lt;/ol&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-2&quot;&gt;Step 2&lt;/h2&gt;
+&lt;h3 id=&quot;layer-1️⃣--internet-access-resources&quot;&gt;Layer 1️⃣ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step2.tf&quot;&gt;Internet access resources&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;외부 인터넷과의 노출을 제한하고 나가는 트래픽을 위해 NAT Gateway를 활용합니다. 또한 들어오는 트래픽을 위해 ALB를 위치시켰습니다.
+로드밸런서와 NAT Gateway는 가용성이 높은 관리형 서비스로 병목 현상에 대해 걱정할 필요가 없습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;💡Nat Gateway 알아보기&lt;/summary&gt;
+  &lt;p&gt;&lt;br /&gt;
+NAT(네트워크 주소 변환) 게이트웨이를 사용하면 프라이빗 서브넷의 인스턴스를 인터넷 또는 기타 AWS 서비스에 연결하는 한편, 인터넷에서 해당 인스턴스와의 연결을 시작하지 못하게 할 수 있습니다.
+NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서브넷을 지정해야 하기 때문에 Step2에서 우선적으로 생성합니다.&lt;/p&gt;
+
+  &lt;p&gt;&lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-nat-gateway.html&quot;&gt;도큐먼트로 더 알아보기&lt;/a&gt;&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step2.png&quot; alt=&quot;step2&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;그림에서는 보이지 않지만, VPC에는 암시적 라우터가 있으며 라우팅 테이블을 사용하여 네트워크 트래픽이 전달되는 위치를 제어합니다.
+VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Step 2 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
+data.aws_availability_zones.available
+aws_eip.nat_1
+aws_eip.nat_2
+aws_internet_gateway.igw
+aws_nat_gateway.nat_gateway_1
+aws_nat_gateway.nat_gateway_2
+aws_route_table.route_table_pub
+aws_route_table_association.route_table_association_1
+aws_route_table_association.route_table_association_2
+aws_subnet.pub_sub_1
+aws_subnet.pub_sub_2
+aws_vpc.main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;em&gt;이번 포스팅에서 ALB와 인스턴스는 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-3&quot;&gt;Step 3&lt;/h2&gt;
+&lt;h3 id=&quot;layer-2️⃣️--apps-in-a-private-subnet&quot;&gt;Layer 2️⃣️ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step3.tf&quot;&gt;Apps in a private subnet&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;2개의 프라이빗 서브넷에 각각의 인스턴스를 놓습니다. 이후, 두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;❗️예제 그림에서는 Private subnet의 cidr block을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.2.0/22&lt;/code&gt;로 가이드 하지만, 이는 앞서 만든 서브넷과 범위가 겹치므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.4.0/22&lt;/code&gt;로 바꿔 진행합니다.&lt;/strong&gt;
+&lt;a href=&quot;https://www.ipaddressguide.com/cidr&quot;&gt;CIDR 계산기&lt;/a&gt; 에서 정확하게 확인해 볼 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step3.png&quot; alt=&quot;step3&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Step3에서도 Step2와 같이 그림에서는 보이지 않는 라우트 테이블을 만들고 NAT 게이트웨이와 프라이빗 서브넷을 연결해 줍니다.
+프라이빗 서브넷의 요청이 외부로 나갈때는 NAT 게이트웨이의 고정 IP를 사용합니다.
+(프라이빗 서브넷의 라우트 테이블은 퍼블릭과 달리 2개를 만들어 각각 연결해 주었습니다.)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Step 3 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
+data.aws_availability_zones.available
+aws_eip.nat_1
+aws_eip.nat_2
+aws_internet_gateway.igw
+aws_nat_gateway.nat_gateway_1
+aws_nat_gateway.nat_gateway_2
+aws_route.private_nat_1
+aws_route.private_nat_2
+aws_route_table.route_table_pri_1
+aws_route_table.route_table_pri_2
+aws_route_table.route_table_pub
+aws_route_table_association.route_table_association_1
+aws_route_table_association.route_table_association_2
+aws_route_table_association.route_table_pri_association_1
+aws_route_table_association.route_table_pri_association_2
+aws_subnet.pri_sub_1
+aws_subnet.pri_sub_2
+aws_subnet.pub_sub_1
+aws_subnet.pub_sub_2
+aws_vpc.main
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;em&gt;이번 포스팅에서 DB와 인스턴스 연결은 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-4&quot;&gt;Step 4&lt;/h2&gt;
+&lt;h3 id=&quot;layer-3️⃣--data-in-a-second-private-subnet&quot;&gt;Layer 3️⃣ : Data in a second private subnet&lt;/h3&gt;
+
+&lt;p&gt;첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다. (코드 생략) &lt;br /&gt;
+장애가 발생할 경우를 대비해 read-replica 혹은 standby 구성으로 배치합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;strong&gt;❗Step4의 서브넷 작성법은 Step3의 방법과 동일합니다. 아래 사진은 CIDR의 범위가 겹치므로, Private subnet의 cidr block을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.8.0/23&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.12.0/23&lt;/code&gt;로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.10.0/23&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.14.0/23&lt;/code&gt;으로 바꿔 진행하세요.&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step4.png&quot; alt=&quot;step4&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;데이터 리소스(/23)보다를 앱 리소스(/22)를 확장할 가능성이 커, 더 큰 서브넷 마스크를 할당합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;step-5&quot;&gt;Step 5&lt;/h2&gt;
+&lt;h3 id=&quot;leave-extra-ips-available&quot;&gt;Leave extra IPs available&lt;/h3&gt;
+
+&lt;p&gt;배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다. (코드 생략)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step5.png&quot; alt=&quot;step5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;위와 같은 단계들을 통해 &lt;strong&gt;3 Tier VPC Architecture&lt;/strong&gt;를 학습해보았습니다.
+Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destory&lt;/code&gt;명령어를 통해 학습을 시작하기 전 상태로 되돌리세요.
+다음 포스팅에서는 이번 포스팅에서 생략했던 인스턴스, DB, LB 등을 모듈로 관리하며 다뤄 보겠습니다.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="aws" />
+      
+        <category term="terraform" />
+      
+
+      
+        <summary type="html">본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.</summary>
       
 
       

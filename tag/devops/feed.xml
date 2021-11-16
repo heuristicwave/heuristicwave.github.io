@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2021-11-16T09:45:03+00:00</updated>
+  <updated>2021-11-16T09:51:20+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -38,8 +38,6 @@
       <updated>2021-11-15T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips1</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips1">&lt;p&gt;Terraform Module과 친해지기 1 - Output&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;서문&quot;&gt;서문&lt;/h2&gt;
 
@@ -122,7 +120,7 @@ security group 모듈을 활용하려면 다음과 같이 &lt;code class=&quot;l
 &lt;h2 id=&quot;글을-마치며&quot;&gt;글을 마치며&lt;/h2&gt;
 
 &lt;p&gt;이렇게 Module의 Output 값을 활용하는 방법을 알게 되니, 테라폼 모듈 조립에 대한 자신감이 생겼습니다. 
-앞으로도 Module을 활용해 다양한 인프라를 구축하고 오픈소스 툴들을 연계하는 방법들을 시리즈로 연재할 계획인데, 언제 연재가 끝날지 모르겠습니다.&lt;/p&gt;
+앞으로도 Module을 활용해 다양한 인프라를 구축하고 오픈소스 툴들을 연계하는 방법을 시리즈로 연재할 계획인데, 언제 끝날지 모르겠습니다. 😑&lt;/p&gt;
 
 &lt;p&gt;지금까지 테라폼 모듈과 친해지기 Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
@@ -1140,6 +1138,8 @@ resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-at
       
         <category term="devops" />
       
+        <category term="terraform" />
+      
 
       
         <summary type="html">Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)</summary>
@@ -1417,6 +1417,8 @@ aws_s3_bucket.artifact_bucket
       
         <category term="devops" />
       
+        <category term="terraform" />
+      
 
       
         <summary type="html">Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</summary>
@@ -1576,6 +1578,8 @@ git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.Use
         <category term="aws" />
       
         <category term="devops" />
+      
+        <category term="terraform" />
       
 
       
@@ -1824,6 +1828,8 @@ Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext h
         <category term="devops" />
       
         <category term="aws" />
+      
+        <category term="terraform" />
       
 
       
