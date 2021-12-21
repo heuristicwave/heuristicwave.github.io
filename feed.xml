@@ -5,9 +5,158 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 16 Nov 2021 09:51:20 +0000</pubDate>
-        <lastBuildDate>Tue, 16 Nov 2021 09:51:20 +0000</lastBuildDate>
+        <pubDate>Tue, 21 Dec 2021 01:44:45 +0000</pubDate>
+        <lastBuildDate>Tue, 21 Dec 2021 01:44:45 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
+        
+            <item>
+                <title>My first impression of AWS Karpenter</title>
+                <description>&lt;p&gt;본 글은 지난 11월 29일에 GA된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Karpenter&lt;/code&gt;를 가볍게 사용해 보며 느낀 첫인상에 대한 글입니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;EKS 환경에서 더 빠르고 효율적인 Kubernetes Cluster Autoscaler &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Karpenter&lt;/code&gt;가 GA 되었습니다.
+오픈소스인 Karpenter는 모든 클라우드 벤더와의 통합도 목표하지만, 아직 타 클라우드와의 통합은 진행 중이라 v0.5으로 공개되었다고 합니다.
+즉 GA 된 v0.5만큼은 AWS 리소스와 완벽하게 통합되었기에 이번 업데이트에 공개되었다고 할 수 있습니다.
+사실 기존 EKS 환경에서도 EC2의 Autoscaling을 활용한 CA를 지원하였는데, Karpenter 출시가 어떤 영향을 미치게 될 것인지 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;kubernetes-autoscaling&quot;&gt;Kubernetes Autoscaling&lt;/h2&gt;
+
+&lt;p&gt;쿠버네티스에서는 다음과 같은 3가지 Autoscaling 방법이 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;HPA(Horizontal Pod Autoscaler)&lt;/li&gt;
+  &lt;li&gt;VPA(Vertical Pod Autoscaler)&lt;/li&gt;
+  &lt;li&gt;CA(Cluster Autoscaler)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Pod Scaling의 경우 CPU 사용량, 메트릭 등을 관찰하여 스케일링하지만, EKS 클러스터 자체의 자원이 모자라는 경우 CA를 고려해야 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-cluster-autoscaler-with-ec2-auto-scaling&quot;&gt;⚙️ Cluster Autoscaler with EC2 Auto Scaling&lt;/h2&gt;
+
+&lt;p&gt;기존 EKS는 다음과 같이 EC2의 Autoscaler 기능을 활용해 탄력적인 환경을 구성했습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/ec2_asg.png&quot; alt=&quot;Red Hat Reference Guide&quot; /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hpa&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpa&lt;/code&gt;가 eks에서 내에서 scaling을 진행하는 것과는 달리,
+worker node를 확보하기 위해 EC2의 Auto Scaling Group을 사용하며 &lt;strong&gt;k8s와 ec2 별도의 Layer를 관리&lt;/strong&gt;해야 하는 운영 복잡도가 발생하게 되었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-cluster-autoscaler-with-karpenter&quot;&gt;🪓 Cluster Autoscaler with Karpenter&lt;/h2&gt;
+
+&lt;p&gt;반면 Karpenter의 경우 k8s의 native method를 확장한 개념이기 때문에, 기존의 CA 방법과는 달리 효율적인 환경을 제공할 수 있습니다.
+&lt;em&gt;(실제로 카펜터를 운영해 보면 기존의 Auto Scaling Group을 사용하지 않는 것은 아니지만,
+사용자 입장에서는 고려하지 않아도 되니 k8s layer에서만 관리된다고 해도 틀린 말은 아닌 것 같습니다.)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://karpenter.sh/&quot;&gt;karpenter.sh&lt;/a&gt; 의 홈 화면을 보면 간단한 동작 원리를 설명하는 그림이 있습니다.
+karpenter가 unscheduled pods를 관찰하고 있다가 즉시(just-in-time) 최적화된 capacity에 pods를 배포합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/karpenter/karpenter.png&quot; alt=&quot;karpenter works&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;overprovisioning&quot;&gt;Overprovisioning&lt;/h3&gt;
+
+&lt;p&gt;과거 EC2의 스케일링을 사용하는 CA에 대한 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/cluster-autoscaler.html&quot;&gt;공식 문서&lt;/a&gt;에서, 다음과 같은 고려 사항을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;노드를 확장하기 전에 노드가 확장될 때까지 기다려야 하므로 배포 대기 시간에 큰 영향을 미칩니다.
+노드를 사용할 수 있게 되려면 몇 분 정도 걸릴 수 있으며, 이로 인해 포드 예약 지연 시간이 크게 늘어날 수 있습니다.
+예약 대기 시간이 늘어나는 것을 감수하고 &lt;strong&gt;오버프로비저닝&lt;/strong&gt;을 사용하여 이를 완화할 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;그러나 이제 karpenter를 도입한다면 &lt;strong&gt;1분 이내 최적화된 인스턴스를 바로 프로비저닝&lt;/strong&gt; 할 수 있으므로,
+더 이상 미리 프로비저닝을 할 필요도 없고 워커 노드의 크기 조정도 고려하지 않아도 됩니다.&lt;/p&gt;
+
+&lt;p&gt;어떻게 오버프로비저닝을 방지하고 컨테이너와 클라우드 환경의 이점을 더 누릴 수 있게 해주는지 제가 진행해본 테스트와 함께 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-lab&quot;&gt;👀 Lab&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;TMI : 이 글을 보는 시점에는 수정되어 있을 수도 있겠습니다만,
+공식 문서에 기재된 Default Region과 Module의 azs Config 값이 통일되지 않았습니다. 수행 시, 참고하시기 바랍니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;공식 문서 &lt;a href=&quot;https://karpenter.sh/docs/getting-started-with-terraform/&quot;&gt;Terraform으로 시작하기&lt;/a&gt; 의 가이드대로
+Terraform 코드를 실행시키면 EKS 내에 다음과 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;karpenter-controller&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;karpenter-webhook&lt;/code&gt; 포드가 올라온 것을 확인할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/initial_pods.png&quot; alt=&quot;initial_pods&quot; /&gt;
+우선, Karpenter가 정말 최적화된 capacity를 제공하는지 확인하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a&lt;/code&gt; 시리즈의 스펙을 첨부합니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/t3a.png&quot; alt=&quot;t3a_spec&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;test-1--t3amedium-인스턴스에-1cpu를-요구하는-5개의-pod-배포&quot;&gt;Test 1 : t3a.medium 인스턴스에 1cpu를 요구하는 5개의 pod 배포&lt;/h3&gt;
+
+&lt;p&gt;문서에서 제공하는 inflate manifest를 활용해 t3a.medium 인스턴스에 1cpu를 요구하는 5개의 pod를 배포하면,
+다음과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a.2xlarge&lt;/code&gt; 인스턴스가 즉시 프로비저닝 됩니다.
+(1분 이내라고 소개되지만, 체감상 1분 보다 더 빠른 시간 안에 프로비저닝 되는 것 같습니다.)
+&lt;img src=&quot;../../assets/built/images/post/karpenter/eks1.png&quot; alt=&quot;eks_dashboard&quot; /&gt;
+새롭게 생성된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a.2xlarge&lt;/code&gt; 노드를 확인하면 다음과 같이 5개의 pod가 배치된 것을 볼 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/eks2.png&quot; alt=&quot;eks2_dashboard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;아키텍처로 보면 다음과 같습니다. 기존 t3a.medium에는 기본으로 있는 pod들 때문에 1cpu 조차 할당할 수 없습니다.
+inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인스턴스를 프로비저닝하고 pod들을 배치시켰습니다.
+요청 리소스를 기반으로 최적의 인스턴스를 할당한 것을 확인할 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/karpenter/archi1.png&quot; alt=&quot;architecture1&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;test-2--test1환경에서-05cpu를-요구하는-5개의-pod-배포&quot;&gt;Test 2 : Test1환경에서 0.5cpu를 요구하는 5개의 pod 배포&lt;/h3&gt;
+&lt;p&gt;Test 1에서 &lt;strong&gt;Scalue out&lt;/strong&gt;(worker node 1대 =&amp;gt; 2대) &amp;amp; &lt;strong&gt;Scale up&lt;/strong&gt;(t3a.medium =&amp;gt; t3a.2xlarge)
+를 동시에 경험해 봤다면, 이번에는 다음과 같이 필요한 리소스만 0.5 cpu로 줄여보겠습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/vscode.png&quot; alt=&quot;vscode&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;기존 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a.2xlarge&lt;/code&gt; 인스턴스가 사라지고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a.xlarge&lt;/code&gt; 인스턴스가 즉시 프로비저닝 되었습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/eks3.png&quot; alt=&quot;eks_dashboard3&quot; /&gt;
+⬆️ a minute ago에서 ⬇️ 2minutes ago로 변하는 것을 보니 정말 1분 이내로 동작하는 것 같습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/eks4.png&quot; alt=&quot;eks_dashboard4&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;아키텍처로 보면 다음과 같습니다.
+이번에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a.medium&lt;/code&gt;에 0.5 cpu만큼의 capacity가 남아있으므로 1개의 inflate pod가 배포되었고,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3x.xlarge&lt;/code&gt; 나머지 4개의 inflate pod가 배포되었습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/archi2.png&quot; alt=&quot;architecture2&quot; /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a.large&lt;/code&gt;(2cpu) &amp;lt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;inflate&lt;/code&gt;(0.5cpu * 4) + &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kube-proxy&lt;/code&gt; + &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws-node&lt;/code&gt; &amp;lt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t3a.xlarge&lt;/code&gt;(4cpu)&lt;/p&gt;
+
+&lt;p&gt;정말 빠른 시간 내에 최적의 capacity를 할당하는 모습을 보니 유연하고 높은 성능을 제공한다는 소개가 맞는 것 같습니다.&lt;/p&gt;
+
+&lt;p&gt;저는 위 실험에서 인스턴스에 관한 별도의 CRD 값들을 지정하지 않아 karpenter가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;t&lt;/code&gt;시리즈 인스턴스들을 프로비저닝 하였지만,
+운영에서 Karpenter를 사용하기 위해서는 &lt;a href=&quot;https://karpenter.sh/docs/provisioner/&quot;&gt;Provisioner API&lt;/a&gt;를 읽고 세밀한 manifest 값들을 조정해 주어야 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+&lt;p&gt;과거 AWS의 CA는 스케일링에 걸리는 시간도 상당할뿐더러,
+제한적인 스케일링으로 인해 리소스가 낭비되거나 운영환경에서 다운타임을 최소화하기 위해 오버프로비저닝 되는 경우도 많았습니다.
+기존의 방법보다 더 Kubernetes native 한 karpenter를 도입한다면, 아래 그림과 같은 효과를 기대할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/archi3.png&quot; alt=&quot;architecture3&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Karpenter의 빠른 프로비저닝과 유연한 스케일링 덕분에 클라우드를 더 클라우드답게 사용할 수 있게 된 만큼
+가까운 미래에 Karpenter가 기존의 CA를 대체할 것으로 예상됩니다.
+지금까지 아주 간단하게 Karpenter를 사용해 본 후기를 작성해 보았습니다.
+추후, Karpenter의 자세한 동작 원리와 제약 사항 혹은 더 많은 기능들에 대하여 다뤄보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;-references&quot;&gt;📚 References&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2021/11/aws-karpenter-v0-5/&quot;&gt;AWS Whats new, aws karpenter&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/introducing-karpenter-an-open-source-high-performance-kubernetes-cluster-autoscaler/&quot;&gt;Introducing Karpenter&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://karpenter.sh/&quot;&gt;Karpenter Document&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+</description>
+                <pubDate>Mon, 20 Dec 2021 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//Karpenter</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//Karpenter</guid>
+                
+                <category>aws</category>
+                
+                
+            </item>
         
             <item>
                 <title>Terraform Module Tips 1 - Output</title>
@@ -1751,172 +1900,6 @@ Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext h
                 <category>aws</category>
                 
                 <category>terraform</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>Pipenv, Nginx, Gunicorn 서버 운영하기</title>
-                <description>&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;사전-작업&quot;&gt;사전 작업&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;자세한 방법은 하단 참고자료를 통해 확인 할 수 있다&lt;/em&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;gunicorn, nginx 설치&lt;/p&gt;
-
-    &lt;blockquote&gt;
-      &lt;p&gt;ec2에서 nginx 설치하기 : &lt;a href=&quot;https://holjjack.tistory.com/114&quot;&gt;CentOS 7 Nginx 설치 방법&lt;/a&gt;&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;gunicorn 작동확인&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;gunicorn-&quot;&gt;Gunicorn 🦄&lt;/h2&gt;
-
-&lt;h3 id=&quot;서비스-등록-스크립트-생성&quot;&gt;서비스 등록 스크립트 생성&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/systemd/system/gunicorn.service&lt;/code&gt; 파일을 아래와 같은 내용으로 생성.
-pipenv는 venv와 &lt;strong&gt;ExecStart&lt;/strong&gt; 경로가 다르다는 점을 유념해 작성하자&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;[Unit]
-Description=gunicorn daemon
-After=network.target
-
-[Service]
-User=ec2-user
-Group=ec2-user
-WorkingDirectory=/home/ec2-user/django/repo
-ExecStart=/usr/local/bin/pipenv run gunicorn --workers 3 \
-        &amp;lt;wsgi가 위치한 폴더&amp;gt;.wsgi:application --bind 0.0.0.0:8000
-
-[Install]
-WantedBy=multi-user.target
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;본래 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--bind&lt;/code&gt;부분에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unix:/home/ec2-user/django/gunicorn.sock&lt;/code&gt; 를 넣어 구동하면 repo의 상위 폴더에  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gunicorn.sock&lt;/code&gt;가 생긴다.
-&lt;br /&gt;
-nginx의 proxy_pass 부분도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://unix:/{$PATH}/gunicorn.sock&lt;/code&gt;을 기재해 sock로 구성하는 것이 맞는 방법 같은데… 이 부분에 대해서는 학습이 필요하다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;서비스-등록&quot;&gt;서비스 등록&lt;/h3&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start gunicorn
-&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl &lt;span class=&quot;nb&quot;&gt;enable &lt;/span&gt;gunicorn
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;서비스-구동-확인&quot;&gt;서비스 구동 확인&lt;/h3&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl status gunicorn
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;nginx&quot;&gt;Nginx&lt;/h2&gt;
-
-&lt;h3 id=&quot;사이트-설정-추가&quot;&gt;사이트 설정 추가&lt;/h3&gt;
-
-&lt;p&gt;ec2에 nginx를 받았을 때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;etc/nginx/sites-enabled&lt;/code&gt; 와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;etc/nginx/sites-availabe&lt;/code&gt; 이 존재하지 않는다. 해당 경로에 없다면 만들어주고 있으면 default 파일을 삭제하자.&lt;/p&gt;
-
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;server {
-        listen 80;
-        server_name &amp;lt;IP or 도메인&amp;gt;;
-        charset utf-8;
-
-        location / {
-                include proxy_params;
-                proxy_pass http://0.0.0.0:8000
-        }
-
-        location /static/ {
-                root /home/ec2-user/django/repo;
-        }
-        
-        location /media/ {
-                root /home/ec2-user/django/repo;
-        }
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;a href=&quot;https://velog.io/@yvvyoon/flask-nginx-gunicorn-1&quot;&gt;nginx 주요 개념&lt;/a&gt;, nginx : &lt;a href=&quot;https://ohgyun.com/556&quot;&gt;root vs alias&lt;/a&gt;
-&lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;include proxy_params&lt;/code&gt;의 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/nginx/proxy_params&lt;/code&gt; 에 프록시 헤더를 기재 해야 한다. (다음 링크 참고) 
-&lt;a href=&quot;https://m.blog.naver.com/PostView.nhn?blogId=93immm&amp;amp;logNo=221304593384&amp;amp;proxyReferer=https:%2F%2Fwww.google.com%2F&quot;&gt;nginx &amp;amp; aws&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;사이트-추가&quot;&gt;사이트 추가&lt;/h3&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo ln&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; /etc/nginx/sites-available/django_test /etc/nginx/sites-enabled
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;기동&quot;&gt;기동&lt;/h3&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl start nginx
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;기타-도움이-되는-명령어&quot;&gt;기타 도움이 되는 명령어&lt;/h4&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl daemon-reload
-&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;systemctl stop, restart nginx
-ps &lt;span class=&quot;nt&quot;&gt;-ef&lt;/span&gt;
-ps
-pkill gunicorn
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;dotenv 관련 에러 해결하기&lt;/summary&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;
-      &lt;p&gt;gunicorn 을 활용해 연결 할 경우&lt;/p&gt;
-
-      &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip uninstall dotenv
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;python-dotenv 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;docker + nginx + gunicorn 을 활용할 경우&lt;/p&gt;
-
-      &lt;div class=&quot;language-sh highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip uninstall dotenv
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;pip &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;python-dotenv 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;h4 id=&quot;참고자료&quot;&gt;참고자료&lt;/h4&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;gunicorn &lt;a href=&quot;https://wikidocs.net/6601#_7&quot;&gt;사전작업&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://velog.io/@y1andyu/Nginx-gunicorn-Django-%EB%B0%B0%ED%8F%AC%ED%95%98%EA%B8%B0#3-%EC%8B%9C%EC%9E%91&quot;&gt;Nginx, Gunicorn, Django 연동하기&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Mon, 04 Jan 2021 00:40:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//pipenv01</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//pipenv01</guid>
-                
-                <category>backend</category>
                 
                 
             </item>
