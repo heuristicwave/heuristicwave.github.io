@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 21 Dec 2021 01:44:45 +0000</pubDate>
-        <lastBuildDate>Tue, 21 Dec 2021 01:44:45 +0000</lastBuildDate>
+        <pubDate>Tue, 21 Dec 2021 01:51:32 +0000</pubDate>
+        <lastBuildDate>Tue, 21 Dec 2021 01:51:32 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -95,9 +95,8 @@ Terraform 코드를 실행시키면 EKS 내에 다음과 같은 &lt;code class=&
 
 &lt;p&gt;아키텍처로 보면 다음과 같습니다. 기존 t3a.medium에는 기본으로 있는 pod들 때문에 1cpu 조차 할당할 수 없습니다.
 inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인스턴스를 프로비저닝하고 pod들을 배치시켰습니다.
-요청 리소스를 기반으로 최적의 인스턴스를 할당한 것을 확인할 수 있었습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/karpenter/archi1.png&quot; alt=&quot;architecture1&quot; /&gt;&lt;/p&gt;
+요청 리소스를 기반으로 최적의 인스턴스를 할당한 것을 확인할 수 있었습니다.
+&lt;img src=&quot;../../assets/built/images/post/karpenter/archi1.png&quot; alt=&quot;architecture1&quot; /&gt;&lt;/p&gt;
 
 &lt;h3 id=&quot;test-2--test1환경에서-05cpu를-요구하는-5개의-pod-배포&quot;&gt;Test 2 : Test1환경에서 0.5cpu를 요구하는 5개의 pod 배포&lt;/h3&gt;
 &lt;p&gt;Test 1에서 &lt;strong&gt;Scalue out&lt;/strong&gt;(worker node 1대 =&amp;gt; 2대) &amp;amp; &lt;strong&gt;Scale up&lt;/strong&gt;(t3a.medium =&amp;gt; t3a.2xlarge)
