@@ -11,7 +11,7 @@
 
 
 
-    <title>Terraform Module Tips 1 - Output</title>
+    <title>AWS CDK Library, Construct Hub</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips1" />
+    <link rel="canonical" href="https://heuristicwave.github.io/ConstructHub" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Terraform Module Tips 1 - Output" />
-    <meta property="og:description" content="Terraform Module과 친해지기 1 - Output 서문 Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래" />
-    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips1" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta property="og:title" content="AWS CDK Library, Construct Hub" />
+    <meta property="og:description" content="본 글은 지난 AWS re:Invent 2021에서 발표된 Construct Hub를 둘러보며 느낀 첫인상에 대한 글입니다. Intro AWS re:Invent 2021, 아마존 CTO인 Dr. Werner Vogels 키노트 에서 AWS CDK 라이브러리들을 활용할 수 있는 Construct Hub 가 발표되었습니다. 보통 AWS 리인벤트에서는 AWS 고유의 서비스들이 소개되는데요, 이번에 말씀드릴 Construct Hub는 AWS의 솔루션이 아닌 오픈" />
+    <meta property="og:url" content="https://heuristicwave.github.io/ConstructHub" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/construct/hub1.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-11-15T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-11-15T00:00:00+00:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2021-12-21T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2021-12-21T00:00:00+00:00" />
+    <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Terraform Module Tips 1 - Output" />
-    <meta name="twitter:description" content="Terraform Module과 친해지기 1 - Output 서문 Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래" />
+    <meta name="twitter:title" content="AWS CDK Library, Construct Hub" />
+    <meta name="twitter:description" content="본 글은 지난 AWS re:Invent 2021에서 발표된 Construct Hub를 둘러보며 느낀 첫인상에 대한 글입니다. Intro AWS re:Invent 2021, 아마존 CTO인 Dr. Werner Vogels 키노트 에서 AWS CDK 라이브러리들을 활용할 수 있는 Construct Hub 가 발표되었습니다. 보통 AWS 리인벤트에서는 AWS 고유의 서비스들이 소개되는데요, 이번에 말씀드릴 Construct Hub는 AWS의 솔루션이 아닌 오픈" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/construct/hub1.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Aws" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/TerraformTips1",
+    "url": "https://heuristicwave.github.io/ConstructHub",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/post/construct/hub1.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/TerraformTips1"
+        "@id": "https://heuristicwave.github.io/ConstructHub"
     },
-    "description": "Terraform Module과 친해지기 1 - Output 서문 Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래"
+    "description": "본 글은 지난 AWS re:Invent 2021에서 발표된 Construct Hub를 둘러보며 느낀 첫인상에 대한 글입니다. Intro AWS re:Invent 2021, 아마존 CTO인 Dr. Werner Vogels 키노트 에서 AWS CDK 라이브러리들을 활용할 수 있는 Construct Hub 가 발표되었습니다. 보통 AWS 리인벤트에서는 AWS 고유의 서비스들이 소개되는데요, 이번에 말씀드릴 Construct Hub는 AWS의 솔루션이 아닌 오픈"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Terraform Module Tips 1 - Output" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="AWS CDK Library, Construct Hub" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -171,122 +171,152 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-terraform post tag-devops ">
+        <article class="post-full  tag-aws post tag-aws ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="15 November 2021">15 November 2021</time>
+                    <time class="post-full-meta-date" datetime="21 December 2021">21 December 2021</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
-                            
-                        
-                            
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/aws/'>AWS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Terraform Module Tips 1 - Output</h1>
+                <h1 class="post-full-title">AWS CDK Library, Construct Hub</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/construct/hub1.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform Module과 친해지기 1 - Output</p>
+                    <p>본 글은 지난 AWS re:Invent 2021에서 발표된 <code class="language-plaintext highlighter-rouge">Construct Hub</code>를 둘러보며 느낀 첫인상에 대한 글입니다.</p>
 
-<h2 id="서문">서문</h2>
+<h1 id="intro">Intro</h1>
 
-<p><strong>Terraform Module</strong>을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다.
-레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요,
-이번 포스팅에서는 모듈 내에 작성된 <strong>Output value</strong>들을 활용하는 방법을 알아보겠습니다.</p>
+<p><a href="https://youtu.be/8_Xs8Ik0h1w?t=4666">AWS re:Invent 2021, 아마존 CTO인 Dr. Werner Vogels 키노트</a> 
+에서 AWS CDK 라이브러리들을 활용할 수 있는 <a href="https://constructs.dev/">Construct Hub</a> 가 발표되었습니다.
+보통 AWS 리인벤트에서는 AWS 고유의 서비스들이 소개되는데요,
+이번에 말씀드릴 Construct Hub는 AWS의 솔루션이 아닌 오픈 소스 커뮤니티이자,
+<strong>CDK 라이브러리를 검색하고 공유할 수 있는 장</strong>이라고 할 수 있습니다.
+Construct Hub를 통해 AWS가 그리는 IaC(Infrastructure as Code)의 미래를 함께 만나보겠습니다.</p>
 
-<p>해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래 링크들을 참고해 주세요!</p>
+<p>우선, Construct Hub를 소개하기 앞서 AWS의 IaC 도구들에 대하여 간략하게 알아보겠습니다.</p>
 
-<p>🥲 사실, 아래 문서보다 더 잘 설명할 자신이 없어서… 언제나 가장 좋은 교재는 공식 문서입니다!</p>
+<p><br /></p>
+
+<h2 id="️-aws-cloudformation">️📂 AWS CloudFormation</h2>
+
+<p>2011년 AWS의 리소스를 JSON 또는 YAML 형식으로 인프라를 템플릿화 할 수 있는 CloudFormation을 발표했습니다.</p>
+
+<blockquote>
+  <p>예) AWS S3 버킷 리소스를 제어하는 CloudFormation 코드</p>
+  <pre><code class="language-YAML">Resources:
+  HelloBucket:
+    Type: AWS::S3::Bucket
+    Properties:
+      AccessControl: PublicRead
+      WebsiteConfiguration:
+        IndexDocument: index.html
+        ErrorDocument: error.html
+</code></pre>
+</blockquote>
+
+<p>그러나, 인프라가 복잡해질수록 CloudFormation 코드의 길이도 길어지고 리소스 간의 관계도 파악하기 어려워 관리의 피로도가 증가하게 되었습니다.
+AWS는 이러한 CloudFormation의 약점을 보완하고 개발자들이 YAML 형식으로 인프라를 정의하는 게 아니라,
+<strong>선호하는 프로그래밍 언어로 클라우드 인프라를 정의할 수 있도록 Cloud Development Kit(CDK)</strong> 를 2019년에 정식으로 출시했습니다.</p>
+
+<p><br /></p>
+
+<h2 id="️-aws-cloud-development-kit">⌨️ AWS Cloud Development Kit</h2>
+
+<p>CDK는 익숙한 프로그래밍 언어를 사용해 클라우드 애플리케이션 리소스를 정의할 수 있는 오픈 소스 소프트웨어 개발 프레임워크입니다.
+CDK는 어떤 방식으로, 앞서 언급된 CloudFormation의 약점들을 보완하는지 그림과 함께 알아보겠습니다.</p>
+
+<p><img src="../../assets/built/images/post/construct/cdk.png" alt="cdk" /></p>
+
+<p>CDK는 <strong>Construct</strong>의 집합체라 말할 수 있습니다.
+<strong>Construct</strong>는 클라우드 서비스를 이루는 컴포넌트라 생각하셔도 좋습니다.</p>
+
+<p>CDK 프레임워크를 통해 개발자 혹은 클라우드 운영자는 타입스크립트, 파이썬, 닷넷, 자바 등의 익숙한 프로그래밍 언어 중
+하나를 선택하여, construct 라이브러리를 사용해 프로그래밍 합니다.
+하나의 Stack으로 엮어진 소스코드를 <code class="language-plaintext highlighter-rouge">cdk synth</code> 라는 명령어로 CloudFormation에서 사용되는 템플릿으로 변환하고 <code class="language-plaintext highlighter-rouge">cdk deploy</code> 명령어로 인프라를 배포합니다.</p>
+
+<p>CDK로 작성된 인프라 코드는 프로그래밍 언어의 이점을 그대로 채택하여,
+해당 언어에 익숙한 사람이라면 YAML로 작성된 CloudFormation 보다 인프라의 환경을 파악하기 쉽습니다.
+실제로 올해 키노트에 언급된 <a href="https://youtu.be/8_Xs8Ik0h1w?t=4872">Liberty Mutual INSURANCE사의 CDK 도입 사례</a> 에서
+1500라인의 CloudFormation 코드를 CDK에서 단 14줄로 구현하며 CDK의 뛰어난 가시성을 알렸습니다.</p>
+
+<p><img src="../../assets/built/images/post/construct/cdk2.png" alt="cdk_migration" /></p>
+
+<p><br /></p>
+
+<h2 id="-construct-hub">🗂 Construct Hub</h2>
+
+<p>대망의 Construct Hub를 소개하기 위해 먼 길을 돌아왔습니다.😓
+맨 처음에 Construct Hub를 오픈 소스 커뮤니티이자, CDK 라이브러리를 검색하고 공유할 수 있는 장이라고 소개한 말이 맞는지 그림과 함께 확인해 보겠습니다.</p>
+
+<p><img src="../../assets/built/images/post/construct/hub1.png" alt="construct_hub" /></p>
+
+<p><a href="https://constructs.dev/">Construct Hub</a> 의 메인 홈페이지를 확인해 보면 CDK 라이브러리를 검색할 수 있는
+‘서치 바’와 현재 ‘지원하는 언어’와 ‘서비스 프로바이더’(AWS, Datadog, Mongo DB, Aqua Security 등)가 보입니다.</p>
+
+<p>이 중에서도 화면 왼쪽에 위치한 다양한 CDK들의 종류에 대해 궁금증이 생기실 것 같습니다.</p>
+
+<p>앞서 소개한 AWS CDK는 프로그래밍 언어로 작성한 인프라 코드를 Cloudformation으로 템플릿을 생성했습니다.
+이처럼 CDK가 생성하는 템플릿이 AWS Cloudformation으로 활용 가능하도록 하는 것을 <code class="language-plaintext highlighter-rouge">AWS CDK</code>,
+쿠버네티스로 활용 가능하도록 하는 것을 <code class="language-plaintext highlighter-rouge">CDK8s</code>, 테라폼으로 활용 가능하도록 하는 <code class="language-plaintext highlighter-rouge">CDKtf</code>라고 합니다.</p>
+
+<p><img src="../../assets/built/images/post/construct/cdk3.png" alt="cdk_type" /></p>
+
+<p>위와 같이 현재 3가지 Type을 지원하고 있으며, 향후 다른 도구들도 지원할 가능성이 있다고 합니다.</p>
+
+<p>다음으로는 Construct Hub에 등록된 다양한 Construct 검색 결과입니다. 
+현재는 대부분 Construct는 Hahicorp, Datadog과 같은 클라우드 서비스 Publisher 들이 참여했지만,
+개인도 <a href="https://aws.github.io/jsii/">JSII</a> (CDK가 다중 언어 라이브러리를 제공할 수 있도록 하는 기술)
+기반의 construct를 만들고 aws-cdk, cdk8s, cdktf 등의 키워드와 함께 npm 레지스트리에 공개되어 있다면 약 30분 내에 <code class="language-plaintext highlighter-rouge">Construct Hub</code>에도 개시된다고 합니다.</p>
+
+<p><img src="../../assets/built/images/post/construct/hub2.png" alt="construct_hub2" /></p>
+
+<p>화면에 보이는 특이점으로는 HashiCorp가 제공하는 <code class="language-plaintext highlighter-rouge">CDKtf</code>를 통해,
+다른 클라우드 서비스들과 통합하여 AWS 서비스 만이 아닌 <strong>모든 클라우드를 CDK로 제어 가능</strong>하게 하려는 큰 그림을 그려나가고 있다는 것을 알 수 있습니다.</p>
+
+<p><br /></p>
+
+<h2 id="outro">Outro</h2>
+
+<p>지금까지 Construct Hub를 간단하게 살펴보며, AWS IaC 도구들의 변천사와 AWS가 그리는 IaC의 미래를 엿볼 수 있었습니다.</p>
+
+<p>그중에서도 흥미로웠던 요소들은 다음 2가지로 말씀드릴 수 있습니다.</p>
+
+<ol>
+  <li>IaC를 도입한 조직의 경우, Terraform, Ansible 등 여러 IaC 도구를 각각의 IaC 도구들의 특성에 맞게 복합적으로 운영합니다. CDK가 다방면으로 IaC 도구를 지원(AWS CDK, CDK8s, CDKtf) 하게 만들어 관리 복잡도를 줄이려는 노력이 흥미롭습니다.</li>
+  <li>CDKtf를 통해, 타 클라우드 서비스를 CDK로 제어하게 된다는 점이 흥미롭습니다.</li>
+</ol>
+
+<p>사실 CDK8s, CDKtf 모두 Construct Hub가 나오기 이전부터 존재했지만, Construct Hub에 개시된 문서들을 보니 더 흥미롭게 다가옵니다.</p>
+
+<p>아직 세상에 알려진지 얼마 되지 않은 Construct Hub를 활용하기에는 어려움이 있지만, 누구나 Construct Hub에 기여할 수 있는 오픈소스 생태계를 구축한 만큼 빠른 성장이 기대됩니다. Construct Hub가 기여할 IaC 미래에 긍정적인 기대를 걸어봅니다.</p>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
+
+<p><br /></p>
+
+<h3 id="-references">📚 References</h3>
 
 <ul>
-  <li><a href="https://www.terraform.io/docs/language/values/outputs.html">Terraform Docs</a></li>
-  <li><a href="https://learn.hashicorp.com/tutorials/terraform/outputs">Tutorial : Output Data from Terraform</a></li>
+  <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2021/12/aws-construct-hub-availability/">AWS Construct Hub availability</a></li>
+  <li><a href="https://constructs.dev/">Construct Hub</a></li>
 </ul>
 
-<p><br /></p>
-
-<h2 id="output-command-option">Output Command Option</h2>
-
-<p>Output은 terraform apply 명령어를 수행하고 난 후, 맨 마지막에 Value 들이 렌더링 되어 나옵니다.
-그러나 테라폼 코드를 작성하는 중간중간 인프라의 value 값들이 필요할 때가 있습니다.</p>
-
-<p>그럴 때, output이 정의된 상황에서 <code class="language-plaintext highlighter-rouge">terraform output {label}</code> 명령어로 Ouput 값을 확인합니다.
-<code class="language-plaintext highlighter-rouge">-raw</code> 옵션을 함께 주면 문자열 형태가 아닌 raw한 텍스트 값만을 얻을 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform output <span class="nt">-raw</span> security_group_id
-</code></pre></div></div>
-
-<h2 id="accessing-child-module-outputs">Accessing Child Module Outputs</h2>
-
-<p>하위 모듈의 아웃풋에 접근할 경우도 종종 있는데요, 이때는 <code class="language-plaintext highlighter-rouge">module.&lt;모듈 명&gt;.&lt;Output 명&gt;</code> 이런 형식으로 조회가 가능합니다.
-하위 모듈 출력값에 접근하는 것이, 모듈과 모듈은 연계하는 방법이기에 아래 예시에서 알아보겠습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module <span class="s2">"vpc"</span> <span class="o">{</span>
-  <span class="nb">source</span> <span class="o">=</span> <span class="s2">"terraform-aws-modules/vpc/aws"</span>
-  name   <span class="o">=</span> <span class="s2">"sample_vpc"</span>
-
-  cidr <span class="o">=</span> <span class="s2">"10.10.0.0/16"</span>
-
-  azs            <span class="o">=</span> <span class="o">[</span><span class="s2">"us-west-2a"</span><span class="o">]</span>
-  public_subnets <span class="o">=</span> <span class="o">[</span><span class="s2">"10.10.1.0/24"</span><span class="o">]</span>
-
-  tags <span class="o">=</span> <span class="o">{</span>
-    Owner       <span class="o">=</span> <span class="s2">"me"</span>
-    Environment <span class="o">=</span> <span class="s2">"stage"</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>위와 같은 vpc 모듈은 security group 모듈과 거의 단짝 수준으로 함께 움직이는데요,
-security group 모듈을 활용하려면 다음과 같이 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값이 필요합니다.</p>
-
-<p>이 경우, vpc를 먼저 생성하고 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값을 알아내어 사용할 수 있지만, 다음과 같은 방법으로 모듈을 연계합니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module <span class="s2">"security_group"</span> <span class="o">{</span>
-  <span class="nb">source</span>      <span class="o">=</span> <span class="s2">"terraform-aws-modules/security-group/aws"</span>
-  name        <span class="o">=</span> <span class="s2">"ssh"</span>
-  description <span class="o">=</span> <span class="s2">"ssh from workstation"</span>
-  vpc_id      <span class="o">=</span> module.vpc.vpc_id
-
-  ingress_cidr_blocks <span class="o">=</span> <span class="o">[</span><span class="s2">"0.0.0.0/0"</span><span class="o">]</span>
-  ingress_rules       <span class="o">=</span> <span class="o">[</span><span class="s2">"ssh-tcp"</span><span class="o">]</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<h2 id="find-module-output-label">Find Module Output Label</h2>
-
-<p>방금 전, 모듈을 연계하는 방법을 배워 보았습니다. 그런데, 모듈을 연계하기 위해서는 미리 사전에 작성된 모듈의 Output Label을 알아야 합니다.</p>
-
-<p>우선 에디터의 Explorer 탭에서 <code class="language-plaintext highlighter-rouge">.terraform</code> 폴더를 열어봅시다.</p>
-
-<p><img src="../../assets/built/images/post/module.png" alt="module.png" /></p>
-
-<p>apply를 적용한 <em>security-group, vpc</em> 모듈이 내 로컬 머신에 숨어 있습니다.
-해당 모듈 폴더 안에 들어가면 <code class="language-plaintext highlighter-rouge">outputs.tf</code> 가 정의되어 있으므로 해당 파일을 참고하여 Label 값을 얻어오면 됩니다!</p>
-
-<p><br /></p>
-
-<h2 id="글을-마치며">글을 마치며</h2>
-
-<p>이렇게 Module의 Output 값을 활용하는 방법을 알게 되니, 테라폼 모듈 조립에 대한 자신감이 생겼습니다. 
-앞으로도 Module을 활용해 다양한 인프라를 구축하고 오픈소스 툴들을 연계하는 방법을 시리즈로 연재할 계획인데, 언제 끝날지 모르겠습니다. 😑</p>
-
-<p>지금까지 테라폼 모듈과 친해지기 Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
-
 <hr />
+
+<p><br /></p>
 
                 </div>
             </section>
@@ -329,9 +359,9 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/TerraformTips1';
-                            this.page.identifier = '/TerraformTips1';
-                            this.page.title = 'Terraform Module Tips 1 - Output';
+                            this.page.url = 'https://heuristicwave.github.io/ConstructHub';
+                            this.page.identifier = '/ConstructHub';
+                            this.page.title = 'AWS CDK Library, Construct Hub';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -365,7 +395,7 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -375,10 +405,15 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
                                 
                                 
                                   
-                                
+                                    
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                            <li><a href="/Karpenter">My first impression of AWS Karpenter</a></li>
+                                        
                                     
                                   
                                 
@@ -388,9 +423,11 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
                                     
                                         
                                         
-                                            <li><a href="/SelfService">Self-service Infrastructure</a></li>
+                                            <li><a href="/EC2_Clocksource">EC2 Clocksource</a></li>
                                         
                                     
+                                  
+                                
                                   
                                 
                                   
@@ -405,8 +442,6 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
                                   
                                     
                                         
-                                        
-                                            <li><a href="/EKS_Max_Pods">Look into EKS max pods</a></li>
                                         
                                     
                                   
@@ -444,9 +479,9 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
+                            <a href="/tag/aws/">
                                 
-                                    See all 7 posts  →
+                                    See all 8 posts  →
                                 
                             </a>
                         </footer>
@@ -455,6 +490,9 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
             
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
                 
 
@@ -499,51 +537,6 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
 
             
 
-            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
-            
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/EC2_Clocksource">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/clock.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/EC2_Clocksource">
-                <header class="post-card-header">
-                    
-                        
-                            
-                                <span class="post-card-tags">Aws</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">EC2 Clocksource</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
-
         </div>
     </div>
 </aside>
@@ -557,18 +550,18 @@ security group 모듈을 활용하려면 다음과 같이 <code class="language-
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Terraform Module Tips 1 - Output</div>
+    <div class="floating-header-title">AWS CDK Library, Construct Hub</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Module+Tips+1+-+Output&amp;url=https://heuristicwave.github.ioTerraformTips1"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=AWS+CDK+Library%2C+Construct+Hub&amp;url=https://heuristicwave.github.ioConstructHub"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips1"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioConstructHub"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
