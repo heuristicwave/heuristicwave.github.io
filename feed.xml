@@ -5,9 +5,114 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 23 Dec 2021 14:31:18 +0000</pubDate>
-        <lastBuildDate>Thu, 23 Dec 2021 14:31:18 +0000</lastBuildDate>
+        <pubDate>Sat, 01 Jan 2022 11:08:48 +0000</pubDate>
+        <lastBuildDate>Sat, 01 Jan 2022 11:08:48 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
+        
+            <item>
+                <title>Terraform Tips 2 - Data &amp; Index</title>
+                <description>&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 실수 하는 내용이라 글로 남기게 되었습니다. &lt;strong&gt;Terraform Data&lt;/strong&gt;를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
+모든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.&lt;/p&gt;
+
+&lt;p&gt;🥲 본격적으로 글을 들어가기 앞서, 이번편도 사실 제 글보다 더 좋은 학습 장소가 있어서 함께 첨부합니다!&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
+
+&lt;p&gt;AWS의 리전마다 사용가능한 az가 다르기 때문에, 조금 더 유연한 코드를 작성하기 위해 다음 코드를 사용해 사용가능한 az를 검색합니다.
+이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data.&amp;lt;NAME&amp;gt;.&amp;lt;ATTRIBUTE&amp;gt;.names&lt;/code&gt; 로 사용가능한 az 값들을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_availability_zones&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  state &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;output &lt;span class=&quot;s2&quot;&gt;&quot;azs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+ value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_availability_zones.available.names
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names&lt;/code&gt;에는 사용가능한 az가 배열 형태로 들어가 있어, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[0]&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[1]&lt;/code&gt;과 같이 Index 값으로 특정 값을 지정할 수 있습니다.
+그러나, 모든 data가 Index 값을 가지고 있는 것은 아닙니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;query-vpc_id&quot;&gt;Query vpc_id&lt;/h2&gt;
+
+&lt;p&gt;다른 리소스와 AWS 솔루션들을 연계하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt; 값이 필수적으로 들어갑니다.
+vpc의 id를 구하기 위해서는 다음과 같은 방법으로 id를 조회할 수 있습니다.
+(tags 값을 활용해 일종의 필터링을 사용할 수도 있습니다.)&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpcs&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vpcs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    tags &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+        Name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.vpc_name
+    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+output &lt;span class=&quot;s2&quot;&gt;&quot;vpc_id&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpcs.vpcs.ids
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위 코드로 다음과 같이 Output 값을 얻을 수 있지만, 하나의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt; 값을 얻을때와 동일한 방식으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ids[0]&lt;/code&gt; 형식으로 값을 조회하려 하면,
+“This value does not have any indices.” 라는 에러 메시지와 함께 출력을 지원하지 않습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Changes to Outputs:
+  + vpc_id &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+      + &lt;span class=&quot;s2&quot;&gt;&quot;vpc-0x1234567890&quot;&lt;/span&gt;,
+    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;도대체 무엇이 잘못된 것일까요? az와 동일한 방법으로 접근했지만, 왜 지원하지 않는지는 아직까지도 모르겠습니다…
+누구 아시는 분이 있다면 알려주세요.&lt;/p&gt;
+
+&lt;h3 id=&quot;count로-index-부여하기&quot;&gt;count로 index 부여하기&lt;/h3&gt;
+
+&lt;p&gt;위 문제를 해결하기 위해서는 az를 검색할 때보다는 불편하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 사용해 해결할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;target&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; tolist&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)[&lt;/span&gt;count.index]
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;c&quot;&gt;# sample code using vpc_id&lt;/span&gt;
+resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sample_resource&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;c&quot;&gt;# Skip Config&lt;/span&gt;
+  vpc_id      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpc.target[count.index].id
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpcs&lt;/code&gt;가 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpc&lt;/code&gt;를 추가하고 index 를 부여하기 위한 내장 함수들을 사용해 index를 부여합니다.
+이후, 리소스에서 data 값들을 식별하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 기입하고 위와 같이 index 값으로 조회가 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt;와 같이 별도의 index 과정 없이,
+간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)&lt;/p&gt;
+
+&lt;p&gt;지금까지 테라폼 더 익숙하게 Module &amp;amp; Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//TerraformTips2</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//TerraformTips2</guid>
+                
+                <category>devops</category>
+                
+                <category>terraform</category>
+                
+                
+            </item>
         
             <item>
                 <title>AWS CDK Library, Construct Hub</title>
@@ -1657,147 +1762,6 @@ aws_s3_bucket.artifact_bucket
                 <pubDate>Thu, 08 Apr 2021 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//CodeBuild</link>
                 <guid isPermaLink="true">https://heuristicwave.github.io//CodeBuild</guid>
-                
-                <category>aws</category>
-                
-                <category>devops</category>
-                
-                <category>terraform</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>ECR CodePipeline with Terraform Ⅰ</title>
-                <description>&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)&lt;/p&gt;
-
-&lt;h1 id=&quot;overview&quot;&gt;Overview&lt;/h1&gt;
-
-&lt;p&gt;이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다.
-AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다.
-&lt;img src=&quot;../../assets/built/images/post/CodePipeline.png&quot; alt=&quot;CodePipeline&quot; /&gt;
-1편에서는 &lt;strong&gt;CodeCommit&lt;/strong&gt; 구축과 &lt;strong&gt;terraform의 Output, Variables, tfvars&lt;/strong&gt; 등을 배워 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;준비-작업&quot;&gt;준비 작업&lt;/h2&gt;
-&lt;p&gt;이번 포스팅의 작업공간(~/terraform)을 생성하고 해당 위치에서 아래 코드 블럭을 터미널에 복사합니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; provider.tf
-provider &quot;aws&quot; {
-  region  = var.aws_region
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform init&lt;/code&gt; 명령어를 실행시켜주세요.&lt;/p&gt;
-
-&lt;h2 id=&quot;codecommit&quot;&gt;CodeCommit&lt;/h2&gt;
-&lt;p&gt;CodeCommit을 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
-링크의 Example Usage를 활용해 코드를 작성할 수도 있지만, 이번 포스팅에서는 제 방식대로아래 코드를 활용해 작성해보겠습니다.
-링크에서 소개하는 코드와 다른 부분은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variable&lt;/code&gt;의 사용 여부입니다.&lt;/p&gt;
-
-&lt;p&gt;✅ 아래 코드와 도큐먼트의 코드가 어떻게 다른지 꼭 확인해보세요!&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codecommit.tf
-resource &quot;aws_codecommit_repository&quot; &quot;test&quot; {
-  repository_name = var.source_repo_name
-  description     = &quot;This is the Sample App Repository&quot;
-}
-
-output &quot;source_repo_clone_url_http&quot; {
-  value = aws_codecommit_repository.test.clone_url_http
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Output&lt;/code&gt;은 향후 clone할 원격 저장소의 위치를 파악하기 위해 넣어줍니다. 또한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용해 보다 유연한 코드를 작성해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;준비 작업에 정의한 리전과 CodeCommit Repo 이름에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용하겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; variables.tf
-variable &quot;aws_region&quot; {
-  description = &quot;The AWS region&quot;
-  default     = &quot;ap-northeast-2&quot;
-}
-
-variable &quot;source_repo_name&quot; {
-  description = &quot;Source repo name&quot;
-  type        = string
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;위 코드를 복사한 후, terraform plan 명령어로 아래와 같은 화면을 확인 할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/plan.png&quot; alt=&quot;terraform plan&quot; /&gt;
-앞서 작성한 variables.tf의 region은 default 값이 있지만, repository는 variable의 형식만 정의되어 있기 때문에 인프라를 생성할 때 필수적으로 이름을 입력받습니다.&lt;/p&gt;
-
-&lt;p&gt;✅ variable의 input값을 수기로 작성하는 것을 피하고 싶으면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;를 사용합니다. 편의상 이번 프로젝트에서 사용할 값들을 미리 작성하겠습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; terraform.tfvars
-aws_ecr=&quot;my-image&quot;
-source_repo_name=&quot;my-pipeline&quot;
-source_repo_branch=&quot;master&quot;
-image_repo_name=&quot;my-pipeline&quot;
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;는 위와 같이 변수의 값을 지정하기도 하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.env&lt;/code&gt;처럼 &lt;strong&gt;외부로 노출하면 안되는 값을 넣어두고 git에 ignore시켜 사용&lt;/strong&gt;하기도 합니다.&lt;/p&gt;
-
-&lt;p&gt;위 작업을 진행 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하면 “Apply complete”과 함께 Outputs 값이 나옵니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어 이외에도, &lt;a href=&quot;https://console.aws.amazon.com/codecommit&quot;&gt;콘솔&lt;/a&gt; 로 이동하면 생성된 인프라를 확인 할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;생성된 원격저장소를 사용하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output&lt;/code&gt;을 활용해 &lt;strong&gt;export 환경 변수&lt;/strong&gt;를 지정합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;tf_source_repo_clone_url_http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;terraform output source_repo_clone_url_http&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# 확인&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;git-setting&quot;&gt;Git Setting&lt;/h2&gt;
-
-&lt;p&gt;CodeCommit의 Repo 활용법은 아래 2가지 방법이 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;1-로컬에-위치한-코드를-codecommit에-push하기-원격저장소가-비어있음&quot;&gt;1. 로컬에 위치한 코드를 CodeCommit에 push하기 (원격저장소가 비어있음)&lt;/h3&gt;
-
-&lt;p&gt;로컬의 빈공간에서 CodeCommit Repo 사용을 위한 git remote 지정&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git init
-git remote add origin &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
-git remote &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# 원격 저장소 확인&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;코드를 작성하고 CodeCommit에 Push하기&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
-git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;First commit&quot;&lt;/span&gt;
-git status
-git push origin &lt;span class=&quot;c&quot;&gt;# master branch로 push&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;자격 증명 문제가 있다면 아래 명령어로 해결합니다. &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html&quot;&gt;자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.helper &lt;span class=&quot;s1&quot;&gt;'!aws codecommit credential-helper $@'&lt;/span&gt;
-git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.UseHttpPath &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-로컬에-원격저장소의-코드를-clone하기-원격저장소가-비어있지-않음&quot;&gt;2. 로컬에 원격저장소의 코드를 clone하기 (원격저장소가 비어있지 않음)&lt;/h3&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;지금까지 도큐먼트를 활용해 코드를 작성하고, variable, output, tfvars의 활용법을 배워보았습니다.&lt;/p&gt;
-
-&lt;p&gt;앞서 작성된 작업들이 정상적으로 커밋과 clone이 가능하면, 다음 단계로 🚀&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Wed, 07 Apr 2021 18:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//CodeCommit</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//CodeCommit</guid>
                 
                 <category>aws</category>
                 
