@@ -8,6 +8,23 @@
     
       
       <item>
+        <title>Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group</title>
+        
+          <description>&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;
+에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
+해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Mon, 21 Feb 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/ImageBuilder</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/ImageBuilder</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Terraform Tips 2 - Data &amp; Index</title>
         
           <description>&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index&lt;/p&gt;

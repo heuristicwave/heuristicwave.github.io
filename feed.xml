@@ -5,9 +5,200 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 01 Jan 2022 11:08:48 +0000</pubDate>
-        <lastBuildDate>Sat, 01 Jan 2022 11:08:48 +0000</lastBuildDate>
+        <pubDate>Wed, 23 Feb 2022 03:21:00 +0000</pubDate>
+        <lastBuildDate>Wed, 23 Feb 2022 03:21:00 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
+        
+            <item>
+                <title>Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group</title>
+                <description>&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;
+에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
+해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;클라우드를 다루다 보면 &lt;strong&gt;Netflix&lt;/strong&gt; 가 여러 분야에서 앞장서 있는 것을 확인할 수 있습니다.
+그중에서 Immutable Server Pattern을 알리는데 기여한 2013년에 발간된 &lt;a href=&quot;https://netflixtechblog.com/ami-creation-with-aminator-98d627ca37b0&quot;&gt;AMI Creation with Aminator&lt;/a&gt;
+를 꼭 한번 읽어보시기 바랍니다. 과거 넷플릭스는 AWS의 이미지 파일을 생성하기 위해 Aminator라는 도구를 사용했지만,
+본 포스팅에서는 이미지 빌더로 AMI를 만들고 Auto Scaling Group에 적용시키는 방법을 배워 Immutable Server Pattern을 학습해 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;immutable-server&quot;&gt;Immutable Server&lt;/h2&gt;
+
+&lt;p&gt;Immutable Server 대한 내용은 martin fowler 블로그에 소개된 &lt;a href=&quot;https://martinfowler.com/bliki/ImmutableServer.html&quot;&gt;ImmutableServer&lt;/a&gt;
+글을 보시면 굉장히 잘 설명되어 있습니다. 요약 + 그동안의 제 뇌피셜을 함께 말씀드리면 다음과 같습니다.&lt;/p&gt;
+
+&lt;p&gt;서버를 운영하다 보면 업데이트를 비롯한 다양한 이슈들로 인해 구성요소가 자주 변하게 됩니다.
+그렇게 운영하다 보면 무언가 꼬여 서버를 재 생성하는 일이 발생하는데 아래와 같은 라이프 사이클을 만나게 됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://martinfowler.com/bliki/images/immutableServer/PhoenixServerLifecycle.png&quot; alt=&quot;phoenixServerLifecycle&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이런 상황에서 구성이 다른 여러 대의 서버를 가지게 되면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Configuration drift&lt;/code&gt;가 발생했다고 표현합니다.
+또한 위 그림처럼 자꾸 새로운 이미지로 회귀하니까, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Shift Left&lt;/code&gt;라고도 표현하고 이를 한국어로 표현하는 말을 찾아보니 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;원점 회귀&lt;/code&gt;라는 표현도 쓰입니다.&lt;/p&gt;
+
+&lt;p&gt;구성 변경이 잦은 서버는 깨지기(fragile) 쉽고, 또 장애가 발생할 경우 재현이 어려울뿐더러 변경 시 연쇄적인 장애를 유발할 가능성이 있습니다.
+이를 두고 깨지기 쉬운 눈송이 같다 하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Snowflake Server&lt;/code&gt;라 부릅니다.
+이 상황을 피하기 위해, Configuration drift를 피하는 Base Image(Configuration이 발생하면 새롭게 생성)를 활용한 방법을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Phoenix Server&lt;/code&gt;
+라 부릅니다. &lt;em&gt;(&lt;a href=&quot;https://martinfowler.com/bliki/PhoenixServer.html&quot;&gt;Phoenix Server&lt;/a&gt; 용어는 마틴 파울러의 동료 &lt;a href=&quot;https://twitter.com/kornys&quot;&gt;Kornelis Sietsma&lt;/a&gt; 가 제안했다 합니다.)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/immutableServer.png&quot; alt=&quot;immutableServer&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;피닉스 서버의 개념은 기본 이미지(Base AMI, Golden AMI)를 통해 언제나 일관성 있는 환경을 제공했고,
+이러한 개념들이 자연스럽게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Immutable Server&lt;/code&gt;의 개념으로 이어졌습니다.
+&lt;em&gt;(최근에는 Immutable Server를 넘어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Immutable Infrastructure&lt;/code&gt;의 개념도 있습니다!)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;이미지-빌더와-오토-스케일-그룹으로-이뮤터블-서버-구축하기&quot;&gt;이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 구축하기&lt;/h2&gt;
+
+&lt;p&gt;클라우드에서의 Immutable Server Pattern 검색하면 아래와 같은 좋은 예시들이 나옵니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/mt/create-immutable-servers-using-ec2-image-builder-aws-codepipeline/&quot;&gt;Create immutable servers using EC2 Image Builder and AWS CodePipeline&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cloudblogs.microsoft.com/opensource/2018/05/23/immutable-infrastructure-azure-vsts-terraform-packer-ansible/&quot;&gt;Tutorial: Immutable infrastructure for Azure, using VSTS, Terraform, Packer and Ansible&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://heuristicwave.github.io/Packer&quot;&gt;하시코프 튜토리얼을 보고 만든 필자의 블로그 🥲&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;그러나 이제부터 다룰, 이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 패턴을 만족시킬 수 있습니다.
+AWS에서 제공하는 AutoScale은 탄력적인 확장과 축소를 제공하지만 Desired Capacity 기능을 활용해 항상 동일한 서버의 수를 유지할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/imagebuilder.png&quot; alt=&quot;imageBuilder&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Image Builder의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Image pipelines&lt;/code&gt;를 활용해 원본 AMI로부터 원하는 형태의 Output(Custom/Golden/Base AMI)을 제작합니다.&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Distribution settings&lt;/code&gt;을 통해 lt(Launch Template)에 1번에서 생성한 AMI로 교체하여 새로운 버전을 만듭니다.&lt;/li&gt;
+  &lt;li&gt;이제, 새롭게 생성되는 ASG(Auto Scaling Group)은 새롭게 버전 업된 lt를 통해 인스턴스를 생성합니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;em&gt;3번의 ASG의 경우, Refresh를 하기 전까지는 이전 상태의 lt를 기준으로 인스턴스가 운영되고 있습니다.
+이미지 생성과 동시에 새로운 AMI로 EC2 Refresh를 할 수 있는 방법이 있지만,
+새롭게 생성된 인스턴스가 운영환경에 바로 적용되는 것은 바람직하지 않으므로 해당 부분에 대한 자동화는 제외하였습니다.
+만약 검증된 AMI를 생성한다면, Lambda 혹은 기타 방법 등을 통해 Refresh 하여 이미지 생성부터 배포까지 자동화할 수 있습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;추후 다른 포스팅에서 자세히 다룰 예정이지만, 이러한 패턴은 Immutable Infrastructure의 한 요소를 이루기도 합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;-workshop&quot;&gt;📜 Workshop&lt;/h2&gt;
+
+&lt;h3 id=&quot;0️⃣-launch-template--auto-scaling-groups-생성&quot;&gt;0️⃣ Launch Template &amp;amp; Auto Scaling groups 생성&lt;/h3&gt;
+
+&lt;p&gt;기존 환경에 0️⃣이 준비되어 있다면 다음 단계인 &lt;strong&gt;Distribution settings&lt;/strong&gt;으로 넘어가도 좋습니다.&lt;/p&gt;
+
+&lt;p&gt;해당 단계는 제가 굉장히 게으른 관계로 AWS Documentation : &lt;a href=&quot;https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-launch-template.html&quot;&gt;Creating an Auto Scaling group using a launch template&lt;/a&gt;
+으로 대체하겠습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 만약 기존 환경이 Launch Template이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Launch Configurations&lt;/code&gt;으로 구성되어 있을 경우,
+콘솔 화면에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Copy to launch template&lt;/code&gt; 버튼을 누르시면 손쉽게 lt로 변경 가능합니다. &lt;br /&gt;
+💡 Launch Template과 Launch Configurations는 굉장히 유사하지만, Launch Template의 경우 더 다양한 기능들을 제공합니다.
+특히 버전관리 기능을 통해 Rollback을 하거나, 업데이트시 ASG를 활용한 Rolling Update가 가능해 Launch Template 사용을 권장합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;1️⃣-distribution-settings&quot;&gt;1️⃣ Distribution settings&lt;/h3&gt;
+
+&lt;p&gt;EC2 Image Builder 콘솔 화면에 접속해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Distribution settings&lt;/code&gt;에서 새로운 세팅을 생성합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/distribution.png&quot; alt=&quot;distribution&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;필수 항목인 이름을 작성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Region settings&lt;/code&gt;에서 배포할 리전을 확인한 후,
+하단의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Launch template configuration&lt;/code&gt;에서 Step 0️⃣에서 작성한 lt를 지정하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create settings&lt;/code&gt;로 생성합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;2️⃣-image-pipelines&quot;&gt;2️⃣ Image pipelines&lt;/h3&gt;
+
+&lt;h4 id=&quot;step-1&quot;&gt;Step 1&lt;/h4&gt;
+
+&lt;p&gt;Distribution settings 작성이 완료되었다면, 콘솔에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Image pipelines&lt;/code&gt;에 접속하여 아래 정보들을 기재합니다.
+아래 사진의 좌측 Step 5까지의 과정을 거치면 목표로 했던 환경이 완성됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/imagepipeline.png&quot; alt=&quot;pipeline&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Build schedule&lt;/code&gt;에서는 주기적으로 파이프라인을 실행할 수 있는 방법들을 제공하는데 운영자가 원하는 방식으로 설정할 수 있습니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;step-2&quot;&gt;Step 2&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Choose recipe&lt;/code&gt; 단계에서는 기존에 만들어둔 &lt;strong&gt;recipe&lt;/strong&gt;가 없으므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create new recipe&lt;/code&gt;를 선택하고, &lt;strong&gt;Image type&lt;/strong&gt;으로 &lt;strong&gt;AMI&lt;/strong&gt;를 선택합니다.&lt;/p&gt;
+
+&lt;p&gt;다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Base image&lt;/code&gt;를 고르는 단계에서는 아래 화면과 같이 &lt;strong&gt;관리형 이미지&lt;/strong&gt;를 사용하거나 기존에 작성한 &lt;strong&gt;Custom AMI ID&lt;/strong&gt;를 사용해도 됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/baseimage.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;그다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Instance configuration&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Working directory&lt;/code&gt;에서는 &lt;strong&gt;기본 값&lt;/strong&gt;으로 둬도 상관없지만
+&lt;strong&gt;SSM, User data, Working directory path&lt;/strong&gt;의 필요 여부에 따라 활용하시면 됩니다.&lt;/p&gt;
+
+&lt;p&gt;이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Components&lt;/code&gt;에서는 Golden AMI를 구축하기 위해 선행되어야 하는 각종 Agent나 소프트웨어(Apache, dotnet etc)를 선택할 수 있습니다.
+저는 편의상 CloudWatch Agent를 선택했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/components.png&quot; alt=&quot;components&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;그다음 이어지는 &lt;strong&gt;Test components, Storage, Tags&lt;/strong&gt; 역시 필요 여부에 따라 활용하시면 됩니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;step-3&quot;&gt;Step 3&lt;/h4&gt;
+
+&lt;p&gt;3단계에 진입하면 아래 사진과 같이 이미지 빌더의 인프라 Config 값들을 정의할 수 있는 공간이 나옵니다.
+3번째 버튼인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create New infrastructure configuration&lt;/code&gt;으로 직접 인스턴스 유형, 네트워크, SNS topic을 설정이 가능하지만,
+저는 1번 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create infrastructure configuration using service defaults&lt;/code&gt;로 기본 구성 값들을 잡아주었습니다.
+(IAM Role과 SNS Topic도 자동으로 생성해 주고 굉장히 편리하네요.)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/defineconfig.png&quot; alt=&quot;config&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;step-4&quot;&gt;Step 4&lt;/h4&gt;
+
+&lt;p&gt;드디어, 이전 &lt;strong&gt;1️⃣ Distribution settings&lt;/strong&gt; 과정에서 만들어둔 &lt;strong&gt;배포 설정&lt;/strong&gt; 해당 단계에서 선택합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/associatelt.png&quot; alt=&quot;asso&quot; /&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;step-5&quot;&gt;Step 5&lt;/h4&gt;
+
+&lt;p&gt;Review 단계까지 구성 요소들을 검토해 보고 Create pipeline을 누르고 Image pipelines 콘솔로 돌아오면 아래와 같은 화면을 만나게 됩니다.
+아래 캡처화면의 경우 이미 빌드가 끝난 상태이지만, 테스트를 위해서 &lt;strong&gt;Actions - Run pipeline&lt;/strong&gt; 단계를 거치면,
+ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종료되는 것을 과정을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/imgconsole.png&quot; alt=&quot;console&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;3️⃣-review&quot;&gt;3️⃣ Review&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;EC2 - Images - AMIs&lt;/strong&gt;에서 새롭게 생성된 AMI 확인&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;EC2 - Launch templates&lt;/strong&gt;에서 새롭게 버전이 올라간 lt 확인, 여기서 Versions 정보를 누르면 Image Builder가 생성한 Description을 확인할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/imagebuilder/version.png&quot; alt=&quot;version&quot; /&gt;&lt;/li&gt;
+  &lt;li&gt;제대로 작동하는지 확인하기 위해 기존의 EC2 하나를 종료시키면, 저의 경우 ASG의 Desired가 2로 설정했으므로 하나의 인스턴스가 새로운 버전으로 변경됩니다.
+이는 &lt;strong&gt;EC2 - Auto Scaling groups&lt;/strong&gt;에서 확인할 수 있습니다.
+&lt;img src=&quot;../../assets/built/images/post/imagebuilder/asg.png&quot; alt=&quot;asg&quot; /&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;4️⃣-clean-up&quot;&gt;4️⃣ Clean Up&lt;/h3&gt;
+
+&lt;p&gt;분해는 조립의 역순으로?! 2️⃣ -&amp;gt; 1️⃣ -&amp;gt; 0️⃣ 역순으로 리소스를 정리하고 3️⃣ Review 항목을 점검하여 모든 리소스가 회수되었는지 확인합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;지금까지 각종 이야기 거리들과 EC2 Image Builder를 사용하며 Immutable Server Pattern을 학습해 보았습니다.
+과거 제가 Packer로 관련 환경을 구축한 적이 있는데, 역시 AWS 환경에서는 AWS의 서비스를 사용하는 게 연계도 용이하고 구축도 쉽네요.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;📚 References&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;글 중간중간 하이퍼 링크로 Reference 들을 달아두었습니다.
+특히, 이번 포스팅 레퍼런스들은 좋은 내용들이 많으니 원본들을 읽어보시고 당시 제가 느낀 기쁨들을 함께 느낄수 있으면 좋겠습니다.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+</description>
+                <pubDate>Mon, 21 Feb 2022 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//ImageBuilder</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//ImageBuilder</guid>
+                
+                <category>aws</category>
+                
+                
+            </item>
         
             <item>
                 <title>Terraform Tips 2 - Data &amp; Index</title>
@@ -1504,264 +1695,6 @@ resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-at
                 <pubDate>Fri, 09 Apr 2021 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//CodePipeline</link>
                 <guid isPermaLink="true">https://heuristicwave.github.io//CodePipeline</guid>
-                
-                <category>aws</category>
-                
-                <category>devops</category>
-                
-                <category>terraform</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>ECR CodePipeline with Terraform Ⅱ</title>
-                <description>&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)&lt;/p&gt;
-
-&lt;p&gt;2편에서는 &lt;strong&gt;ECR&lt;/strong&gt;과 &lt;strong&gt;CodeBuild&lt;/strong&gt;를 생성하고 &lt;strong&gt;IAM 역할, 정책을 부여&lt;/strong&gt;하는 법을 학습합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;ecr&quot;&gt;ECR&lt;/h2&gt;
-&lt;p&gt;ECR 역시 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository&quot;&gt;공식 문서&lt;/a&gt; 에서 사용방법을 확인합니다.
-공식문서에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image_scanning_configuration&lt;/code&gt; config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다.
-더불어, output도 함께 작성하겠습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; ecr.tf
-resource &quot;aws_ecr_repository&quot; &quot;image_repo&quot; {
-  name                 = var.image_repo_name
-  image_tag_mutability = &quot;MUTABLE&quot;
-}
-
-output &quot;image_repo_url&quot; {
-  value = aws_ecr_repository.image_repo.repository_url
-}
-
-output &quot;image_repo_arn&quot; {
-  value = aws_ecr_repository.image_repo.arn
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecr.tf&lt;/code&gt;에서 변수로 사용하기 위한 &lt;strong&gt;var.image_repo_name&lt;/strong&gt; 부분이 작동하도록 1편에서 작성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variables.tf&lt;/code&gt; 아래 값을 추가합니다.&lt;/p&gt;
-
-&lt;p&gt;✅ 편의상 이번 단계에 필요한 variable을 함께 포함했습니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;variable &quot;image_repo_name&quot; {
-  description = &quot;Image repo name&quot;
-  type        = string
-}
-
-variable &quot;container_name&quot; {
-  description = &quot;Container Name&quot;
-  default     = &quot;my-container&quot;
-}
-
-variable &quot;source_repo_branch&quot; {
-  description = &quot;Source repo branch&quot;
-  type        = string
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;ecr 작성을 완료햇으니 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan, apply&lt;/code&gt; 명령어를 차례로 입력해 인프라를 생성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어나 &lt;a href=&quot;https://console.aws.amazon.com/ecr/home&quot;&gt;콘솔&lt;/a&gt; 에서 생성된 인프라를 확인합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;codebuild&quot;&gt;CodeBuild&lt;/h2&gt;
-&lt;p&gt;CodeBuild를 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
-기존까지의 작업과는 달리 상당히 어려워 보입니다. 그러나 쓱 훝어보면 크게 4가지(bucket, IAM Role과 Policy, Codebuild)로 정리됩니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;bucket&quot;&gt;Bucket&lt;/h3&gt;
-&lt;p&gt;도큐먼트와 같이 우선적으로 S3를 생성합니다. bucket의 이름은 선택이지만, 여러개의 버킷을 가지고 있는 저는 식별을 위해 이름을 부여했습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codebuild.tf
-resource &quot;aws_s3_bucket&quot; &quot;artifact_bucket&quot; {
-  bucket = &quot;ecr-pipeline&quot;
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;iam-role&quot;&gt;IAM Role&lt;/h3&gt;
-&lt;p&gt;도큐먼트를 따라 AssumeRole을 사용합시다. &lt;br /&gt;
-➕ S3을 만들때 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 아래 코드를 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_role&quot; &quot;codebuild_role&quot; {
-  name = &quot;terraform-codebuild&quot;,
-  assume_role_policy = &amp;lt;&amp;lt;EOF
-{
-   &quot;Version&quot;: &quot;2012-10-17&quot;,
-   &quot;Statement&quot;: [
-      {
-         &quot;Effect&quot;: &quot;Allow&quot;,
-         &quot;Principal&quot;: {
-            &quot;Service&quot;: &quot;codebuild.amazonaws.com&quot;
-         },
-         &quot;Action&quot;: &quot;sts:AssumeRole&quot;
-      }
-   ]
-}
-EOF
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;iam-policy&quot;&gt;IAM Policy&lt;/h3&gt;
-&lt;p&gt;정책은 IAM 콘솔에서 기존에 만들어진 정책을 사용할 수도 있지만, 아래와 같이 직접 작성할 수도 있습니다.
-도큐먼트에서 EC2에 대한 정책을 사용하지만, 우리는 ECR을 사용하므로 아래와 같은 정책을 사용하겠습니다.&lt;/p&gt;
-&lt;noscript&gt;
-  &lt;pre&gt;resource &amp;quot;aws_iam_policy&amp;quot; &amp;quot;codebuild_policy&amp;quot; {
-  description = &amp;quot;CodeBuild Execution Policy&amp;quot;
-  policy      = &amp;lt;&amp;lt;EOF
-{
-  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
-  &amp;quot;Statement&amp;quot;: [
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;logs:CreateLogGroup&amp;quot;, &amp;quot;logs:CreateLogStream&amp;quot;, &amp;quot;logs:PutLogEvents&amp;quot;,
-        &amp;quot;ecr:GetAuthorizationToken&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;*&amp;quot;
-    },
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;s3:GetObject&amp;quot;, &amp;quot;s3:GetObjectVersion&amp;quot;, &amp;quot;s3:PutObject&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_s3_bucket.artifact_bucket.arn}/*&amp;quot;
-    },
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;ecr:GetDownloadUrlForLayer&amp;quot;, &amp;quot;ecr:BatchGetImage&amp;quot;,
-        &amp;quot;ecr:BatchCheckLayerAvailability&amp;quot;, &amp;quot;ecr:PutImage&amp;quot;,
-        &amp;quot;ecr:InitiateLayerUpload&amp;quot;, &amp;quot;ecr:UploadLayerPart&amp;quot;,
-        &amp;quot;ecr:CompleteLayerUpload&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_ecr_repository.image_repo.arn}&amp;quot;
-    }
-  ]
-}
-EOF
-}&lt;/pre&gt;
-&lt;/noscript&gt;
-&lt;script src=&quot;https://gist.github.com/heuristicwave/09103b88af041153ccd206ec6d51b7c1.js&quot;&gt; &lt;/script&gt;
-
-&lt;p&gt;20, 30라인에서 앞서 생성한 리소스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;${채움참조}&lt;/code&gt; 문법으로 유연한 코드를 작성합니다.&lt;/p&gt;
-
-&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_role_policy_attachment&quot; &quot;codebuild-attach&quot; {
-  role       = aws_iam_role.codebuild_role.name
-  policy_arn = aws_iam_policy.codebuild_policy.arn
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;codebuild-1&quot;&gt;CodeBuild&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 를 보아도 어떻게 해야 ECR에 적용시킬 수 있는지 알기 어렵습니다.
-우선 CodeBuild를 이해하기 위해 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/sample-docker.html&quot;&gt;AWS docs&lt;/a&gt; 를 읽어봅시다.
-대략 리소스 이름을 정하고, 환경을 구성하고 빌드를 하기 위한 방법을 정의해야 한다는 사실을 알 수 있습니다.
-CodeBuild가 정의된 아래 코드를 활용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
-&lt;noscript&gt;
-  &lt;pre&gt;resource &amp;quot;aws_codebuild_project&amp;quot; &amp;quot;codebuild&amp;quot; {
-  name         = &amp;quot;codebuild-${var.source_repo_name}-${var.source_repo_branch}&amp;quot;
-  service_role = aws_iam_role.codebuild_role.arn
-
-  artifacts {
-    type = &amp;quot;CODEPIPELINE&amp;quot;
-  }
-  
-  environment {
-    compute_type                = &amp;quot;BUILD_GENERAL1_MEDIUM&amp;quot;
-    image                       = &amp;quot;aws/codebuild/standard:3.0&amp;quot;
-    type                        = &amp;quot;LINUX_CONTAINER&amp;quot;
-    privileged_mode             = true
-    image_pull_credentials_type = &amp;quot;CODEBUILD&amp;quot;
-    environment_variable {
-      name  = &amp;quot;REPOSITORY_URI&amp;quot;
-      value = aws_ecr_repository.image_repo.repository_url
-    }
-    environment_variable {
-      name  = &amp;quot;AWS_DEFAULT_REGION&amp;quot;
-      value = var.aws_region
-    }
-    environment_variable {
-      name  = &amp;quot;CONTAINER_NAME&amp;quot;
-      value = var.container_name
-    }
-  }
-  source {
-    type      = &amp;quot;CODEPIPELINE&amp;quot;
-    buildspec = &amp;lt;&amp;lt;BUILDSPEC
-${file(&amp;quot;buildspec.yml&amp;quot;)}
-BUILDSPEC
-  }
-}&lt;/pre&gt;
-&lt;/noscript&gt;
-&lt;script src=&quot;https://gist.github.com/heuristicwave/2ebf79ce3cbdf4a87657b272f9e1d994.js&quot;&gt; &lt;/script&gt;
-
-&lt;p&gt;31라인이 참조하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yml&lt;/code&gt;을 pre_build, build, post_build에 맞춰 작성합니다.&lt;/p&gt;
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;cat &amp;lt;&amp;lt;EOF &amp;gt; buildspec.yml&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.2&lt;/span&gt;
-
-&lt;span class=&quot;na&quot;&gt;phases&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;install&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;runtime-versions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;docker&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;18&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;pre_build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Logging in to Amazon ECR...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IMAGE_TAG=${COMMIT_HASH:=latest}&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Build started on `date`&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Building the Docker image...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker build -t $REPOSITORY_URI:latest .&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;post_build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Build completed on `date`&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Pushing the Docker image...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:latest&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:$IMAGE_TAG&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Writing image definitions file...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;printf '[{&quot;name&quot;:&quot;%s&quot;,&quot;imageUri&quot;:&quot;%s&quot;}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &amp;gt; imagedefinitions.json&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;artifacts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;imagedefinitions.json&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;EOF&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
-aws_codebuild_project.codebuild
-aws_codecommit_repository.test
-aws_ecr_repository.image_repo
-aws_iam_policy.codebuild_policy
-aws_iam_role.codebuild_role
-aws_iam_role_policy_attachment.codebuild-attach
-aws_s3_bucket.artifact_bucket
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우, 👉 Click&lt;/summary&gt;
-
-  &lt;p&gt;실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.&lt;/p&gt;
-  &lt;ol&gt;
-    &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-target&lt;/code&gt; 옵션과 함께 resource 명으로 명령어를 작성합니다. &lt;br /&gt;
-&lt;em&gt;예시) terraform destory -target aws_vpc.main&lt;/em&gt;&lt;/li&gt;
-    &lt;li&gt;잘못 작성한 코드를 수정 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하여 최신 상태의 인프라를 반영합니다.&lt;/li&gt;
-  &lt;/ol&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Thu, 08 Apr 2021 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//CodeBuild</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//CodeBuild</guid>
                 
                 <category>aws</category>
                 

@@ -11,7 +11,7 @@
 
 
 
-    <title>3-Tier VPC Architecture with Terraform</title>
+    <title>Create Immutable Server using AWS Image Builder & Auto Scaling Group</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/3Tier" />
+    <link rel="canonical" href="https://heuristicwave.github.io/ImageBuilder" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="3-Tier VPC Architecture with Terraform" />
-    <meta property="og:description" content="본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층" />
-    <meta property="og:url" content="https://heuristicwave.github.io/3Tier" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png" />
+    <meta property="og:title" content="Create Immutable Server using AWS Image Builder & Auto Scaling Group" />
+    <meta property="og:description" content="본 글은 2021년 4월 30일 EC2 Image Builder supports Auto Scaling launch template 에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고, 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다. Intro 클라우드를 다루다 보면 Netflix 가 여러 분야에서 앞장서 있는 것을 확인할 수 있습니다. 그중에서 Immutable Server Pattern을" />
+    <meta property="og:url" content="https://heuristicwave.github.io/ImageBuilder" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/imagebuilder.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-01-27T18:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-01-27T18:00:00+00:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2022-02-21T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-02-21T00:00:00+00:00" />
+    <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="3-Tier VPC Architecture with Terraform" />
-    <meta name="twitter:description" content="본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층" />
+    <meta name="twitter:title" content="Create Immutable Server using AWS Image Builder & Auto Scaling Group" />
+    <meta name="twitter:description" content="본 글은 2021년 4월 30일 EC2 Image Builder supports Auto Scaling launch template 에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고, 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다. Intro 클라우드를 다루다 보면 Netflix 가 여러 분야에서 앞장서 있는 것을 확인할 수 있습니다. 그중에서 Immutable Server Pattern을" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/imagebuilder.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Aws" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/3Tier",
+    "url": "https://heuristicwave.github.io/ImageBuilder",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/post/vpc-step5.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/imagebuilder.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/3Tier"
+        "@id": "https://heuristicwave.github.io/ImageBuilder"
     },
-    "description": "본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다. Multi-Tier VPC 란? VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로 다중 계층"
+    "description": "본 글은 2021년 4월 30일 EC2 Image Builder supports Auto Scaling launch template 에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고, 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다. Intro 클라우드를 다루다 보면 Netflix 가 여러 분야에서 앞장서 있는 것을 확인할 수 있습니다. 그중에서 Immutable Server Pattern을"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="3-Tier VPC Architecture with Terraform" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Create Immutable Server using AWS Image Builder & Auto Scaling Group" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -171,249 +171,207 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-aws tag-terraform post tag-devops ">
+        <article class="post-full  tag-aws post tag-aws ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="27 January 2021">27 January 2021</time>
+                    <time class="post-full-meta-date" datetime="21 February 2022">21 February 2022</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
-                            
-                        
-                            
-                               <a href='/tag/aws/'>AWS</a>,
-                            
-                        
-                            
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/aws/'>AWS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">3-Tier VPC Architecture with Terraform</h1>
+                <h1 class="post-full-title">Create Immutable Server using AWS Image Builder & Auto Scaling Group</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/vpc-step5.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/imagebuilder.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>본 글은 <a href="https://www.aws.training/Details/eLearning?id=61799">Configure and Deploying VPCs with Multiple Subnets</a> 에서 다루는 <code class="language-plaintext highlighter-rouge">Production-Ready: The 3-Tier VPC</code> 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.</p>
+                    <p>본 글은 2021년 4월 30일 <a href="https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/">EC2 Image Builder supports Auto Scaling launch template</a>
+에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
+해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.</p>
+
+<h1 id="intro">Intro</h1>
+
+<p>클라우드를 다루다 보면 <strong>Netflix</strong> 가 여러 분야에서 앞장서 있는 것을 확인할 수 있습니다.
+그중에서 Immutable Server Pattern을 알리는데 기여한 2013년에 발간된 <a href="https://netflixtechblog.com/ami-creation-with-aminator-98d627ca37b0">AMI Creation with Aminator</a>
+를 꼭 한번 읽어보시기 바랍니다. 과거 넷플릭스는 AWS의 이미지 파일을 생성하기 위해 Aminator라는 도구를 사용했지만,
+본 포스팅에서는 이미지 빌더로 AMI를 만들고 Auto Scaling Group에 적용시키는 방법을 배워 Immutable Server Pattern을 학습해 보겠습니다.</p>
 
 <p><br /></p>
 
-<details>
-  <summary>Multi-Tier VPC 란?</summary>
-  <p><br />
-VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로
-다중 계층 VPC 아키텍처를 만들어 방어 계층을 이룰 수 있습니다.</p>
+<h2 id="immutable-server">Immutable Server</h2>
 
-  <p><img src="../../assets/built/images/post/Multi-tier VPC.png" alt="multiTier" /></p>
-</details>
+<p>Immutable Server 대한 내용은 martin fowler 블로그에 소개된 <a href="https://martinfowler.com/bliki/ImmutableServer.html">ImmutableServer</a>
+글을 보시면 굉장히 잘 설명되어 있습니다. 요약 + 그동안의 제 뇌피셜을 함께 말씀드리면 다음과 같습니다.</p>
 
-<p><br /></p>
+<p>서버를 운영하다 보면 업데이트를 비롯한 다양한 이슈들로 인해 구성요소가 자주 변하게 됩니다.
+그렇게 운영하다 보면 무언가 꼬여 서버를 재 생성하는 일이 발생하는데 아래와 같은 라이프 사이클을 만나게 됩니다.</p>
 
-<h1 id="디자인-패턴--3-tier-vpc-architecture">디자인 패턴 : 3 Tier VPC Architecture</h1>
+<p><img src="https://martinfowler.com/bliki/images/immutableServer/PhoenixServerLifecycle.png" alt="phoenixServerLifecycle" /></p>
 
-<p><em>테라폼 코드는 모듈로 관리하는 것을 권장하지만, 이번 포스팅에서는 3-tier 아키텍처 중 네트워크와 관련된 부분만을 다뤄 하나의 파일에서 코드를 관리합니다.</em></p>
+<p>이런 상황에서 구성이 다른 여러 대의 서버를 가지게 되면 <code class="language-plaintext highlighter-rouge">Configuration drift</code>가 발생했다고 표현합니다.
+또한 위 그림처럼 자꾸 새로운 이미지로 회귀하니까, <code class="language-plaintext highlighter-rouge">Shift Left</code>라고도 표현하고 이를 한국어로 표현하는 말을 찾아보니 <code class="language-plaintext highlighter-rouge">원점 회귀</code>라는 표현도 쓰입니다.</p>
 
-<p><br /></p>
+<p>구성 변경이 잦은 서버는 깨지기(fragile) 쉽고, 또 장애가 발생할 경우 재현이 어려울뿐더러 변경 시 연쇄적인 장애를 유발할 가능성이 있습니다.
+이를 두고 깨지기 쉬운 눈송이 같다 하여 <code class="language-plaintext highlighter-rouge">Snowflake Server</code>라 부릅니다.
+이 상황을 피하기 위해, Configuration drift를 피하는 Base Image(Configuration이 발생하면 새롭게 생성)를 활용한 방법을 <code class="language-plaintext highlighter-rouge">Phoenix Server</code>
+라 부릅니다. <em>(<a href="https://martinfowler.com/bliki/PhoenixServer.html">Phoenix Server</a> 용어는 마틴 파울러의 동료 <a href="https://twitter.com/kornys">Kornelis Sietsma</a> 가 제안했다 합니다.)</em></p>
 
-<details>
-  <summary>Step 0 (테라폼을 활용하실 줄 안다면 넘어가세요)</summary>
+<p><img src="../../assets/built/images/post/imagebuilder/immutableServer.png" alt="immutableServer" /></p>
 
-  <h2 id="step-0">Step 0</h2>
-
-  <p>아키텍처를 구성할 폴더를 만들고 <code class="language-plaintext highlighter-rouge">provider</code>를 주입합니다.</p>
-  <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">mkdir </span>architecture
-<span class="nb">cd </span>architecture
-terraform init
-<span class="nb">touch </span>threeTierVPC.tf
-</code></pre></div>  </div>
-  <p><code class="language-plaintext highlighter-rouge">threeTierVPC.tf</code>에 벤더 정보를 작성합니다.</p>
-  <div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">provider</span> <span class="s2">"aws"</span> <span class="p">{</span>
-  <span class="nx">region</span> <span class="p">=</span> <span class="s2">"ap-northeast-2"</span>
-<span class="p">}</span>
-</code></pre></div>  </div>
-  <p>명령어<code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code>를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 🚀
-<br /></p>
-  <blockquote>
-    <p><code class="language-plaintext highlighter-rouge">terraform apply</code>로 인프라를 반영 할때, <code class="language-plaintext highlighter-rouge">-auto-approve</code>옵션을 주면 <code class="language-plaintext highlighter-rouge">yes</code>입력 없이 진행 할 수 있습니다. 그러나 <code class="language-plaintext highlighter-rouge">yes</code>를 입력하기 전, 한번 더 검토할 수 있는 기회가 있으므로 권장하지 않습니다.</p>
-  </blockquote>
-</details>
+<p>피닉스 서버의 개념은 기본 이미지(Base AMI, Golden AMI)를 통해 언제나 일관성 있는 환경을 제공했고,
+이러한 개념들이 자연스럽게 <code class="language-plaintext highlighter-rouge">Immutable Server</code>의 개념으로 이어졌습니다.
+<em>(최근에는 Immutable Server를 넘어 <code class="language-plaintext highlighter-rouge">Immutable Infrastructure</code>의 개념도 있습니다!)</em></p>
 
 <p><br /></p>
 
-<p><strong>💡각 소제목 링크에 첨부된 코드를 활용해 Step 0 에서 만든 <code class="language-plaintext highlighter-rouge">threeTierVPC.tf</code>에 이어서 작성하거나, 따로 새로운 파일을 만들어 <code class="language-plaintext highlighter-rouge">terraform plan</code>, <code class="language-plaintext highlighter-rouge">terraform apply</code> 명령어를 차례로 작성하며 계층을 쌓아 올립니다.</strong></p>
+<h2 id="이미지-빌더와-오토-스케일-그룹으로-이뮤터블-서버-구축하기">이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 구축하기</h2>
 
-<p><br /></p>
+<p>클라우드에서의 Immutable Server Pattern 검색하면 아래와 같은 좋은 예시들이 나옵니다.</p>
 
-<h2 id="step-1">Step 1</h2>
-<h3 id="layer-1️⃣--public-subnet">Layer 1️⃣ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step1.tf">Public subnet</a></h3>
+<ul>
+  <li><a href="https://aws.amazon.com/ko/blogs/mt/create-immutable-servers-using-ec2-image-builder-aws-codepipeline/">Create immutable servers using EC2 Image Builder and AWS CodePipeline</a></li>
+  <li><a href="https://cloudblogs.microsoft.com/opensource/2018/05/23/immutable-infrastructure-azure-vsts-terraform-packer-ansible/">Tutorial: Immutable infrastructure for Azure, using VSTS, Terraform, Packer and Ansible</a></li>
+  <li><a href="https://learn.hashicorp.com/tutorials/terraform/packer">Provision Infrastructure with Packer</a></li>
+  <li><a href="https://heuristicwave.github.io/Packer">하시코프 튜토리얼을 보고 만든 필자의 블로그 🥲</a></li>
+</ul>
 
-<p>하나의 VPC에 2개의 AZ를 만들고 각각의 Public 서브넷을 위치시킵니다.</p>
+<p>그러나 이제부터 다룰, 이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 패턴을 만족시킬 수 있습니다.
+AWS에서 제공하는 AutoScale은 탄력적인 확장과 축소를 제공하지만 Desired Capacity 기능을 활용해 항상 동일한 서버의 수를 유지할 수 있습니다.</p>
 
-<p><img src="../../assets/built/images/post/vpc-step1.png" alt="step1" /></p>
+<p><img src="../../assets/built/images/background/imagebuilder.png" alt="imageBuilder" /></p>
+
+<ol>
+  <li>Image Builder의 <code class="language-plaintext highlighter-rouge">Image pipelines</code>를 활용해 원본 AMI로부터 원하는 형태의 Output(Custom/Golden/Base AMI)을 제작합니다.</li>
+  <li><code class="language-plaintext highlighter-rouge">Distribution settings</code>을 통해 lt(Launch Template)에 1번에서 생성한 AMI로 교체하여 새로운 버전을 만듭니다.</li>
+  <li>이제, 새롭게 생성되는 ASG(Auto Scaling Group)은 새롭게 버전 업된 lt를 통해 인스턴스를 생성합니다.</li>
+</ol>
+
+<p><em>3번의 ASG의 경우, Refresh를 하기 전까지는 이전 상태의 lt를 기준으로 인스턴스가 운영되고 있습니다.
+이미지 생성과 동시에 새로운 AMI로 EC2 Refresh를 할 수 있는 방법이 있지만,
+새롭게 생성된 인스턴스가 운영환경에 바로 적용되는 것은 바람직하지 않으므로 해당 부분에 대한 자동화는 제외하였습니다.
+만약 검증된 AMI를 생성한다면, Lambda 혹은 기타 방법 등을 통해 Refresh 하여 이미지 생성부터 배포까지 자동화할 수 있습니다.</em></p>
+
+<p>추후 다른 포스팅에서 자세히 다룰 예정이지만, 이러한 패턴은 Immutable Infrastructure의 한 요소를 이루기도 합니다.</p>
+
+<h2 id="-workshop">📜 Workshop</h2>
+
+<h3 id="0️⃣-launch-template--auto-scaling-groups-생성">0️⃣ Launch Template &amp; Auto Scaling groups 생성</h3>
+
+<p>기존 환경에 0️⃣이 준비되어 있다면 다음 단계인 <strong>Distribution settings</strong>으로 넘어가도 좋습니다.</p>
+
+<p>해당 단계는 제가 굉장히 게으른 관계로 AWS Documentation : <a href="https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-launch-template.html">Creating an Auto Scaling group using a launch template</a>
+으로 대체하겠습니다.</p>
 
 <blockquote>
-  <p>퍼블릭 서브넷은 프라이빗 서브넷 보다 적은 수의 IP 예약하는 것이 좋습니다.</p>
+  <p>💡 만약 기존 환경이 Launch Template이 아닌 <code class="language-plaintext highlighter-rouge">Launch Configurations</code>으로 구성되어 있을 경우,
+콘솔 화면에서 <code class="language-plaintext highlighter-rouge">Copy to launch template</code> 버튼을 누르시면 손쉽게 lt로 변경 가능합니다. <br />
+💡 Launch Template과 Launch Configurations는 굉장히 유사하지만, Launch Template의 경우 더 다양한 기능들을 제공합니다.
+특히 버전관리 기능을 통해 Rollback을 하거나, 업데이트시 ASG를 활용한 Rolling Update가 가능해 Launch Template 사용을 권장합니다.</p>
 </blockquote>
 
-<p>Step 1 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
-data.aws_availability_zones.available
-aws_internet_gateway.igw
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-</code></pre></div></div>
+<h3 id="1️⃣-distribution-settings">1️⃣ Distribution settings</h3>
 
-<details>
-  <summary>생성한 인프라가 위와 같지 않을 경우</summary>
+<p>EC2 Image Builder 콘솔 화면에 접속해 <code class="language-plaintext highlighter-rouge">Distribution settings</code>에서 새로운 세팅을 생성합니다.</p>
 
-  <p>실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.</p>
-  <ol>
-    <li><code class="language-plaintext highlighter-rouge">terraform destroy</code> 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, <code class="language-plaintext highlighter-rouge">-target</code> 옵션과 함께 resource 명으로 명령어를 작성합니다. <br />
-<em>예시) terraform destory -target aws_vpc.main</em></li>
-    <li>잘못 작성한 코드를 수정 후, <code class="language-plaintext highlighter-rouge">terraform apply</code>명령어를 적용하여 최신 상태의 인프라를 반영합니다.</li>
-  </ol>
+<p><img src="../../assets/built/images/post/imagebuilder/distribution.png" alt="distribution" /></p>
 
-</details>
+<p>필수 항목인 이름을 작성하고 <code class="language-plaintext highlighter-rouge">Region settings</code>에서 배포할 리전을 확인한 후,
+하단의 <code class="language-plaintext highlighter-rouge">Launch template configuration</code>에서 Step 0️⃣에서 작성한 lt를 지정하고 <code class="language-plaintext highlighter-rouge">create settings</code>로 생성합니다.</p>
+
+<h3 id="2️⃣-image-pipelines">2️⃣ Image pipelines</h3>
+
+<h4 id="step-1">Step 1</h4>
+
+<p>Distribution settings 작성이 완료되었다면, 콘솔에서 <code class="language-plaintext highlighter-rouge">Image pipelines</code>에 접속하여 아래 정보들을 기재합니다.
+아래 사진의 좌측 Step 5까지의 과정을 거치면 목표로 했던 환경이 완성됩니다.</p>
+
+<p><img src="../../assets/built/images/post/imagebuilder/imagepipeline.png" alt="pipeline" /></p>
+
+<p><code class="language-plaintext highlighter-rouge">Build schedule</code>에서는 주기적으로 파이프라인을 실행할 수 있는 방법들을 제공하는데 운영자가 원하는 방식으로 설정할 수 있습니다.</p>
+
+<h4 id="step-2">Step 2</h4>
+
+<p><code class="language-plaintext highlighter-rouge">Choose recipe</code> 단계에서는 기존에 만들어둔 <strong>recipe</strong>가 없으므로 <code class="language-plaintext highlighter-rouge">Create new recipe</code>를 선택하고, <strong>Image type</strong>으로 <strong>AMI</strong>를 선택합니다.</p>
+
+<p>다음 <code class="language-plaintext highlighter-rouge">Base image</code>를 고르는 단계에서는 아래 화면과 같이 <strong>관리형 이미지</strong>를 사용하거나 기존에 작성한 <strong>Custom AMI ID</strong>를 사용해도 됩니다.</p>
+
+<p><img src="../../assets/built/images/post/imagebuilder/baseimage.png" alt="baseimage" /></p>
+
+<p>그다음 <code class="language-plaintext highlighter-rouge">Instance configuration</code>와 <code class="language-plaintext highlighter-rouge">Working directory</code>에서는 <strong>기본 값</strong>으로 둬도 상관없지만
+<strong>SSM, User data, Working directory path</strong>의 필요 여부에 따라 활용하시면 됩니다.</p>
+
+<p>이어서 <code class="language-plaintext highlighter-rouge">Components</code>에서는 Golden AMI를 구축하기 위해 선행되어야 하는 각종 Agent나 소프트웨어(Apache, dotnet etc)를 선택할 수 있습니다.
+저는 편의상 CloudWatch Agent를 선택했습니다.</p>
+
+<p><img src="../../assets/built/images/post/imagebuilder/components.png" alt="components" /></p>
+
+<p>그다음 이어지는 <strong>Test components, Storage, Tags</strong> 역시 필요 여부에 따라 활용하시면 됩니다.</p>
+
+<h4 id="step-3">Step 3</h4>
+
+<p>3단계에 진입하면 아래 사진과 같이 이미지 빌더의 인프라 Config 값들을 정의할 수 있는 공간이 나옵니다.
+3번째 버튼인 <code class="language-plaintext highlighter-rouge">Create New infrastructure configuration</code>으로 직접 인스턴스 유형, 네트워크, SNS topic을 설정이 가능하지만,
+저는 1번 <code class="language-plaintext highlighter-rouge">Create infrastructure configuration using service defaults</code>로 기본 구성 값들을 잡아주었습니다.
+(IAM Role과 SNS Topic도 자동으로 생성해 주고 굉장히 편리하네요.)</p>
+
+<p><img src="../../assets/built/images/post/imagebuilder/defineconfig.png" alt="config" /></p>
+
+<h4 id="step-4">Step 4</h4>
+
+<p>드디어, 이전 <strong>1️⃣ Distribution settings</strong> 과정에서 만들어둔 <strong>배포 설정</strong> 해당 단계에서 선택합니다.</p>
+
+<p><img src="../../assets/built/images/post/imagebuilder/associatelt.png" alt="asso" /></p>
+
+<h4 id="step-5">Step 5</h4>
+
+<p>Review 단계까지 구성 요소들을 검토해 보고 Create pipeline을 누르고 Image pipelines 콘솔로 돌아오면 아래와 같은 화면을 만나게 됩니다.
+아래 캡처화면의 경우 이미 빌드가 끝난 상태이지만, 테스트를 위해서 <strong>Actions - Run pipeline</strong> 단계를 거치면,
+ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종료되는 것을 과정을 확인할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/imagebuilder/imgconsole.png" alt="console" /></p>
+
+<h3 id="3️⃣-review">3️⃣ Review</h3>
+
+<ol>
+  <li><strong>EC2 - Images - AMIs</strong>에서 새롭게 생성된 AMI 확인</li>
+  <li><strong>EC2 - Launch templates</strong>에서 새롭게 버전이 올라간 lt 확인, 여기서 Versions 정보를 누르면 Image Builder가 생성한 Description을 확인할 수 있습니다.
+<img src="../../assets/built/images/post/imagebuilder/version.png" alt="version" /></li>
+  <li>제대로 작동하는지 확인하기 위해 기존의 EC2 하나를 종료시키면, 저의 경우 ASG의 Desired가 2로 설정했으므로 하나의 인스턴스가 새로운 버전으로 변경됩니다.
+이는 <strong>EC2 - Auto Scaling groups</strong>에서 확인할 수 있습니다.
+<img src="../../assets/built/images/post/imagebuilder/asg.png" alt="asg" /></li>
+</ol>
+
+<h3 id="4️⃣-clean-up">4️⃣ Clean Up</h3>
+
+<p>분해는 조립의 역순으로?! 2️⃣ -&gt; 1️⃣ -&gt; 0️⃣ 역순으로 리소스를 정리하고 3️⃣ Review 항목을 점검하여 모든 리소스가 회수되었는지 확인합니다.</p>
 
 <p><br /></p>
 
-<h2 id="step-2">Step 2</h2>
-<h3 id="layer-1️⃣--internet-access-resources">Layer 1️⃣ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step2.tf">Internet access resources</a></h3>
+<h2 id="outro">Outro</h2>
 
-<p>외부 인터넷과의 노출을 제한하고 나가는 트래픽을 위해 NAT Gateway를 활용합니다. 또한 들어오는 트래픽을 위해 ALB를 위치시켰습니다.
-로드밸런서와 NAT Gateway는 가용성이 높은 관리형 서비스로 병목 현상에 대해 걱정할 필요가 없습니다.</p>
+<p>지금까지 각종 이야기 거리들과 EC2 Image Builder를 사용하며 Immutable Server Pattern을 학습해 보았습니다.
+과거 제가 Packer로 관련 환경을 구축한 적이 있는데, 역시 AWS 환경에서는 AWS의 서비스를 사용하는 게 연계도 용이하고 구축도 쉽네요.</p>
 
-<details>
-  <summary>💡Nat Gateway 알아보기</summary>
-  <p><br />
-NAT(네트워크 주소 변환) 게이트웨이를 사용하면 프라이빗 서브넷의 인스턴스를 인터넷 또는 기타 AWS 서비스에 연결하는 한편, 인터넷에서 해당 인스턴스와의 연결을 시작하지 못하게 할 수 있습니다.
-NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서브넷을 지정해야 하기 때문에 Step2에서 우선적으로 생성합니다.</p>
-
-  <p><a href="https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-nat-gateway.html">도큐먼트로 더 알아보기</a></p>
-
-</details>
-
-<p><img src="../../assets/built/images/post/vpc-step2.png" alt="step2" /></p>
-
-<blockquote>
-  <p>그림에서는 보이지 않지만, VPC에는 암시적 라우터가 있으며 라우팅 테이블을 사용하여 네트워크 트래픽이 전달되는 위치를 제어합니다.
-VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다.</p>
-</blockquote>
-
-<p>Step 2 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
-data.aws_availability_zones.available
-aws_eip.nat_1
-aws_eip.nat_2
-aws_internet_gateway.igw
-aws_nat_gateway.nat_gateway_1
-aws_nat_gateway.nat_gateway_2
-aws_route_table.route_table_pub
-aws_route_table_association.route_table_association_1
-aws_route_table_association.route_table_association_2
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-</code></pre></div></div>
-
-<p><em>이번 포스팅에서 ALB와 인스턴스는 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.</em> <br /></p>
-
-<h2 id="step-3">Step 3</h2>
-<h3 id="layer-2️⃣️--apps-in-a-private-subnet">Layer 2️⃣️ : <a href="https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step3.tf">Apps in a private subnet</a></h3>
-
-<p>2개의 프라이빗 서브넷에 각각의 인스턴스를 놓습니다. 이후, 두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.</p>
-
-<blockquote>
-  <p><strong>❗️예제 그림에서는 Private subnet의 cidr block을 <code class="language-plaintext highlighter-rouge">10.0.2.0/22</code>로 가이드 하지만, 이는 앞서 만든 서브넷과 범위가 겹치므로 <code class="language-plaintext highlighter-rouge">10.0.4.0/22</code>로 바꿔 진행합니다.</strong>
-<a href="https://www.ipaddressguide.com/cidr">CIDR 계산기</a> 에서 정확하게 확인해 볼 수 있습니다.</p>
-</blockquote>
-
-<p><img src="../../assets/built/images/post/vpc-step3.png" alt="step3" /></p>
-
-<blockquote>
-  <p>Step3에서도 Step2와 같이 그림에서는 보이지 않는 라우트 테이블을 만들고 NAT 게이트웨이와 프라이빗 서브넷을 연결해 줍니다.
-프라이빗 서브넷의 요청이 외부로 나갈때는 NAT 게이트웨이의 고정 IP를 사용합니다.
-(프라이빗 서브넷의 라우트 테이블은 퍼블릭과 달리 2개를 만들어 각각 연결해 주었습니다.)</p>
-</blockquote>
-
-<p>Step 3 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform state list
-data.aws_availability_zones.available
-aws_eip.nat_1
-aws_eip.nat_2
-aws_internet_gateway.igw
-aws_nat_gateway.nat_gateway_1
-aws_nat_gateway.nat_gateway_2
-aws_route.private_nat_1
-aws_route.private_nat_2
-aws_route_table.route_table_pri_1
-aws_route_table.route_table_pri_2
-aws_route_table.route_table_pub
-aws_route_table_association.route_table_association_1
-aws_route_table_association.route_table_association_2
-aws_route_table_association.route_table_pri_association_1
-aws_route_table_association.route_table_pri_association_2
-aws_subnet.pri_sub_1
-aws_subnet.pri_sub_2
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-</code></pre></div></div>
-
-<p><em>이번 포스팅에서 DB와 인스턴스 연결은 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.</em> <br /></p>
-
-<h2 id="step-4">Step 4</h2>
-<h3 id="layer-3️⃣--data-in-a-second-private-subnet">Layer 3️⃣ : Data in a second private subnet</h3>
-
-<p>첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다. (코드 생략) <br />
-장애가 발생할 경우를 대비해 read-replica 혹은 standby 구성으로 배치합니다.</p>
-
-<blockquote>
-  <p><strong>❗Step4의 서브넷 작성법은 Step3의 방법과 동일합니다. 아래 사진은 CIDR의 범위가 겹치므로, Private subnet의 cidr block을 <code class="language-plaintext highlighter-rouge">10.0.8.0/23</code>을 <code class="language-plaintext highlighter-rouge">10.0.12.0/23</code>로, <code class="language-plaintext highlighter-rouge">10.0.10.0/23</code>을 <code class="language-plaintext highlighter-rouge">10.0.14.0/23</code>으로 바꿔 진행하세요.</strong></p>
-</blockquote>
-
-<p><img src="../../assets/built/images/post/vpc-step4.png" alt="step4" /></p>
-
-<blockquote>
-  <p>데이터 리소스(/23)보다를 앱 리소스(/22)를 확장할 가능성이 커, 더 큰 서브넷 마스크를 할당합니다.</p>
-</blockquote>
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
 
 <p><br /></p>
 
-<h2 id="step-5">Step 5</h2>
-<h3 id="leave-extra-ips-available">Leave extra IPs available</h3>
+<p><strong>📚 References</strong></p>
 
-<p>배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다. (코드 생략)</p>
-
-<p><img src="../../assets/built/images/post/vpc-step5.png" alt="step5" /></p>
-
-<p><br /></p>
-
-<p>위와 같은 단계들을 통해 <strong>3 Tier VPC Architecture</strong>를 학습해보았습니다.
-Terraform으로 생성된 자원들은 <code class="language-plaintext highlighter-rouge">terraform destory</code>명령어를 통해 학습을 시작하기 전 상태로 되돌리세요.
-다음 포스팅에서는 이번 포스팅에서 생략했던 인스턴스, DB, LB 등을 모듈로 관리하며 다뤄 보겠습니다.</p>
+<p>글 중간중간 하이퍼 링크로 Reference 들을 달아두었습니다.
+특히, 이번 포스팅 레퍼런스들은 좋은 내용들이 많으니 원본들을 읽어보시고 당시 제가 느낀 기쁨들을 함께 느낄수 있으면 좋겠습니다.</p>
 
 <hr />
-
-<p><span class="table-of-contents-list">Terraform Courses</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./3Tier">3-Tier VPC Architecture with Terraform</a></li>
-    <li><a href="./CodeCommit">ECR Pipeline with Terraform Ⅰ (CodeCommit)</a></li>
-    <li><a href="./CodeBuild">ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)</a></li>
-    <li><a href="./CodePipeline">ECR Pipeline with Terraform Ⅲ (CodePipeline)</a></li>
-    <li><a href="./Packer">Provision Infrastructure with Packer</a></li>
-</ul>
 
 <p><br /></p>
 
@@ -458,9 +416,9 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/3Tier';
-                            this.page.identifier = '/3Tier';
-                            this.page.title = '3-Tier VPC Architecture with Terraform';
+                            this.page.url = 'https://heuristicwave.github.io/ImageBuilder';
+                            this.page.identifier = '/ImageBuilder';
+                            this.page.title = 'Create Immutable Server using AWS Image Builder & Auto Scaling Group';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -494,7 +452,7 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -504,26 +462,6 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                                 
                                 
                                   
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/TerraformTips2">Terraform Tips 2 - Data & Index</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/TerraformTips1">Terraform Tips 1 - Module & Output</a></li>
-                                        
                                     
                                   
                                 
@@ -533,7 +471,7 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                                     
                                         
                                         
-                                            <li><a href="/SelfService">Self-service Infrastructure</a></li>
+                                            <li><a href="/ConstructHub">AWS CDK Library, Construct Hub</a></li>
                                         
                                     
                                   
@@ -542,14 +480,22 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                                     
                                         
                                         
+                                            <li><a href="/Karpenter">My first impression of AWS Karpenter</a></li>
+                                        
                                     
+                                  
+                                
                                   
                                 
                                   
                                     
                                         
                                         
+                                            <li><a href="/EC2_Clocksource">EC2 Clocksource</a></li>
+                                        
                                     
+                                  
+                                
                                   
                                 
                                   
@@ -574,6 +520,23 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                     
                                   
                                 
@@ -582,9 +545,9 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
+                            <a href="/tag/aws/">
                                 
-                                    See all 8 posts  →
+                                    See all 9 posts  →
                                 
                             </a>
                         </footer>
@@ -594,22 +557,21 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
                 
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/CodeCommit">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)"></div>
+            <a class="post-card-image-link" href="/TerraformTips2">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/CodeCommit">
+            <a class="post-card-content-link" href="/TerraformTips2">
                 <header class="post-card-header">
                     
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
                         
                             
                                <span class="post-card-tags">Devops</span>
@@ -621,52 +583,7 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
                         
                     
 
-                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅰ</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
-
-            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
-            
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/pipenv01">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/soap-bubble.jpg)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/pipenv01">
-                <header class="post-card-header">
-                    
-                        
-                            
-                                <span class="post-card-tags">Backend</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Pipenv, Nginx, Gunicorn 서버 운영하기</h2>
+                    <h2 class="post-card-title">Terraform Tips 2 - Data & Index</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -703,18 +620,18 @@ Terraform으로 생성된 자원들은 <code class="language-plaintext highlight
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">3-Tier VPC Architecture with Terraform</div>
+    <div class="floating-header-title">Create Immutable Server using AWS Image Builder & Auto Scaling Group</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=3-Tier+VPC+Architecture+with+Terraform&amp;url=https://heuristicwave.github.io3Tier"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Create+Immutable+Server+using+AWS+Image+Builder+%26+Auto+Scaling+Group&amp;url=https://heuristicwave.github.ioImageBuilder"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.io3Tier"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioImageBuilder"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
