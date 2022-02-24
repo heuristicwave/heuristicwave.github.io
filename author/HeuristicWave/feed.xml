@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-02-23T03:21:00+00:00</updated>
+  <updated>2022-02-24T07:53:54+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -30,6 +30,138 @@
   
   
 
+  
+    <entry>
+      <title type="html">Using Amazon ECS Exec for debugging</title>
+      <link href="https://heuristicwave.github.io/ECS_Exec" rel="alternate" type="text/html" title="Using Amazon ECS Exec for debugging" />
+      <published>2022-02-22T00:00:00+00:00</published>
+      <updated>2022-02-22T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/ECS_Exec</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/ECS_Exec">&lt;p&gt;Docker에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
+21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.&lt;/p&gt;
+
+&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/cli/latest/reference/ecs/execute-command.html&quot;&gt;AWS CLI Cmd Ref : excute-commnad&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;exec-활성화&quot;&gt;Exec 활성화&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여&lt;/li&gt;
+  &lt;li&gt;task-definition config 추가
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s2&quot;&gt;&quot;linuxParameters&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;initProcessEnabled&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;CLI로 execute-command enable 후, 점검
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs create-service &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--task-definition&lt;/span&gt; task-definition-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--enable-execute-command&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--service-name&lt;/span&gt; service-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--desired-count&lt;/span&gt; 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;아래 명령어로 활성화 여부 확인. (grep option 활용, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep -F4 &quot;managedAgents&quot;&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep &quot;enableExecuteCommand&quot;&lt;/code&gt;)&lt;/p&gt;
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs describe-tasks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--tasks&lt;/span&gt; task-id 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;활성화 상태일 때의 Snippet&lt;/p&gt;
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;tasks&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            ...
+            &lt;span class=&quot;s2&quot;&gt;&quot;containers&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    ...
+                    &lt;span class=&quot;s2&quot;&gt;&quot;managedAgents&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+                        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStartedAt&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;2021-03-01T14:49:44.574000-06:00&quot;&lt;/span&gt;,
+                            &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;ExecuteCommandAgent&quot;&lt;/span&gt;,
+                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStatus&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;RUNNING&quot;&lt;/span&gt;
+                        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+                    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,
+            ...
+            &lt;span class=&quot;s2&quot;&gt;&quot;enableExecuteCommand&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
+            ...
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Running ECS Exec
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs execute-command &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--task&lt;/span&gt; task-id &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--container&lt;/span&gt; container-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--interactive&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--command&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/bin/sh&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;문제-해결&quot;&gt;문제 해결&lt;/h2&gt;
+
+&lt;p&gt;Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;An error occurred &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ClusterNotFoundException&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; when calling the ExecuteCommand operation: Cluster not found.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="devops" />
+      
+
+      
+        <summary type="html">Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Create Immutable Server using AWS Image Builder &amp;amp; Auto Scaling Group</title>
@@ -1666,271 +1798,6 @@ AWS에서는 ENI라는 &lt;em&gt;가상 네트워크 카드를 나타내는 논�
 
       
         <summary type="html">EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까?</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">ECR CodePipeline with Terraform Ⅲ</title>
-      <link href="https://heuristicwave.github.io/CodePipeline" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅲ" />
-      <published>2021-04-09T00:00:00+00:00</published>
-      <updated>2021-04-09T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/CodePipeline</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/CodePipeline">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)&lt;/p&gt;
-
-&lt;h1 id=&quot;preview&quot;&gt;Preview&lt;/h1&gt;
-
-&lt;p&gt;3편에서는 CodePipeline을 생성하고 IAM 정책과 역할을 부여하는 법을 배워보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline&quot;&gt;문서&lt;/a&gt;
-를 확인하면 artifact가 담기는 버킷, pipeline을 생성하는 리소스, 관련된 IAM Role과 Policy가 보입니다.
-테라폼은 선언형 언어이므로 Role과 Resource의 작성 순서가 바뀌어도 상관이 없지만, 콘솔에서 작업할 경우 Role을 먼저 작성하고 리소스를 생성하니 3편에서는 IAM을 먼저 작성하겠습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;iam-role&quot;&gt;IAM Role&lt;/h3&gt;
-&lt;p&gt;아래 Role을 방금전 생성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 작성합니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline_role&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-codepipeline&quot;&lt;/span&gt;
-  assume_role_policy &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;
-{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Action&quot;: &quot;sts:AssumeRole&quot;,
-      &quot;Principal&quot;: {
-        &quot;Service&quot;: &quot;codepipeline.amazonaws.com&quot;
-      },
-      &quot;Effect&quot;: &quot;Allow&quot;
-    }
-  ]
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;iam-policy&quot;&gt;IAM Policy&lt;/h3&gt;
-&lt;p&gt;본래 필요한 정책만을 골라 &lt;a href=&quot;https://awspolicygen.s3.amazonaws.com/policygen.html&quot;&gt;정책생성기&lt;/a&gt; 에서 생생된 정책을 활용하는 방법이 있지만, 어떤 정책이 필요한지 한번에 맞추기는 너무 어렵습니다.
-(저의 경우 인터넷에서 타인이 작성한 정책과 에러메시지를 맞아가며 정책을 작성하고 있습니다 😅)&lt;br /&gt;
-➕ 아래 Policy를 방금전 생성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 아래 코드를 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_policy&quot; &quot;codepipeline_policy&quot; {
-  description = &quot;Codepipeline Execution Policy&quot;
-  policy      = &amp;lt;&amp;lt;EOF
-{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Action&quot;: [
-        &quot;s3:GetObject&quot;, &quot;s3:GetObjectVersion&quot;, &quot;s3:PutObject&quot;,
-        &quot;s3:GetBucketVersioning&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_s3_bucket.artifact_bucket.arn}/*&quot;
-    },
-    {
-      &quot;Action&quot; : [
-        &quot;codebuild:StartBuild&quot;, &quot;codebuild:BatchGetBuilds&quot;,
-        &quot;iam:PassRole&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;*&quot;
-    },
-    {
-      &quot;Action&quot; : [
-        &quot;codecommit:CancelUploadArchive&quot;,
-        &quot;codecommit:GetBranch&quot;,
-        &quot;codecommit:GetCommit&quot;,
-        &quot;codecommit:GetUploadArchiveStatus&quot;,
-        &quot;codecommit:UploadArchive&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_codecommit_repository.test.arn}&quot;
-    }
-  ]
-}
-EOF
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role_policy_attachment&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline-attach&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  role       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_role.codepipeline_role.name
-  policy_arn &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_policy.codepipeline_policy.arn
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;codepipeline&quot;&gt;CodePipeline&lt;/h2&gt;
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_codepipeline&lt;/code&gt;리소스의 config에는 artifact store와 암호화 키, Source-Build-Deploy로 이어지는 각 Stage가 선언되어 있습니다.
-리소스 안에 기재된 설정들은 필수가 아니므로 선택하여 사용할 수 있습니다. 이번 포스팅에서는 deploy stage와 암호화 config는 제외하고 진행하겠습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_codepipeline&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;pipeline&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  name     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.source_repo_name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.source_repo_branch&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-Pipeline&quot;&lt;/span&gt;
-  role_arn &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_role.codepipeline_role.arn
-  artifact_store &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    location &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_s3_bucket.artifact_bucket.bucket
-    &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;S3&quot;&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
-    action &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-      name             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
-      category         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
-      owner            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;AWS&quot;&lt;/span&gt;
-      version          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;
-      provider         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CodeCommit&quot;&lt;/span&gt;
-      output_artifacts &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SourceOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-      run_order        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
-      configuration &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        RepositoryName       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.source_repo_name
-        BranchName           &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.source_repo_branch
-        PollForSourceChanges &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;false&quot;&lt;/span&gt;
-      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
-    action &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-      name             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
-      category         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
-      owner            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;AWS&quot;&lt;/span&gt;
-      version          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;
-      provider         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CodeBuild&quot;&lt;/span&gt;
-      input_artifacts  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SourceOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-      output_artifacts &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;BuildOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-      run_order        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
-      configuration &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        ProjectName &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_codebuild_project.codebuild.id
-      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;1편에서 작성한 CodeCommit을 Stage의 Source, 2편에서 작성한 CodeBuild를 Build단계 지정했습니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply, plan&lt;/code&gt; 명령어를 차례로 반영해 오류가 없는지 확인합니다.&lt;/p&gt;
-
-&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
-aws_codebuild_project.codebuild
-aws_codecommit_repository.test
-aws_codepipeline.pipeline
-aws_ecr_repository.image_repo
-aws_iam_policy.codebuild_policy
-aws_iam_policy.codepipeline_policy
-aws_iam_role.codebuild_role
-aws_iam_role.codepipeline_role
-aws_iam_role_policy_attachment.codebuild-attach
-aws_iam_role_policy_attachment.codepipeline-attach
-aws_s3_bucket.artifact_bucket
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipe line 콘솔&lt;/a&gt; 에서 확인하면 권한이 없어 실패한 화면이 나올 것 입니다.
-이를 해결하기 위해 또 다른 권한이 필요합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;codepipeline-trigger&quot;&gt;CodePipeline Trigger&lt;/h2&gt;
-&lt;p&gt;CodeCommit에서 발생한 이벤트가 CodePipeline으로 트리거되기 위해서는 아래 정의된 권한이 필요합니다.&lt;/p&gt;
-
-&lt;p&gt;➕ 아래 코드를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 추가하고 인프라를 생성해주세요.&lt;/p&gt;
-&lt;noscript&gt;
-  &lt;pre&gt;resource &amp;quot;aws_iam_role&amp;quot; &amp;quot;trigger_role&amp;quot; {
-  name               = &amp;quot;terraform-trigger&amp;quot;
-  assume_role_policy = &amp;lt;&amp;lt;EOF
-{
-  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
-  &amp;quot;Statement&amp;quot;: [
-    {
-      &amp;quot;Action&amp;quot;: &amp;quot;sts:AssumeRole&amp;quot;,
-      &amp;quot;Principal&amp;quot;: {
-        &amp;quot;Service&amp;quot;: &amp;quot;events.amazonaws.com&amp;quot;
-      },
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Sid&amp;quot;: &amp;quot;&amp;quot;
-    }
-  ]
-}
-EOF
-}
-
-resource &amp;quot;aws_iam_policy&amp;quot; &amp;quot;trigger_policy&amp;quot; {
-  description = &amp;quot;CodePipeline Trigger Execution Policy&amp;quot;
-  policy      = &amp;lt;&amp;lt;EOF
-{
-  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
-  &amp;quot;Statement&amp;quot;: [
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;codepipeline:StartPipelineExecution&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_codepipeline.pipeline.arn}&amp;quot;
-    }
-  ]
-}
-EOF
-}
-
-resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-attach&amp;quot; {
-  role       = aws_iam_role.trigger_role.name
-  policy_arn = aws_iam_policy.trigger_policy.arn
-}&lt;/pre&gt;
-&lt;/noscript&gt;
-&lt;script src=&quot;https://gist.github.com/heuristicwave/5b566b2cc70337501a4d60b71215930f.js&quot;&gt; &lt;/script&gt;
-
-&lt;h2 id=&quot;result&quot;&gt;Result&lt;/h2&gt;
-&lt;p&gt;Trigger 까지 정상적으로 적용하고 테스트용으로 활용할 아무 Dockerfile을 CodeCommit에 Push합니다.
-다시 &lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipeline 콘솔&lt;/a&gt; 에 접속해 우상단에 위치한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;변경사항 릴리스&lt;/code&gt;를 누르면,
-아래와 같이 정상적으로 코드 파이프라인이 작동하여 운영되는 것을 확인 할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/ecr_terraform_demo.png&quot; alt=&quot;terraform_demo&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;cleanup&quot;&gt;Cleanup&lt;/h2&gt;
-&lt;p&gt;S3 bucket은 빈상태여야 제거가 가능하기에 &lt;a href=&quot;https://console.aws.amazon.com/s3/home&quot;&gt;S3 콘솔&lt;/a&gt; 에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecr-pipeline&lt;/code&gt;의 데이터를 모두 삭제합니다.
-이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destory&lt;/code&gt; 명령어로 모든 리소스를 회수합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;총 3편에 걸쳐서 테라폼으로 &lt;strong&gt;최소한의 리소스&lt;/strong&gt;로 ECR Pipeline 구축법을 알아보았습니다. (CloudWatch 기능을 추가해 CodePipeline을 구축해보세요 👍)
-해당 과정을 통해 AWS 인프라 생성법과, IAM 활용법, Variable, Output, tfvars 등을 활용해 코드를 작성하는 법을 공부했습니다.
-다른 CI/CD 파이프라인 구축법도 이번 포스팅에서 다룬 방법과 크게 다르지 않으니, 해당 포스팅이 도움이 되면 좋겠습니다. 😁&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)</summary>
       
 
       

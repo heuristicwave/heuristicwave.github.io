@@ -184,6 +184,15 @@ into the {body} of the default.hbs template -->
 <script>
     window.store = {
     
+    "ecs-exec": {
+        "title": "Using Amazon ECS Exec for debugging",
+            "author": "HeuristicWave",
+            "category": "",
+            "content": "Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.📚 References  Using Amazon ECS Exec for debugging  AWS CLI Cmd Ref : excute-commnadExec 활성화  SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여  task-definition config 추가    \"linuxParameters\": {    \"initProcessEnabled\": true}        CLI로 execute-command enable 후, 점검    aws ecs create-service \\ --cluster cluster-name \\ --task-definition task-definition-name \\ --enable-execute-command \\ --service-name service-name \\ --desired-count 1        아래 명령어로 활성화 여부 확인. (grep option 활용, grep -F4 \"managedAgents\", grep \"enableExecuteCommand\")    aws ecs describe-tasks \\ --cluster cluster-name \\ --tasks task-id         활성화 상태일 때의 Snippet    {    \"tasks\": [        {            ...            \"containers\": [                {                    ...                    \"managedAgents\": [                        {                            \"lastStartedAt\": \"2021-03-01T14:49:44.574000-06:00\",                            \"name\": \"ExecuteCommandAgent\",                            \"lastStatus\": \"RUNNING\"                        }                    ]                }            ],            ...            \"enableExecuteCommand\": true,            ...        }    ]}        Running ECS Exec    aws ecs execute-command --cluster cluster-name \\ --task task-id \\ --container container-name \\ --interactive \\ --command \"/bin/sh\"      문제 해결Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)An error occurred (ClusterNotFoundException) when calling the ExecuteCommand operation: Cluster not found.  Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found  클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)ECS Error Handling and Troubleshooting    Using Amazon ECS Exec for debugging",
+        "url": "/ECS_Exec"
+    }
+    ,
+    
     "imagebuilder": {
         "title": "Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group",
             "author": "HeuristicWave",

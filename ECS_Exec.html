@@ -11,7 +11,7 @@
 
 
 
-    <title>My first impression of AWS Karpenter</title>
+    <title>Using Amazon ECS Exec for debugging</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,26 +49,26 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/Karpenter" />
+    <link rel="canonical" href="https://heuristicwave.github.io/ECS_Exec" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="My first impression of AWS Karpenter" />
-    <meta property="og:description" content="본 글은 지난 11월 29일에 GA된 Karpenter를 가볍게 사용해 보며 느낀 첫인상에 대한 글입니다. Intro EKS 환경에서 더 빠르고 효율적인 Kubernetes Cluster Autoscaler Karpenter가 GA 되었습니다. 오픈소스인 Karpenter는 모든 클라우드 벤더와의 통합도 목표하지만, 아직 타 클라우드와의 통합은 진행 중이라 v0.5으로 공개되었다고 합니다. 즉 GA 된 v0.5만큼은 AWS 리소스와 완벽하게 통합되었기에" />
-    <meta property="og:url" content="https://heuristicwave.github.io/Karpenter" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/karpenter.png" />
+    <meta property="og:title" content="Using Amazon ECS Exec for debugging" />
+    <meta property="og:description" content="Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition" />
+    <meta property="og:url" content="https://heuristicwave.github.io/ECS_Exec" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-12-20T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-12-20T00:00:00+00:00" />
+    <meta property="article:published_time" content="2022-02-22T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-02-22T00:00:00+00:00" />
     <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="My first impression of AWS Karpenter" />
-    <meta name="twitter:description" content="본 글은 지난 11월 29일에 GA된 Karpenter를 가볍게 사용해 보며 느낀 첫인상에 대한 글입니다. Intro EKS 환경에서 더 빠르고 효율적인 Kubernetes Cluster Autoscaler Karpenter가 GA 되었습니다. 오픈소스인 Karpenter는 모든 클라우드 벤더와의 통합도 목표하지만, 아직 타 클라우드와의 통합은 진행 중이라 v0.5으로 공개되었다고 합니다. 즉 GA 된 v0.5만큼은 AWS 리소스와 완벽하게 통합되었기에" />
+    <meta name="twitter:title" content="Using Amazon ECS Exec for debugging" />
+    <meta name="twitter:description" content="Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/karpenter.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/Karpenter",
+    "url": "https://heuristicwave.github.io/ECS_Exec",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/karpenter.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/blog-cover.jpg",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/Karpenter"
+        "@id": "https://heuristicwave.github.io/ECS_Exec"
     },
-    "description": "본 글은 지난 11월 29일에 GA된 Karpenter를 가볍게 사용해 보며 느낀 첫인상에 대한 글입니다. Intro EKS 환경에서 더 빠르고 효율적인 Kubernetes Cluster Autoscaler Karpenter가 GA 되었습니다. 오픈소스인 Karpenter는 모든 클라우드 벤더와의 통합도 목표하지만, 아직 타 클라우드와의 통합은 진행 중이라 v0.5으로 공개되었다고 합니다. 즉 GA 된 v0.5만큼은 AWS 리소스와 완벽하게 통합되었기에"
+    "description": "Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="My first impression of AWS Karpenter" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Using Amazon ECS Exec for debugging" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -171,164 +171,126 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-aws post tag-aws ">
+        <article class="post-full  tag-aws tag-devops post tag-aws no-image">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="20 December 2021">20 December 2021</time>
+                    <time class="post-full-meta-date" datetime="22 February 2022">22 February 2022</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/aws/'>AWS</a>
+                               <a href='/tag/aws/'>AWS</a>,
+                            
+                        
+                            
+                               <a href='/tag/devops/'>DEVOPS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">My first impression of AWS Karpenter</h1>
+                <h1 class="post-full-title">Using Amazon ECS Exec for debugging</h1>
             </header>
 
-            
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/karpenter.png)">
-            </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>본 글은 지난 11월 29일에 GA된 <code class="language-plaintext highlighter-rouge">Karpenter</code>를 가볍게 사용해 보며 느낀 첫인상에 대한 글입니다.</p>
+                    <p>Docker에서는 <code class="language-plaintext highlighter-rouge">exec</code> 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
+21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</p>
 
-<h1 id="intro">Intro</h1>
-
-<p>EKS 환경에서 더 빠르고 효율적인 Kubernetes Cluster Autoscaler <code class="language-plaintext highlighter-rouge">Karpenter</code>가 GA 되었습니다.
-오픈소스인 Karpenter는 모든 클라우드 벤더와의 통합도 목표하지만, 아직 타 클라우드와의 통합은 진행 중이라 v0.5으로 공개되었다고 합니다.
-즉 GA 된 v0.5만큼은 AWS 리소스와 완벽하게 통합되었기에 이번 업데이트에 공개되었다고 할 수 있습니다.
-사실 기존 EKS 환경에서도 EC2의 Autoscaling을 활용한 CA를 지원하였는데, Karpenter 출시가 어떤 영향을 미치게 될 것인지 알아보겠습니다.</p>
-
-<p><br /></p>
-
-<h2 id="kubernetes-autoscaling">Kubernetes Autoscaling</h2>
-
-<p>쿠버네티스에서는 다음과 같은 3가지 Autoscaling 방법이 있습니다.</p>
+<h2 id="-references">📚 References</h2>
 
 <ul>
-  <li>HPA(Horizontal Pod Autoscaler)</li>
-  <li>VPA(Vertical Pod Autoscaler)</li>
-  <li>CA(Cluster Autoscaler)</li>
+  <li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html">Using Amazon ECS Exec for debugging</a></li>
+  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/ecs/execute-command.html">AWS CLI Cmd Ref : excute-commnad</a></li>
 </ul>
 
-<p>Pod Scaling의 경우 CPU 사용량, 메트릭 등을 관찰하여 스케일링하지만, EKS 클러스터 자체의 자원이 모자라는 경우 CA를 고려해야 합니다.</p>
+<h2 id="exec-활성화">Exec 활성화</h2>
+
+<ol>
+  <li>SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여</li>
+  <li>task-definition config 추가
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"linuxParameters"</span>: <span class="o">{</span>
+    <span class="s2">"initProcessEnabled"</span>: <span class="nb">true</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>CLI로 execute-command enable 후, 점검
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs create-service <span class="se">\</span>
+ <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
+ <span class="nt">--task-definition</span> task-definition-name <span class="se">\</span>
+ <span class="nt">--enable-execute-command</span> <span class="se">\</span>
+ <span class="nt">--service-name</span> service-name <span class="se">\</span>
+ <span class="nt">--desired-count</span> 1
+</code></pre></div>    </div>
+    <p>아래 명령어로 활성화 여부 확인. (grep option 활용, <code class="language-plaintext highlighter-rouge">grep -F4 "managedAgents"</code>, <code class="language-plaintext highlighter-rouge">grep "enableExecuteCommand"</code>)</p>
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs describe-tasks <span class="se">\</span>
+ <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
+ <span class="nt">--tasks</span> task-id 
+</code></pre></div>    </div>
+    <p>활성화 상태일 때의 Snippet</p>
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
+    <span class="s2">"tasks"</span>: <span class="o">[</span>
+        <span class="o">{</span>
+            ...
+            <span class="s2">"containers"</span>: <span class="o">[</span>
+                <span class="o">{</span>
+                    ...
+                    <span class="s2">"managedAgents"</span>: <span class="o">[</span>
+                        <span class="o">{</span>
+                            <span class="s2">"lastStartedAt"</span>: <span class="s2">"2021-03-01T14:49:44.574000-06:00"</span>,
+                            <span class="s2">"name"</span>: <span class="s2">"ExecuteCommandAgent"</span>,
+                            <span class="s2">"lastStatus"</span>: <span class="s2">"RUNNING"</span>
+                        <span class="o">}</span>
+                    <span class="o">]</span>
+                <span class="o">}</span>
+            <span class="o">]</span>,
+            ...
+            <span class="s2">"enableExecuteCommand"</span>: <span class="nb">true</span>,
+            ...
+        <span class="o">}</span>
+    <span class="o">]</span>
+<span class="o">}</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Running ECS Exec
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs execute-command <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
+ <span class="nt">--task</span> task-id <span class="se">\</span>
+ <span class="nt">--container</span> container-name <span class="se">\</span>
+ <span class="nt">--interactive</span> <span class="se">\</span>
+ <span class="nt">--command</span> <span class="s2">"/bin/sh"</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
 
 <p><br /></p>
 
-<h2 id="️-cluster-autoscaler-with-ec2-auto-scaling">⚙️ Cluster Autoscaler with EC2 Auto Scaling</h2>
+<h2 id="문제-해결">문제 해결</h2>
 
-<p>기존 EKS는 다음과 같이 EC2의 Autoscaler 기능을 활용해 탄력적인 환경을 구성했습니다.
-<img src="../../assets/built/images/post/karpenter/ec2_asg.png" alt="Red Hat Reference Guide" />
-<code class="language-plaintext highlighter-rouge">hpa</code>와 <code class="language-plaintext highlighter-rouge">vpa</code>가 eks에서 내에서 scaling을 진행하는 것과는 달리,
-worker node를 확보하기 위해 EC2의 Auto Scaling Group을 사용하며 <strong>k8s와 ec2 별도의 Layer를 관리</strong>해야 하는 운영 복잡도가 발생하게 되었습니다.</p>
-
-<p><br /></p>
-
-<h2 id="-cluster-autoscaler-with-karpenter">🪓 Cluster Autoscaler with Karpenter</h2>
-
-<p>반면 Karpenter의 경우 k8s의 native method를 확장한 개념이기 때문에, 기존의 CA 방법과는 달리 효율적인 환경을 제공할 수 있습니다.
-<em>(실제로 카펜터를 운영해 보면 기존의 Auto Scaling Group을 사용하지 않는 것은 아니지만,
-사용자 입장에서는 고려하지 않아도 되니 k8s layer에서만 관리된다고 해도 틀린 말은 아닌 것 같습니다.)</em></p>
-
-<p><a href="https://karpenter.sh/">karpenter.sh</a> 의 홈 화면을 보면 간단한 동작 원리를 설명하는 그림이 있습니다.
-karpenter가 unscheduled pods를 관찰하고 있다가 즉시(just-in-time) 최적화된 capacity에 pods를 배포합니다.</p>
-
-<p><img src="../../assets/built/images/post/karpenter/karpenter.png" alt="karpenter works" /></p>
-
-<h3 id="overprovisioning">Overprovisioning</h3>
-
-<p>과거 EC2의 스케일링을 사용하는 CA에 대한 <a href="https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/cluster-autoscaler.html">공식 문서</a>에서, 다음과 같은 고려 사항을 확인할 수 있습니다.</p>
+<p>Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>An error occurred <span class="o">(</span>ClusterNotFoundException<span class="o">)</span> when calling the ExecuteCommand operation: Cluster not found.
+</code></pre></div></div>
 
 <blockquote>
-  <p>노드를 확장하기 전에 노드가 확장될 때까지 기다려야 하므로 배포 대기 시간에 큰 영향을 미칩니다.
-노드를 사용할 수 있게 되려면 몇 분 정도 걸릴 수 있으며, 이로 인해 포드 예약 지연 시간이 크게 늘어날 수 있습니다.
-예약 대기 시간이 늘어나는 것을 감수하고 <strong>오버프로비저닝</strong>을 사용하여 이를 완화할 수 있습니다.</p>
+  <p>Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)</p>
 </blockquote>
 
-<p>그러나 이제 karpenter를 도입한다면 <strong>1분 이내 최적화된 인스턴스를 바로 프로비저닝</strong> 할 수 있으므로,
-더 이상 미리 프로비저닝을 할 필요도 없고 워커 노드의 크기 조정도 고려하지 않아도 됩니다.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found
+</code></pre></div></div>
 
-<p>어떻게 오버프로비저닝을 방지하고 컨테이너와 클라우드 환경의 이점을 더 누릴 수 있게 해주는지 제가 진행해본 테스트와 함께 알아보겠습니다.</p>
-
-<p><br /></p>
-
-<h2 id="-lab">👀 Lab</h2>
-
-<p><em>TMI : 이 글을 보는 시점에는 수정되어 있을 수도 있겠습니다만,
-공식 문서에 기재된 Default Region과 Module의 azs Config 값이 통일되지 않았습니다. 수행 시, 참고하시기 바랍니다.</em></p>
-
-<p>공식 문서 <a href="https://karpenter.sh/docs/getting-started-with-terraform/">Terraform으로 시작하기</a> 의 가이드대로
-Terraform 코드를 실행시키면 EKS 내에 다음과 같은 <code class="language-plaintext highlighter-rouge">karpenter-controller</code>와 <code class="language-plaintext highlighter-rouge">karpenter-webhook</code> 포드가 올라온 것을 확인할 수 있습니다.
-<img src="../../assets/built/images/post/karpenter/initial_pods.png" alt="initial_pods" />
-우선, Karpenter가 정말 최적화된 capacity를 제공하는지 확인하기 위해 <code class="language-plaintext highlighter-rouge">t3a</code> 시리즈의 스펙을 첨부합니다.
-<img src="../../assets/built/images/post/karpenter/t3a.png" alt="t3a_spec" /></p>
-
-<h3 id="test-1--t3amedium-인스턴스에-1cpu를-요구하는-5개의-pod-배포">Test 1 : t3a.medium 인스턴스에 1cpu를 요구하는 5개의 pod 배포</h3>
-
-<p>문서에서 제공하는 inflate manifest를 활용해 t3a.medium 인스턴스에 1cpu를 요구하는 5개의 pod를 배포하면,
-다음과 같이 <code class="language-plaintext highlighter-rouge">t3a.2xlarge</code> 인스턴스가 즉시 프로비저닝 됩니다.
-(1분 이내라고 소개되지만, 체감상 1분 보다 더 빠른 시간 안에 프로비저닝 되는 것 같습니다.)
-<img src="../../assets/built/images/post/karpenter/eks1.png" alt="eks_dashboard" />
-새롭게 생성된 <code class="language-plaintext highlighter-rouge">t3a.2xlarge</code> 노드를 확인하면 다음과 같이 5개의 pod가 배치된 것을 볼 수 있습니다.
-<img src="../../assets/built/images/post/karpenter/eks2.png" alt="eks2_dashboard" /></p>
-
-<p>아키텍처로 보면 다음과 같습니다. 기존 t3a.medium에는 기본으로 있는 pod들 때문에 1cpu 조차 할당할 수 없습니다.
-inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인스턴스를 프로비저닝하고 pod들을 배치시켰습니다.
-요청 리소스를 기반으로 최적의 인스턴스를 할당한 것을 확인할 수 있었습니다.
-<img src="../../assets/built/images/post/karpenter/archi1.png" alt="architecture1" /></p>
-
-<h3 id="test-2--test1환경에서-05cpu를-요구하는-5개의-pod-배포">Test 2 : Test1환경에서 0.5cpu를 요구하는 5개의 pod 배포</h3>
-<p>Test 1에서 <strong>Scalue out</strong>(worker node 1대 =&gt; 2대) &amp; <strong>Scale up</strong>(t3a.medium =&gt; t3a.2xlarge)
-를 동시에 경험해 봤다면, 이번에는 다음과 같이 필요한 리소스만 0.5 cpu로 줄여보겠습니다.
-<img src="../../assets/built/images/post/karpenter/vscode.png" alt="vscode" /></p>
-
-<p>기존 <code class="language-plaintext highlighter-rouge">t3a.2xlarge</code> 인스턴스가 사라지고, <code class="language-plaintext highlighter-rouge">t3a.xlarge</code> 인스턴스가 즉시 프로비저닝 되었습니다.
-<img src="../../assets/built/images/post/karpenter/eks3.png" alt="eks_dashboard3" />
-⬆️ a minute ago에서 ⬇️ 2minutes ago로 변하는 것을 보니 정말 1분 이내로 동작하는 것 같습니다.
-<img src="../../assets/built/images/post/karpenter/eks4.png" alt="eks_dashboard4" /></p>
-
-<p>아키텍처로 보면 다음과 같습니다.
-이번에는 <code class="language-plaintext highlighter-rouge">t3a.medium</code>에 0.5 cpu만큼의 capacity가 남아있으므로 1개의 inflate pod가 배포되었고,
-<code class="language-plaintext highlighter-rouge">t3x.xlarge</code> 나머지 4개의 inflate pod가 배포되었습니다.
-<img src="../../assets/built/images/post/karpenter/archi2.png" alt="architecture2" />
-<code class="language-plaintext highlighter-rouge">t3a.large</code>(2cpu) &lt; <code class="language-plaintext highlighter-rouge">inflate</code>(0.5cpu * 4) + <code class="language-plaintext highlighter-rouge">kube-proxy</code> + <code class="language-plaintext highlighter-rouge">aws-node</code> &lt; <code class="language-plaintext highlighter-rouge">t3a.xlarge</code>(4cpu)</p>
-
-<p>정말 빠른 시간 내에 최적의 capacity를 할당하는 모습을 보니 유연하고 높은 성능을 제공한다는 소개가 맞는 것 같습니다.</p>
-
-<p>저는 위 실험에서 인스턴스에 관한 별도의 CRD 값들을 지정하지 않아 karpenter가 <code class="language-plaintext highlighter-rouge">t</code>시리즈 인스턴스들을 프로비저닝 하였지만,
-운영에서 Karpenter를 사용하기 위해서는 <a href="https://karpenter.sh/docs/provisioner/">Provisioner API</a>를 읽고 세밀한 manifest 값들을 조정해 주어야 합니다.</p>
+<blockquote>
+  <p>클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)</p>
+</blockquote>
 
 <p><br /></p>
-
-<h2 id="outro">Outro</h2>
-<p>과거 AWS의 CA는 스케일링에 걸리는 시간도 상당할뿐더러,
-제한적인 스케일링으로 인해 리소스가 낭비되거나 운영환경에서 다운타임을 최소화하기 위해 오버프로비저닝 되는 경우도 많았습니다.
-기존의 방법보다 더 Kubernetes native 한 karpenter를 도입한다면, 아래 그림과 같은 효과를 기대할 수 있습니다.
-<img src="../../assets/built/images/post/karpenter/archi3.png" alt="architecture3" /></p>
-
-<p>Karpenter의 빠른 프로비저닝과 유연한 스케일링 덕분에 클라우드를 더 클라우드답게 사용할 수 있게 된 만큼
-가까운 미래에 Karpenter가 기존의 CA를 대체할 것으로 예상됩니다.
-지금까지 아주 간단하게 Karpenter를 사용해 본 후기를 작성해 보았습니다.
-추후, Karpenter의 자세한 동작 원리와 제약 사항 혹은 더 많은 기능들에 대하여 다뤄보겠습니다.</p>
-
-<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
-
-<p><br /></p>
-
-<h3 id="-references">📚 References</h3>
-
-<ul>
-  <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2021/11/aws-karpenter-v0-5/">AWS Whats new, aws karpenter</a></li>
-  <li><a href="https://aws.amazon.com/ko/blogs/aws/introducing-karpenter-an-open-source-high-performance-kubernetes-cluster-autoscaler/">Introducing Karpenter</a></li>
-  <li><a href="https://karpenter.sh/">Karpenter Document</a></li>
-</ul>
 
 <hr />
+
+<p><span class="table-of-contents-list">ECS Error Handling and Troubleshooting</span></p>
+<ul class="table-of-contents-list">
+    <li><a href="./ECS_Exec">Using Amazon ECS Exec for debugging</a></li>
+</ul>
 
 <p><br /></p>
 
@@ -373,9 +335,9 @@ inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인�
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/Karpenter';
-                            this.page.identifier = '/Karpenter';
-                            this.page.title = 'My first impression of AWS Karpenter';
+                            this.page.url = 'https://heuristicwave.github.io/ECS_Exec';
+                            this.page.identifier = '/ECS_Exec';
+                            this.page.title = 'Using Amazon ECS Exec for debugging';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -420,11 +382,6 @@ inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인�
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/ECS_Exec">Using Amazon ECS Exec for debugging</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -448,6 +405,11 @@ inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인�
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                            <li><a href="/Karpenter">My first impression of AWS Karpenter</a></li>
+                                        
                                     
                                   
                                 
@@ -521,16 +483,19 @@ inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인�
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
                 
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/ConstructHub">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/construct/hub1.png)"></div>
+            <a class="post-card-image-link" href="/ImageBuilder">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/imagebuilder.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/ConstructHub">
+            <a class="post-card-content-link" href="/ImageBuilder">
                 <header class="post-card-header">
                     
                         
@@ -540,56 +505,7 @@ inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인�
                         
                     
 
-                    <h2 class="post-card-title">AWS CDK Library, Construct Hub</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
-
-            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
-            
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/TerraformTips1">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/TerraformTips1">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Devops</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Terraform</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Terraform Tips 1 - Module & Output</h2>
+                    <h2 class="post-card-title">Create Immutable Server using AWS Image Builder & Auto Scaling Group</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -626,18 +542,18 @@ inflate는 5cpu를 요구하므로, 이를 수용할 수 있는 t3a.2xlarge 인�
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">My first impression of AWS Karpenter</div>
+    <div class="floating-header-title">Using Amazon ECS Exec for debugging</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=My+first+impression+of+AWS+Karpenter&amp;url=https://heuristicwave.github.ioKarpenter"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Using+Amazon+ECS+Exec+for+debugging&amp;url=https://heuristicwave.github.ioECS_Exec"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioKarpenter"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioECS_Exec"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

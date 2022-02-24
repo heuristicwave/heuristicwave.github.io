@@ -8,6 +8,22 @@
     
       
       <item>
+        <title>Using Amazon ECS Exec for debugging</title>
+        
+          <description>&lt;p&gt;Docker에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
+21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Tue, 22 Feb 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/ECS_Exec</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/ECS_Exec</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group</title>
         
           <description>&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;

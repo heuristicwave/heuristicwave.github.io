@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-02-23T03:21:00+00:00</updated>
+  <updated>2022-02-24T07:53:54+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,138 @@
   
   
 
+  
+    <entry>
+      <title type="html">Using Amazon ECS Exec for debugging</title>
+      <link href="https://heuristicwave.github.io/ECS_Exec" rel="alternate" type="text/html" title="Using Amazon ECS Exec for debugging" />
+      <published>2022-02-22T00:00:00+00:00</published>
+      <updated>2022-02-22T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/ECS_Exec</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/ECS_Exec">&lt;p&gt;Docker에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
+21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.&lt;/p&gt;
+
+&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/cli/latest/reference/ecs/execute-command.html&quot;&gt;AWS CLI Cmd Ref : excute-commnad&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;exec-활성화&quot;&gt;Exec 활성화&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여&lt;/li&gt;
+  &lt;li&gt;task-definition config 추가
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s2&quot;&gt;&quot;linuxParameters&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;initProcessEnabled&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;CLI로 execute-command enable 후, 점검
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs create-service &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--task-definition&lt;/span&gt; task-definition-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--enable-execute-command&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--service-name&lt;/span&gt; service-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--desired-count&lt;/span&gt; 1
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;아래 명령어로 활성화 여부 확인. (grep option 활용, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep -F4 &quot;managedAgents&quot;&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep &quot;enableExecuteCommand&quot;&lt;/code&gt;)&lt;/p&gt;
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs describe-tasks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--tasks&lt;/span&gt; task-id 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+    &lt;p&gt;활성화 상태일 때의 Snippet&lt;/p&gt;
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;tasks&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            ...
+            &lt;span class=&quot;s2&quot;&gt;&quot;containers&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                    ...
+                    &lt;span class=&quot;s2&quot;&gt;&quot;managedAgents&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+                        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStartedAt&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;2021-03-01T14:49:44.574000-06:00&quot;&lt;/span&gt;,
+                            &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;ExecuteCommandAgent&quot;&lt;/span&gt;,
+                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStatus&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;RUNNING&quot;&lt;/span&gt;
+                        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+                    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,
+            ...
+            &lt;span class=&quot;s2&quot;&gt;&quot;enableExecuteCommand&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
+            ...
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Running ECS Exec
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs execute-command &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--task&lt;/span&gt; task-id &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--container&lt;/span&gt; container-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--interactive&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+ &lt;span class=&quot;nt&quot;&gt;--command&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/bin/sh&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;문제-해결&quot;&gt;문제 해결&lt;/h2&gt;
+
+&lt;p&gt;Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;An error occurred &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ClusterNotFoundException&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; when calling the ExecuteCommand operation: Cluster not found.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="devops" />
+      
+
+      
+        <summary type="html">Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Create Immutable Server using AWS Image Builder &amp;amp; Auto Scaling Group</title>
@@ -1970,256 +2102,6 @@ git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.Use
 
       
         <summary type="html">Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">3-Tier VPC Architecture with Terraform</title>
-      <link href="https://heuristicwave.github.io/3Tier" rel="alternate" type="text/html" title="3-Tier VPC Architecture with Terraform" />
-      <published>2021-01-27T18:00:00+00:00</published>
-      <updated>2021-01-27T18:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/3Tier</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/3Tier">&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;Multi-Tier VPC 란?&lt;/summary&gt;
-  &lt;p&gt;&lt;br /&gt;
-VPC를 구축할 때 단일 계층 VPC에 모든 자원을 넣는다면, 네트워크에 접근할 수 있는 잠재적 공격자에게 자원이 노출됩니다. 이를 보완하기 위해 서브넷으로
-다중 계층 VPC 아키텍처를 만들어 방어 계층을 이룰 수 있습니다.&lt;/p&gt;
-
-  &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/Multi-tier VPC.png&quot; alt=&quot;multiTier&quot; /&gt;&lt;/p&gt;
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;디자인-패턴--3-tier-vpc-architecture&quot;&gt;디자인 패턴 : 3 Tier VPC Architecture&lt;/h1&gt;
-
-&lt;p&gt;&lt;em&gt;테라폼 코드는 모듈로 관리하는 것을 권장하지만, 이번 포스팅에서는 3-tier 아키텍처 중 네트워크와 관련된 부분만을 다뤄 하나의 파일에서 코드를 관리합니다.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;Step 0 (테라폼을 활용하실 줄 안다면 넘어가세요)&lt;/summary&gt;
-
-  &lt;h2 id=&quot;step-0&quot;&gt;Step 0&lt;/h2&gt;
-
-  &lt;p&gt;아키텍처를 구성할 폴더를 만들고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provider&lt;/code&gt;를 주입합니다.&lt;/p&gt;
-  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;architecture
-&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;architecture
-terraform init
-&lt;span class=&quot;nb&quot;&gt;touch &lt;/span&gt;threeTierVPC.tf
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;threeTierVPC.tf&lt;/code&gt;에 벤더 정보를 작성합니다.&lt;/p&gt;
-  &lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ap-northeast-2&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-  &lt;p&gt;명령어&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;를 통해, 오류 없이 통과하는 화면을 확인하고 다음 단계로 🚀
-&lt;br /&gt;&lt;/p&gt;
-  &lt;blockquote&gt;
-    &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;로 인프라를 반영 할때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-auto-approve&lt;/code&gt;옵션을 주면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;입력 없이 진행 할 수 있습니다. 그러나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;를 입력하기 전, 한번 더 검토할 수 있는 기회가 있으므로 권장하지 않습니다.&lt;/p&gt;
-  &lt;/blockquote&gt;
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;💡각 소제목 링크에 첨부된 코드를 활용해 Step 0 에서 만든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;threeTierVPC.tf&lt;/code&gt;에 이어서 작성하거나, 따로 새로운 파일을 만들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt; 명령어를 차례로 작성하며 계층을 쌓아 올립니다.&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;step-1&quot;&gt;Step 1&lt;/h2&gt;
-&lt;h3 id=&quot;layer-1️⃣--public-subnet&quot;&gt;Layer 1️⃣ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step1.tf&quot;&gt;Public subnet&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;하나의 VPC에 2개의 AZ를 만들고 각각의 Public 서브넷을 위치시킵니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step1.png&quot; alt=&quot;step1&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;퍼블릭 서브넷은 프라이빗 서브넷 보다 적은 수의 IP 예약하는 것이 좋습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Step 1 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
-data.aws_availability_zones.available
-aws_internet_gateway.igw
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우&lt;/summary&gt;
-
-  &lt;p&gt;실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.&lt;/p&gt;
-  &lt;ol&gt;
-    &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-target&lt;/code&gt; 옵션과 함께 resource 명으로 명령어를 작성합니다. &lt;br /&gt;
-&lt;em&gt;예시) terraform destory -target aws_vpc.main&lt;/em&gt;&lt;/li&gt;
-    &lt;li&gt;잘못 작성한 코드를 수정 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하여 최신 상태의 인프라를 반영합니다.&lt;/li&gt;
-  &lt;/ol&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;step-2&quot;&gt;Step 2&lt;/h2&gt;
-&lt;h3 id=&quot;layer-1️⃣--internet-access-resources&quot;&gt;Layer 1️⃣ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step2.tf&quot;&gt;Internet access resources&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;외부 인터넷과의 노출을 제한하고 나가는 트래픽을 위해 NAT Gateway를 활용합니다. 또한 들어오는 트래픽을 위해 ALB를 위치시켰습니다.
-로드밸런서와 NAT Gateway는 가용성이 높은 관리형 서비스로 병목 현상에 대해 걱정할 필요가 없습니다.&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;💡Nat Gateway 알아보기&lt;/summary&gt;
-  &lt;p&gt;&lt;br /&gt;
-NAT(네트워크 주소 변환) 게이트웨이를 사용하면 프라이빗 서브넷의 인스턴스를 인터넷 또는 기타 AWS 서비스에 연결하는 한편, 인터넷에서 해당 인스턴스와의 연결을 시작하지 못하게 할 수 있습니다.
-NAT 게이트웨이를 만들려면 NAT 게이트웨이가 속할 퍼블릭 서브넷을 지정해야 하기 때문에 Step2에서 우선적으로 생성합니다.&lt;/p&gt;
-
-  &lt;p&gt;&lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/vpc/latest/userguide/vpc-nat-gateway.html&quot;&gt;도큐먼트로 더 알아보기&lt;/a&gt;&lt;/p&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step2.png&quot; alt=&quot;step2&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;그림에서는 보이지 않지만, VPC에는 암시적 라우터가 있으며 라우팅 테이블을 사용하여 네트워크 트래픽이 전달되는 위치를 제어합니다.
-VPC의 각 서브넷을 라우팅 테이블에 연결해야 합니다. 테이블에서는 서브넷에 대한 라우팅을 제어합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Step 2 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
-data.aws_availability_zones.available
-aws_eip.nat_1
-aws_eip.nat_2
-aws_internet_gateway.igw
-aws_nat_gateway.nat_gateway_1
-aws_nat_gateway.nat_gateway_2
-aws_route_table.route_table_pub
-aws_route_table_association.route_table_association_1
-aws_route_table_association.route_table_association_2
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;이번 포스팅에서 ALB와 인스턴스는 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;step-3&quot;&gt;Step 3&lt;/h2&gt;
-&lt;h3 id=&quot;layer-2️⃣️--apps-in-a-private-subnet&quot;&gt;Layer 2️⃣️ : &lt;a href=&quot;https://github.com/heuristicwave/TIL-DevOps/blob/main/IaC/Terraform/code/3-Tier%20VPC/step3.tf&quot;&gt;Apps in a private subnet&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;2개의 프라이빗 서브넷에 각각의 인스턴스를 놓습니다. 이후, 두 퍼블릭 서브넷에 연결된 ALB는 프라이빗 서브넷 리소스 간의 트래픽을 분산시킵니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;❗️예제 그림에서는 Private subnet의 cidr block을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.2.0/22&lt;/code&gt;로 가이드 하지만, 이는 앞서 만든 서브넷과 범위가 겹치므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.4.0/22&lt;/code&gt;로 바꿔 진행합니다.&lt;/strong&gt;
-&lt;a href=&quot;https://www.ipaddressguide.com/cidr&quot;&gt;CIDR 계산기&lt;/a&gt; 에서 정확하게 확인해 볼 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step3.png&quot; alt=&quot;step3&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Step3에서도 Step2와 같이 그림에서는 보이지 않는 라우트 테이블을 만들고 NAT 게이트웨이와 프라이빗 서브넷을 연결해 줍니다.
-프라이빗 서브넷의 요청이 외부로 나갈때는 NAT 게이트웨이의 고정 IP를 사용합니다.
-(프라이빗 서브넷의 라우트 테이블은 퍼블릭과 달리 2개를 만들어 각각 연결해 주었습니다.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Step 3 코드를 적용 후, 명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
-data.aws_availability_zones.available
-aws_eip.nat_1
-aws_eip.nat_2
-aws_internet_gateway.igw
-aws_nat_gateway.nat_gateway_1
-aws_nat_gateway.nat_gateway_2
-aws_route.private_nat_1
-aws_route.private_nat_2
-aws_route_table.route_table_pri_1
-aws_route_table.route_table_pri_2
-aws_route_table.route_table_pub
-aws_route_table_association.route_table_association_1
-aws_route_table_association.route_table_association_2
-aws_route_table_association.route_table_pri_association_1
-aws_route_table_association.route_table_pri_association_2
-aws_subnet.pri_sub_1
-aws_subnet.pri_sub_2
-aws_subnet.pub_sub_1
-aws_subnet.pub_sub_2
-aws_vpc.main
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;em&gt;이번 포스팅에서 DB와 인스턴스 연결은 다루지 않습니다. 추후, 모듈로 테라폼을 관리하는 방법에서 학습하겠습니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;step-4&quot;&gt;Step 4&lt;/h2&gt;
-&lt;h3 id=&quot;layer-3️⃣--data-in-a-second-private-subnet&quot;&gt;Layer 3️⃣ : Data in a second private subnet&lt;/h3&gt;
-
-&lt;p&gt;첫 번째 프라이빗 서브넷 뒤에 두 번째 프라이빗 서브넷을 배치합니다. (코드 생략) &lt;br /&gt;
-장애가 발생할 경우를 대비해 read-replica 혹은 standby 구성으로 배치합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;❗Step4의 서브넷 작성법은 Step3의 방법과 동일합니다. 아래 사진은 CIDR의 범위가 겹치므로, Private subnet의 cidr block을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.8.0/23&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.12.0/23&lt;/code&gt;로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.10.0/23&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;10.0.14.0/23&lt;/code&gt;으로 바꿔 진행하세요.&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step4.png&quot; alt=&quot;step4&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;데이터 리소스(/23)보다를 앱 리소스(/22)를 확장할 가능성이 커, 더 큰 서브넷 마스크를 할당합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;step-5&quot;&gt;Step 5&lt;/h2&gt;
-&lt;h3 id=&quot;leave-extra-ips-available&quot;&gt;Leave extra IPs available&lt;/h3&gt;
-
-&lt;p&gt;배포된 인프라가 확장되어 아키텍처가 변경될 때 사용할 수 있는 여유분의 IP를 예약을 할 수도 있습니다. (코드 생략)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/vpc-step5.png&quot; alt=&quot;step5&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;위와 같은 단계들을 통해 &lt;strong&gt;3 Tier VPC Architecture&lt;/strong&gt;를 학습해보았습니다.
-Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destory&lt;/code&gt;명령어를 통해 학습을 시작하기 전 상태로 되돌리세요.
-다음 포스팅에서는 이번 포스팅에서 생략했던 인스턴스, DB, LB 등을 모듈로 관리하며 다뤄 보겠습니다.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="devops" />
-      
-        <category term="aws" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">본 글은 Configure and Deploying VPCs with Multiple Subnets 에서 다루는 Production-Ready: The 3-Tier VPC 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.</summary>
       
 
       
