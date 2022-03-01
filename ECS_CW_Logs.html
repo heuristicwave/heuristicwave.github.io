@@ -11,7 +11,7 @@
 
 
 
-    <title>Using Amazon ECS Exec for debugging</title>
+    <title>Using the awslogs log driver in ECS(Fargate)</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,24 +49,24 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/ECS_Exec" />
+    <link rel="canonical" href="https://heuristicwave.github.io/ECS_CW_Logs" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Using Amazon ECS Exec for debugging" />
-    <meta property="og:description" content="Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition" />
-    <meta property="og:url" content="https://heuristicwave.github.io/ECS_Exec" />
+    <meta property="og:title" content="Using the awslogs log driver in ECS(Fargate)" />
+    <meta property="og:description" content="ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다. Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 아래 요소들을 고민해 볼 수 있습니다. 📚 References Using the awslogs log driver Regular expression Wikipedia Fargate에서 필요한 awslogs 로그" />
+    <meta property="og:url" content="https://heuristicwave.github.io/ECS_CW_Logs" />
     <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-02-22T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-02-22T00:00:00+00:00" />
+    <meta property="article:published_time" content="2022-03-01T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-03-01T00:00:00+00:00" />
     <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Using Amazon ECS Exec for debugging" />
-    <meta name="twitter:description" content="Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition" />
+    <meta name="twitter:title" content="Using the awslogs log driver in ECS(Fargate)" />
+    <meta name="twitter:description" content="ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다. Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 아래 요소들을 고민해 볼 수 있습니다. 📚 References Using the awslogs log driver Regular expression Wikipedia Fargate에서 필요한 awslogs 로그" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
     <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
     <meta name="twitter:label1" content="Written by" />
@@ -87,7 +87,7 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/ECS_Exec",
+    "url": "https://heuristicwave.github.io/ECS_CW_Logs",
     "image": {
         "@type": "ImageObject",
         "url": "https://heuristicwave.github.io/assets/built/images/blog-cover.jpg",
@@ -96,9 +96,9 @@
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/ECS_Exec"
+        "@id": "https://heuristicwave.github.io/ECS_CW_Logs"
     },
-    "description": "Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition"
+    "description": "ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다. Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 아래 요소들을 고민해 볼 수 있습니다. 📚 References Using the awslogs log driver Regular expression Wikipedia Fargate에서 필요한 awslogs 로그"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Using Amazon ECS Exec for debugging" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Using the awslogs log driver in ECS(Fargate)" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -175,7 +175,7 @@ into the {body} of the default.hbs template -->
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="22 February 2022">22 February 2022</time>
+                    <time class="post-full-meta-date" datetime=" 1 March 2022"> 1 March 2022</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -189,99 +189,122 @@ into the {body} of the default.hbs template -->
                         
                     
                 </section>
-                <h1 class="post-full-title">Using Amazon ECS Exec for debugging</h1>
+                <h1 class="post-full-title">Using the awslogs log driver in ECS(Fargate)</h1>
             </header>
 
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Docker에서는 <code class="language-plaintext highlighter-rouge">exec</code> 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
-21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</p>
+                    <p>ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다.
+Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 
+아래 요소들을 고민해 볼 수 있습니다.</p>
 
 <h2 id="-references">📚 References</h2>
 
 <ul>
-  <li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html">Using Amazon ECS Exec for debugging</a></li>
-  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/ecs/execute-command.html">AWS CLI Cmd Ref : excute-commnad</a></li>
+  <li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html">Using the awslogs log driver</a></li>
+  <li><a href="https://en.wikipedia.org/wiki/Regular_expression">Regular expression Wikipedia</a></li>
 </ul>
 
-<h2 id="exec-활성화">Exec 활성화</h2>
+<h2 id="fargate에서-필요한-awslogs-로그-드라이버">Fargate에서 필요한 awslogs 로그 드라이버</h2>
+
+<p>공식 문서에서는 <code class="language-plaintext highlighter-rouge">awslogs-region</code>, <code class="language-plaintext highlighter-rouge">awslogs-group</code> 만이 필요하다고 하지만, <strong>Fargate</strong>를 사용하는 경우 <code class="language-plaintext highlighter-rouge">awslogs-stream-prefix</code>이 추가적으로 필요합니다.
+또한, 가시성을 확보하기 위해 CloudWatch Logs에 수집된 여러 줄의 로그를 하나의 메시지로 보기 위해서는 <code class="language-plaintext highlighter-rouge">awslogs-multiline-pattern</code>이 필수적으로 필요합니다.</p>
+
+<h3 id="awslogs-multiline-pattern">awslogs-multiline-pattern</h3>
+
+<p>공식 문서의 Note 부분을 보면 다음과 같은 메모를 확인할 수 있습니다. <em>(정말 공식 문서는 한 줄도 그냥 지나칠 수 없는 것 같습니다!)</em></p>
+
+<blockquote>
+  <p>Multiline logging performs regular expression parsing and matching of all log messages.
+This may have a negative impact on logging performance.</p>
+</blockquote>
+
+<p>실제로 저는 정규 표현식을 간과하고 검증되지 않은 정규식들을 적용했다가 다음과 같은 <code class="language-plaintext highlighter-rouge">Negative Impact</code>를 만났습니다.</p>
 
 <ol>
-  <li>SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여</li>
-  <li>task-definition config 추가
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"linuxParameters"</span>: <span class="o">{</span>
-    <span class="s2">"initProcessEnabled"</span>: <span class="nb">true</span>
-<span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>CLI로 execute-command enable 후, 점검
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs create-service <span class="se">\</span>
- <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
- <span class="nt">--task-definition</span> task-definition-name <span class="se">\</span>
- <span class="nt">--enable-execute-command</span> <span class="se">\</span>
- <span class="nt">--service-name</span> service-name <span class="se">\</span>
- <span class="nt">--desired-count</span> 1
-</code></pre></div>    </div>
-    <p>아래 명령어로 활성화 여부 확인. (grep option 활용, <code class="language-plaintext highlighter-rouge">grep -F4 "managedAgents"</code>, <code class="language-plaintext highlighter-rouge">grep "enableExecuteCommand"</code>)</p>
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs describe-tasks <span class="se">\</span>
- <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
- <span class="nt">--tasks</span> task-id 
-</code></pre></div>    </div>
-    <p>활성화 상태일 때의 Snippet</p>
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
-    <span class="s2">"tasks"</span>: <span class="o">[</span>
-        <span class="o">{</span>
-            ...
-            <span class="s2">"containers"</span>: <span class="o">[</span>
-                <span class="o">{</span>
-                    ...
-                    <span class="s2">"managedAgents"</span>: <span class="o">[</span>
-                        <span class="o">{</span>
-                            <span class="s2">"lastStartedAt"</span>: <span class="s2">"2021-03-01T14:49:44.574000-06:00"</span>,
-                            <span class="s2">"name"</span>: <span class="s2">"ExecuteCommandAgent"</span>,
-                            <span class="s2">"lastStatus"</span>: <span class="s2">"RUNNING"</span>
-                        <span class="o">}</span>
-                    <span class="o">]</span>
-                <span class="o">}</span>
-            <span class="o">]</span>,
-            ...
-            <span class="s2">"enableExecuteCommand"</span>: <span class="nb">true</span>,
-            ...
-        <span class="o">}</span>
-    <span class="o">]</span>
-<span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Running ECS Exec
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs execute-command <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
- <span class="nt">--task</span> task-id <span class="se">\</span>
- <span class="nt">--container</span> container-name <span class="se">\</span>
- <span class="nt">--interactive</span> <span class="se">\</span>
- <span class="nt">--command</span> <span class="s2">"/bin/sh"</span>
-</code></pre></div>    </div>
-  </li>
+  <li>로그가 수집되기까지의 지나친 지연 시간 발생 (10분 이상)</li>
+  <li>지연시간으로 인한 Timestamp 불일치 (Ingestion time과 Event Timestamp의 과도한 오차)</li>
+  <li>1, 2번 이유로 인한 로그 미수집</li>
 </ol>
 
 <p><br /></p>
 
-<h2 id="문제-해결">문제 해결</h2>
+<h2 id="regular-expression-lab">Regular Expression Lab</h2>
 
-<p>Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>An error occurred <span class="o">(</span>ClusterNotFoundException<span class="o">)</span> when calling the ExecuteCommand operation: Cluster not found.
-</code></pre></div></div>
+<p>지금부터 예시들을 통해, CW Logs를 운영하며 만날 수 있는 상황들을 체험해 보겠습니다.</p>
 
 <blockquote>
-  <p>Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)</p>
+  <p><em>샘플 로그를 복사하여 <a href="https://regexr.com">RegExr</a>에서 match 여부를 테스트해 볼 수 있습니다.</em></p>
 </blockquote>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found
+<h3 id="case-1️⃣">Case 1️⃣</h3>
+
+<p><code class="language-plaintext highlighter-rouge">awslogs-multiline-pattern</code>의 <strong>value</strong>로 <code class="language-plaintext highlighter-rouge">^INFO</code>를 설정할 경우 3개의 Line 중 match 되는 라인은 몇 라인일까요?</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>INFO | <span class="o">(</span>pkg/trace/info/stats.go:104 <span class="k">in </span>LogStats<span class="o">)</span>                <span class="c"># Line 1</span>
+INFO | <span class="o">(</span>pkg/trace/info/stats.go:104 <span class="k">in </span>LogStats<span class="o">)</span>                <span class="c"># Line 2</span>
+12:15:10 UTC | INFO | <span class="o">(</span>pkg/trace/info/stats.go:104 <span class="k">in </span>LogStats<span class="o">)</span> <span class="c"># Line 3</span>
+</code></pre></div></div>
+<details>
+  <summary>🖍 정답 보기</summary>
+
+  <blockquote>
+    <p><strong>INFO</strong> | (pkg/trace/info/stats.go:104 in LogStats)                # Line 1</p>
+  </blockquote>
+</details>
+
+<h3 id="case-2️⃣">Case 2️⃣</h3>
+
+<p>다음은 <code class="language-plaintext highlighter-rouge">시:분:초</code>를 표현하는 정규 표현식 입니다. 해당 정규 표현식은 아래 3줄을 모두 Match 시킬 수 있을까요? <br />
+<code class="language-plaintext highlighter-rouge">(0[1-9]|1[0-9]|2[0-4]):(0[1-9]|[1-5][0-9]):(0[1-9]|[1-5][0-9])</code></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>07:36:35 | Which line will match? Line 1
+08:00:01 | I am Line 2!
+08:01:00 | I am Line 3!
 </code></pre></div></div>
 
-<blockquote>
-  <p>클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)</p>
-</blockquote>
+<details>
+  <summary>🖍 정답 보기</summary>
+
+  <blockquote>
+    <p><strong>07:36:35</strong> | I was matched <br />
+08:00:01 | I was not matched! <br />
+08:01:00 | I was not matched! <br /></p>
+  </blockquote>
+
+  <p>그렇다면 왜? 첫 번째 라인만이 매칭되었을까요? <strong>분, 초</strong>에 해당하는 표현식을 유심히 살펴보면 00분 00시는 매칭되지 않습니다.
+때문에 각각 (분 : <code class="language-plaintext highlighter-rouge">(0[0-9]|[1-5][0-9])</code>, 초 : <code class="language-plaintext highlighter-rouge">(0[0-9]|[1-5][0-9])</code>)로 수정해야 위 3줄을 매칭 시킬 수 있습니다.</p>
+
+</details>
+
+<p><br /></p>
+
+<h3 id="other-case">Other Case</h3>
+
+<p>위 2가지 케이스만 준비된다면 모든 로그들을 제대로 분리하여 수집할 수 있을까요?</p>
+
+<details>
+  <summary>🤔 생각해보기</summary>
+
+  <ul>
+    <li>Flag가 <code class="language-plaintext highlighter-rouge">INFO</code> 형식이 아닌 <code class="language-plaintext highlighter-rouge">WARN</code>이 발생할 경우</li>
+    <li>Timestamp로 매칭 작업을 하는데 한 줄에 1회 이상 Timestamp가 포함된 경우
+      <blockquote>
+        <p>ex) <strong>08:00:01</strong> | It’s <strong>08:02:03</strong> right now.</p>
+      </blockquote>
+    </li>
+    <li>Application Crash로 인한 예상치 못한 메시지가 포함될 경우</li>
+    <li>awslogs 로그 드라이버 내의 우선순위</li>
+  </ul>
+
+</details>
+
+<p><br /></p>
+
+<p>아마도 위에 기재한 것들 외에도 더 고려 할 것들이 많을 것 같습니다.
+개발이나 알고리즘 문제를 풀 때와 마찬가지로 항상 예상치 못한 실패 지점을 예상하는 습관이 필요한 것 같습니다.</p>
 
 <p><br /></p>
 
@@ -336,9 +359,9 @@ into the {body} of the default.hbs template -->
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/ECS_Exec';
-                            this.page.identifier = '/ECS_Exec';
-                            this.page.title = 'Using Amazon ECS Exec for debugging';
+                            this.page.url = 'https://heuristicwave.github.io/ECS_CW_Logs';
+                            this.page.identifier = '/ECS_CW_Logs';
+                            this.page.title = 'Using the awslogs log driver in ECS(Fargate)';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -383,14 +406,14 @@ into the {body} of the default.hbs template -->
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/ECS_CW_Logs">Using the awslogs log driver in ECS(Fargate)</a></li>
-                                        
-                                    
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                            <li><a href="/ECS_Exec">Using Amazon ECS Exec for debugging</a></li>
+                                        
                                     
                                   
                                 
@@ -491,61 +514,15 @@ into the {body} of the default.hbs template -->
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template no-image">
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/ECS_CW_Logs">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Devops</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Using the awslogs log driver in ECS(Fargate)</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
                 
 
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/ImageBuilder">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/imagebuilder.png)"></div>
-            </a>
+    <article class="post-card post-template no-image">
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/ImageBuilder">
+            <a class="post-card-content-link" href="/ECS_Exec">
                 <header class="post-card-header">
                     
                         
@@ -559,7 +536,7 @@ into the {body} of the default.hbs template -->
                         
                     
 
-                    <h2 class="post-card-title">Create Immutable Server using AWS Image Builder & Auto Scaling Group</h2>
+                    <h2 class="post-card-title">Using Amazon ECS Exec for debugging</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -596,18 +573,18 @@ into the {body} of the default.hbs template -->
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Using Amazon ECS Exec for debugging</div>
+    <div class="floating-header-title">Using the awslogs log driver in ECS(Fargate)</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Using+Amazon+ECS+Exec+for+debugging&amp;url=https://heuristicwave.github.ioECS_Exec"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Using+the+awslogs+log+driver+in+ECS%28Fargate%29&amp;url=https://heuristicwave.github.ioECS_CW_Logs"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioECS_Exec"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioECS_CW_Logs"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

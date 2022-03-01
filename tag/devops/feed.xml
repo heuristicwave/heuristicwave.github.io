@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-03-01T13:55:37+00:00</updated>
+  <updated>2022-03-01T15:06:17+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -30,6 +30,162 @@
   
   
 
+  
+    <entry>
+      <title type="html">Using the awslogs log driver in ECS(Fargate)</title>
+      <link href="https://heuristicwave.github.io/ECS_CW_Logs" rel="alternate" type="text/html" title="Using the awslogs log driver in ECS(Fargate)" />
+      <published>2022-03-01T00:00:00+00:00</published>
+      <updated>2022-03-01T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/ECS_CW_Logs</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/ECS_CW_Logs">&lt;p&gt;ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다.
+Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 
+아래 요소들을 고민해 볼 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html&quot;&gt;Using the awslogs log driver&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Regular_expression&quot;&gt;Regular expression Wikipedia&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;fargate에서-필요한-awslogs-로그-드라이버&quot;&gt;Fargate에서 필요한 awslogs 로그 드라이버&lt;/h2&gt;
+
+&lt;p&gt;공식 문서에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-region&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-group&lt;/code&gt; 만이 필요하다고 하지만, &lt;strong&gt;Fargate&lt;/strong&gt;를 사용하는 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-stream-prefix&lt;/code&gt;이 추가적으로 필요합니다.
+또한, 가시성을 확보하기 위해 CloudWatch Logs에 수집된 여러 줄의 로그를 하나의 메시지로 보기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-multiline-pattern&lt;/code&gt;이 필수적으로 필요합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;awslogs-multiline-pattern&quot;&gt;awslogs-multiline-pattern&lt;/h3&gt;
+
+&lt;p&gt;공식 문서의 Note 부분을 보면 다음과 같은 메모를 확인할 수 있습니다. &lt;em&gt;(정말 공식 문서는 한 줄도 그냥 지나칠 수 없는 것 같습니다!)&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Multiline logging performs regular expression parsing and matching of all log messages.
+This may have a negative impact on logging performance.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;실제로 저는 정규 표현식을 간과하고 검증되지 않은 정규식들을 적용했다가 다음과 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Negative Impact&lt;/code&gt;를 만났습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;로그가 수집되기까지의 지나친 지연 시간 발생 (10분 이상)&lt;/li&gt;
+  &lt;li&gt;지연시간으로 인한 Timestamp 불일치 (Ingestion time과 Event Timestamp의 과도한 오차)&lt;/li&gt;
+  &lt;li&gt;1, 2번 이유로 인한 로그 미수집&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;regular-expression-lab&quot;&gt;Regular Expression Lab&lt;/h2&gt;
+
+&lt;p&gt;지금부터 예시들을 통해, CW Logs를 운영하며 만날 수 있는 상황들을 체험해 보겠습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;샘플 로그를 복사하여 &lt;a href=&quot;https://regexr.com&quot;&gt;RegExr&lt;/a&gt;에서 match 여부를 테스트해 볼 수 있습니다.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;case-1️⃣&quot;&gt;Case 1️⃣&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-multiline-pattern&lt;/code&gt;의 &lt;strong&gt;value&lt;/strong&gt;로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;^INFO&lt;/code&gt;를 설정할 경우 3개의 Line 중 match 되는 라인은 몇 라인일까요?&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;# Line 1&lt;/span&gt;
+INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;# Line 2&lt;/span&gt;
+12:15:10 UTC | INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# Line 3&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;details&gt;
+  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
+
+  &lt;blockquote&gt;
+    &lt;p&gt;&lt;strong&gt;INFO&lt;/strong&gt; | (pkg/trace/info/stats.go:104 in LogStats)                # Line 1&lt;/p&gt;
+  &lt;/blockquote&gt;
+&lt;/details&gt;
+
+&lt;h3 id=&quot;case-2️⃣&quot;&gt;Case 2️⃣&lt;/h3&gt;
+
+&lt;p&gt;다음은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;시:분:초&lt;/code&gt;를 표현하는 정규 표현식 입니다. 해당 정규 표현식은 아래 3줄을 모두 Match 시킬 수 있을까요? &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[1-9]|1[0-9]|2[0-4]):(0[1-9]|[1-5][0-9]):(0[1-9]|[1-5][0-9])&lt;/code&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;07:36:35 | Which line will match? Line 1
+08:00:01 | I am Line 2!
+08:01:00 | I am Line 3!
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
+
+  &lt;blockquote&gt;
+    &lt;p&gt;&lt;strong&gt;07:36:35&lt;/strong&gt; | I was matched &lt;br /&gt;
+08:00:01 | I was not matched! &lt;br /&gt;
+08:01:00 | I was not matched! &lt;br /&gt;&lt;/p&gt;
+  &lt;/blockquote&gt;
+
+  &lt;p&gt;그렇다면 왜? 첫 번째 라인만이 매칭되었을까요? &lt;strong&gt;분, 초&lt;/strong&gt;에 해당하는 표현식을 유심히 살펴보면 00분 00시는 매칭되지 않습니다.
+때문에 각각 (분 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[0-9]|[1-5][0-9])&lt;/code&gt;, 초 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[0-9]|[1-5][0-9])&lt;/code&gt;)로 수정해야 위 3줄을 매칭 시킬 수 있습니다.&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;other-case&quot;&gt;Other Case&lt;/h3&gt;
+
+&lt;p&gt;위 2가지 케이스만 준비된다면 모든 로그들을 제대로 분리하여 수집할 수 있을까요?&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🤔 생각해보기&lt;/summary&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;Flag가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INFO&lt;/code&gt; 형식이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WARN&lt;/code&gt;이 발생할 경우&lt;/li&gt;
+    &lt;li&gt;Timestamp로 매칭 작업을 하는데 한 줄에 1회 이상 Timestamp가 포함된 경우
+      &lt;blockquote&gt;
+        &lt;p&gt;ex) &lt;strong&gt;08:00:01&lt;/strong&gt; | It’s &lt;strong&gt;08:02:03&lt;/strong&gt; right now.&lt;/p&gt;
+      &lt;/blockquote&gt;
+    &lt;/li&gt;
+    &lt;li&gt;Application Crash로 인한 예상치 못한 메시지가 포함될 경우&lt;/li&gt;
+    &lt;li&gt;awslogs 로그 드라이버 내의 우선순위&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;아마도 위에 기재한 것들 외에도 더 고려 할 것들이 많을 것 같습니다.
+개발이나 알고리즘 문제를 풀 때와 마찬가지로 항상 예상치 못한 실패 지점을 예상하는 습관이 필요한 것 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="devops" />
+      
+
+      
+        <summary type="html">ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다. Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 아래 요소들을 고민해 볼 수 있습니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Using Amazon ECS Exec for debugging</title>
@@ -131,7 +287,7 @@
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS Fargate&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -1895,168 +2051,6 @@ aws_s3_bucket.artifact_bucket
 
       
         <summary type="html">Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">ECR CodePipeline with Terraform Ⅰ</title>
-      <link href="https://heuristicwave.github.io/CodeCommit" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅰ" />
-      <published>2021-04-07T18:00:00+00:00</published>
-      <updated>2021-04-07T18:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/CodeCommit</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/CodeCommit">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)&lt;/p&gt;
-
-&lt;h1 id=&quot;overview&quot;&gt;Overview&lt;/h1&gt;
-
-&lt;p&gt;이번 포스팅에서는 커밋 후, 도커의 이미지를 자동으로 배포하는 ECR Pipeline을 테라폼으로 생성해보겠습니다.
-AWS에서 저장소 역할을 하는 CodeCommit, 코드를 빌드하는 CodeBuild, 파이프라인을 자동화 하는 CodePipeline, 컨테이너 이미지를 저장하는 ECR을 활용해 구축합니다.
-&lt;img src=&quot;../../assets/built/images/post/CodePipeline.png&quot; alt=&quot;CodePipeline&quot; /&gt;
-1편에서는 &lt;strong&gt;CodeCommit&lt;/strong&gt; 구축과 &lt;strong&gt;terraform의 Output, Variables, tfvars&lt;/strong&gt; 등을 배워 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;준비-작업&quot;&gt;준비 작업&lt;/h2&gt;
-&lt;p&gt;이번 포스팅의 작업공간(~/terraform)을 생성하고 해당 위치에서 아래 코드 블럭을 터미널에 복사합니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; provider.tf
-provider &quot;aws&quot; {
-  region  = var.aws_region
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform init&lt;/code&gt; 명령어를 실행시켜주세요.&lt;/p&gt;
-
-&lt;h2 id=&quot;codecommit&quot;&gt;CodeCommit&lt;/h2&gt;
-&lt;p&gt;CodeCommit을 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
-링크의 Example Usage를 활용해 코드를 작성할 수도 있지만, 이번 포스팅에서는 제 방식대로아래 코드를 활용해 작성해보겠습니다.
-링크에서 소개하는 코드와 다른 부분은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variable&lt;/code&gt;의 사용 여부입니다.&lt;/p&gt;
-
-&lt;p&gt;✅ 아래 코드와 도큐먼트의 코드가 어떻게 다른지 꼭 확인해보세요!&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codecommit.tf
-resource &quot;aws_codecommit_repository&quot; &quot;test&quot; {
-  repository_name = var.source_repo_name
-  description     = &quot;This is the Sample App Repository&quot;
-}
-
-output &quot;source_repo_clone_url_http&quot; {
-  value = aws_codecommit_repository.test.clone_url_http
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Output&lt;/code&gt;은 향후 clone할 원격 저장소의 위치를 파악하기 위해 넣어줍니다. 또한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용해 보다 유연한 코드를 작성해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;준비 작업에 정의한 리전과 CodeCommit Repo 이름에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Variable&lt;/code&gt;을 사용하겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; variables.tf
-variable &quot;aws_region&quot; {
-  description = &quot;The AWS region&quot;
-  default     = &quot;ap-northeast-2&quot;
-}
-
-variable &quot;source_repo_name&quot; {
-  description = &quot;Source repo name&quot;
-  type        = string
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;위 코드를 복사한 후, terraform plan 명령어로 아래와 같은 화면을 확인 할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/plan.png&quot; alt=&quot;terraform plan&quot; /&gt;
-앞서 작성한 variables.tf의 region은 default 값이 있지만, repository는 variable의 형식만 정의되어 있기 때문에 인프라를 생성할 때 필수적으로 이름을 입력받습니다.&lt;/p&gt;
-
-&lt;p&gt;✅ variable의 input값을 수기로 작성하는 것을 피하고 싶으면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;를 사용합니다. 편의상 이번 프로젝트에서 사용할 값들을 미리 작성하겠습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; terraform.tfvars
-aws_ecr=&quot;my-image&quot;
-source_repo_name=&quot;my-pipeline&quot;
-source_repo_branch=&quot;master&quot;
-image_repo_name=&quot;my-pipeline&quot;
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;는 위와 같이 변수의 값을 지정하기도 하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.env&lt;/code&gt;처럼 &lt;strong&gt;외부로 노출하면 안되는 값을 넣어두고 git에 ignore시켜 사용&lt;/strong&gt;하기도 합니다.&lt;/p&gt;
-
-&lt;p&gt;위 작업을 진행 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하면 “Apply complete”과 함께 Outputs 값이 나옵니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어 이외에도, &lt;a href=&quot;https://console.aws.amazon.com/codecommit&quot;&gt;콘솔&lt;/a&gt; 로 이동하면 생성된 인프라를 확인 할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;생성된 원격저장소를 사용하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output&lt;/code&gt;을 활용해 &lt;strong&gt;export 환경 변수&lt;/strong&gt;를 지정합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;tf_source_repo_clone_url_http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;terraform output source_repo_clone_url_http&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# 확인&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;git-setting&quot;&gt;Git Setting&lt;/h2&gt;
-
-&lt;p&gt;CodeCommit의 Repo 활용법은 아래 2가지 방법이 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;1-로컬에-위치한-코드를-codecommit에-push하기-원격저장소가-비어있음&quot;&gt;1. 로컬에 위치한 코드를 CodeCommit에 push하기 (원격저장소가 비어있음)&lt;/h3&gt;
-
-&lt;p&gt;로컬의 빈공간에서 CodeCommit Repo 사용을 위한 git remote 지정&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git init
-git remote add origin &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
-git remote &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# 원격 저장소 확인&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;코드를 작성하고 CodeCommit에 Push하기&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
-git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;First commit&quot;&lt;/span&gt;
-git status
-git push origin &lt;span class=&quot;c&quot;&gt;# master branch로 push&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;자격 증명 문제가 있다면 아래 명령어로 해결합니다. &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html&quot;&gt;자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.helper &lt;span class=&quot;s1&quot;&gt;'!aws codecommit credential-helper $@'&lt;/span&gt;
-git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.UseHttpPath &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2-로컬에-원격저장소의-코드를-clone하기-원격저장소가-비어있지-않음&quot;&gt;2. 로컬에 원격저장소의 코드를 clone하기 (원격저장소가 비어있지 않음)&lt;/h3&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git clone &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;지금까지 도큐먼트를 활용해 코드를 작성하고, variable, output, tfvars의 활용법을 배워보았습니다.&lt;/p&gt;
-
-&lt;p&gt;앞서 작성된 작업들이 정상적으로 커밋과 clone이 가능하면, 다음 단계로 🚀&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)</summary>
       
 
       
