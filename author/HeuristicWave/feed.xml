@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-02-24T07:53:54+00:00</updated>
+  <updated>2022-03-01T13:55:37+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -131,6 +131,7 @@
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS Fargate&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -365,6 +366,8 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
 
       
         <category term="aws" />
+      
+        <category term="devops" />
       
 
       

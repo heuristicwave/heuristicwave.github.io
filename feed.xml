@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 24 Feb 2022 07:53:54 +0000</pubDate>
-        <lastBuildDate>Thu, 24 Feb 2022 07:53:54 +0000</lastBuildDate>
+        <pubDate>Tue, 01 Mar 2022 13:55:37 +0000</pubDate>
+        <lastBuildDate>Tue, 01 Mar 2022 13:55:37 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -105,6 +105,7 @@
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS Fargate&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
@@ -307,6 +308,8 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
                 <guid isPermaLink="true">https://heuristicwave.github.io//ImageBuilder</guid>
                 
                 <category>aws</category>
+                
+                <category>devops</category>
                 
                 
             </item>
