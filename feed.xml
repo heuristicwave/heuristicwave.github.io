@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 02 Mar 2022 00:48:55 +0000</pubDate>
-        <lastBuildDate>Wed, 02 Mar 2022 00:48:55 +0000</lastBuildDate>
+        <pubDate>Fri, 04 Mar 2022 04:29:30 +0000</pubDate>
+        <lastBuildDate>Fri, 04 Mar 2022 04:29:30 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -544,7 +544,17 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Module &amp;amp; Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
 &lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//TerraformTips2</link>
@@ -928,7 +938,17 @@ security group 모듈을 활용하려면 다음과 같이 &lt;code class=&quot;l
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Module &amp;amp; Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
 &lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Mon, 15 Nov 2021 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//TerraformTips1</link>
