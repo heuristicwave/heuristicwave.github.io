@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-03-04T04:29:30+00:00</updated>
+  <updated>2022-03-23T05:38:50+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -756,6 +756,26 @@ security group 모듈을 활용하려면 다음과 같이 &lt;code class=&quot;l
 
 &lt;p&gt;apply를 적용한 &lt;em&gt;security-group, vpc&lt;/em&gt; 모듈이 내 로컬 머신에 숨어 있습니다.
 해당 모듈 폴더 안에 들어가면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;outputs.tf&lt;/code&gt; 가 정의되어 있으므로 해당 파일을 참고하여 Label 값을 얻어오면 됩니다!&lt;/p&gt;
+
+&lt;h3 id=&quot;example&quot;&gt;Example&lt;/h3&gt;
+
+&lt;p&gt;상황 : VPC 모듈을 사용해 VPC와 서브넷을 구축한 상황에서, EFS를 각 서브넷에서 사용하려고 합니다.
+EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
+
+  &lt;p&gt;위에서 언급한대로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;modules/vpc/output.tf&lt;/code&gt; 에서 프라이빗 서브넷의 Label을 확인해보면,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;private_subnets&lt;/code&gt; 이라 기재된 것을 확인할 수 있습니다. 이를 활용해 아래와 같이 모듈을 참조 할 수 있습니다.&lt;/p&gt;
+
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_efs_mount_target&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;mount&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;module.vpc.private_subnets&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+
+  file_system_id &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_efs_file_system.foo.id
+  subnet_id      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; module.vpc.private_subnets[count.index]
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
