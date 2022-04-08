@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-03-23T05:38:50+00:00</updated>
+  <updated>2022-04-08T02:46:12+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -30,6 +30,165 @@
   
   
 
+  
+    <entry>
+      <title type="html">Export cloudwatch log data to Amazon S3 using lambda</title>
+      <link href="https://heuristicwave.github.io/Export_data_to_S3_Lambda" rel="alternate" type="text/html" title="Export cloudwatch log data to Amazon S3 using lambda" />
+      <published>2022-04-07T00:00:00+00:00</published>
+      <updated>2022-04-07T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Export_data_to_S3_Lambda</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Export_data_to_S3_Lambda">&lt;p&gt;본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;글을 시작하기 앞서, &lt;a href=&quot;https://noob2geek.in/2021/06/18/export-aws-cloudwatch-logs-to-s3-using-lambda-functions-in-node-js/&quot;&gt;Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js&lt;/a&gt;
+를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하기 위한 플로우는 다음과 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/exportLambda.png&quot; alt=&quot;imageBuilder&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Amazon EventBridge에 정의한 Rule에 의해 Lambda를 호출합니다.&lt;/li&gt;
+  &lt;li&gt;이후 람다가 지정한 CloudWatch의 Logs에 적재된 데이터를 찾습니다.&lt;/li&gt;
+  &lt;li&gt;2번에 연속되어 이관될 대상의 로그들이 S3로 이관됩니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;-workshop&quot;&gt;📜 Workshop&lt;/h2&gt;
+
+&lt;h3 id=&quot;1️⃣-log를-담을-bucket-및-정책-생성하기&quot;&gt;1️⃣ Log를 담을 Bucket 및 정책 생성하기&lt;/h3&gt;
+
+&lt;p&gt;Amazon S3 콘솔 화면에 접속해 Log들이 담길 Bucket을 생성하고 이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Permissions&lt;/code&gt;에서 S3 버킷에 대한 권한을 설정합니다.
+해당 방법은 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/S3ExportTasksConsole.html&quot;&gt;공식 문서, 1단계와 3단계&lt;/a&gt; 자세히 설명되어 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 공식 문서 3단계에서 기재된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random-string&lt;/code&gt;은 필요에 의한 경우 사용하세요. 해당 글에서는 편의상 생략하였습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;2️⃣-lambda-생성하기&quot;&gt;2️⃣ Lambda 생성하기&lt;/h3&gt;
+
+&lt;h4 id=&quot;step-1--lambda가-사용하는-iam-role--policy-생성&quot;&gt;Step 1 : Lambda가 사용하는 IAM Role &amp;amp; Policy 생성&lt;/h4&gt;
+
+&lt;p&gt;Lambda가 Log를 Export 할 수 있도록 다음 정책을 생성합니다.
+IAM에서 Create policy를 선택하고 아래 JSON을 복사하여 붙여 넣고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cloudwatch_export_task&lt;/code&gt;라는 이름으로 정책을 생성합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;Version&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;2012-10-17&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;Statement&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s2&quot;&gt;&quot;Effect&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;Allow&quot;&lt;/span&gt;,
+            &lt;span class=&quot;s2&quot;&gt;&quot;Action&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;logs:CreateExportTask&quot;&lt;/span&gt;,
+            &lt;span class=&quot;s2&quot;&gt;&quot;Resource&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;arn:aws:logs:{Region}:{AccountNumber}:*&quot;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Lambda에 권한을 부여해 주기 위해서 IAM &amp;gt; Roles &amp;gt; Create Role을 선택합니다.
+Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export_S3_lambda&lt;/code&gt;라는 이름으로 Role을 생성합니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;step-2--코드-작성&quot;&gt;Step 2 : 코드 작성&lt;/h4&gt;
+
+&lt;p&gt;Lambda 콘솔 화면에서 아래와 같이 빈칸을 채우고, Step 1에서 만들어둔 role을 부여해 람다 함수를 생성합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/guide/exportLambda.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 만약, Export 역할을 수행하는 &lt;strong&gt;람다 함수가 생성하는 로그&lt;/strong&gt;를 수집하고 싶을 경우에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create a new role with basic Lambda permissions&lt;/code&gt;을
+선택하고 Console에 의해 자동적으로 생성되는 Role에 Step 1에서 만든 정책을 부여하면 됩니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이어서 아래 코드를 복사하여 상황에 맞는 인자 값을 넣어주고 Deploy 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;region : 로그 그룹과 대상 버킷은 동일 리전에 위치&lt;/li&gt;
+  &lt;li&gt;destination : 로그가 이관되는 대상 버킷&lt;/li&gt;
+  &lt;li&gt;logGroupName : Cloudwatch Log group 이름&lt;/li&gt;
+  &lt;li&gt;destinationPrefix : 1️⃣ 에서 언급한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random-string&lt;/code&gt; 값&lt;/li&gt;
+  &lt;li&gt;from/to : Lambda 함수가 호출 되는 시점을 기준으로, from/to 기간의 로그 그룹들을 export&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AWS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;aws-sdk&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudconfig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;2014-03-28&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudwatchlogs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AWS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CloudWatchLogs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cloudconfig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;params&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;destination&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;bucket-name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;logGroupName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;log-groups-name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;destinationPrefix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;86400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudwatchlogs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createExportTask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;params&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;promise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;501&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이후 테스트 버튼을 눌러 결과값을 보면 taskId 값이 생성되고 S3에 로그가 이관된 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;3️⃣-eventbridge-트리거-생성하기&quot;&gt;3️⃣ EventBridge 트리거 생성하기&lt;/h3&gt;
+
+&lt;p&gt;작성한 람다 함수 콘솔 화면 상단에서 &lt;strong&gt;Add trigger&lt;/strong&gt; 버튼을 눌러 다음과 같이 Rule을 생성합니다. 저는 주기를 점검하기 위해 아래와 같이 5분을 주었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/guide/eventBridgeRule.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 &lt;a href=&quot;https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html&quot;&gt;스케쥴 표현식 작성법&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;지금까지 Lambda 함수와 EventBrdige를 사용하여 자동으로 로그를 S3으로 백업하는 방법을 알아보았습니다.
+해당 방법 외에도 로그를 이관하는 다양한 방법들이 있으므로, 더 쉽고 좋은 방법이 있다면 알려주세요!&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Using the awslogs log driver in ECS(Fargate)</title>
@@ -1423,442 +1582,6 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. &lt;em&gt;
 
       
         <summary type="html">본 글은 Kief Morris의 Infrastructure as Code 와 HashiCorp 백서 를 읽고 학습한 내용을 기반으로 작성한 글 입니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Provision Infrastructure with Packer</title>
-      <link href="https://heuristicwave.github.io/Packer" rel="alternate" type="text/html" title="Provision Infrastructure with Packer" />
-      <published>2021-08-02T00:00:00+00:00</published>
-      <updated>2021-08-02T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/Packer</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/Packer">&lt;p&gt;본 글은 &lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;HashiCorp Learn - Provision Infrastructure with Packer&lt;/a&gt; 에서 다루는 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Packer를 사용해 AWS AMI를 만들고 Terraform과 연계하여 활용하는 방법에 약간의 설명과 팁을 담아 한국어로 재작성해 보았습니다. (설치와 관련된 준비사항은 생략되어 있으므로 원문을 확인해주세요.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;프로젝트-구조&quot;&gt;프로젝트 구조&lt;/h2&gt;
-
-&lt;p&gt;먼저, 해당 튜토리얼을 진행하기 위한 프로젝트 구조는 아래와 같습니다. 아래와 폴더와 파일을 준비해주세요.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
-└── provision-infra-with-packer
-    ├── images
-    │   └── image.pkr.hcl
-    ├── instances
-    │   ├── main.tf
-    │   └── variables.tf
-    └── scripts
-        └── setup.sh
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;local-ssh-key-생성하기&quot;&gt;Local SSH key 생성하기&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;provision-infra-with-packer&lt;/code&gt; 폴더 안에서 AWS AMI로 만들 인스턴스에 접속하기 위한 SSH 키를 생성합니다.
-필자는 사용할 공개키를 Mac OS에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh-keygen&lt;/code&gt;으로 생성하였습니다. 각자 환경에 맞는 방법으로 SSH 공개키를 생성하세요.
-암호화 타입(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-t&lt;/code&gt;)을 RSA로 주석(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-C&lt;/code&gt;)을 이메일로 생성되는 공개키의 위치(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-f&lt;/code&gt;)를 현재 directory로 설정하고 공개키의 이름을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tf-packer&lt;/code&gt;로 설정했습니다.
-명령어를 입력하고 비밀번호를 입력하면 되지만 편의상 공백으로 두겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;ssh-keygen &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; rsa &lt;span class=&quot;nt&quot;&gt;-C&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;your_email@example.com&quot;&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; ./tf-packer
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;이후 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tf-packer&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tf-packer.pub&lt;/code&gt; 2가지 파일이 생성되었다면 다음 단계 🚀&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;packer-코드-작성하기&quot;&gt;Packer 코드 작성하기&lt;/h2&gt;
-
-&lt;p&gt;&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image.pkr.hcl&lt;/code&gt; 파일에서 진행합니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;1️⃣-ami-구축에-필요한-config-작성&quot;&gt;1️⃣ AMI 구축에 필요한 config 작성&lt;/h3&gt;
-
-&lt;p&gt;packer가 빌드한 이미지가 저장될 리전의 정보와 AMI에 timestamp 정보를 넣기 위한 config를 차례로 작성합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;variable &lt;span class=&quot;s2&quot;&gt;&quot;region&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; string
-  default &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;us-east-1&quot;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-locals &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt; timestamp &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; regex_replace&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;timestamp&lt;span class=&quot;o&quot;&gt;()&lt;/span&gt;, &lt;span class=&quot;s2&quot;&gt;&quot;[- TZ:]&quot;&lt;/span&gt;, &lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;2️⃣️-base-ami에-대한-source-ami-config-작성&quot;&gt;2️⃣️ Base AMI에 대한 Source AMI config 작성&lt;/h3&gt;
-
-&lt;p&gt;packer가 이미지를 만들기 위해 기본으로 사용되는 Base AMI에 대한 정보를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source&lt;/code&gt; 블록에 정의합니다.
-1단계에서 작성한 config 값을 활용해 리전과 timestamp를 넣어주는 코드와 Packer Builder로 사용할 &lt;strong&gt;인스턴스 타입을 지정&lt;/strong&gt;합니다.
-이후, AWS에 존재하는 수많은 AMI 중에서 source로 활용할 이미지를 &lt;strong&gt;filter&lt;/strong&gt; 코드로 작성합니다.
-(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;name&lt;/code&gt; 부분에 직접 ami 번호를 명시적으로 기재 할 수도 있습니다.)&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon-ebs&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;example&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  ami_name      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;learn-terraform-packer-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;local&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.timestamp&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-  instance_type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;t2.micro&quot;&lt;/span&gt;
-  region        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.region
-  source_ami_filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    filters &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-      name                &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*&quot;&lt;/span&gt;
-      root-device-type    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ebs&quot;&lt;/span&gt;
-      virtualization-type &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;hvm&quot;&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-    &lt;/span&gt;owners      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;099720109477&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-  ssh_username &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ubuntu&quot;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;3️⃣-packer-build-config-작성&quot;&gt;3️⃣ Packer build config 작성&lt;/h3&gt;
-
-&lt;p&gt;build 부분에서는 &lt;a href=&quot;https://learn.hashicorp.com/tutorials/packer/aws-get-started-provision?in=packer/aws-get-started#add-provisioner-to-template&quot;&gt;환경변수 세팅이나 명령어를 inline 형태&lt;/a&gt;로 기입 할 수 있지만,
-아래와 같은 간단한 기능만 수행하도록 코드를 작성합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hcl&lt;/code&gt; 문법에 따라 &lt;strong&gt;source를 지정&lt;/strong&gt;하고, 프로비저닝을 위한 &lt;strong&gt;공개키의 위치를 명세&lt;/strong&gt;합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;source&lt;/code&gt;는 로컬 머신, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;destination&lt;/code&gt;은 원격 머신 입니다.
-마지막으로 Packer로 빌드한 이미지에서 Application Setup이 담긴 &lt;strong&gt;script를 지정&lt;/strong&gt;합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;build &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  sources &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;source.amazon-ebs.example&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-
-  provisioner &lt;span class=&quot;s2&quot;&gt;&quot;file&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nb&quot;&gt;source&lt;/span&gt;      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;../tf-packer.pub&quot;&lt;/span&gt;
-    destination &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/tmp/tf-packer.pub&quot;&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-  provisioner &lt;span class=&quot;s2&quot;&gt;&quot;shell&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    script &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;../scripts/setup.sh&quot;&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;4️⃣-shell-script-작성&quot;&gt;4️⃣ Shell script 작성&lt;/h2&gt;
-
-&lt;p&gt;&lt;em&gt;해당 작업은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scripts&lt;/code&gt; 폴더의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;setup.sh&lt;/code&gt;에서 진행합니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;이 부분은 Terraform으로 프로비저닝 한 인프라를 웹페이지에서 확인하기 위해 간단한 샘플을 띄우는 코드가 담겨있습니다.
-아래 Script에 필요한 종속성 설치, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform&lt;/code&gt;을 user에 추가, 생성한 SSH키 설치, 샘플 Go App 설치가 단계가 작성되어 있습니다.&lt;/p&gt;
-
-&lt;noscript&gt;
-  &lt;pre&gt;#!/bin/bash
-set -e
-
-# Install necessary dependencies
-sudo DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::=&amp;quot;--force-confdef&amp;quot; -o Dpkg::Options::=&amp;quot;--force-confold&amp;quot; dist-upgrade
-sudo apt-get -y -qq install curl wget git vim apt-transport-https ca-certificates
-sudo add-apt-repository ppa:longsleep/golang-backports -y
-sudo apt -y -qq install golang-go
-
-# Setup sudo to allow no-password sudo for &amp;quot;hashicorp&amp;quot; group and adding &amp;quot;terraform&amp;quot; user
-sudo groupadd -r hashicorp
-sudo useradd -m -s /bin/bash terraform
-sudo usermod -a -G hashicorp terraform
-sudo cp /etc/sudoers /etc/sudoers.orig
-echo &amp;quot;terraform ALL=(ALL) NOPASSWD:ALL&amp;quot; | sudo tee /etc/sudoers.d/terraform
-
-# Installing SSH key
-sudo mkdir -p /home/terraform/.ssh
-sudo chmod 700 /home/terraform/.ssh
-sudo cp /tmp/tf-packer.pub /home/terraform/.ssh/authorized_keys
-sudo chmod 600 /home/terraform/.ssh/authorized_keys
-sudo chown -R terraform /home/terraform/.ssh
-sudo usermod --shell /bin/bash terraform
-
-# Create GOPATH for Terraform user &amp;amp; download the webapp from GitHub
-sudo -H -i -u terraform -- env bash &amp;lt;&amp;lt; EOF
-whoami
-echo ~terraform
-
-cd /home/terraform
-
-export GOROOT=/usr/lib/go
-export GOPATH=/home/terraform/go
-export PATH=$PATH:$GOROOT/bin:$GOPATH/bin
-go get -d github.com/hashicorp/learn-go-webapp-demo
-EOF
-&lt;/pre&gt;
-&lt;/noscript&gt;
-&lt;script src=&quot;https://gist.github.com/heuristicwave/3c0d9afefb5e04d7b69700f11918e9a0.js&quot;&gt; &lt;/script&gt;
-
-&lt;p&gt;1 ~ 4단계를 마쳤다면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;images&lt;/code&gt; 폴더 위치에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;packer build image.pkr.hcl&lt;/code&gt; 명령어로 이미지를 빌드합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;이미지 빌드 후, 콘솔 &lt;strong&gt;Images&lt;/strong&gt; 탭의 &lt;strong&gt;AMIs&lt;/strong&gt;을 확인하면 빌드한 이미지가 존재합니다.
-또한, 인스턴스 탭을 확인하면 아래와 같이 Base AMI를 만들기 위한 Packer Builder의 흔적을 볼 수 있습니다.
-&lt;img src=&quot;/assets/built/images/post/packerBuilder.png&quot; alt=&quot;Packer_Builder&quot; /&gt;
-해당 화면의 Instance ID를 눌러 설정들을 확인해보면 source 블록에 정의한 값을 바탕으로 만들어진 모습을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;terraform으로-packer-이미지-배포&quot;&gt;Terraform으로 Packer 이미지 배포&lt;/h2&gt;
-
-&lt;p&gt;&lt;em&gt;해당 작업은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;instances&lt;/code&gt; 폴더에서 진행합니다.&lt;/em&gt; &lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;sample-app-infra-code-작성하기&quot;&gt;Sample App Infra Code 작성하기&lt;/h3&gt;
-
-&lt;p&gt;아래 🛠 이모티콘을 클릭하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.tf&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;varaiables.tf&lt;/code&gt;를 작성합니다.&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;🔨 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.tf&lt;/code&gt; 🔨&lt;/summary&gt;
-  &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-  &lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;terraform&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;required_providers&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;aws&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;source&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;hashicorp/aws&quot;&lt;/span&gt;
-      &lt;span class=&quot;nx&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~&amp;gt; 3.26.0&quot;&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;required_version&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~&amp;gt; 1.0.2&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;provider&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;region&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vpc&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;cidr_block&lt;/span&gt;           &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cidr_vpc&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;enable_dns_support&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;enable_dns_hostnames&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_internet_gateway&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;igw&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;vpc_id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_subnet&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;subnet_public&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;vpc_id&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;cidr_block&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kd&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cidr_subnet&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_route_table&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;rtb_public&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;vpc_id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;route&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;cidr_block&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;gateway_id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_internet_gateway&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;igw&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_route_table_association&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;rta_subnet_public&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;subnet_id&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_subnet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;subnet_public&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;route_table_id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_route_table&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;rtb_public&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_security_group&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sg_22_80&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sg_22&quot;&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;vpc_id&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;vpc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-
-  &lt;span class=&quot;c1&quot;&gt;# SSH access from the VPC&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;ingress&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;from_port&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;22&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;to_port&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;22&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;protocol&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;tcp&quot;&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;cidr_blocks&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;ingress&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;from_port&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8080&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;to_port&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;8080&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;protocol&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;tcp&quot;&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;cidr_blocks&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;ingress&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;from_port&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;to_port&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;80&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;protocol&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;tcp&quot;&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;cidr_blocks&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;egress&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;from_port&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;to_port&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;protocol&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;-1&quot;&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;cidr_blocks&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0.0.0.0/0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_instance&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;web&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;ami&lt;/span&gt;                         &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ami-YOUR-AMI-ID&quot;&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;instance_type&lt;/span&gt;               &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;t2.micro&quot;&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;subnet_id&lt;/span&gt;                   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_subnet&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;subnet_public&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;vpc_security_group_ids&lt;/span&gt;      &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;aws_security_group&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;sg_22_80&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;associate_public_ip_address&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;kc&quot;&gt;true&lt;/span&gt;
-
-  &lt;span class=&quot;nx&quot;&gt;tags&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;Name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Learn-Packer&quot;&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;public_ip&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;web&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;public_ip&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-
-&lt;/details&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;🔧 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;varaiables.tf&lt;/code&gt; 🔧&lt;/summary&gt;
-  &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-  &lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;variable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;cidr_vpc&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CIDR block for the VPC&quot;&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;default&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.1.0.0/16&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;variable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;cidr_subnet&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CIDR block for the subnet&quot;&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;default&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;10.1.0.0/24&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;variable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;environment_tag&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Environment tag&quot;&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;default&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Learn&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;variable&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;region&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;description&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;The region Terraform deploys your instance&quot;&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;default&lt;/span&gt;     &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;us-east-1&quot;&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-&lt;/details&gt;
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;인프라 코드에 대한 설명은 생략하겠습니다. &lt;br /&gt;
-인프라에 대한 테라폼 코드가 궁금하시다면 다른 게시글이나 &lt;a href=&quot;https://heuristicwave.github.io/3Tier&quot;&gt;제 포스팅&lt;/a&gt;을 읽어보세요!&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;ami-query-하기&quot;&gt;AMI Query 하기&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;본문&lt;/a&gt;에는 소개되지 않았지만, Packer와 Terraform의 통합을 위해 필자가 작성한 부분입니다.
-Terraform의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;를 활용해 빌드된 AMI를 Query하여 샘플 앱을 프로비저닝 해봅시다.
-선행 작업에서 진행한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.tf&lt;/code&gt; 하단에 아래 코드를 추가합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;data&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami_ids&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;myami&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;owners&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;YOUR Account ID&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;c1&quot;&gt;# sort_ascending = true&lt;/span&gt;
-  
-  &lt;span class=&quot;nx&quot;&gt;filter&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;   &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;learn-terraform-packer-*&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Packer로 이미지를 빌드했으므로, ami owner가 되었습니다!
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 부분에 자신의 계정 ID를 작성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;에 packer build를 할 떄 사용한 ami_name을 value 값으로 넣습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;strong&gt;sort_ascending&lt;/strong&gt; default 값이 false&lt;/p&gt;
-
-  &lt;p&gt;sort_ascending = false : list의 0번째 요소가 latest &lt;br /&gt;
-sort_ascending = true : 만들어진 순서대로 리스트 생성 (가장 먼저 생성된 ami가 0번)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.tf&lt;/code&gt;에 인스턴스 리소스를 정의한 부분의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ami = &quot;ami-YOUR-AMI-ID&quot;&lt;/code&gt; 코드를 아래와 같이 대체합니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt; 객체에 필터링한 결과 값들이 빌드된 AMI들이 리스트 형식으로 들어가는데 &lt;strong&gt;latest&lt;/strong&gt; 버전을 사용하기 위해 0번째 이미지를 명시합니다.
-편의상 사용된 ami 번호를 터미널에서 확인 할 수 있도록 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt;에 대한 코드도 함께 작성합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_instance&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;web&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;ami&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;aws_ami_ids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;myami&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ids&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;# &quot;ami-YOUR-AMI-ID&quot;&lt;/span&gt;
-  &lt;span class=&quot;c1&quot;&gt;# Skip Other Config&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;k&quot;&gt;output&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;my_ami&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;nx&quot;&gt;value&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;web&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;ami&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;코드를 작성하고 테라폼 코드가 위치한 폴더에서(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;instances&lt;/code&gt; 폴더 하위) 다음 명령어를 실행합니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform init &amp;amp;&amp;amp; terraform apply&lt;/code&gt; 인스턴스를 생성하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;yes&lt;/code&gt;를 기입합니다. &lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;명령어로 인프라 상태를 점검해 아래와 같다면 다음 단계로 🚀&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform state list
-data.aws_ami_ids.myami
-aws_instance.web
-aws_internet_gateway.igw
-aws_route_table.rtb_public
-aws_route_table_association.rta_subnet_public
-aws_security_group.sg_22_80
-aws_subnet.subnet_public
-aws_vpc.vpc
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;data object에 담긴 정보가 확인하고 싶다면? &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ terraform state show data.aws_ami_ids.myami.ids&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;인스턴스-확인하기&quot;&gt;인스턴스 확인하기&lt;/h2&gt;
-
-&lt;p&gt;SSH를 통해 인스턴스에 연결합니다. &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ssh terraform@$(terraform output -raw public_ip) -i ../tf-packer&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;Go 디렉토리로 이동하세요. &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cd go/src/github.com/hashicorp/learn-go-webapp-demo&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;데모 앱을 실행합니다. &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;go run webapp.go&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;배포한 앱 확인을 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output public_ip&lt;/code&gt;로 얻은 IP에 8080 포트로 접속하면 간단한 테트리스 게임 앱을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;인스턴스-리소스-회수&quot;&gt;인스턴스 리소스 회수&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 상기 프로젝트에서 사용한 인프라를 리소스를 회수합니다. Packer로 작성한 이미지는 파괴되지 않습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;위와 같은 단계들을 통해 패커로 이미지를 만들고 테라폼과 통합하는 방법을 학습해보았습니다.
-이번 포스팅에서 다뤘던 내용은 &lt;strong&gt;Immutable Servers&lt;/strong&gt;를 유지하기 위한 방법 중 하나입니다.
-오늘 포스팅에 추가로 &lt;strong&gt;Ansible&lt;/strong&gt;을 통합한다면, &lt;strong&gt;Immutable Infrastructure&lt;/strong&gt;를 구축할 수도 있습니다.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="devops" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">본 글은 HashiCorp Learn - Provision Infrastructure with Packer 에서 다루는 내용을 기반으로 작성한 글 입니다.</summary>
       
 
       

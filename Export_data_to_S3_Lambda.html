@@ -11,7 +11,7 @@
 
 
 
-    <title>EC2 Clocksource</title>
+    <title>Export cloudwatch log data to Amazon S3 using lambda</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,26 +49,26 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/EC2_Clocksource" />
+    <link rel="canonical" href="https://heuristicwave.github.io/Export_data_to_S3_Lambda" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="EC2 Clocksource" />
-    <meta property="og:description" content="몰라도 되지만 알면 알수록 더 신비한 EC2 🙃 Preview 이번 포스팅에서는 AWS Well-Architected Labs - Performance Efficiency 에 개재된 Calculating differences in clock source 를 읽고 궁금증이 생겨 구글링을 하다 알게 된 사실들을 의식의 흐름대로 작성한 포스팅입니다. Performance Efficiency Summary 일단 Performance Efficiency에 나오는 실험 내용을 요약하자면 다음과 같습니다. AWS의" />
-    <meta property="og:url" content="https://heuristicwave.github.io/EC2_Clocksource" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/clock.png" />
+    <meta property="og:title" content="Export cloudwatch log data to Amazon S3 using lambda" />
+    <meta property="og:description" content="본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다. Intro 글을 시작하기 앞서, Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js 를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로" />
+    <meta property="og:url" content="https://heuristicwave.github.io/Export_data_to_S3_Lambda" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/exportLambda.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-11-08T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-11-08T00:00:00+00:00" />
+    <meta property="article:published_time" content="2022-04-07T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-04-07T00:00:00+00:00" />
     <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="EC2 Clocksource" />
-    <meta name="twitter:description" content="몰라도 되지만 알면 알수록 더 신비한 EC2 🙃 Preview 이번 포스팅에서는 AWS Well-Architected Labs - Performance Efficiency 에 개재된 Calculating differences in clock source 를 읽고 궁금증이 생겨 구글링을 하다 알게 된 사실들을 의식의 흐름대로 작성한 포스팅입니다. Performance Efficiency Summary 일단 Performance Efficiency에 나오는 실험 내용을 요약하자면 다음과 같습니다. AWS의" />
+    <meta name="twitter:title" content="Export cloudwatch log data to Amazon S3 using lambda" />
+    <meta name="twitter:description" content="본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다. Intro 글을 시작하기 앞서, Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js 를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/clock.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/exportLambda.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/EC2_Clocksource",
+    "url": "https://heuristicwave.github.io/Export_data_to_S3_Lambda",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/clock.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/exportLambda.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/EC2_Clocksource"
+        "@id": "https://heuristicwave.github.io/Export_data_to_S3_Lambda"
     },
-    "description": "몰라도 되지만 알면 알수록 더 신비한 EC2 🙃 Preview 이번 포스팅에서는 AWS Well-Architected Labs - Performance Efficiency 에 개재된 Calculating differences in clock source 를 읽고 궁금증이 생겨 구글링을 하다 알게 된 사실들을 의식의 흐름대로 작성한 포스팅입니다. Performance Efficiency Summary 일단 Performance Efficiency에 나오는 실험 내용을 요약하자면 다음과 같습니다. AWS의"
+    "description": "본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다. Intro 글을 시작하기 앞서, Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js 를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -111,7 +111,7 @@
     </script> -->
 
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="EC2 Clocksource" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Export cloudwatch log data to Amazon S3 using lambda" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -175,7 +175,7 @@ into the {body} of the default.hbs template -->
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 8 November 2021"> 8 November 2021</time>
+                    <time class="post-full-meta-date" datetime=" 7 April 2022"> 7 April 2022</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -185,105 +185,138 @@ into the {body} of the default.hbs template -->
                         
                     
                 </section>
-                <h1 class="post-full-title">EC2 Clocksource</h1>
+                <h1 class="post-full-title">Export cloudwatch log data to Amazon S3 using lambda</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/clock.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/exportLambda.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>몰라도 되지만 알면 알수록 더 신비한 EC2 🙃</p>
+                    <p>본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.</p>
 
-<h1 id="preview">Preview</h1>
+<h1 id="intro">Intro</h1>
 
-<p>이번 포스팅에서는 <a href="https://www.wellarchitectedlabs.com/performance-efficiency/100_labs/100_clock_source_performance/">AWS Well-Architected Labs - Performance Efficiency</a> 에 개재된 <strong>Calculating differences in clock source</strong>
-를 읽고 궁금증이 생겨 구글링을 하다 알게 된 사실들을 의식의 흐름대로 작성한 포스팅입니다.</p>
+<p>글을 시작하기 앞서, <a href="https://noob2geek.in/2021/06/18/export-aws-cloudwatch-logs-to-s3-using-lambda-functions-in-node-js/">Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js</a>
+를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하기 위한 플로우는 다음과 같습니다.</p>
 
-<p><br /></p>
+<p><img src="../../assets/built/images/background/exportLambda.png" alt="imageBuilder" /></p>
 
-<h2 id="performance-efficiency-summary">Performance Efficiency Summary</h2>
+<ol>
+  <li>Amazon EventBridge에 정의한 Rule에 의해 Lambda를 호출합니다.</li>
+  <li>이후 람다가 지정한 CloudWatch의 Logs에 적재된 데이터를 찾습니다.</li>
+  <li>2번에 연속되어 이관될 대상의 로그들이 S3로 이관됩니다.</li>
+</ol>
 
-<p>일단 Performance Efficiency에 나오는 실험 내용을 요약하자면 다음과 같습니다.</p>
+<h2 id="-workshop">📜 Workshop</h2>
 
-<p>AWS의 5세대 가상머신 Nitro와 non-nitro 인스턴스 2개를 올리고 시간을 반환하는 테스트 코드를 돌려 성능 테스트를 진행합니다.
-당연히 5세대 Nitro가 기존 세대보다 월등한 결과를 보여 주지만,
-non-nitro 기반의 인스턴스에서 <strong>‘리눅스 클럭 소스를 교체하면 유의미한 성능 향상의 결과를 얻을 수 있다’</strong> 라는 실험 결과를 보여줍니다.</p>
+<h3 id="1️⃣-log를-담을-bucket-및-정책-생성하기">1️⃣ Log를 담을 Bucket 및 정책 생성하기</h3>
+
+<p>Amazon S3 콘솔 화면에 접속해 Log들이 담길 Bucket을 생성하고 이어서 <code class="language-plaintext highlighter-rouge">Permissions</code>에서 S3 버킷에 대한 권한을 설정합니다.
+해당 방법은 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/S3ExportTasksConsole.html">공식 문서, 1단계와 3단계</a> 자세히 설명되어 있습니다.</p>
 
 <blockquote>
-  <p>Nitro 기반 인스턴스의 default clocksource : kvm-clock(권장)</p>
-
-  <p>Non-nitro 인스턴스의 default clocksource : xen</p>
-
-  <p>실험에서 교체한 Non-nitro 인스턴스의 clocksource : tsc</p>
+  <p>💡 공식 문서 3단계에서 기재된 <code class="language-plaintext highlighter-rouge">random-string</code>은 필요에 의한 경우 사용하세요. 해당 글에서는 편의상 생략하였습니다.</p>
 </blockquote>
 
-<p>마지막으로 첨부된 <a href="https://aws.amazon.com/premiumsupport/knowledge-center/manage-ec2-linux-clock-source">How do I manage the clock source for EC2 instances running Linux?</a>
-게시물에서 클럭 소스를 교체하는 방법(<em>xen에서 tsc로 교체</em>)을 소개하며 실험 내용을 마칩니다.</p>
+<h3 id="2️⃣-lambda-생성하기">2️⃣ Lambda 생성하기</h3>
 
-<p><br /></p>
+<h4 id="step-1--lambda가-사용하는-iam-role--policy-생성">Step 1 : Lambda가 사용하는 IAM Role &amp; Policy 생성</h4>
 
-<h2 id="궁금한-건-못-참아-">궁금한 건 못 참아 ❓</h2>
+<p>Lambda가 Log를 Export 할 수 있도록 다음 정책을 생성합니다.
+IAM에서 Create policy를 선택하고 아래 JSON을 복사하여 붙여 넣고, <code class="language-plaintext highlighter-rouge">cloudwatch_export_task</code>라는 이름으로 정책을 생성합니다.</p>
 
-<p>위에 소개한 Lab을 진행하다 보니 <em>‘왜 tsc로 교체하여 성능 향상 효과를 얻을 수 있는지’</em> 알 수가 없었습니다.
-궁금증을 해소하기 위해 구글링을 하다 보니 이해를 돕는 다음 3가지 자료를 찾을 수 있었습니다.</p>
-
-<h3 id="-timestamping">⏱ Timestamping</h3>
-
-<p><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux_for_real_time/7/html/reference_guide/chap-timestamping">Red Hat Reference Guide</a> 에서 어느 정도 제 가려운 부분을 긁어 주었던 포스팅이 있습니다.</p>
-
-<p>기본적으로 멀티프로세서 시스템인 NUMA와 SMP 아키텍처에서는 여러 개의 clock source가 탑재되어 있습니다.
-멀티프로세서 기반의 EC2 인스턴스에서도 아래 명령어로 사용 가능한 clocksource를 확인하면 다음과 같은 결과를 확인할 수 있습니다.</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /sys/devices/system/clocksource/clocksource0/available_clocksource
-xen tsc hpet acpi_pm
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
+    <span class="s2">"Version"</span>: <span class="s2">"2012-10-17"</span>,
+    <span class="s2">"Statement"</span>: <span class="o">[</span>
+        <span class="o">{</span>
+            <span class="s2">"Effect"</span>: <span class="s2">"Allow"</span>,
+            <span class="s2">"Action"</span>: <span class="s2">"logs:CreateExportTask"</span>,
+            <span class="s2">"Resource"</span>: <span class="s2">"arn:aws:logs:{Region}:{AccountNumber}:*"</span>
+        <span class="o">}</span>
+    <span class="o">]</span>
+<span class="o">}</span>
 </code></pre></div></div>
 
-<p>Red Hat의 실험 결과에 따르면 <code class="language-plaintext highlighter-rouge">tsc &gt; hpet &gt; acpi_pm</code> 순으로 오버헤드가 적은데,
-<code class="language-plaintext highlighter-rouge">tsc</code>는 <strong>register</strong>에서 <code class="language-plaintext highlighter-rouge">hpet</code>은 <strong>memory area</strong>에서 읽기 때문에 수십만 개의 타임스탬프를 지정할 때 상당한 성능 이점을 제공한다고 합니다.</p>
+<p>Lambda에 권한을 부여해 주기 위해서 IAM &gt; Roles &gt; Create Role을 선택합니다.
+Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <code class="language-plaintext highlighter-rouge">export_S3_lambda</code>라는 이름으로 Role을 생성합니다.</p>
 
-<h3 id="️-heap-engineering-post">⚙️ Heap Engineering Post</h3>
+<h4 id="step-2--코드-작성">Step 2 : 코드 작성</h4>
 
-<p><a href="https://heap.io/blog/clocksource-aws-ec2-vdso">Running a database on EC2? Your clock could be slowing you down.</a> 을 보면 더 정확한 분석이 있습니다.
-내용이 어려워 저는 완벽하게 이해하지 못했지만, 읽어보시면 굉장히 좋은 자료인 것 같습니다.</p>
+<p>Lambda 콘솔 화면에서 아래와 같이 빈칸을 채우고, Step 1에서 만들어둔 role을 부여해 람다 함수를 생성합니다.</p>
 
-<p>Heap Engineering 해당 포스팅에서 <strong>밀당</strong>을 시도하는데…
-<em>‘tsc에서는 낮은 가능성으로 clock drift 현상이 있어 프로덕션에서는 수행하지 말라’</em> 고 했다가,
-실제로는 <code class="language-plaintext highlighter-rouge">clock drfit</code>가 발생하지 않는다며 <a href="https://www.slideshare.net/AmazonWebServices/cmp402-amazon-ec2-instances-deep-dive/24">AWS가 tsc를 권장했던 슬라이드 자료</a> 를 함께 보여줍니다.</p>
+<p><img src="../../assets/built/images/post/guide/exportLambda.png" alt="baseimage" /></p>
 
-<p><em>그냥 맘놓고 <code class="language-plaintext highlighter-rouge">kvm-clock</code>이 탑재된 인스턴스를 사용하는게 좋을 것 같습니다.</em></p>
+<blockquote>
+  <p>💡 만약, Export 역할을 수행하는 <strong>람다 함수가 생성하는 로그</strong>를 수집하고 싶을 경우에는 <code class="language-plaintext highlighter-rouge">Create a new role with basic Lambda permissions</code>을
+선택하고 Console에 의해 자동적으로 생성되는 Role에 Step 1에서 만든 정책을 부여하면 됩니다.</p>
+</blockquote>
 
-<h3 id="-tudum-또-netflix">🎥 Tudum~ 또! Netflix</h3>
+<p>이어서 아래 코드를 복사하여 상황에 맞는 인자 값을 넣어주고 Deploy 합니다.</p>
 
-<p>클라우드를 공부하다 보면 Netflix 가 클라우드에 지대한 영향을 끼친 것 같다고 느낄 때가 많은데, 이번에도 그랬습니다.
-AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendangregg/performance-tuning-ec2-instances/42">Senior Performance Architect, Brendan Gregg의 발표 자료</a> 를 보면
-<strong>xen에서 tsc로 교체</strong>하여 <strong>CPU 사용량은 30%, 평균 앱 레이턴시는 43%가 줄었다</strong>고 합니다.</p>
-
-<p><br /></p>
-
-<h2 id="result">Result</h2>
-
-<p>이번에도 구글링으로 딴짓을 하다 보니 많은 사실들을 알게 되었습니다. 사실 <a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/instance-types.html#AvailableInstanceTypes">Current generation instances</a> 를
-사용하면 대부분 위에서 언급한 최적화는 T2 시리즈, Gravition 계열을 제외한 대부분의 인스턴스에서는 기본적으로 적용되어 있습니다.
-그래서 포스팅의 첫 포문을 ‘몰라도 되지만 ~’이라 지었습니다.</p>
-
-<p>clocksource와는 별도로 이번 포스팅을 준비하다 거의 주말 하루를 소비했는데,
-비교적 최근의 인스턴스가 과거 인스턴스들과 어떻게 다른지(Hypervisor, Jumbo Frame 등등)를 알 수 있었습니다.
-새롭게 알게 된 사실들 역시 그냥 Nitro 기반의 Amazon Linux 2를 사용하면, 운영하는데 몰라도 지장 없이 최고의 성능을 보장받는 것 같습니다.
-아직 알음알음 아는 지식이라 포스팅하기 어렵지만, 훗날 더 정확히 알게 되면 성능과 관련된 다른 튜닝 요소들도 적어보겠습니다.</p>
-
-<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
-
-<p><br /></p>
-
-<h3 id="-포스팅과-직접적인-연관도는-떨어지지만-함께-보면-좋은-자료">📚 포스팅과 직접적인 연관도는 떨어지지만 함께 보면 좋은 자료</h3>
-
+<p><strong>Parameter</strong></p>
 <ul>
-  <li><a href="https://www.brendangregg.com/blog/2017-11-29/aws-ec2-virtualization-2017.html">AWS EC2 Virtualization 2017: Introducing Nitro</a></li>
-  <li><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/virtualization_types.html">Linux AMI virtualization types</a></li>
-  <li><a href="https://www.allthingsdistributed.com/2020/09/reinventing-virtualization-with-nitro.html">Reinventing virtualization with the AWS Nitro System</a></li>
+  <li>region : 로그 그룹과 대상 버킷은 동일 리전에 위치</li>
+  <li>destination : 로그가 이관되는 대상 버킷</li>
+  <li>logGroupName : Cloudwatch Log group 이름</li>
+  <li>destinationPrefix : 1️⃣ 에서 언급한 <code class="language-plaintext highlighter-rouge">random-string</code> 값</li>
+  <li>from/to : Lambda 함수가 호출 되는 시점을 기준으로, from/to 기간의 로그 그룹들을 export</li>
 </ul>
+
+<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">AWS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">aws-sdk</span><span class="dl">'</span><span class="p">)</span>
+<span class="kd">const</span> <span class="nx">cloudconfig</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="na">apiVersion</span><span class="p">:</span> <span class="dl">'</span><span class="s1">2014-03-28</span><span class="dl">'</span><span class="p">,</span>
+  <span class="na">region</span><span class="p">:</span> <span class="dl">'</span><span class="s1">region</span><span class="dl">'</span><span class="p">,</span>
+<span class="p">}</span>
+<span class="kd">const</span> <span class="nx">cloudwatchlogs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWS</span><span class="p">.</span><span class="nx">CloudWatchLogs</span><span class="p">(</span><span class="nx">cloudconfig</span><span class="p">)</span>
+<span class="nx">exports</span><span class="p">.</span><span class="nx">handler</span> <span class="o">=</span>  <span class="k">async</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+   <span class="kd">const</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="na">destination</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bucket-name</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">logGroupName</span><span class="p">:</span> <span class="dl">'</span><span class="s1">log-groups-name</span><span class="dl">'</span><span class="p">,</span>
+      <span class="na">destinationPrefix</span><span class="p">:</span> <span class="dl">''</span><span class="p">,</span>
+      <span class="na">from</span><span class="p">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="mi">86400</span><span class="p">,</span>
+      <span class="na">to</span><span class="p">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">(),</span>
+  <span class="p">};</span>
+<span class="k">await</span> <span class="nx">cloudwatchlogs</span><span class="p">.</span><span class="nx">createExportTask</span><span class="p">(</span><span class="nx">params</span><span class="p">).</span><span class="nx">promise</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">({</span>
+      <span class="na">statusCode</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
+        <span class="na">body</span><span class="p">:</span> <span class="nx">data</span><span class="p">,</span>
+    <span class="p">});</span>
+  <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
+    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">({</span>
+      <span class="na">statusCode</span><span class="p">:</span> <span class="mi">501</span><span class="p">,</span>
+        <span class="na">body</span><span class="p">:</span> <span class="nx">err</span><span class="p">,</span>
+    <span class="p">});</span>
+  <span class="p">});</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>이후 테스트 버튼을 눌러 결과값을 보면 taskId 값이 생성되고 S3에 로그가 이관된 것을 확인할 수 있습니다.</p>
+
+<h3 id="3️⃣-eventbridge-트리거-생성하기">3️⃣ EventBridge 트리거 생성하기</h3>
+
+<p>작성한 람다 함수 콘솔 화면 상단에서 <strong>Add trigger</strong> 버튼을 눌러 다음과 같이 Rule을 생성합니다. 저는 주기를 점검하기 위해 아래와 같이 5분을 주었습니다.</p>
+
+<p><img src="../../assets/built/images/post/guide/eventBridgeRule.png" alt="baseimage" /></p>
+
+<blockquote>
+  <p>💡 <a href="https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html">스케쥴 표현식 작성법</a></p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="outro">Outro</h2>
+
+<p>지금까지 Lambda 함수와 EventBrdige를 사용하여 자동으로 로그를 S3으로 백업하는 방법을 알아보았습니다.
+해당 방법 외에도 로그를 이관하는 다양한 방법들이 있으므로, 더 쉽고 좋은 방법이 있다면 알려주세요!</p>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+
+<p><br /></p>
 
 <hr />
 
@@ -330,9 +363,9 @@ AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendang
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/EC2_Clocksource';
-                            this.page.identifier = '/EC2_Clocksource';
-                            this.page.title = 'EC2 Clocksource';
+                            this.page.url = 'https://heuristicwave.github.io/Export_data_to_S3_Lambda';
+                            this.page.identifier = '/Export_data_to_S3_Lambda';
+                            this.page.title = 'Export cloudwatch log data to Amazon S3 using lambda';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -377,11 +410,6 @@ AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendang
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/Export_data_to_S3_Lambda">Export cloudwatch log data to Amazon S3 using lambda</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -406,6 +434,8 @@ AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendang
                                     
                                         
                                         
+                                            <li><a href="/ImageBuilder">Create Immutable Server using AWS Image Builder & Auto Scaling Group</a></li>
+                                        
                                     
                                   
                                 
@@ -428,6 +458,9 @@ AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendang
                                   
                                 
                                   
+                                    
+                                        
+                                        
                                     
                                   
                                 
@@ -492,67 +525,21 @@ AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendang
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/TerraformTips1">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/TerraformTips1">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Devops</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Terraform</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Terraform Tips 1 - Module & Output</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
                 
 
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/SelfService">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/self.png)"></div>
-            </a>
+    <article class="post-card post-template no-image">
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/SelfService">
+            <a class="post-card-content-link" href="/ECS_CW_Logs">
                 <header class="post-card-header">
                     
+                        
+                            
+                               <span class="post-card-tags">Aws</span>
+                            
                         
                             
                                 <span class="post-card-tags">Devops</span>
@@ -560,7 +547,7 @@ AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendang
                         
                     
 
-                    <h2 class="post-card-title">Self-service Infrastructure</h2>
+                    <h2 class="post-card-title">Using the awslogs log driver in ECS(Fargate)</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -597,18 +584,18 @@ AWS re:Invent 2014에서 Netflix의 <a href="https://www.slideshare.net/brendang
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">EC2 Clocksource</div>
+    <div class="floating-header-title">Export cloudwatch log data to Amazon S3 using lambda</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=EC2+Clocksource&amp;url=https://heuristicwave.github.ioEC2_Clocksource"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Export+cloudwatch+log+data+to+Amazon+S3+using+lambda&amp;url=https://heuristicwave.github.ioExport_data_to_S3_Lambda"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioEC2_Clocksource"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioExport_data_to_S3_Lambda"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

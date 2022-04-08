@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-03-23T05:38:50+00:00</updated>
+  <updated>2022-04-08T02:46:12+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,165 @@
   
   
 
+  
+    <entry>
+      <title type="html">Export cloudwatch log data to Amazon S3 using lambda</title>
+      <link href="https://heuristicwave.github.io/Export_data_to_S3_Lambda" rel="alternate" type="text/html" title="Export cloudwatch log data to Amazon S3 using lambda" />
+      <published>2022-04-07T00:00:00+00:00</published>
+      <updated>2022-04-07T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Export_data_to_S3_Lambda</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Export_data_to_S3_Lambda">&lt;p&gt;본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;글을 시작하기 앞서, &lt;a href=&quot;https://noob2geek.in/2021/06/18/export-aws-cloudwatch-logs-to-s3-using-lambda-functions-in-node-js/&quot;&gt;Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js&lt;/a&gt;
+를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하기 위한 플로우는 다음과 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/exportLambda.png&quot; alt=&quot;imageBuilder&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Amazon EventBridge에 정의한 Rule에 의해 Lambda를 호출합니다.&lt;/li&gt;
+  &lt;li&gt;이후 람다가 지정한 CloudWatch의 Logs에 적재된 데이터를 찾습니다.&lt;/li&gt;
+  &lt;li&gt;2번에 연속되어 이관될 대상의 로그들이 S3로 이관됩니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;-workshop&quot;&gt;📜 Workshop&lt;/h2&gt;
+
+&lt;h3 id=&quot;1️⃣-log를-담을-bucket-및-정책-생성하기&quot;&gt;1️⃣ Log를 담을 Bucket 및 정책 생성하기&lt;/h3&gt;
+
+&lt;p&gt;Amazon S3 콘솔 화면에 접속해 Log들이 담길 Bucket을 생성하고 이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Permissions&lt;/code&gt;에서 S3 버킷에 대한 권한을 설정합니다.
+해당 방법은 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/S3ExportTasksConsole.html&quot;&gt;공식 문서, 1단계와 3단계&lt;/a&gt; 자세히 설명되어 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 공식 문서 3단계에서 기재된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random-string&lt;/code&gt;은 필요에 의한 경우 사용하세요. 해당 글에서는 편의상 생략하였습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;2️⃣-lambda-생성하기&quot;&gt;2️⃣ Lambda 생성하기&lt;/h3&gt;
+
+&lt;h4 id=&quot;step-1--lambda가-사용하는-iam-role--policy-생성&quot;&gt;Step 1 : Lambda가 사용하는 IAM Role &amp;amp; Policy 생성&lt;/h4&gt;
+
+&lt;p&gt;Lambda가 Log를 Export 할 수 있도록 다음 정책을 생성합니다.
+IAM에서 Create policy를 선택하고 아래 JSON을 복사하여 붙여 넣고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cloudwatch_export_task&lt;/code&gt;라는 이름으로 정책을 생성합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;s2&quot;&gt;&quot;Version&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;2012-10-17&quot;&lt;/span&gt;,
+    &lt;span class=&quot;s2&quot;&gt;&quot;Statement&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s2&quot;&gt;&quot;Effect&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;Allow&quot;&lt;/span&gt;,
+            &lt;span class=&quot;s2&quot;&gt;&quot;Action&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;logs:CreateExportTask&quot;&lt;/span&gt;,
+            &lt;span class=&quot;s2&quot;&gt;&quot;Resource&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;arn:aws:logs:{Region}:{AccountNumber}:*&quot;&lt;/span&gt;
+        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Lambda에 권한을 부여해 주기 위해서 IAM &amp;gt; Roles &amp;gt; Create Role을 선택합니다.
+Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export_S3_lambda&lt;/code&gt;라는 이름으로 Role을 생성합니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;step-2--코드-작성&quot;&gt;Step 2 : 코드 작성&lt;/h4&gt;
+
+&lt;p&gt;Lambda 콘솔 화면에서 아래와 같이 빈칸을 채우고, Step 1에서 만들어둔 role을 부여해 람다 함수를 생성합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/guide/exportLambda.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 만약, Export 역할을 수행하는 &lt;strong&gt;람다 함수가 생성하는 로그&lt;/strong&gt;를 수집하고 싶을 경우에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create a new role with basic Lambda permissions&lt;/code&gt;을
+선택하고 Console에 의해 자동적으로 생성되는 Role에 Step 1에서 만든 정책을 부여하면 됩니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이어서 아래 코드를 복사하여 상황에 맞는 인자 값을 넣어주고 Deploy 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;region : 로그 그룹과 대상 버킷은 동일 리전에 위치&lt;/li&gt;
+  &lt;li&gt;destination : 로그가 이관되는 대상 버킷&lt;/li&gt;
+  &lt;li&gt;logGroupName : Cloudwatch Log group 이름&lt;/li&gt;
+  &lt;li&gt;destinationPrefix : 1️⃣ 에서 언급한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random-string&lt;/code&gt; 값&lt;/li&gt;
+  &lt;li&gt;from/to : Lambda 함수가 호출 되는 시점을 기준으로, from/to 기간의 로그 그룹들을 export&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AWS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;aws-sdk&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudconfig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;2014-03-28&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudwatchlogs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AWS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CloudWatchLogs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cloudconfig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;params&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;destination&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;bucket-name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;logGroupName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;log-groups-name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;destinationPrefix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;86400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudwatchlogs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createExportTask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;params&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;promise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;501&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이후 테스트 버튼을 눌러 결과값을 보면 taskId 값이 생성되고 S3에 로그가 이관된 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;3️⃣-eventbridge-트리거-생성하기&quot;&gt;3️⃣ EventBridge 트리거 생성하기&lt;/h3&gt;
+
+&lt;p&gt;작성한 람다 함수 콘솔 화면 상단에서 &lt;strong&gt;Add trigger&lt;/strong&gt; 버튼을 눌러 다음과 같이 Rule을 생성합니다. 저는 주기를 점검하기 위해 아래와 같이 5분을 주었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/guide/eventBridgeRule.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 &lt;a href=&quot;https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html&quot;&gt;스케쥴 표현식 작성법&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;지금까지 Lambda 함수와 EventBrdige를 사용하여 자동으로 로그를 S3으로 백업하는 방법을 알아보았습니다.
+해당 방법 외에도 로그를 이관하는 다양한 방법들이 있으므로, 더 쉽고 좋은 방법이 있다면 알려주세요!&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Using the awslogs log driver in ECS(Fargate)</title>
@@ -1823,285 +1982,6 @@ resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-at
 
       
         <summary type="html">Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">ECR CodePipeline with Terraform Ⅱ</title>
-      <link href="https://heuristicwave.github.io/CodeBuild" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅱ" />
-      <published>2021-04-08T00:00:00+00:00</published>
-      <updated>2021-04-08T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/CodeBuild</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/CodeBuild">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)&lt;/p&gt;
-
-&lt;p&gt;2편에서는 &lt;strong&gt;ECR&lt;/strong&gt;과 &lt;strong&gt;CodeBuild&lt;/strong&gt;를 생성하고 &lt;strong&gt;IAM 역할, 정책을 부여&lt;/strong&gt;하는 법을 학습합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;ecr&quot;&gt;ECR&lt;/h2&gt;
-&lt;p&gt;ECR 역시 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository&quot;&gt;공식 문서&lt;/a&gt; 에서 사용방법을 확인합니다.
-공식문서에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image_scanning_configuration&lt;/code&gt; config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다.
-더불어, output도 함께 작성하겠습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; ecr.tf
-resource &quot;aws_ecr_repository&quot; &quot;image_repo&quot; {
-  name                 = var.image_repo_name
-  image_tag_mutability = &quot;MUTABLE&quot;
-}
-
-output &quot;image_repo_url&quot; {
-  value = aws_ecr_repository.image_repo.repository_url
-}
-
-output &quot;image_repo_arn&quot; {
-  value = aws_ecr_repository.image_repo.arn
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecr.tf&lt;/code&gt;에서 변수로 사용하기 위한 &lt;strong&gt;var.image_repo_name&lt;/strong&gt; 부분이 작동하도록 1편에서 작성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variables.tf&lt;/code&gt; 아래 값을 추가합니다.&lt;/p&gt;
-
-&lt;p&gt;✅ 편의상 이번 단계에 필요한 variable을 함께 포함했습니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;variable &quot;image_repo_name&quot; {
-  description = &quot;Image repo name&quot;
-  type        = string
-}
-
-variable &quot;container_name&quot; {
-  description = &quot;Container Name&quot;
-  default     = &quot;my-container&quot;
-}
-
-variable &quot;source_repo_branch&quot; {
-  description = &quot;Source repo branch&quot;
-  type        = string
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;ecr 작성을 완료햇으니 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan, apply&lt;/code&gt; 명령어를 차례로 입력해 인프라를 생성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어나 &lt;a href=&quot;https://console.aws.amazon.com/ecr/home&quot;&gt;콘솔&lt;/a&gt; 에서 생성된 인프라를 확인합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;codebuild&quot;&gt;CodeBuild&lt;/h2&gt;
-&lt;p&gt;CodeBuild를 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
-기존까지의 작업과는 달리 상당히 어려워 보입니다. 그러나 쓱 훝어보면 크게 4가지(bucket, IAM Role과 Policy, Codebuild)로 정리됩니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;bucket&quot;&gt;Bucket&lt;/h3&gt;
-&lt;p&gt;도큐먼트와 같이 우선적으로 S3를 생성합니다. bucket의 이름은 선택이지만, 여러개의 버킷을 가지고 있는 저는 식별을 위해 이름을 부여했습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codebuild.tf
-resource &quot;aws_s3_bucket&quot; &quot;artifact_bucket&quot; {
-  bucket = &quot;ecr-pipeline&quot;
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;iam-role&quot;&gt;IAM Role&lt;/h3&gt;
-&lt;p&gt;도큐먼트를 따라 AssumeRole을 사용합시다. &lt;br /&gt;
-➕ S3을 만들때 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 아래 코드를 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_role&quot; &quot;codebuild_role&quot; {
-  name = &quot;terraform-codebuild&quot;,
-  assume_role_policy = &amp;lt;&amp;lt;EOF
-{
-   &quot;Version&quot;: &quot;2012-10-17&quot;,
-   &quot;Statement&quot;: [
-      {
-         &quot;Effect&quot;: &quot;Allow&quot;,
-         &quot;Principal&quot;: {
-            &quot;Service&quot;: &quot;codebuild.amazonaws.com&quot;
-         },
-         &quot;Action&quot;: &quot;sts:AssumeRole&quot;
-      }
-   ]
-}
-EOF
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;iam-policy&quot;&gt;IAM Policy&lt;/h3&gt;
-&lt;p&gt;정책은 IAM 콘솔에서 기존에 만들어진 정책을 사용할 수도 있지만, 아래와 같이 직접 작성할 수도 있습니다.
-도큐먼트에서 EC2에 대한 정책을 사용하지만, 우리는 ECR을 사용하므로 아래와 같은 정책을 사용하겠습니다.&lt;/p&gt;
-&lt;noscript&gt;
-  &lt;pre&gt;resource &amp;quot;aws_iam_policy&amp;quot; &amp;quot;codebuild_policy&amp;quot; {
-  description = &amp;quot;CodeBuild Execution Policy&amp;quot;
-  policy      = &amp;lt;&amp;lt;EOF
-{
-  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
-  &amp;quot;Statement&amp;quot;: [
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;logs:CreateLogGroup&amp;quot;, &amp;quot;logs:CreateLogStream&amp;quot;, &amp;quot;logs:PutLogEvents&amp;quot;,
-        &amp;quot;ecr:GetAuthorizationToken&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;*&amp;quot;
-    },
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;s3:GetObject&amp;quot;, &amp;quot;s3:GetObjectVersion&amp;quot;, &amp;quot;s3:PutObject&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_s3_bucket.artifact_bucket.arn}/*&amp;quot;
-    },
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;ecr:GetDownloadUrlForLayer&amp;quot;, &amp;quot;ecr:BatchGetImage&amp;quot;,
-        &amp;quot;ecr:BatchCheckLayerAvailability&amp;quot;, &amp;quot;ecr:PutImage&amp;quot;,
-        &amp;quot;ecr:InitiateLayerUpload&amp;quot;, &amp;quot;ecr:UploadLayerPart&amp;quot;,
-        &amp;quot;ecr:CompleteLayerUpload&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_ecr_repository.image_repo.arn}&amp;quot;
-    }
-  ]
-}
-EOF
-}&lt;/pre&gt;
-&lt;/noscript&gt;
-&lt;script src=&quot;https://gist.github.com/heuristicwave/09103b88af041153ccd206ec6d51b7c1.js&quot;&gt; &lt;/script&gt;
-
-&lt;p&gt;20, 30라인에서 앞서 생성한 리소스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;${채움참조}&lt;/code&gt; 문법으로 유연한 코드를 작성합니다.&lt;/p&gt;
-
-&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_role_policy_attachment&quot; &quot;codebuild-attach&quot; {
-  role       = aws_iam_role.codebuild_role.name
-  policy_arn = aws_iam_policy.codebuild_policy.arn
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;codebuild-1&quot;&gt;CodeBuild&lt;/h3&gt;
-&lt;p&gt;&lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 를 보아도 어떻게 해야 ECR에 적용시킬 수 있는지 알기 어렵습니다.
-우선 CodeBuild를 이해하기 위해 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/sample-docker.html&quot;&gt;AWS docs&lt;/a&gt; 를 읽어봅시다.
-대략 리소스 이름을 정하고, 환경을 구성하고 빌드를 하기 위한 방법을 정의해야 한다는 사실을 알 수 있습니다.
-CodeBuild가 정의된 아래 코드를 활용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
-&lt;noscript&gt;
-  &lt;pre&gt;resource &amp;quot;aws_codebuild_project&amp;quot; &amp;quot;codebuild&amp;quot; {
-  name         = &amp;quot;codebuild-${var.source_repo_name}-${var.source_repo_branch}&amp;quot;
-  service_role = aws_iam_role.codebuild_role.arn
-
-  artifacts {
-    type = &amp;quot;CODEPIPELINE&amp;quot;
-  }
-  
-  environment {
-    compute_type                = &amp;quot;BUILD_GENERAL1_MEDIUM&amp;quot;
-    image                       = &amp;quot;aws/codebuild/standard:3.0&amp;quot;
-    type                        = &amp;quot;LINUX_CONTAINER&amp;quot;
-    privileged_mode             = true
-    image_pull_credentials_type = &amp;quot;CODEBUILD&amp;quot;
-    environment_variable {
-      name  = &amp;quot;REPOSITORY_URI&amp;quot;
-      value = aws_ecr_repository.image_repo.repository_url
-    }
-    environment_variable {
-      name  = &amp;quot;AWS_DEFAULT_REGION&amp;quot;
-      value = var.aws_region
-    }
-    environment_variable {
-      name  = &amp;quot;CONTAINER_NAME&amp;quot;
-      value = var.container_name
-    }
-  }
-  source {
-    type      = &amp;quot;CODEPIPELINE&amp;quot;
-    buildspec = &amp;lt;&amp;lt;BUILDSPEC
-${file(&amp;quot;buildspec.yml&amp;quot;)}
-BUILDSPEC
-  }
-}&lt;/pre&gt;
-&lt;/noscript&gt;
-&lt;script src=&quot;https://gist.github.com/heuristicwave/2ebf79ce3cbdf4a87657b272f9e1d994.js&quot;&gt; &lt;/script&gt;
-
-&lt;p&gt;31라인이 참조하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yml&lt;/code&gt;을 pre_build, build, post_build에 맞춰 작성합니다.&lt;/p&gt;
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s&quot;&gt;cat &amp;lt;&amp;lt;EOF &amp;gt; buildspec.yml&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;0.2&lt;/span&gt;
-
-&lt;span class=&quot;na&quot;&gt;phases&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;install&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;runtime-versions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;docker&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;m&quot;&gt;18&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;pre_build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Logging in to Amazon ECR...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;IMAGE_TAG=${COMMIT_HASH:=latest}&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Build started on `date`&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Building the Docker image...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker build -t $REPOSITORY_URI:latest .&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;post_build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Build completed on `date`&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Pushing the Docker image...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:latest&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:$IMAGE_TAG&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Writing image definitions file...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;printf '[{&quot;name&quot;:&quot;%s&quot;,&quot;imageUri&quot;:&quot;%s&quot;}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &amp;gt; imagedefinitions.json&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;artifacts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;imagedefinitions.json&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;EOF&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
-aws_codebuild_project.codebuild
-aws_codecommit_repository.test
-aws_ecr_repository.image_repo
-aws_iam_policy.codebuild_policy
-aws_iam_role.codebuild_role
-aws_iam_role_policy_attachment.codebuild-attach
-aws_s3_bucket.artifact_bucket
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;생성한 인프라가 위와 같지 않을 경우, 👉 Click&lt;/summary&gt;
-
-  &lt;p&gt;실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.&lt;/p&gt;
-  &lt;ol&gt;
-    &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destroy&lt;/code&gt; 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-target&lt;/code&gt; 옵션과 함께 resource 명으로 명령어를 작성합니다. &lt;br /&gt;
-&lt;em&gt;예시) terraform destory -target aws_vpc.main&lt;/em&gt;&lt;/li&gt;
-    &lt;li&gt;잘못 작성한 코드를 수정 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하여 최신 상태의 인프라를 반영합니다.&lt;/li&gt;
-  &lt;/ol&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</summary>
       
 
       
