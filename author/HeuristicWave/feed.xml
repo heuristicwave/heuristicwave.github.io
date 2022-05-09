@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-05-09T01:43:51+00:00</updated>
+  <updated>2022-05-09T02:21:57+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -68,6 +68,10 @@
 
     &lt;p&gt;&lt;em&gt;아직 2편 밖에 없는 작고 초라한 나의 시리즈물&lt;/em&gt;
 &lt;img src=&quot;../../assets/built/images/post/etc/series.png&quot; alt=&quot;posting_quality&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;관심 기술 스터디 &lt;br /&gt;
+Kubernetes, Terraform, Istio, AWS 서비스들에 대한 글을 작성하며, 성장의 기록들을 남기겠습니다.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;주제를 추천받아 작성 &lt;br /&gt;

@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 09 May 2022 01:43:51 +0000</pubDate>
-        <lastBuildDate>Mon, 09 May 2022 01:43:51 +0000</lastBuildDate>
+        <pubDate>Mon, 09 May 2022 02:21:57 +0000</pubDate>
+        <lastBuildDate>Mon, 09 May 2022 02:21:57 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -42,6 +42,10 @@
 
     &lt;p&gt;&lt;em&gt;아직 2편 밖에 없는 작고 초라한 나의 시리즈물&lt;/em&gt;
 &lt;img src=&quot;../../assets/built/images/post/etc/series.png&quot; alt=&quot;posting_quality&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;관심 기술 스터디 &lt;br /&gt;
+Kubernetes, Terraform, Istio, AWS 서비스들에 대한 글을 작성하며, 성장의 기록들을 남기겠습니다.&lt;/p&gt;
   &lt;/li&gt;
   &lt;li&gt;
     &lt;p&gt;주제를 추천받아 작성 &lt;br /&gt;
