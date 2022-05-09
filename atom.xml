@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>글또 7기 다짐글</title>
+        
+          <description>&lt;p&gt;글또 7기 다짐글 입니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Thu, 05 May 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/geultto</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/geultto</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Export cloudwatch log data to Amazon S3 using lambda</title>
         
           <description>&lt;p&gt;본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.&lt;/p&gt;
