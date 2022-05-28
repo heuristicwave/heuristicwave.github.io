@@ -11,7 +11,7 @@
 
 
 
-    <title>Using Amazon ECS Exec for debugging</title>
+    <title>Terraform Tips 3 - Refresh & Replace</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/ECS_Exec" />
+    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips3" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Using Amazon ECS Exec for debugging" />
-    <meta property="og:description" content="Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition" />
-    <meta property="og:url" content="https://heuristicwave.github.io/ECS_Exec" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
+    <meta property="og:title" content="Terraform Tips 3 - Refresh & Replace" />
+    <meta property="og:description" content="Terraform 더 익숙하게 3 - Refresh &amp; Replace Intro IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, 코드로 정의한 형상과 실제 인프라의 형상을 동일하게 유지하는 것 입니다. Terraform에서는 Configuration Drift(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다. 이번 포스팅에서는 형상을 유지하는 다양한 기법 중 Refresh와 Replace에 대하여 알아보겠습니다." />
+    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips3" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-02-22T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-02-22T00:00:00+00:00" />
-    <meta property="article:tag" content="Aws" />
+    <meta property="article:published_time" content="2022-05-28T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-05-28T00:00:00+00:00" />
+    <meta property="article:tag" content="Devops" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Using Amazon ECS Exec for debugging" />
-    <meta name="twitter:description" content="Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition" />
+    <meta name="twitter:title" content="Terraform Tips 3 - Refresh & Replace" />
+    <meta name="twitter:description" content="Terraform 더 익숙하게 3 - Refresh &amp; Replace Intro IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, 코드로 정의한 형상과 실제 인프라의 형상을 동일하게 유지하는 것 입니다. Terraform에서는 Configuration Drift(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다. 이번 포스팅에서는 형상을 유지하는 다양한 기법 중 Refresh와 Replace에 대하여 알아보겠습니다." />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Aws" />
+    <meta name="twitter:data2" content="Devops" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/ECS_Exec",
+    "url": "https://heuristicwave.github.io/TerraformTips3",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/blog-cover.jpg",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/ECS_Exec"
+        "@id": "https://heuristicwave.github.io/TerraformTips3"
     },
-    "description": "Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록. 📚 References Using Amazon ECS Exec for debugging AWS CLI Cmd Ref : excute-commnad Exec 활성화 SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여 task-definition"
+    "description": "Terraform 더 익숙하게 3 - Refresh &amp; Replace Intro IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, 코드로 정의한 형상과 실제 인프라의 형상을 동일하게 유지하는 것 입니다. Terraform에서는 Configuration Drift(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다. 이번 포스팅에서는 형상을 유지하는 다양한 기법 중 Refresh와 Replace에 대하여 알아보겠습니다."
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Using Amazon ECS Exec for debugging" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Terraform Tips 3 - Refresh & Replace" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -180,126 +180,74 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-aws tag-devops post tag-aws no-image">
+        <article class="post-full  tag-devops tag-terraform post tag-devops ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="22 February 2022">22 February 2022</time>
+                    <time class="post-full-meta-date" datetime="28 May 2022">28 May 2022</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/aws/'>AWS</a>,
+                               <a href='/tag/devops/'>DEVOPS</a>,
                             
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>
+                               <a href='/tag/terraform/'>TERRAFORM</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Using Amazon ECS Exec for debugging</h1>
+                <h1 class="post-full-title">Terraform Tips 3 - Refresh & Replace</h1>
             </header>
 
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
+            </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Docker에서는 <code class="language-plaintext highlighter-rouge">exec</code> 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
-21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</p>
+                    <p>Terraform 더 익숙하게 3 - Refresh &amp; Replace</p>
 
-<h2 id="-references">📚 References</h2>
+<h2 id="intro">Intro</h2>
 
-<ul>
-  <li><a href="https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html">Using Amazon ECS Exec for debugging</a></li>
-  <li><a href="https://docs.aws.amazon.com/cli/latest/reference/ecs/execute-command.html">AWS CLI Cmd Ref : excute-commnad</a></li>
-</ul>
-
-<h2 id="exec-활성화">Exec 활성화</h2>
-
-<ol>
-  <li>SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여</li>
-  <li>task-definition config 추가
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="s2">"linuxParameters"</span>: <span class="o">{</span>
-    <span class="s2">"initProcessEnabled"</span>: <span class="nb">true</span>
-<span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>CLI로 execute-command enable 후, 점검
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs create-service <span class="se">\</span>
- <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
- <span class="nt">--task-definition</span> task-definition-name <span class="se">\</span>
- <span class="nt">--enable-execute-command</span> <span class="se">\</span>
- <span class="nt">--service-name</span> service-name <span class="se">\</span>
- <span class="nt">--desired-count</span> 1
-</code></pre></div>    </div>
-    <p>아래 명령어로 활성화 여부 확인. (grep option 활용, <code class="language-plaintext highlighter-rouge">grep -F4 "managedAgents"</code>, <code class="language-plaintext highlighter-rouge">grep "enableExecuteCommand"</code>)</p>
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs describe-tasks <span class="se">\</span>
- <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
- <span class="nt">--tasks</span> task-id 
-</code></pre></div>    </div>
-    <p>활성화 상태일 때의 Snippet</p>
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
-    <span class="s2">"tasks"</span>: <span class="o">[</span>
-        <span class="o">{</span>
-            ...
-            <span class="s2">"containers"</span>: <span class="o">[</span>
-                <span class="o">{</span>
-                    ...
-                    <span class="s2">"managedAgents"</span>: <span class="o">[</span>
-                        <span class="o">{</span>
-                            <span class="s2">"lastStartedAt"</span>: <span class="s2">"2021-03-01T14:49:44.574000-06:00"</span>,
-                            <span class="s2">"name"</span>: <span class="s2">"ExecuteCommandAgent"</span>,
-                            <span class="s2">"lastStatus"</span>: <span class="s2">"RUNNING"</span>
-                        <span class="o">}</span>
-                    <span class="o">]</span>
-                <span class="o">}</span>
-            <span class="o">]</span>,
-            ...
-            <span class="s2">"enableExecuteCommand"</span>: <span class="nb">true</span>,
-            ...
-        <span class="o">}</span>
-    <span class="o">]</span>
-<span class="o">}</span>
-</code></pre></div>    </div>
-  </li>
-  <li>Running ECS Exec
-    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecs execute-command <span class="nt">--cluster</span> cluster-name <span class="se">\</span>
- <span class="nt">--task</span> task-id <span class="se">\</span>
- <span class="nt">--container</span> container-name <span class="se">\</span>
- <span class="nt">--interactive</span> <span class="se">\</span>
- <span class="nt">--command</span> <span class="s2">"/bin/sh"</span>
-</code></pre></div>    </div>
-  </li>
-</ol>
+<p>IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, <strong>코드로 정의한 형상</strong>과 <strong>실제 인프라의 형상</strong>을 동일하게 유지하는 것 입니다.
+Terraform에서는 <strong>Configuration Drift</strong>(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다.
+이번 포스팅에서는 형상을 유지하는 다양한 기법 중 <code class="language-plaintext highlighter-rouge">Refresh</code>와 <code class="language-plaintext highlighter-rouge">Replace</code>에 대하여 알아보겠습니다.</p>
 
 <p><br /></p>
 
-<h2 id="문제-해결">문제 해결</h2>
+<h2 id="refresh">Refresh</h2>
 
-<p>Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>An error occurred <span class="o">(</span>ClusterNotFoundException<span class="o">)</span> when calling the ExecuteCommand operation: Cluster not found.
-</code></pre></div></div>
+<p>문서에는 다음과 같이 기재되어 있지만, 처음 접한다면 무엇을 말하는지 쉽게 와닿지 않습니다.</p>
 
 <blockquote>
-  <p>Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)</p>
+  <p>The <code class="language-plaintext highlighter-rouge">terraform refresh</code> command reads the current settings from all managed remote objects and updates the Terraform state to match. <br />
+<code class="language-plaintext highlighter-rouge">terraform refresh</code> 명령어는 원격 객체의 현재 상태를 읽어 Terraform state와 일치시킵니다.</p>
 </blockquote>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found
-</code></pre></div></div>
+<p>클라우드 환경에서 클러스터를 운용하면 인스턴스의 Scale이 변화함에 따라 인스턴스 ID 값도 변합니다.
+이 경우 코드로 정의한 상태는 프로비저닝 당시 시점을 기억하지만, 실제 인프라의 현상은 최신 인스턴스의 상태를 가지고 있으므로 Drift가 발생합니다.</p>
 
-<blockquote>
-  <p>클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)</p>
-</blockquote>
+<p>위와 같은 상황에서 <code class="language-plaintext highlighter-rouge">refresh</code> 명령어를 사용하면 <code class="language-plaintext highlighter-rouge">terraform.tfstate</code>의 값이 현재 인프라의 상태와 일치하게 됩니다.</p>
+
+<p>하지만, 위 명령어는 deprecate 되었습니다. 왜냐하면 관리자가 무엇이 변경되는지 알지 못하고 <code class="language-plaintext highlighter-rouge">tfstate</code>가 최신화 되기 때문입니다.</p>
+
+<p><br /></p>
+
+<h2 id="outro">Outro</h2>
+
+<p>지금까지 테라폼 더 익숙하게 Refresh &amp; Replace 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
 
 <p><br /></p>
 
 <hr />
 
-<p><span class="table-of-contents-list">ECS Error Handling and Troubleshooting</span></p>
+<p><span class="table-of-contents-list">Terraform Tips</span></p>
 <ul class="table-of-contents-list">
-    <li><a href="./ECS_Exec">Using Amazon ECS Exec for debugging</a></li>
-    <li><a href="./ECS_CW_Logs">Using the awslogs log driver in ECS(Fargate)</a></li>
+    <li><a href="./TerraformTips1">Module &amp; Output</a></li>
+    <li><a href="./TerraformTips2">Data &amp; Index</a></li>
 </ul>
 
 <p><br /></p>
@@ -345,9 +293,9 @@ into the {body} of the default.hbs template -->
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/ECS_Exec';
-                            this.page.identifier = '/ECS_Exec';
-                            this.page.title = 'Using Amazon ECS Exec for debugging';
+                            this.page.url = 'https://heuristicwave.github.io/TerraformTips3';
+                            this.page.identifier = '/TerraformTips3';
+                            this.page.title = 'Terraform Tips 3 - Refresh & Replace';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -381,7 +329,7 @@ into the {body} of the default.hbs template -->
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -391,16 +339,11 @@ into the {body} of the default.hbs template -->
                                 
                                 
                                   
-                                
+                                    
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                            <li><a href="/Export_data_to_S3_Lambda">Export cloudwatch log data to Amazon S3 using lambda</a></li>
-                                        
-                                    
+                                
                                   
                                 
                                   
@@ -414,6 +357,11 @@ into the {body} of the default.hbs template -->
                                 
                                   
                                     
+                                        
+                                        
+                                            <li><a href="/ECS_Exec">Using Amazon ECS Exec for debugging</a></li>
+                                        
+                                    
                                   
                                 
                                   
@@ -426,15 +374,6 @@ into the {body} of the default.hbs template -->
                                   
                                 
                                   
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
                                     
                                         
                                         
@@ -444,12 +383,21 @@ into the {body} of the default.hbs template -->
                                   
                                 
                                   
+                                
+                                  
                                     
                                         
                                         
                                     
                                   
                                 
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
                                   
                                 
                                   
@@ -499,7 +447,7 @@ into the {body} of the default.hbs template -->
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/aws/">
+                            <a href="/tag/devops/">
                                 
                                     See all 12 posts  →
                                 
@@ -511,48 +459,6 @@ into the {body} of the default.hbs template -->
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template no-image">
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/ECS_CW_Logs">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Devops</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Using the awslogs log driver in ECS(Fargate)</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -560,26 +466,22 @@ into the {body} of the default.hbs template -->
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/ImageBuilder">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/imagebuilder.png)"></div>
+            <a class="post-card-image-link" href="/geultto">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/geultto.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/ImageBuilder">
+            <a class="post-card-content-link" href="/geultto">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Devops</span>
+                                <span class="post-card-tags">Extracurricular</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Create Immutable Server using AWS Image Builder & Auto Scaling Group</h2>
+                    <h2 class="post-card-title">글또 7기 다짐글</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -616,18 +518,18 @@ into the {body} of the default.hbs template -->
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Using Amazon ECS Exec for debugging</div>
+    <div class="floating-header-title">Terraform Tips 3 - Refresh & Replace</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Using+Amazon+ECS+Exec+for+debugging&amp;url=https://heuristicwave.github.ioECS_Exec"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Tips+3+-+Refresh+%26+Replace&amp;url=https://heuristicwave.github.ioTerraformTips3"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioECS_Exec"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips3"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

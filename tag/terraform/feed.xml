@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-05-28T15:26:39+00:00</updated>
+  <updated>2022-05-28T15:36:20+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -30,6 +30,84 @@
   
   
 
+  
+    <entry>
+      <title type="html">Terraform Tips 3 - Refresh &amp;amp; Replace</title>
+      <link href="https://heuristicwave.github.io/TerraformTips3" rel="alternate" type="text/html" title="Terraform Tips 3 - Refresh &amp; Replace" />
+      <published>2022-05-28T00:00:00+00:00</published>
+      <updated>2022-05-28T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/TerraformTips3</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips3">&lt;p&gt;Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, &lt;strong&gt;코드로 정의한 형상&lt;/strong&gt;과 &lt;strong&gt;실제 인프라의 형상&lt;/strong&gt;을 동일하게 유지하는 것 입니다.
+Terraform에서는 &lt;strong&gt;Configuration Drift&lt;/strong&gt;(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다.
+이번 포스팅에서는 형상을 유지하는 다양한 기법 중 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Refresh&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Replace&lt;/code&gt;에 대하여 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;refresh&quot;&gt;Refresh&lt;/h2&gt;
+
+&lt;p&gt;문서에는 다음과 같이 기재되어 있지만, 처음 접한다면 무엇을 말하는지 쉽게 와닿지 않습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform refresh&lt;/code&gt; command reads the current settings from all managed remote objects and updates the Terraform state to match. &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform refresh&lt;/code&gt; 명령어는 원격 객체의 현재 상태를 읽어 Terraform state와 일치시킵니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;클라우드 환경에서 클러스터를 운용하면 인스턴스의 Scale이 변화함에 따라 인스턴스 ID 값도 변합니다.
+이 경우 코드로 정의한 상태는 프로비저닝 당시 시점을 기억하지만, 실제 인프라의 현상은 최신 인스턴스의 상태를 가지고 있으므로 Drift가 발생합니다.&lt;/p&gt;
+
+&lt;p&gt;위와 같은 상황에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;refresh&lt;/code&gt; 명령어를 사용하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform.tfstate&lt;/code&gt;의 값이 현재 인프라의 상태와 일치하게 됩니다.&lt;/p&gt;
+
+&lt;p&gt;하지만, 위 명령어는 deprecate 되었습니다. 왜냐하면 관리자가 무엇이 변경되는지 알지 못하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfstate&lt;/code&gt;가 최신화 되기 때문입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;지금까지 테라폼 더 익숙하게 Refresh &amp;amp; Replace 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="terraform" />
+      
+
+      
+        <summary type="html">Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Terraform Tips 2 - Data &amp;amp; Index</title>
@@ -61,11 +139,6 @@
   filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
     name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
     values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amzn2-ami-kernel-*-hvm-*-x86_64-gp2&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;owner-alias&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
   &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 
