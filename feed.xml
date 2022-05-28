@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 09 May 2022 02:21:57 +0000</pubDate>
-        <lastBuildDate>Mon, 09 May 2022 02:21:57 +0000</lastBuildDate>
+        <pubDate>Sat, 28 May 2022 11:28:00 +0000</pubDate>
+        <lastBuildDate>Sat, 28 May 2022 11:28:00 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -685,13 +685,39 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
 &lt;p&gt;이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 실수 하는 내용이라 글로 남기게 되었습니다. &lt;strong&gt;Terraform Data&lt;/strong&gt;를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
 모든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.&lt;/p&gt;
 
-&lt;p&gt;🥲 본격적으로 글을 들어가기 앞서, 이번편도 사실 제 글보다 더 좋은 학습 장소가 있어서 함께 첨부합니다!&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
+&lt;p&gt;공식문서(&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;) 에서도 Data 활용방법을 배울 수 있지만,
+이번 포스팅에서는 3가지 예제와 함께 리소스를 Query하는 방법을 배워 보겠습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;query-ami&quot;&gt;Query AMI&lt;/h2&gt;
+
+&lt;p&gt;AWS의 최신 AMI는 주기적으로 갱신됩니다. 따라서 재사용 가능한 코드를 작성하기 위해, 항상 최신 AMI를 참조하는 코드를 작성하는데 다음과 같은 방법을 사용할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
+
+  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+
+  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
+    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amzn2-ami-kernel-*-hvm-*-x86_64-gp2&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;owner-alias&quot;&lt;/span&gt;
+    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+output &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_ami.amazon_linux.id
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;위와 같은 방법으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
+예를 들어 ECS와 EKS에서 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;values = [&quot;amzn2-ami-ecs-hvm-*-x86_64-ebs&quot;]&lt;/code&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
 
