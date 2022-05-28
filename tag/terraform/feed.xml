@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-05-28T15:36:20+00:00</updated>
+  <updated>2022-05-28T17:29:59+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -41,13 +41,13 @@
 
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
 
-&lt;p&gt;IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, &lt;strong&gt;코드로 정의한 형상&lt;/strong&gt;과 &lt;strong&gt;실제 인프라의 형상&lt;/strong&gt;을 동일하게 유지하는 것 입니다.
+&lt;p&gt;IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, &lt;strong&gt;코드로 정의한 형상&lt;/strong&gt;과 &lt;strong&gt;실제 인프라의 형상&lt;/strong&gt;을 동일하게 유지하는 것입니다.
 Terraform에서는 &lt;strong&gt;Configuration Drift&lt;/strong&gt;(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다.
-이번 포스팅에서는 형상을 유지하는 다양한 기법 중 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Refresh&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Replace&lt;/code&gt;에 대하여 알아보겠습니다.&lt;/p&gt;
+이번 포스팅에서는 형상을 유지하는 다양한 기법 중 하나인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Refresh&lt;/code&gt;와 비슷하면서도 헷갈리는 개념인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Replace&lt;/code&gt;에 대하여 알아보겠습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;refresh&quot;&gt;Refresh&lt;/h2&gt;
+&lt;h2 id=&quot;️-refresh&quot;&gt;♻️ Refresh&lt;/h2&gt;
 
 &lt;p&gt;문서에는 다음과 같이 기재되어 있지만, 처음 접한다면 무엇을 말하는지 쉽게 와닿지 않습니다.&lt;/p&gt;
 
@@ -59,13 +59,73 @@ Terraform에서는 &lt;strong&gt;Configuration Drift&lt;/strong&gt;(정의한 �
 &lt;p&gt;클라우드 환경에서 클러스터를 운용하면 인스턴스의 Scale이 변화함에 따라 인스턴스 ID 값도 변합니다.
 이 경우 코드로 정의한 상태는 프로비저닝 당시 시점을 기억하지만, 실제 인프라의 현상은 최신 인스턴스의 상태를 가지고 있으므로 Drift가 발생합니다.&lt;/p&gt;
 
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/state.png&quot; alt=&quot;state&quot; /&gt;&lt;/p&gt;
+
 &lt;p&gt;위와 같은 상황에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;refresh&lt;/code&gt; 명령어를 사용하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform.tfstate&lt;/code&gt;의 값이 현재 인프라의 상태와 일치하게 됩니다.&lt;/p&gt;
 
-&lt;p&gt;하지만, 위 명령어는 deprecate 되었습니다. 왜냐하면 관리자가 무엇이 변경되는지 알지 못하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfstate&lt;/code&gt;가 최신화 되기 때문입니다.&lt;/p&gt;
+&lt;p&gt;하지만, 위 명령어는 deprecate 되었습니다. 왜냐하면 관리자가 무엇이 변경되는지 알지 못하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfstate&lt;/code&gt;가 최신화되기 때문입니다.
+그래서 테라폼 v0.15.4.에서부터는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-refresh-only&lt;/code&gt; 옵션을 제공하기 시작했습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;refresh-only&quot;&gt;–refresh-only&lt;/h3&gt;
+
+&lt;p&gt;왼쪽은 프로비저닝 당시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt;입니다. 오른쪽은 해당 환경을 콘솔에서 health check를 하는 간격을 120초로 변경한 화면입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/refresh.png&quot; alt=&quot;refresh&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;의도적으로 Drfit 상황을 만들었기 때문에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan --refresh-only&lt;/code&gt; 명령어로 점검하면 다음과 같이 어떤 리소스 객체가 변경될 것인지 확인 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/refresh-only.png&quot; alt=&quot;refresh-only&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 사진에서, elb의 AutoScalingGroup 내의 인스턴스가 바뀌어 최신화됨과, 기존에 콘솔에서 변경한 health_check 값을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;이어서 해당 차이를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply --refresh-only&lt;/code&gt; 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt;를 최신화 시킵니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;️-주의&quot;&gt;⚠️ 주의&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt;는 Refresh로 최신화되었지만, 여전히 코드로 정의한 interval 값은 180입니다.
+그러므로 코드로 정의된 부분을 변경하지 않은 상황에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt; 명렁어를 치면, 현재 120의 interval 값이 180으로 원복 됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-taint&quot;&gt;☠️ Taint&lt;/h2&gt;
+
+&lt;p&gt;Replace를 설명하기 앞서, 기존 테라폼에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;taint&lt;/code&gt;라는 명령어가 있습니다. 문서에는 다음과 같이 기재되어 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform taint&lt;/code&gt; command informs Terraform that a particular object has become degraded or damaged. &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform taint&lt;/code&gt; 명령어는 특정 객체가 저하되거나 손상되었음을 Terraform에 알립니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;운영을 하다 보면 &lt;strong&gt;인프라를 정의한 코드는 그대로&lt;/strong&gt;인 상태에서 &lt;strong&gt;리소스만 교체&lt;/strong&gt;할 경우가 발생합니다.
+저의 경우 스파이크성 트래픽을 갑자기 받아 로드밸런서의 성능이 저하되었을 때, ELB를 교체한 경험이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;이런 상황에서 성능이 저하된 혹은 &lt;strong&gt;교체가 필요한 리소스&lt;/strong&gt; 객체만을 on/off 방식으로 &lt;strong&gt;주석 처리 및 해제&lt;/strong&gt;하며 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; 명령어로 교체할 수 있지만,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;taint(교체 리소스를 마킹)&lt;/code&gt; 명령어로 교체하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;untaint(교체 리소스 마킹 해제)&lt;/code&gt; 명령어로 교체할 필요가 없다고 명령할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;그러나 위와 같은 워크플로우는 테라폼 v0.15.2.에서 deprecate 되었고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-replace&lt;/code&gt; 옵션을 제공하며 더 직관적인 사용자 경험을 제공하게 됩니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;--replace&quot;&gt;🌗 -replace&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-replace&lt;/code&gt; 옵션은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;taint&lt;/code&gt; 명령어와 동일하게 작용하며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;untaint&lt;/code&gt; 명령어를 칠 필요가 없습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform apply &lt;span class=&quot;nt&quot;&gt;-replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;aws_instance.example[0]&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/replace.png&quot; alt=&quot;replace&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;교체가 필요한 리소스 객체를 파악하기 위해 아래 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;state list&lt;/code&gt; 명령어로 target을 찾아 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-replace&lt;/code&gt; 옵션과 함께 지정하면,
+코드는 그대로지만 리소스 객체가 변경되는 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-replace&lt;/code&gt; 옵션 역시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--refresh-only&lt;/code&gt; 옵션과 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt; 명령어와 함께 적용하여 변경 지점을 미리 파악
+변경되는 리소스에 대한 검토를 하는 습관을 들입시다!&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;Refresh와 Replace 비슷하면서도 전혀 다른 두 명령어의 변천사를 확인하며 인프라의 동일한 형상을 유지하기 위한 방법을 알아보았습니다.
+이번 포스팅에서 언급한 방법 외에도 형상을 일치시키는 방법들이 존재하지만, 위 2가지 명령어만 제대로 활용하면 대부분의 인프라의 형상이 달라지는 사태를 예방할 수 있습니다. 
+IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한 검토를 하는 습관이 매우 중요하다는 것을 강조하며 이번 3편을 마칩니다.&lt;/p&gt;
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Refresh &amp;amp; Replace 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
@@ -77,6 +137,7 @@ Terraform에서는 &lt;strong&gt;Configuration Drift&lt;/strong&gt;(정의한 �
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -237,6 +298,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -390,6 +452,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
