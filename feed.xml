@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 28 May 2022 11:28:00 +0000</pubDate>
-        <lastBuildDate>Sat, 28 May 2022 11:28:00 +0000</lastBuildDate>
+        <pubDate>Sat, 28 May 2022 14:16:27 +0000</pubDate>
+        <lastBuildDate>Sat, 28 May 2022 14:16:27 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -716,8 +716,11 @@ output &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt; &lt;span c
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;위와 같은 방법으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS와 EKS에서 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;values = [&quot;amzn2-ami-ecs-hvm-*-x86_64-ebs&quot;]&lt;/code&gt;&lt;/p&gt;
+예를 들어 ECS와 EKS에서 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
 
@@ -792,7 +795,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
 &lt;p&gt;지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt;와 같이 별도의 index 과정 없이,
 간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)&lt;/p&gt;
 
-&lt;p&gt;지금까지 테라폼 더 익숙하게 Module &amp;amp; Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+&lt;p&gt;지금까지 테라폼 더 익숙하게 Data &amp;amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
@@ -806,7 +809,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
-                <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
+                <pubDate>Sun, 02 Jan 2022 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//TerraformTips2</link>
                 <guid isPermaLink="true">https://heuristicwave.github.io//TerraformTips2</guid>
                 

@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-05-28T11:28:00+00:00</updated>
+  <updated>2022-05-28T14:16:27+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -540,8 +540,8 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
     <entry>
       <title type="html">Terraform Tips 2 - Data &amp;amp; Index</title>
       <link href="https://heuristicwave.github.io/TerraformTips2" rel="alternate" type="text/html" title="Terraform Tips 2 - Data &amp; Index" />
-      <published>2022-01-01T00:00:00+00:00</published>
-      <updated>2022-01-01T00:00:00+00:00</updated>
+      <published>2022-01-02T00:00:00+00:00</published>
+      <updated>2022-01-02T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips2</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips2">&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index&lt;/p&gt;
 
@@ -581,8 +581,11 @@ output &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt; &lt;span c
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;위와 같은 방법으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS와 EKS에서 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;values = [&quot;amzn2-ami-ecs-hvm-*-x86_64-ebs&quot;]&lt;/code&gt;&lt;/p&gt;
+예를 들어 ECS와 EKS에서 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
 
@@ -657,7 +660,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
 &lt;p&gt;지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt;와 같이 별도의 index 과정 없이,
 간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)&lt;/p&gt;
 
-&lt;p&gt;지금까지 테라폼 더 익숙하게 Module &amp;amp; Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+&lt;p&gt;지금까지 테라폼 더 익숙하게 Data &amp;amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
