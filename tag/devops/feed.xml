@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-05-30T02:28:47+00:00</updated>
+  <updated>2022-05-30T02:43:23+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -682,11 +682,12 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
       <published>2022-01-02T00:00:00+00:00</published>
       <updated>2022-01-02T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips2</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips2">&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index&lt;/p&gt;
+      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips2">&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index &lt;br /&gt;
+AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
 
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
 
-&lt;p&gt;이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 실수 하는 내용이라 글로 남기게 되었습니다. &lt;strong&gt;Terraform Data&lt;/strong&gt;를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
+&lt;p&gt;이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. &lt;strong&gt;Terraform Data&lt;/strong&gt;를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
 모든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.&lt;/p&gt;
 
 &lt;p&gt;공식문서(&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;) 에서도 Data 활용방법을 배울 수 있지만,
@@ -741,22 +742,24 @@ EKS 이미지의 경우 모든 이미지의 첫 문자열이 &lt;code class=&quo
 &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;그러나 위 Quert의 결과 값을 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html&quot;&gt;공식 문서&lt;/a&gt; 에 기재된 AMI ID와 비교해 보면,
+&lt;p&gt;그러나 위 Query의 결과 값을 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html&quot;&gt;공식 문서&lt;/a&gt; 에 기재된 AMI ID와 비교해 보면,
 &lt;strong&gt;x86&lt;/strong&gt; ID가 아닌, &lt;strong&gt;x86 가속&lt;/strong&gt; ID 값과 일치한 다는 것을 알 수 있을 겁니다.
-&lt;strong&gt;x86 가속&lt;/strong&gt; gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-gpu&lt;/code&gt;로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.&lt;/p&gt;
+문서에 기재된 &lt;strong&gt;x86 가속&lt;/strong&gt;은 gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-gpu&lt;/code&gt;로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.&lt;/p&gt;
 
-&lt;p&gt;그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 어느 문서에도 기재되어 있지 않지만,
-대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다. 🧐&lt;/p&gt;
+&lt;p&gt;그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 🧐 어느 문서에도 기재되어 있지 않지만,
+대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다.&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;values = [“amazon-eks-node-1.22-*”]&lt;/p&gt;
+
+  &lt;p&gt;value 값의 &lt;em&gt;prefix&lt;/em&gt; 규칙을 보니 EKS의 버전도 &lt;em&gt;prefix&lt;/em&gt; 안에 포함되어, &lt;br /&gt;
+이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있다는 것을 추측 할 수 있습니다.&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;위 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prefix&lt;/code&gt; 규칙을 보니 EKS의 버전도 prefix 안에 포함되어 이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있습니다!
-이외에도 리전마다 다른 Optimized AMI는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt;에는 명시하지 않았지만, &lt;strong&gt;Provider에 명시한 리전에 종속성&lt;/strong&gt;을 갖게 됩니다.
+&lt;p&gt;이외에도 리전마다 다른 Optimized AMI는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt;에는 명시하지 않았지만, &lt;strong&gt;Provider에 명시한 리전에 종속성&lt;/strong&gt;을 갖게 됩니다.
 또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!&lt;/p&gt;
 
-&lt;p&gt;지금까지 실무에 자주 사용되는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎&lt;/p&gt;
+&lt;p&gt;여기까지 제가 자주 사용하는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎&lt;/p&gt;
 
 &lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
 
@@ -867,7 +870,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
       
 
       
-        <summary type="html">Terraform 더 익숙하게 2 - Data &amp;amp; Index</summary>
+        <summary type="html">Terraform 더 익숙하게 2 - Data &amp;amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁</summary>
       
 
       
