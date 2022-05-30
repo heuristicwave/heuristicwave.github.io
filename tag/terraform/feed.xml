@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-05-28T23:36:31+00:00</updated>
+  <updated>2022-05-30T01:07:59+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -184,7 +184,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
 모든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.&lt;/p&gt;
 
 &lt;p&gt;공식문서(&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;) 에서도 Data 활용방법을 배울 수 있지만,
-이번 포스팅에서는 3가지 예제와 함께 리소스를 Query하는 방법을 배워 보겠습니다.&lt;/p&gt;
+이번 포스팅에서는 3가지 예제와 함께 리소스를 Query 하는 방법을 배워 보겠습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
@@ -209,11 +209,48 @@ output &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt; &lt;span c
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;위와 같은 방법으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS와 EKS에서 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.&lt;/p&gt;
+예를 들어 ECS의 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;p&gt;values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]&lt;/p&gt;
 &lt;/blockquote&gt;
+
+&lt;p&gt;ECS와 달리 EKS는 AMI 명명 규칙이 약간 달라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt; 기능을 활용해야, 조건에 맞는 Optimized 이미지를 얻을 수 있습니다.
+EKS 이미지의 경우 모든 이미지의 첫 문자열이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-&lt;/code&gt;으로 시작하기 때문에, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt;를 함께 넣어 Optimized AMI를 얻을 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux_eks&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
+
+  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+
+  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
+    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon-eks-*&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+
+  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
+    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;architecture&quot;&lt;/span&gt;
+    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;x86_64&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;그러나 위 Quert의 결과 값을 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html&quot;&gt;공식 문서&lt;/a&gt; 에 기재된 AMI ID와 비교해 보면,
+&lt;strong&gt;x86&lt;/strong&gt; ID가 아닌, &lt;strong&gt;x86 가속&lt;/strong&gt; ID 값과 일치한 다는 것을 알 수 있을 겁니다.
+&lt;strong&gt;x86 가속&lt;/strong&gt; gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-gpu&lt;/code&gt;로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.&lt;/p&gt;
+
+&lt;p&gt;그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 어느 문서에도 기재되어 있지 않지만,
+대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다. 🧐&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;values = [“amazon-eks-node-1.22-*”]&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;위 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prefix&lt;/code&gt; 규칙을 보니 EKS의 버전도 prefix 안에 포함되어 이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있습니다!
+이외에도 리전마다 다른 Optimized AMI는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt;에는 명시하지 않았지만, &lt;strong&gt;Provider에 명시한 리전에 종속성&lt;/strong&gt;을 갖게 됩니다.
+또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!&lt;/p&gt;
+
+&lt;p&gt;지금까지 실무에 자주 사용되는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎&lt;/p&gt;
 
 &lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
 

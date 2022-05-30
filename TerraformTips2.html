@@ -216,7 +216,7 @@ into the {body} of the default.hbs template -->
 모든 <code class="language-plaintext highlighter-rouge">Data Sources</code>가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.</p>
 
 <p>공식문서(<a href="https://learn.hashicorp.com/tutorials/terraform/data-sources">Tutorial : Query Data Sources</a>) 에서도 Data 활용방법을 배울 수 있지만,
-이번 포스팅에서는 3가지 예제와 함께 리소스를 Query하는 방법을 배워 보겠습니다.</p>
+이번 포스팅에서는 3가지 예제와 함께 리소스를 Query 하는 방법을 배워 보겠습니다.</p>
 
 <p><br /></p>
 
@@ -241,11 +241,48 @@ output <span class="s2">"name"</span> <span class="o">{</span>
 </code></pre></div></div>
 
 <p>위와 같은 방법으로 <code class="language-plaintext highlighter-rouge">filter</code>와 <code class="language-plaintext highlighter-rouge">owners</code> 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS와 EKS에서 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.</p>
+예를 들어 ECS의 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.</p>
 
 <blockquote>
   <p>values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]</p>
 </blockquote>
+
+<p>ECS와 달리 EKS는 AMI 명명 규칙이 약간 달라 <code class="language-plaintext highlighter-rouge">filter</code> 기능을 활용해야, 조건에 맞는 Optimized 이미지를 얻을 수 있습니다.
+EKS 이미지의 경우 모든 이미지의 첫 문자열이 <code class="language-plaintext highlighter-rouge">amazon-eks-</code>으로 시작하기 때문에, <code class="language-plaintext highlighter-rouge">*</code>를 함께 넣어 Optimized AMI를 얻을 수 있습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_ami"</span> <span class="s2">"amazon_linux_eks"</span> <span class="o">{</span>
+  most_recent <span class="o">=</span> <span class="nb">true
+
+  </span>owners <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon"</span><span class="o">]</span>
+
+  filter <span class="o">{</span>
+    name   <span class="o">=</span> <span class="s2">"name"</span>
+    values <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon-eks-*"</span><span class="o">]</span>
+  <span class="o">}</span>
+
+  filter <span class="o">{</span>
+    name   <span class="o">=</span> <span class="s2">"architecture"</span>
+    values <span class="o">=</span> <span class="o">[</span><span class="s2">"x86_64"</span><span class="o">]</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></div></div>
+
+<p>그러나 위 Quert의 결과 값을 <a href="https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html">공식 문서</a> 에 기재된 AMI ID와 비교해 보면,
+<strong>x86</strong> ID가 아닌, <strong>x86 가속</strong> ID 값과 일치한 다는 것을 알 수 있을 겁니다.
+<strong>x86 가속</strong> gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 <code class="language-plaintext highlighter-rouge">amazon-eks-gpu</code>로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.</p>
+
+<p>그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 어느 문서에도 기재되어 있지 않지만,
+대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다. 🧐</p>
+
+<blockquote>
+  <p>values = [“amazon-eks-node-1.22-*”]</p>
+</blockquote>
+
+<p>위 <code class="language-plaintext highlighter-rouge">prefix</code> 규칙을 보니 EKS의 버전도 prefix 안에 포함되어 이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있습니다!
+이외에도 리전마다 다른 Optimized AMI는 <code class="language-plaintext highlighter-rouge">data</code>에는 명시하지 않았지만, <strong>Provider에 명시한 리전에 종속성</strong>을 갖게 됩니다.
+또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!</p>
+
+<p>지금까지 실무에 자주 사용되는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎</p>
 
 <h2 id="query-az">Query AZ</h2>
 
