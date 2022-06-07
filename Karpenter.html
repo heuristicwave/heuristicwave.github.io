@@ -244,7 +244,7 @@ worker node를 확보하기 위해 EC2의 Auto Scaling Group을 사용하며 <st
 <em>(실제로 카펜터를 운영해 보면 기존의 Auto Scaling Group을 사용하지 않는 것은 아니지만,
 사용자 입장에서는 고려하지 않아도 되니 k8s layer에서만 관리된다고 해도 틀린 말은 아닌 것 같습니다.)</em></p>
 
-<p><a href="https://karpenter.sh/">karpenter.sh</a> 의 홈 화면을 보면 간단한 동작 원리를 설명하는 그림이 있습니다.
+<p><a href="https://karpenter.sh/">karpenter.sh</a>의 홈 화면을 보면 간단한 동작 원리를 설명하는 그림이 있습니다.
 karpenter가 unscheduled pods를 관찰하고 있다가 즉시(just-in-time) 최적화된 capacity에 pods를 배포합니다.</p>
 
 <p><img src="../../assets/built/images/post/karpenter/karpenter.png" alt="karpenter works" /></p>
@@ -271,7 +271,7 @@ karpenter가 unscheduled pods를 관찰하고 있다가 즉시(just-in-time) 최
 <p><em>TMI : 이 글을 보는 시점에는 수정되어 있을 수도 있겠습니다만,
 공식 문서에 기재된 Default Region과 Module의 azs Config 값이 통일되지 않았습니다. 수행 시, 참고하시기 바랍니다.</em></p>
 
-<p>공식 문서 <a href="https://karpenter.sh/docs/getting-started-with-terraform/">Terraform으로 시작하기</a> 의 가이드대로
+<p>공식 문서 <a href="https://karpenter.sh/docs/getting-started-with-terraform/">Terraform으로 시작하기</a>의 가이드대로
 Terraform 코드를 실행시키면 EKS 내에 다음과 같은 <code class="language-plaintext highlighter-rouge">karpenter-controller</code>와 <code class="language-plaintext highlighter-rouge">karpenter-webhook</code> 포드가 올라온 것을 확인할 수 있습니다.
 <img src="../../assets/built/images/post/karpenter/initial_pods.png" alt="initial_pods" />
 우선, Karpenter가 정말 최적화된 capacity를 제공하는지 확인하기 위해 <code class="language-plaintext highlighter-rouge">t3a</code> 시리즈의 스펙을 첨부합니다.

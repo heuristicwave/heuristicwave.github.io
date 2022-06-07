@@ -56,7 +56,7 @@
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Look into EKS max pods" />
-    <meta property="og:description" content="EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까? Preview 이번 포스팅에서는 EKS의 노드 그룹에서는 최대 몇 개의 포드(Private IP)가 할당 가능하고 어떠한 방법으로 최대 포드의 개수를 제어할 수 있는지 알아보자. Build Up 쿠버네티스 도규먼트 에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가" />
+    <meta property="og:description" content="EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까? Preview 이번 포스팅에서는 EKS의 노드 그룹에서는 최대 몇 개의 포드(Private IP)가 할당 가능하고 어떠한 방법으로 최대 포드의 개수를 제어할 수 있는지 알아보자. Build Up 쿠버네티스 도규먼트에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가 생성" />
     <meta property="og:url" content="https://heuristicwave.github.io/EKS_Max_Pods" />
     <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/eks.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
@@ -66,7 +66,7 @@
     <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Look into EKS max pods" />
-    <meta name="twitter:description" content="EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까? Preview 이번 포스팅에서는 EKS의 노드 그룹에서는 최대 몇 개의 포드(Private IP)가 할당 가능하고 어떠한 방법으로 최대 포드의 개수를 제어할 수 있는지 알아보자. Build Up 쿠버네티스 도규먼트 에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가" />
+    <meta name="twitter:description" content="EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까? Preview 이번 포스팅에서는 EKS의 노드 그룹에서는 최대 몇 개의 포드(Private IP)가 할당 가능하고 어떠한 방법으로 최대 포드의 개수를 제어할 수 있는지 알아보자. Build Up 쿠버네티스 도규먼트에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가 생성" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
     <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/eks.png" />
     <meta name="twitter:label1" content="Written by" />
@@ -98,7 +98,7 @@
         "@type": "WebPage",
         "@id": "https://heuristicwave.github.io/EKS_Max_Pods"
     },
-    "description": "EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까? Preview 이번 포스팅에서는 EKS의 노드 그룹에서는 최대 몇 개의 포드(Private IP)가 할당 가능하고 어떠한 방법으로 최대 포드의 개수를 제어할 수 있는지 알아보자. Build Up 쿠버네티스 도규먼트 에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가"
+    "description": "EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까? Preview 이번 포스팅에서는 EKS의 노드 그룹에서는 최대 몇 개의 포드(Private IP)가 할당 가능하고 어떠한 방법으로 최대 포드의 개수를 제어할 수 있는지 알아보자. Build Up 쿠버네티스 도규먼트에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가 생성"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -222,17 +222,17 @@ into the {body} of the default.hbs template -->
 
 <h2 id="build-up">Build Up</h2>
 
-<p><a href="https://kubernetes.io/docs/setup/best-practices/cluster-large/">쿠버네티스 도규먼트</a> 에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가 생성 가능하다고 한다. <br />
-<a href="https://cloud.google.com/kubernetes-engine/docs/how-to/flexible-pod-cidr?hl=en#cidr_ranges_for_clusters">GCP의 GKE 가이드</a> 에 따르면 기본 클러스터 노드 하나에 최대 110개의 포드가 생성 가능하다고 한다. <br />
+<p><a href="https://kubernetes.io/docs/setup/best-practices/cluster-large/">쿠버네티스 도규먼트</a>에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가 생성 가능하다고 한다. <br />
+<a href="https://cloud.google.com/kubernetes-engine/docs/how-to/flexible-pod-cidr?hl=en#cidr_ranges_for_clusters">GCP의 GKE 가이드</a>에 따르면 기본 클러스터 노드 하나에 최대 110개의 포드가 생성 가능하다고 한다. <br />
 구글링을 통해 확인하니, 노드에서 포드의 갯수가 증가할수록 kubelet, cAdvisor 등과 같은 K8s 에이전트에 오버헤드를 발생시키므로 110개 정도를 권장한다고 한다.
-그래서 그런지 <a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/">kubelet docs</a> 에서도 아래와 같은 max-pods가 110을 기본값으로 가진다.</p>
+그래서 그런지 <a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/">kubelet docs</a>에서도 아래와 같은 max-pods가 110을 기본값으로 가진다.</p>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nt">--max-pods</span> int32     Default: 110
 </code></pre></div></div>
 
 <h2 id="eks-eni-max-pods">EKS eni max pods</h2>
 
-<p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI">IP addresses per network interface per instance type</a> 을 확인해보면 AWS의 인스턴스 타입별 ENI 개수를 파악할 수 있다.
-<a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html">EKS 설명서</a> 를 보면 다음과 같은 공식을 확인할 수 있다. <br /></p>
+<p><a href="https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI">IP addresses per network interface per instance type</a>을 확인해보면 AWS의 인스턴스 타입별 ENI 개수를 파악할 수 있다.
+<a href="https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html">EKS 설명서</a>를 보면 다음과 같은 공식을 확인할 수 있다. <br /></p>
 
 <p><code class="language-plaintext highlighter-rouge">(# of network interfaces for the instance type × (# of IPv4 per network interface - 1)) + 2</code></p>
 
@@ -261,7 +261,7 @@ Non-terminated Pods:          <span class="o">(</span>17 <span class="k">in </sp
 <h2 id="maximum-pods-변경하기">Maximum Pods 변경하기</h2>
 
 <p>EKS에서 Maximum Pods를 결정 짓는 요소는 ENI다. 그러나 클러스터의 노드그룹을 생성할 때 kubelet의 <code class="language-plaintext highlighter-rouge">max-pods</code> 값을 변경해 커스터마이징 할 수 있다. 
-<a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html">AWS Docs</a> 에서 다음과 같은 (불친절한?) 설명을 통해 ENI와 별개로 max-pods를 제어할 수 있는 힌트를 얻었다.
+<a href="https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html">AWS Docs</a>에서 다음과 같은 (불친절한?) 설명을 통해 ENI와 별개로 max-pods를 제어할 수 있는 힌트를 얻었다.
 <img src="../../assets/built/images/post/bootstrapArg.png" alt="max-pods.png" />
 공식 문서에서 설명이 굉장히 빈약하지만, EKS에서 노드 그룹을 커스텀으로 생성할 때 <strong>Launch templates</strong>의 <code class="language-plaintext highlighter-rouge">UserData</code>를 아래와 같이 정의하면 Maximum Pods가 변경된다.</p>
 

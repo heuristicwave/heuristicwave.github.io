@@ -88,8 +88,8 @@ Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Tim
       <item>
         <title>Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group</title>
         
-          <description>&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;
-에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
+          <description>&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;에
+소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.&lt;/p&gt;
 
 </description>
@@ -181,7 +181,7 @@ AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
       <item>
         <title>Self-service Infrastructure</title>
         
-          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://www.oreilly.com/library/view/infrastructure-as-code/9781491924334/&quot;&gt;Kief Morris의 Infrastructure as Code&lt;/a&gt; 와 &lt;a href=&quot;https://www.hashicorp.com/resources/unlocking-the-cloud-operating-model-provisioning&quot;&gt;HashiCorp 백서&lt;/a&gt; 를 읽고 학습한 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
+          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://www.oreilly.com/library/view/infrastructure-as-code/9781491924334/&quot;&gt;Kief Morris의 Infrastructure as Code&lt;/a&gt;와 &lt;a href=&quot;https://www.hashicorp.com/resources/unlocking-the-cloud-operating-model-provisioning&quot;&gt;HashiCorp 백서&lt;/a&gt;를 읽고 학습한 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
 
 </description>
         
@@ -196,7 +196,7 @@ AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
       <item>
         <title>Provision Infrastructure with Packer</title>
         
-          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;HashiCorp Learn - Provision Infrastructure with Packer&lt;/a&gt; 에서 다루는 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
+          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;HashiCorp Learn - Provision Infrastructure with Packer&lt;/a&gt;에서 다루는 내용을 기반으로 작성한 글 입니다.&lt;/p&gt;
 
 </description>
         
@@ -271,7 +271,8 @@ AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
       <item>
         <title>3-Tier VPC Architecture with Terraform</title>
         
-          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt; 에서 다루는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
+          <description>&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt;에서 다루는
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;
 
 </description>
         
