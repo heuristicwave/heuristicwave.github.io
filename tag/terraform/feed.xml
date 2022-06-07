@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-05-30T02:43:23+00:00</updated>
+  <updated>2022-06-07T06:00:33+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -1097,7 +1097,7 @@ provider &quot;aws&quot; {
 &lt;p&gt;이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform init&lt;/code&gt; 명령어를 실행시켜주세요.&lt;/p&gt;
 
 &lt;h2 id=&quot;codecommit&quot;&gt;CodeCommit&lt;/h2&gt;
-&lt;p&gt;CodeCommit을 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository&quot;&gt;Terraform 도큐먼트&lt;/a&gt; 에서 사용법을 확인합니다.
+&lt;p&gt;CodeCommit을 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codecommit_repository&quot;&gt;Terraform 도큐먼트&lt;/a&gt;에서 사용법을 확인합니다.
 링크의 Example Usage를 활용해 코드를 작성할 수도 있지만, 이번 포스팅에서는 제 방식대로아래 코드를 활용해 작성해보겠습니다.
 링크에서 소개하는 코드와 다른 부분은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;variable&lt;/code&gt;의 사용 여부입니다.&lt;/p&gt;
 
@@ -1144,7 +1144,7 @@ image_repo_name=&quot;my-pipeline&quot;
 &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfvars&lt;/code&gt;는 위와 같이 변수의 값을 지정하기도 하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.env&lt;/code&gt;처럼 &lt;strong&gt;외부로 노출하면 안되는 값을 넣어두고 git에 ignore시켜 사용&lt;/strong&gt;하기도 합니다.&lt;/p&gt;
 
 &lt;p&gt;위 작업을 진행 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt;명령어를 적용하면 “Apply complete”과 함께 Outputs 값이 나옵니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어 이외에도, &lt;a href=&quot;https://console.aws.amazon.com/codecommit&quot;&gt;콘솔&lt;/a&gt; 로 이동하면 생성된 인프라를 확인 할 수 있습니다.&lt;/p&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어 이외에도, &lt;a href=&quot;https://console.aws.amazon.com/codecommit&quot;&gt;콘솔&lt;/a&gt;로 이동하면 생성된 인프라를 확인 할 수 있습니다.&lt;/p&gt;
 
 &lt;p&gt;생성된 원격저장소를 사용하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output&lt;/code&gt;을 활용해 &lt;strong&gt;export 환경 변수&lt;/strong&gt;를 지정합니다.&lt;/p&gt;
 
