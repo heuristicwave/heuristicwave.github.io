@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-06-08T02:03:23+00:00</updated>
+  <updated>2022-06-08T02:11:39+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -1056,10 +1056,11 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
     <entry>
       <title type="html">Terraform Tips 1 - Module &amp;amp; Output</title>
       <link href="https://heuristicwave.github.io/TerraformTips1" rel="alternate" type="text/html" title="Terraform Tips 1 - Module &amp; Output" />
-      <published>2021-11-15T00:00:00+00:00</published>
-      <updated>2021-11-15T00:00:00+00:00</updated>
+      <published>2022-01-01T00:00:00+00:00</published>
+      <updated>2022-01-01T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips1</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips1">&lt;p&gt;Terraform 더 익숙하게 1 - Module &amp;amp; Output&lt;/p&gt;
+      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips1">&lt;p&gt;Terraform 더 익숙하게 1 - Module &amp;amp; Output &lt;br /&gt;
+AWS 리소스로 알아보는 terraform Module 연계 팁&lt;/p&gt;
 
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
 
@@ -1201,7 +1202,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
       
 
       
-        <summary type="html">Terraform 더 익숙하게 1 - Module &amp;amp; Output</summary>
+        <summary type="html">Terraform 더 익숙하게 1 - Module &amp;amp; Output AWS 리소스로 알아보는 terraform Module 연계 팁</summary>
       
 
       

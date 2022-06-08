@@ -134,6 +134,22 @@ AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
     
       
       <item>
+        <title>Terraform Tips 1 - Module &amp; Output</title>
+        
+          <description>&lt;p&gt;Terraform 더 익숙하게 1 - Module &amp;amp; Output &lt;br /&gt;
+AWS 리소스로 알아보는 terraform Module 연계 팁&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 01 Jan 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/TerraformTips1</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/TerraformTips1</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>AWS CDK Library, Construct Hub</title>
         
           <description>&lt;p&gt;본 글은 지난 AWS re:Invent 2021에서 발표된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Construct Hub&lt;/code&gt;를 둘러보며 느낀 첫인상에 대한 글입니다.&lt;/p&gt;
@@ -159,21 +175,6 @@ AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
         <link>
         https://heuristicwave.github.io/Karpenter</link>
         <guid isPermaLink="true">https://heuristicwave.github.io/Karpenter</guid>
-      </item>
-      
-    
-      
-      <item>
-        <title>Terraform Tips 1 - Module &amp; Output</title>
-        
-          <description>&lt;p&gt;Terraform 더 익숙하게 1 - Module &amp;amp; Output&lt;/p&gt;
-
-</description>
-        
-        <pubDate>Mon, 15 Nov 2021 00:00:00 +0000</pubDate>
-        <link>
-        https://heuristicwave.github.io/TerraformTips1</link>
-        <guid isPermaLink="true">https://heuristicwave.github.io/TerraformTips1</guid>
       </item>
       
     

@@ -132,6 +132,22 @@
         </url>
     
         <url>
+            <loc>https://heuristicwave.github.io/TerraformTips1.html</loc>
+            
+                <lastmod>2022-01-01T00:00:00+00:00</lastmod>
+            
+
+            
+                <changefreq>weekly</changefreq>
+            
+
+            
+                <priority>0.5</priority>
+            
+
+        </url>
+    
+        <url>
             <loc>https://heuristicwave.github.io/ConstructHub.html</loc>
             
                 <lastmod>2021-12-21T00:00:00+00:00</lastmod>
@@ -151,22 +167,6 @@
             <loc>https://heuristicwave.github.io/Karpenter.html</loc>
             
                 <lastmod>2021-12-20T00:00:00+00:00</lastmod>
-            
-
-            
-                <changefreq>weekly</changefreq>
-            
-
-            
-                <priority>0.5</priority>
-            
-
-        </url>
-    
-        <url>
-            <loc>https://heuristicwave.github.io/TerraformTips1.html</loc>
-            
-                <lastmod>2021-11-15T00:00:00+00:00</lastmod>
             
 
             
