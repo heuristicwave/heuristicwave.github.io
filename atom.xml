@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Terraform Tips 4 - Move (Refactoring)</title>
+        
+          <description>&lt;p&gt;Terraform 더 익숙하게 4 - Move (Refactoring)&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Tue, 07 Jun 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/TerraformTips4</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/TerraformTips4</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Terraform Tips 3 - Refresh &amp; Replace</title>
         
           <description>&lt;p&gt;Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace&lt;/p&gt;

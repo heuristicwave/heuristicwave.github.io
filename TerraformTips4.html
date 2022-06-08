@@ -11,7 +11,7 @@
 
 
 
-    <title>Export cloudwatch log data to Amazon S3 using lambda</title>
+    <title>Terraform Tips 4 - Move (Refactoring)</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/Export_data_to_S3_Lambda" />
+    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips4" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Export cloudwatch log data to Amazon S3 using lambda" />
-    <meta property="og:description" content="본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다. Intro 글을 시작하기 앞서, Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js 를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로" />
-    <meta property="og:url" content="https://heuristicwave.github.io/Export_data_to_S3_Lambda" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/exportLambda.png" />
+    <meta property="og:title" content="Terraform Tips 4 - Move (Refactoring)" />
+    <meta property="og:description" content="Terraform 더 익숙하게 4 - Move (Refactoring) Intro 지난 3편에서는 코드의 변경 없이 형상을 유지하는 기법 중 하나인 Refresh와 Replace에 대하여 알아보았습니다. 4편에서는 코드를 변경(Refactoring) 할 때 형상을 유지하는 방법인 Move와 관련된 기능들을 소개합니다. 🤹 Moving Resources Terraform으로 정의한 인프라는 terraform.tfstate에 기록되며, real-world의 객체는 특정 리소스 주소와 연결되어 있습니다. 그래서" />
+    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips4" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-04-07T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-04-07T00:00:00+00:00" />
-    <meta property="article:tag" content="Aws" />
+    <meta property="article:published_time" content="2022-06-07T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-06-07T00:00:00+00:00" />
+    <meta property="article:tag" content="Devops" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Export cloudwatch log data to Amazon S3 using lambda" />
-    <meta name="twitter:description" content="본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다. Intro 글을 시작하기 앞서, Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js 를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로" />
+    <meta name="twitter:title" content="Terraform Tips 4 - Move (Refactoring)" />
+    <meta name="twitter:description" content="Terraform 더 익숙하게 4 - Move (Refactoring) Intro 지난 3편에서는 코드의 변경 없이 형상을 유지하는 기법 중 하나인 Refresh와 Replace에 대하여 알아보았습니다. 4편에서는 코드를 변경(Refactoring) 할 때 형상을 유지하는 방법인 Move와 관련된 기능들을 소개합니다. 🤹 Moving Resources Terraform으로 정의한 인프라는 terraform.tfstate에 기록되며, real-world의 객체는 특정 리소스 주소와 연결되어 있습니다. 그래서" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/exportLambda.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Aws" />
+    <meta name="twitter:data2" content="Devops" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/Export_data_to_S3_Lambda",
+    "url": "https://heuristicwave.github.io/TerraformTips4",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/exportLambda.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/Export_data_to_S3_Lambda"
+        "@id": "https://heuristicwave.github.io/TerraformTips4"
     },
-    "description": "본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다. Intro 글을 시작하기 앞서, Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js 를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로"
+    "description": "Terraform 더 익숙하게 4 - Move (Refactoring) Intro 지난 3편에서는 코드의 변경 없이 형상을 유지하는 기법 중 하나인 Refresh와 Replace에 대하여 알아보았습니다. 4편에서는 코드를 변경(Refactoring) 할 때 형상을 유지하는 방법인 Move와 관련된 기능들을 소개합니다. 🤹 Moving Resources Terraform으로 정의한 인프라는 terraform.tfstate에 기록되며, real-world의 객체는 특정 리소스 주소와 연결되어 있습니다. 그래서"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Export cloudwatch log data to Amazon S3 using lambda" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Terraform Tips 4 - Move (Refactoring)" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -180,154 +180,172 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-aws post tag-aws ">
+        <article class="post-full  tag-devops tag-terraform post tag-devops ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 7 April 2022"> 7 April 2022</time>
+                    <time class="post-full-meta-date" datetime=" 7 June 2022"> 7 June 2022</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/aws/'>AWS</a>
+                               <a href='/tag/devops/'>DEVOPS</a>,
+                            
+                        
+                            
+                               <a href='/tag/terraform/'>TERRAFORM</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Export cloudwatch log data to Amazon S3 using lambda</h1>
+                <h1 class="post-full-title">Terraform Tips 4 - Move (Refactoring)</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/exportLambda.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.</p>
+                    <p>Terraform 더 익숙하게 4 - Move (Refactoring)</p>
 
-<h1 id="intro">Intro</h1>
+<h2 id="intro">Intro</h2>
 
-<p>글을 시작하기 앞서, <a href="https://noob2geek.in/2021/06/18/export-aws-cloudwatch-logs-to-s3-using-lambda-functions-in-node-js/">Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js</a>
-를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하기 위한 플로우는 다음과 같습니다.</p>
+<p><a href="https://heuristicwave.github.io/TerraformTips3">지난 3편</a>에서는 <em>코드의 변경 없이</em> 형상을 유지하는 기법 중 하나인 <code class="language-plaintext highlighter-rouge">Refresh</code>와 <code class="language-plaintext highlighter-rouge">Replace</code>에 대하여 알아보았습니다.
+4편에서는 <em>코드를 변경(Refactoring)</em> 할 때 형상을 유지하는 방법인 <code class="language-plaintext highlighter-rouge">Move</code>와 관련된 기능들을 소개합니다.</p>
 
-<p><img src="../../assets/built/images/background/exportLambda.png" alt="imageBuilder" /></p>
+<p><br /></p>
 
-<ol>
-  <li>Amazon EventBridge에 정의한 Rule에 의해 Lambda를 호출합니다.</li>
-  <li>이후 람다가 지정한 CloudWatch의 Logs에 적재된 데이터를 찾습니다.</li>
-  <li>2번에 연속되어 이관될 대상의 로그들이 S3로 이관됩니다.</li>
-</ol>
+<h2 id="-moving-resources">🤹 Moving Resources</h2>
 
-<h2 id="-workshop">📜 Workshop</h2>
+<p>Terraform으로 정의한 인프라는 <code class="language-plaintext highlighter-rouge">terraform.tfstate</code>에 기록되며, real-world의 객체는 특정 <a href="https://www.terraform.io/cli/state/resource-addressing">리소스 주소</a>와 연결되어 있습니다.
+그래서 정의한 인프라 코드를 변경 후, 적용하면 real-world의 객체와 상태가 변경됩니다.
+코드로 정의된 실제 인프라를 운영하고 있다면, 코드 리팩토링 시 발생하는 리소스 변경 지점을 <code class="language-plaintext highlighter-rouge">State</code> 명령어를 활용해 해소해야 합니다.</p>
 
-<h3 id="1️⃣-log를-담을-bucket-및-정책-생성하기">1️⃣ Log를 담을 Bucket 및 정책 생성하기</h3>
+<p><strong>Commands</strong></p>
 
-<p>Amazon S3 콘솔 화면에 접속해 Log들이 담길 Bucket을 생성하고 이어서 <code class="language-plaintext highlighter-rouge">Permissions</code>에서 S3 버킷에 대한 권한을 설정합니다.
-해당 방법은 <a href="https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/S3ExportTasksConsole.html">공식 문서, 1단계와 3단계</a>에 자세히 설명되어 있습니다.</p>
-
-<blockquote>
-  <p>💡 공식 문서 3단계에서 기재된 <code class="language-plaintext highlighter-rouge">random-string</code>은 필요에 의한 경우 사용하세요. 해당 글에서는 편의상 생략하였습니다.</p>
-</blockquote>
-
-<h3 id="2️⃣-lambda-생성하기">2️⃣ Lambda 생성하기</h3>
-
-<h4 id="step-1--lambda가-사용하는-iam-role--policy-생성">Step 1 : Lambda가 사용하는 IAM Role &amp; Policy 생성</h4>
-
-<p>Lambda가 Log를 Export 할 수 있도록 다음 정책을 생성합니다.
-IAM에서 Create policy를 선택하고 아래 JSON을 복사하여 붙여 넣고, <code class="language-plaintext highlighter-rouge">cloudwatch_export_task</code>라는 이름으로 정책을 생성합니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">{</span>
-    <span class="s2">"Version"</span>: <span class="s2">"2012-10-17"</span>,
-    <span class="s2">"Statement"</span>: <span class="o">[</span>
-        <span class="o">{</span>
-            <span class="s2">"Effect"</span>: <span class="s2">"Allow"</span>,
-            <span class="s2">"Action"</span>: <span class="s2">"logs:CreateExportTask"</span>,
-            <span class="s2">"Resource"</span>: <span class="s2">"arn:aws:logs:{Region}:{AccountNumber}:*"</span>
-        <span class="o">}</span>
-    <span class="o">]</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>Lambda에 권한을 부여해 주기 위해서 IAM &gt; Roles &gt; Create Role을 선택합니다.
-Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <code class="language-plaintext highlighter-rouge">export_S3_lambda</code>라는 이름으로 Role을 생성합니다.</p>
-
-<h4 id="step-2--코드-작성">Step 2 : 코드 작성</h4>
-
-<p>Lambda 콘솔 화면에서 아래와 같이 빈칸을 채우고, Step 1에서 만들어둔 role을 부여해 람다 함수를 생성합니다.</p>
-
-<p><img src="../../assets/built/images/post/guide/exportLambda.png" alt="baseimage" /></p>
-
-<blockquote>
-  <p>💡 만약, Export 역할을 수행하는 <strong>람다 함수가 생성하는 로그</strong>를 수집하고 싶을 경우에는 <code class="language-plaintext highlighter-rouge">Create a new role with basic Lambda permissions</code>을
-선택하고 Console에 의해 자동적으로 생성되는 Role에 Step 1에서 만든 정책을 부여하면 됩니다.</p>
-</blockquote>
-
-<p>이어서 아래 코드를 복사하여 상황에 맞는 인자 값을 넣어주고 Deploy 합니다.</p>
-
-<p><strong>Parameter</strong></p>
 <ul>
-  <li>region : 로그 그룹과 대상 버킷은 동일 리전에 위치</li>
-  <li>destination : 로그가 이관되는 대상 버킷</li>
-  <li>logGroupName : Cloudwatch Log group 이름</li>
-  <li>destinationPrefix : 1️⃣ 에서 언급한 <code class="language-plaintext highlighter-rouge">random-string</code> 값</li>
-  <li>from/to : Lambda 함수가 호출 되는 시점을 기준으로, from/to 기간의 로그 그룹들을 export</li>
+  <li><code class="language-plaintext highlighter-rouge">state mv</code> : real-world 객체와 연결된 리소스 주소를 변경</li>
+  <li><code class="language-plaintext highlighter-rouge">state rm</code> : real-world 객체를 파괴하지 않고 코드로 정의한 리소스 관리 대상 제거</li>
+  <li><code class="language-plaintext highlighter-rouge">state replace-provider</code> : 재생성 없이, 새로운 provider에 기존 리소스 전</li>
 </ul>
 
-<div class="language-js highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kd">const</span> <span class="nx">AWS</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="dl">'</span><span class="s1">aws-sdk</span><span class="dl">'</span><span class="p">)</span>
-<span class="kd">const</span> <span class="nx">cloudconfig</span> <span class="o">=</span> <span class="p">{</span>
-  <span class="na">apiVersion</span><span class="p">:</span> <span class="dl">'</span><span class="s1">2014-03-28</span><span class="dl">'</span><span class="p">,</span>
-  <span class="na">region</span><span class="p">:</span> <span class="dl">'</span><span class="s1">region</span><span class="dl">'</span><span class="p">,</span>
+<h3 id="-state-mv">🛠 state mv</h3>
+
+<p>위 3가지 명령어 중에서도 가장 활용도가 높은 <code class="language-plaintext highlighter-rouge">state mv</code> 명령어의 예시들을 확인해 보겠습니다.</p>
+
+<ol>
+  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-rename-a-resource">리소스 이름 재정의</a> : 
+리팩토링 과정에서 정의된 리소스 명을 변경하는 경우 <br /> 
+<code class="language-plaintext highlighter-rouge">terraform state mv {ResourceType}.{ExistingName} {ResourceType}.{ChangedName}</code></li>
+  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-move-a-resource-into-a-module">리소스를 모듈로 이동</a> : 
+루트에 위치한 리소스를 child 모듈에 포함시켜 리팩토링 하는 경우 <br />
+<code class="language-plaintext highlighter-rouge">terraform state mv {Type}.{Name} module.{ModuleName}.{Type}.{Name}</code></li>
+  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-move-a-module-into-a-module">모듈을 다른 모듈로 이동</a> <br />
+<code class="language-plaintext highlighter-rouge">terraform state mv module.{ModuleName} module.{ParentModuleName}.module.{ModuleName}</code></li>
+  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-move-a-particular-instance-of-a-resource-using-count">meta-argument <code class="language-plaintext highlighter-rouge">for_each</code>, <code class="language-plaintext highlighter-rouge">count</code>로 정의된 특정 리소스 교체</a> <br />
+<code class="language-plaintext highlighter-rouge">terraform state mv {ResourceType}.{Before}[0] {ResourceType}.{After}[0]</code></li>
+</ol>
+
+<p><br /></p>
+
+<h2 id="️-moved-statements">🏃️ Moved statements</h2>
+
+<p><a href="https://heuristicwave.github.io/TerraformTips3">지난 3편</a>에서 <code class="language-plaintext highlighter-rouge">refresh</code>와 <code class="language-plaintext highlighter-rouge">taint</code>가 가진 한계점으로 인하여
+<code class="language-plaintext highlighter-rouge">--refresh-only</code>와 <code class="language-plaintext highlighter-rouge">replace</code>가 나왔듯이, <code class="language-plaintext highlighter-rouge">state mv</code>도 한계점이 있습니다.</p>
+
+<blockquote>
+  <p>The <code class="language-plaintext highlighter-rouge">terraform taint</code> command informs Terraform that a particular object has become degraded or damaged. <br /></p>
+</blockquote>
+
+<h3 id="problems-with-terraform-state-mv"><a href="https://youtu.be/bDgoGBusX0k?t=178">Problems with <code class="language-plaintext highlighter-rouge">terraform state mv</code></a></h3>
+
+<p>위 링크로 첨부한 Terraform 1.1 버전이 출시하면서 발표한 <code class="language-plaintext highlighter-rouge">Move</code> 기능에 대한 발표 자료를 보면 아래 3가지 이유로 한계점을 다룹니다.</p>
+
+<ol>
+  <li>Risky and error prone</li>
+  <li>Terraform Cloud users couldn’t refactor within core workflows</li>
+  <li>Module authors couldn’t coordinate changes themselves</li>
+</ol>
+
+<p>3가지의 한계점이 언급되었지만, 결국 <code class="language-plaintext highlighter-rouge">refresh</code> 때와 마찬가지로 <code class="language-plaintext highlighter-rouge">plan</code>을 통한 예측 과정이 없는 동일한 이유로 위와 같은 문제가 발생한다는 사실을 알 수 있습니다.</p>
+
+<h3 id="refactoring"><a href="https://www.terraform.io/language/modules/develop/refactoring">Refactoring</a></h3>
+
+<p>앞서 언급한 한계점들은 <code class="language-plaintext highlighter-rouge">plan</code> 기능이 없는 <code class="language-plaintext highlighter-rouge">mv</code> 명령어 대신 기존의 테라폼 문법에 <code class="language-plaintext highlighter-rouge">moved</code> block이 추가되며 해소되었습니다.
+아래 예시는 <a href="https://www.terraform.io/language/modules/develop/refactoring#moved-block-syntax">공식 문서</a>에 기재된 예제입니다.</p>
+
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">locals</span> <span class="p">{</span>
+  <span class="nx">instances</span> <span class="p">=</span> <span class="nx">tomap</span><span class="p">({</span>
+    <span class="nx">big</span> <span class="p">=</span> <span class="p">{</span>
+      <span class="nx">instance_type</span> <span class="p">=</span> <span class="s2">"m3.large"</span>
+    <span class="p">}</span>
+    <span class="nx">small</span> <span class="p">=</span> <span class="p">{</span>
+      <span class="nx">instance_type</span> <span class="p">=</span> <span class="s2">"t2.medium"</span>
+    <span class="p">}</span>
+  <span class="p">})</span>
 <span class="p">}</span>
-<span class="kd">const</span> <span class="nx">cloudwatchlogs</span> <span class="o">=</span> <span class="k">new</span> <span class="nx">AWS</span><span class="p">.</span><span class="nx">CloudWatchLogs</span><span class="p">(</span><span class="nx">cloudconfig</span><span class="p">)</span>
-<span class="nx">exports</span><span class="p">.</span><span class="nx">handler</span> <span class="o">=</span>  <span class="k">async</span> <span class="p">(</span><span class="nx">event</span><span class="p">,</span> <span class="nx">context</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-   <span class="kd">const</span> <span class="nx">params</span> <span class="o">=</span> <span class="p">{</span>
-      <span class="na">destination</span><span class="p">:</span> <span class="dl">'</span><span class="s1">bucket-name</span><span class="dl">'</span><span class="p">,</span>
-      <span class="na">logGroupName</span><span class="p">:</span> <span class="dl">'</span><span class="s1">log-groups-name</span><span class="dl">'</span><span class="p">,</span>
-      <span class="na">destinationPrefix</span><span class="p">:</span> <span class="dl">''</span><span class="p">,</span>
-      <span class="na">from</span><span class="p">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">()</span> <span class="o">-</span> <span class="mi">86400</span><span class="p">,</span>
-      <span class="na">to</span><span class="p">:</span> <span class="k">new</span> <span class="nb">Date</span><span class="p">().</span><span class="nx">getTime</span><span class="p">(),</span>
-  <span class="p">};</span>
-<span class="k">await</span> <span class="nx">cloudwatchlogs</span><span class="p">.</span><span class="nx">createExportTask</span><span class="p">(</span><span class="nx">params</span><span class="p">).</span><span class="nx">promise</span><span class="p">().</span><span class="nx">then</span><span class="p">((</span><span class="nx">data</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="nx">data</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">({</span>
-      <span class="na">statusCode</span><span class="p">:</span> <span class="mi">200</span><span class="p">,</span>
-        <span class="na">body</span><span class="p">:</span> <span class="nx">data</span><span class="p">,</span>
-    <span class="p">});</span>
-  <span class="p">}).</span><span class="k">catch</span><span class="p">((</span><span class="nx">err</span><span class="p">)</span> <span class="o">=&gt;</span> <span class="p">{</span>
-    <span class="nx">console</span><span class="p">.</span><span class="nx">error</span><span class="p">(</span><span class="nx">err</span><span class="p">)</span>
-    <span class="k">return</span> <span class="p">({</span>
-      <span class="na">statusCode</span><span class="p">:</span> <span class="mi">501</span><span class="p">,</span>
-        <span class="na">body</span><span class="p">:</span> <span class="nx">err</span><span class="p">,</span>
-    <span class="p">});</span>
-  <span class="p">});</span>
+
+<span class="k">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"a"</span> <span class="p">{</span>
+  <span class="nx">for_each</span> <span class="p">=</span> <span class="kd">local</span><span class="p">.</span><span class="nx">instances</span>
+
+  <span class="nx">instance_type</span> <span class="p">=</span> <span class="nx">each</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">instance_type</span>
+  <span class="c1"># (other resource-type-specific configuration)</span>
+<span class="p">}</span>
+
+<span class="nx">moved</span> <span class="p">{</span>
+  <span class="nx">from</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">a</span>
+  <span class="nx">to</span>   <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">a</span><span class="p">[</span><span class="s2">"small"</span><span class="p">]</span>
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p>이후 테스트 버튼을 눌러 결과값을 보면 taskId 값이 생성되고 S3에 로그가 이관된 것을 확인할 수 있습니다.</p>
+<p><code class="language-plaintext highlighter-rouge">moved</code> block에 변경 전후 상태를 선언하여, 기존 상태를 바꾸는 명령조차도 코드로 선언하여 상태를 바꾸는 행위를 코드화했습니다.</p>
 
-<h3 id="3️⃣-eventbridge-트리거-생성하기">3️⃣ EventBridge 트리거 생성하기</h3>
+<h3 id="️-고려사항">⁉️ 고려사항</h3>
 
-<p>작성한 람다 함수 콘솔 화면 상단에서 <strong>Add trigger</strong> 버튼을 눌러 다음과 같이 Rule을 생성합니다. 저는 주기를 점검하기 위해 아래와 같이 5분을 주었습니다.</p>
+<p>클라우드 환경에서 운영을 하다 보면 최적화 과정 중 리소스 스펙(인스턴스 종류, 타입)이 자주 변경됩니다.
+그럼 아래와 같은 <code class="language-plaintext highlighter-rouge">moved</code> 블록이 체인과 같이 길어지게 됩니다.</p>
 
-<p><img src="../../assets/built/images/post/guide/eventBridgeRule.png" alt="baseimage" /></p>
+<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Block 1</span>
+<span class="nx">moved</span> <span class="p">{</span>
+  <span class="nx">from</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">a</span>
+  <span class="nx">to</span>   <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">b</span>
+<span class="p">}</span>
 
-<blockquote>
-  <p>💡 <a href="https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html">스케쥴 표현식 작성법</a></p>
-</blockquote>
+<span class="c1"># Block 2</span>
+<span class="nx">moved</span> <span class="p">{</span>
+  <span class="nx">from</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">b</span>
+  <span class="nx">to</span>   <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">c</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>이는 오히려 사용하지 않는 혹은 <em>중복된 코드를 지우고 로직을 이해하기 쉽게 디자인</em>해야 하는 <strong>리팩토링과는 멀어지게</strong> 됩니다.
+그러므로 AWS 리소스의 경우 <strong>단순 스펙 변경</strong>과 같은 작업은 <code class="language-plaintext highlighter-rouge">Launch templates</code>을 사용하는 게 좋습니다.
+이처럼 AWS 서비스 내에서 <strong>형상 관리</strong> 기능을 제공하는 서비스를 활용해, moved 블록을 생성하는 작업을 최소화해야 합니다.</p>
 
 <p><br /></p>
 
 <h2 id="outro">Outro</h2>
 
-<p>지금까지 Lambda 함수와 EventBrdige를 사용하여 자동으로 로그를 S3으로 백업하는 방법을 알아보았습니다.
-해당 방법 외에도 로그를 이관하는 다양한 방법들이 있으므로, 더 쉽고 좋은 방법이 있다면 알려주세요!</p>
+<p>지금까지 리팩토링 작업을 위해 필수적으로 사용되는 <code class="language-plaintext highlighter-rouge">state mv</code>와 <code class="language-plaintext highlighter-rouge">moved</code> syntax 사용법을 알아보았습니다.
+<code class="language-plaintext highlighter-rouge">Move</code>의 탄생 과정에서 선언형 도구인 테라폼의 목적에 맞게 진화해나가는 모습과 초기 설계의 중요성을 고민해 볼 수 있었던 좋은 기회였습니다.
+여담으로 저는 테라폼 버전이 0.12일 때 다루기 시작했는데, 2년 만에 버전 1.2.2에 이르며 정착해나가는 과정을 보니
+사용자도 IaC 도구의 철학을 이해하며 함께 성장하는 기분에 감격스럽습니다.</p>
 
-<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+<p>지금까지 테라폼 더 익숙하게 Move(Refactoring) 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
 
 <p><br /></p>
 
 <hr />
+
+<p><span class="table-of-contents-list">Terraform Tips</span></p>
+<ul class="table-of-contents-list">
+    <li><a href="./TerraformTips1">Module &amp; Output</a></li>
+    <li><a href="./TerraformTips2">Data &amp; Index</a></li>
+    <li><a href="./TerraformTips3">Refresh &amp; Replace</a></li>
+    <li><a href="./TerraformTips4">Move (Refactoring)</a></li>
+</ul>
 
 <p><br /></p>
 
@@ -372,9 +390,9 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/Export_data_to_S3_Lambda';
-                            this.page.identifier = '/Export_data_to_S3_Lambda';
-                            this.page.title = 'Export cloudwatch log data to Amazon S3 using lambda';
+                            this.page.url = 'https://heuristicwave.github.io/TerraformTips4';
+                            this.page.identifier = '/TerraformTips4';
+                            this.page.title = 'Terraform Tips 4 - Move (Refactoring)';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -408,7 +426,7 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -418,13 +436,20 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
                                 
                                 
                                   
-                                
-                                  
-                                
+                                    
                                   
                                 
                                   
                                     
+                                        
+                                        
+                                            <li><a href="/TerraformTips3">Terraform Tips 3 - Refresh & Replace</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
                                   
                                 
                                   
@@ -449,17 +474,6 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
                                     
                                         
                                         
-                                            <li><a href="/ImageBuilder">Create Immutable Server using AWS Image Builder & Auto Scaling Group</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
                                     
                                   
                                 
@@ -473,12 +487,21 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
                                   
                                 
                                   
+                                
+                                  
                                     
                                         
                                         
                                     
                                   
                                 
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
                                   
                                 
                                   
@@ -528,9 +551,9 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/aws/">
+                            <a href="/tag/devops/">
                                 
-                                    See all 12 posts  →
+                                    See all 13 posts  →
                                 
                             </a>
                         </footer>
@@ -540,71 +563,33 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/geultto">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/geultto.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/geultto">
-                <header class="post-card-header">
-                    
-                        
-                            
-                                <span class="post-card-tags">Extracurricular</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">글또 7기 다짐글</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
                 
 
-    <article class="post-card post-template no-image">
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/TerraformTips3">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
+            </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/ECS_CW_Logs">
+            <a class="post-card-content-link" href="/TerraformTips3">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Aws</span>
+                               <span class="post-card-tags">Devops</span>
                             
                         
                             
-                                <span class="post-card-tags">Devops</span>
+                                <span class="post-card-tags">Terraform</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Using the awslogs log driver in ECS(Fargate)</h2>
+                    <h2 class="post-card-title">Terraform Tips 3 - Refresh & Replace</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -641,18 +626,18 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, <co
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Export cloudwatch log data to Amazon S3 using lambda</div>
+    <div class="floating-header-title">Terraform Tips 4 - Move (Refactoring)</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Export+cloudwatch+log+data+to+Amazon+S3+using+lambda&amp;url=https://heuristicwave.github.ioExport_data_to_S3_Lambda"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Tips+4+-+Move+%28Refactoring%29&amp;url=https://heuristicwave.github.ioTerraformTips4"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioExport_data_to_S3_Lambda"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips4"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
