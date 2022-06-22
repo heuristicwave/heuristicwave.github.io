@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-06-08T02:11:39+00:00</updated>
+  <updated>2022-06-22T01:45:51+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -1326,7 +1326,7 @@ image_repo_name=&quot;my-pipeline&quot;
 
 &lt;p&gt;생성된 원격저장소를 사용하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform output&lt;/code&gt;을 활용해 &lt;strong&gt;export 환경 변수&lt;/strong&gt;를 지정합니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;tf_source_repo_clone_url_http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;terraform output source_repo_clone_url_http&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;tf_source_repo_clone_url_http&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;terraform output &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt; source_repo_clone_url_http&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;nb&quot;&gt;echo&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;	&lt;span class=&quot;c&quot;&gt;# 확인&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -1334,7 +1334,7 @@ image_repo_name=&quot;my-pipeline&quot;
 
 &lt;h2 id=&quot;git-setting&quot;&gt;Git Setting&lt;/h2&gt;
 
-&lt;p&gt;CodeCommit의 Repo 활용법은 아래 2가지 방법이 있습니다.&lt;/p&gt;
+&lt;p&gt;CodeCommit의 Repo 활용법을 아래 2가지 방법으로 기재하였지만, 해당 실습에서는 1번만 다룹니다.&lt;/p&gt;
 
 &lt;h3 id=&quot;1-로컬에-위치한-코드를-codecommit에-push하기-원격저장소가-비어있음&quot;&gt;1. 로컬에 위치한 코드를 CodeCommit에 push하기 (원격저장소가 비어있음)&lt;/h3&gt;
 
@@ -1343,9 +1343,28 @@ image_repo_name=&quot;my-pipeline&quot;
 git remote add origin &lt;span class=&quot;nv&quot;&gt;$tf_source_repo_clone_url_http&lt;/span&gt;
 git remote &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt;   &lt;span class=&quot;c&quot;&gt;# 원격 저장소 확인&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;코드를 작성하고 CodeCommit에 Push하기&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
-git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;First commit&quot;&lt;/span&gt;
+
+&lt;p&gt;해당 포스팅의 2 &amp;amp; 3편에서 ECR에 올릴 이미지 파일 생성하기 위해 아래 샘플 &lt;strong&gt;Dockerfile&lt;/strong&gt;을 생성하겠습니다.&lt;/p&gt;
+&lt;div class=&quot;language-Dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cat &amp;lt;&amp;lt;EOF &amp;gt; Dockerfile
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang:1.12-alpine AS build&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#Install git&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;apk add &lt;span class=&quot;nt&quot;&gt;--no-cache&lt;/span&gt; git
+&lt;span class=&quot;c&quot;&gt;#Get the hello world package from a GitHub repository&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go get github.com/golang/example/hello
+&lt;span class=&quot;k&quot;&gt;WORKDIR&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; /go/src/github.com/golang/example/hello&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Build the project and send the output to /bin/HelloWorld &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go build &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /bin/HelloWorld
+
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang:1.12-alpine&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#Copy the build's output binary from the previous build container&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; --from=build /bin/HelloWorld /bin/HelloWorld&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/bin/HelloWorld&quot;]&lt;/span&gt;
+EOF
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;작성된 &lt;strong&gt;Dockerfile&lt;/strong&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Commit&lt;/code&gt;하고, CodeCommit에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Push&lt;/code&gt;합니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add Dockerfile
+git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Create Dockerfile&quot;&lt;/span&gt;
 git status
 git push origin &lt;span class=&quot;c&quot;&gt;# master branch로 push&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
