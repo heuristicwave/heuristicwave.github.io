@@ -272,7 +272,7 @@ resource "aws_s3_bucket" "artifact_bucket" {
 <p>도큐먼트를 따라 AssumeRole을 사용합시다. <br />
 ➕ S3을 만들때 사용한 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 아래 코드를 추가합니다.</p>
 <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_iam_role" "codebuild_role" {
-  name = "terraform-codebuild",
+  name = "terraform-codebuild"
   assume_role_policy = &lt;&lt;EOF
 {
    "Version": "2012-10-17",
