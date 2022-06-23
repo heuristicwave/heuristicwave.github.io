@@ -415,6 +415,26 @@ resource &quot;aws_iam_role_policy_attachment&quot; &quot;trigger-attach&quot; {
 아래와 같이 정상적으로 코드 파이프라인이 작동하여 운영되는 것을 확인 할 수 있습니다.
 <img src="../../assets/built/images/post/ecr_terraform_demo.png" alt="terraform_demo" /></p>
 
+<p>마지막으로, 빌드된 ECR 이미지를 다운받아 로컬에서 실행시켜보며 정상적으로 작성되었는지 확인해보겠습니다.</p>
+
+<ol>
+  <li>ECR에 올라온 이미지를 사용하기 위해 환경변수 세팅 🔨
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">tf_image_repo_url</span><span class="o">=</span><span class="si">$(</span>terraform output <span class="nt">-raw</span> image_repo_url<span class="si">)</span>
+</code></pre></div>    </div>
+  </li>
+  <li>AWSCLI로 ECR 로그인 (Region명 주의!) 🔑
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>aws ecr get-login-password <span class="nt">--region</span> <span class="o">{</span>YOUR_REGION<span class="o">}</span> | docker login <span class="nt">--username</span> AWS <span class="nt">--password-stdin</span> <span class="nv">$tf_image_repo_url</span>
+</code></pre></div>    </div>
+  </li>
+  <li>이미지 <code class="language-plaintext highlighter-rouge">Pull</code> 후, <code class="language-plaintext highlighter-rouge">Run</code> 명령어 실행 💻
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker pull <span class="nv">$tf_image_repo_url</span>
+docker run <span class="nv">$tf_image_repo_url</span>
+</code></pre></div>    </div>
+  </li>
+</ol>
+
+<p>🏵 Docker 실행 후, Shell에서 <em>Hello, Go examples!</em> 메시지를 확인하였다면 성공!</p>
+
 <h2 id="cleanup">Cleanup</h2>
 <p>S3 bucket은 빈상태여야 제거가 가능하기에 <a href="https://console.aws.amazon.com/s3/home">S3 콘솔</a>에서 <code class="language-plaintext highlighter-rouge">ecr-pipeline</code>의 데이터를 모두 삭제합니다.
 이어서 <code class="language-plaintext highlighter-rouge">terraform destory</code> 명령어로 모든 리소스를 회수합니다.</p>
