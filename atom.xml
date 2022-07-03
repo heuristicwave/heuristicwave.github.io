@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>ECS on EC2 Walkthrough</title>
+        
+          <description>&lt;p&gt;EC2 기반의 ECS를 다루기 위한 사소한 지식들 톱아보기!&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sun, 03 Jul 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/ECS_Walkthrough</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/ECS_Walkthrough</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Terraform Tips 4 - Move (Refactoring)</title>
         
           <description>&lt;p&gt;Terraform 더 익숙하게 4 - Move (Refactoring)&lt;/p&gt;

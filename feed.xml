@@ -5,9 +5,225 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 23 Jun 2022 02:22:39 +0000</pubDate>
-        <lastBuildDate>Thu, 23 Jun 2022 02:22:39 +0000</lastBuildDate>
+        <pubDate>Sun, 03 Jul 2022 15:57:22 +0000</pubDate>
+        <lastBuildDate>Sun, 03 Jul 2022 15:57:22 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
+        
+            <item>
+                <title>ECS on EC2 Walkthrough</title>
+                <description>&lt;p&gt;EC2 기반의 ECS를 다루기 위한 사소한 지식들 톱아보기!&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;당장 Amazon Elastic Container Service(이하 ECS)를 운영해야 하지만, 공식 문서를 다 읽기에는 벅차고 중요한 운영 포인트들을 빠르게 학습하기 위해 아래와 같은 요소들을 다룹니다.
+&lt;em&gt;ECS 마스터&lt;/em&gt;가 될 수 있는 모든 것을 다루는 것은 아니지만, 최소한의 고민해 볼 만한 지점들을 다뤄보았습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Amazon ECS Container Agent&lt;/li&gt;
+  &lt;li&gt;ECS 리소스 할당&lt;/li&gt;
+  &lt;li&gt;ECS Scaling&lt;/li&gt;
+  &lt;li&gt;ECS 서비스 구성&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-container-agent&quot;&gt;🕋 ECS Container Agent&lt;/h2&gt;
+
+&lt;p&gt;EC2 기반의 ECS를 운용하기 위해서는 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html&quot;&gt;ECS 최적화 AMI&lt;/a&gt;를 사용해야 합니다.
+일반 EC2 인스턴스로도 ECS를 운용할 수 있지만, ECS 최적화 AMI를 사용하는 것이 관리와 운용 측면에서 유리합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;예를 들어 Docker를 운영하다 보면, 미사용 상태인 컨테이너 이미지가 쌓여나가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prune&lt;/code&gt; 명령어를 통해 이미지를 정리해 주어야 합니다.
+이런 상황에서 컨테이너 에이전트는 다양한 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/automated_image_cleanup.html#automated_image_cleanup_parameters&quot;&gt;자동화된 이미지 정리&lt;/a&gt; 옵션을 제공합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;ECS-optimized AMI에는 &lt;a href=&quot;https://github.com/aws/amazon-ecs-agent&quot;&gt;Amazon ECS Container Agent&lt;/a&gt;가 기본적으로 포함되어 있습니다.
+ECS 인스턴스를 부트스트랩 하는 단계에서 EC2의 user data를 사용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/ecs/ecs.config&lt;/code&gt;에 configuration parameters을 전달합니다.&lt;/p&gt;
+
+&lt;p&gt;아래와 같이 환경 변수를 지정하지 않아도 default 값이 지정되어 있어 운용상의 큰 문제는 없지만,
+&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html&quot;&gt;공식 문서&lt;/a&gt;를 확인해 필요한 configuration 들을 파악해야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;' &amp;gt;&amp;gt; /etc/ecs/ecs.config
+ECS_CLUSTER=MyCluster
+ECS_LOGLEVEL=debug
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;다양한 configuration 중, 운영 환경(GPU, SPOT, 서비스 등)에 따라 필요한 Configuration 값들이 다르겠지만 일반적으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ECS_RESERVED_MEMORY&lt;/code&gt;는 고려하여 지정하는 것이 좋습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 인스턴스의 모든 메모리를 테스크에 배정한다면, 테스크와 중요한 시스템 프로세스 사이에서 메모리 경합이 발생할 수 있습니다.
+이를 예방하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ECS_RESERVED_MEMORY&lt;/code&gt; configuration을 사용해 메모리를 예약함으로써 풀에서 할당 가능한 메모리를 제외할 수 있습니다.
+필요로 하는 최소한의 요구 메모리가 정의되어 있지는 않지만, 저는 문서의 예시처럼 256MiB로 사용하고 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-resource&quot;&gt;🎛 ECS Resource&lt;/h2&gt;
+
+&lt;p&gt;ECS는 3가지 범주로 리소스를 설정할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;🥇 &lt;strong&gt;Container instance&lt;/strong&gt; : ECS 클러스터를 이루고 있는 EC2 인스턴스의 유형 &lt;br /&gt;
+🥈 &lt;strong&gt;Task Size&lt;/strong&gt; : Task Definitions을 통해 정의하는 Size &lt;br /&gt;
+🥉 &lt;strong&gt;Container Size&lt;/strong&gt; : Task Definitions의 Container 정의 부분에서 정의하는 Size &lt;br /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 Container Size의 리소스 할당 파라미터는 각각 다음과 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker run&lt;/code&gt; 명령어 옵션에 매핑됩니다. &lt;br /&gt;
+&lt;strong&gt;cpu&lt;/strong&gt; : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--cpu-shares&lt;/code&gt;, &lt;strong&gt;memory&lt;/strong&gt; : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory&lt;/code&gt;(hard) / &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory-reservation&lt;/code&gt;(soft)
+&lt;br /&gt;&lt;br /&gt;
+💡 ECS on EC2에서는 Task Size와 Container Size 방식 중 선택 가능하지만, Fargate 방식에서 Task Size는 필수입니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;🥇로 갈수록 더 상위 개념이며, Task Definitions에서는 🥈, 🥉을 활용해 리소스를 제어합니다.
+세밀한 제어를 하고 싶다면 🥈, 🥉을 모두 사용하여 제어할 수 있으나,
+🥉 사용해야 하는 특별한 이유가 없다면 🥈만을 사용해 리소스를 제어하는 것이 용이합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;actual-available-memory&quot;&gt;Actual available memory&lt;/h3&gt;
+
+&lt;p&gt;16GiB의 인스턴스를 프로비저닝해도 &lt;strong&gt;실제 사용 가능한 메모리(15318 MiB)&lt;/strong&gt;는 더 적습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Amazon EC2&lt;/th&gt;
+      &lt;th&gt;인스턴스&lt;/th&gt;
+      &lt;th&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;free -m&lt;/code&gt;&lt;/th&gt;
+      &lt;th&gt;Registered&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;c5.2xlarge&lt;/td&gt;
+      &lt;td&gt;16384 MiB&lt;/td&gt;
+      &lt;td&gt;15574 MiB&lt;/td&gt;
+      &lt;td&gt;15318 MiB&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;EC2 인스턴스와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;free -m&lt;/code&gt; 명령어로 확인한 차이&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;ECS 플랫폼 메모리 오버헤드와 OS 커널이 차지하는 메모리로 인해 차이가 발생합니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;free -m&lt;/code&gt; 명령어로 확인한 메모리와 컨테이너 인스턴스(registered)의 차이&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;컨테이너 에이전트를 설정할 때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ECS_RESERVED_MEMORY=256&lt;/code&gt;으로 설정한 만큼 차이가 발생합니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-scaling&quot;&gt;🏘 ECS Scaling&lt;/h2&gt;
+
+&lt;p&gt;ECS의 Scaling 방법은 2가지로 정의할 수 있습니다. 해당 스케일링 기법은 선택 사항이 아니라, 2가지 모두를 고려해 적용해야 합니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Service에 의하여 Task가 Scaling 되는 Horizontal Autoscaling&lt;/li&gt;
+  &lt;li&gt;CapacityProvider에 의하여 컨테이너 인스턴스가 Scaling 되는 Cluster Autoscaling&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;service-auto-scaling&quot;&gt;Service auto scaling&lt;/h3&gt;
+
+&lt;p&gt;서비스 스케일링은 또다시 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/userguide/service-autoscaling-targettracking.html&quot;&gt;Target tracking&lt;/a&gt;과 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/userguide/service-autoscaling-stepscaling.html&quot;&gt;Step&lt;/a&gt; scaling으로 나뉩니다.&lt;/p&gt;
+
+&lt;p&gt;Target tracking은 &lt;strong&gt;CPU/Memory 사용률&lt;/strong&gt; 및 &lt;strong&gt;ALB 요청 횟수&lt;/strong&gt;를 기반의 정책이 있으며, Step 방식은 &lt;strong&gt;Alarm을 활용한 Custom&lt;/strong&gt; 정책들을 작성할 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 Step scaling policies의 문서 첫 문장은 다음과 같습니다. &lt;br /&gt;
+Although Amazon ECS service auto scaling supports using Application Auto Scaling step scaling policies, we recommend using target tracking scaling policies instead. &lt;br /&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Step scaling은 조금 더 공격적인 정책이 필요할 때 대안으로 사용하고, Service auto scaling은 복수의 조정 정책을 동시에 활용할 수 있으므로 하나의 정책에 의존하기보다는 복수의 정책을 사용해 보다 세밀한 Scaling 정책을 만드는 게 어떨까요? 🧐&lt;/p&gt;
+
+&lt;h3 id=&quot;cluster-auto-scaling&quot;&gt;Cluster auto scaling&lt;/h3&gt;
+
+&lt;p&gt;Service auto scaling에 컨테이너 인스턴스 내 자원을 다 할당했을 경우, CapacityProvider EC2 Auto Scaling을 활용해 클러스터 자원을 확보합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/blogs/containers/deep-dive-on-amazon-ecs-cluster-auto-scaling/&quot;&gt;AWS 블로그&lt;/a&gt;에 자세한 작동원리가 나오므로 꼭 한번 읽어보시기 바랍니다.
+해당 내용을 요약하자면 &lt;strong&gt;Capacity Provider&lt;/strong&gt;를 Cluster 인프라를 관리합니다.
+이를 위해 &lt;strong&gt;CapacityProviderReservation 지표&lt;/strong&gt;가 존재하고 사전에 설정한 &lt;strong&gt;Target capacity %&lt;/strong&gt;(1~100사이의 값)에 맞춰 EC2 AutoScalingGroup(ASG)에 Trigger가 작동합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CapacityProviderReservation(%) = M(현재 인스턴스+추가 요청 인스턴스)/N(현재 인스턴스) * 100(%)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;만약 Target capacity을 100으로 지정했을 때, 현재 Cluster의 Node 개수가 3이고 CapacityProviderReservation가 200이라면
+CapacityProviderReservation를 목표치(Target capacity)인 100에 맞추기 위해 3개의 EC2를 Scale-out 시킵니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ To create an empty Auto Scaling group, set the desired count to zero. &lt;br /&gt; 
+Capacity Provider는 &lt;strong&gt;Desired&lt;/strong&gt; 값이 &lt;strong&gt;0&lt;/strong&gt;인 ASG와 연결되어야 합니다. 또한 CapacityProvider에 의하여 관리형 조정을 enable 한 상태에서,
+ASG를 &lt;strong&gt;수동&lt;/strong&gt;으로 수정한다면 CapacityProviderReservation 계산에 영향을 미칠 수 있으므로 &lt;strong&gt;지양&lt;/strong&gt;해야 합니다. 
+&lt;br /&gt;&lt;br /&gt;
+🚫️ DO NOT EDIT OR DELETE &lt;br /&gt;
+해당 메시지는 Service &amp;amp; Cluster Scaling이 CloudWatch에 자동으로 생성한 TargetTracking의 주석 내용입니다.
+관리형 정책의 기능을 활용 시, 조금 더 세밀한 Scaling 필요하다면 알람 Trigger의 빈도가 아닌 다른 방안을 고민하도록 합니다!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-service-configuration&quot;&gt;🧮 ECS Service Configuration&lt;/h2&gt;
+
+&lt;h3 id=&quot;deployment-configuration&quot;&gt;Deployment Configuration&lt;/h3&gt;
+
+&lt;p&gt;ECS 서비스에서 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentConfiguration.html&quot;&gt;배포와 관련된 설정&lt;/a&gt;을 보면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maximumPercent&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minimumHealthyPercent&lt;/code&gt;가 있습니다.
+제게 비슷하면서도 헷갈리기 쉬운 2개의 설정값 개념은 손에 잡힐듯하면서도 쉽게 잡히지 않는 것 같습니다.😂&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;해당 개념이 조금 더 와닿을 수 있도록, 공식 문서를 읽어보시고 아래 상황이 어떨지 예상해 보세요!&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;🧑🏻‍💻는 ECS &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maximumPercent&lt;/code&gt;가 200%, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minimumHealthyPercent&lt;/code&gt;가 100%로 설정되어 있으며, Rolling update 방식을 사용하고 있다.
+현재 ver01을 운영하는 🧑🏻‍💻는 실수로 오류를 포함한 ver02를 배포했다. 기존 Task 4개일 때, 어떤 상황이 벌어지는가?&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
+
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minimumHealthyPercent&lt;/code&gt;가 100%이기 때문에 ver02에 프로비저닝되고 정상 상태로 확인될 때까지 ver01은 중단되지 않습니다.
+ver02는 &lt;strong&gt;running&lt;/strong&gt; 상태로 진입하지 못해 &lt;strong&gt;provisioning-pending-stopped&lt;/strong&gt; 단계를 반복합니다.
+이때 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maximumPercent&lt;/code&gt;가 200%임에 따라 ver02 Task는 4개와 ver01 Task 4개(합, 최대 8개)의 Task가 동시에 올라올 수 있습니다.&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;h3 id=&quot;task-placement&quot;&gt;Task Placement&lt;/h3&gt;
+
+&lt;p&gt;ECS의 서비스가 컨테이너 인스턴스에 Task를 배치하는 전략은 아래와 같이 3가지 분류됩니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;binpack&lt;/code&gt;: CPU 또는 메모리를 최소화하기 위해 유휴 자원을 고려한 배치&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random&lt;/code&gt; : 무작위 배치&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spread&lt;/code&gt; : ami-id, availability-zone, instance-type, os-type 등을 고려한 배치&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;위 3가지 전략은 단독 혹은 복수로 선택되어 사용될 수 있으며, 가용성을 확보하기 위해 AZ를 고려하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AZ + binpack&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AZ + spread&lt;/code&gt;와 같이 사용되기도 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;쿠버네티스를 공부해 보신 분이라면, 해당 전략은 마치 k8s의 nodeSelector와 비슷하게 동작합니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🔊 CapacityProviderReservation에 영향을 미치는 배포 설정과 배치 전략 &lt;br /&gt;
+ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성 문제와 직결되고 이는 비용 문제로도 이어집니다.
+앞서 언급 한 CapacityProviderReservation 계산에 활용되는 M 값에 배포 설정과 배치 전략이 영향을 미친다는 점을 유의하세요!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;이번 포스팅을 통해 ECS와 관련된 내용을 정리하다 보니, AWS 내의 다른 오케스트레이션 서비스인 EKS의 운용 전략과 무척이나 비슷하다는 느낌을 지울 수 없었습니다.
+쿠버네티스의 HPA 최적화, Pod 배치 및 리소스 할당 전략과 같은 포인트들은 운영을 하며 지속적으로 관리하는 관리 대상인 만큼,
+위에 언급된 ECS의 운영 포인트들도 &lt;strong&gt;서비스를 배포한 이후에도 지속적으로 관심&lt;/strong&gt;을 가져야 하는 포인트임을 강조하며 마칩니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+</description>
+                <pubDate>Sun, 03 Jul 2022 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//ECS_Walkthrough</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//ECS_Walkthrough</guid>
+                
+                <category>aws</category>
+                
+                
+            </item>
         
             <item>
                 <title>Terraform Tips 4 - Move (Refactoring)</title>
@@ -1260,140 +1476,6 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
                 <category>devops</category>
                 
                 <category>terraform</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>AWS CDK Library, Construct Hub</title>
-                <description>&lt;p&gt;본 글은 지난 AWS re:Invent 2021에서 발표된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Construct Hub&lt;/code&gt;를 둘러보며 느낀 첫인상에 대한 글입니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://youtu.be/8_Xs8Ik0h1w?t=4666&quot;&gt;AWS re:Invent 2021, 아마존 CTO인 Dr. Werner Vogels 키노트&lt;/a&gt;에서
-AWS CDK 라이브러리들을 활용할 수 있는 &lt;a href=&quot;https://constructs.dev/&quot;&gt;Construct Hub&lt;/a&gt;가 발표되었습니다.
-보통 AWS 리인벤트에서는 AWS 고유의 서비스들이 소개되는데요,
-이번에 말씀드릴 Construct Hub는 AWS의 솔루션이 아닌 오픈 소스 커뮤니티이자,
-&lt;strong&gt;CDK 라이브러리를 검색하고 공유할 수 있는 장&lt;/strong&gt;이라고 할 수 있습니다.
-Construct Hub를 통해 AWS가 그리는 IaC(Infrastructure as Code)의 미래를 함께 만나보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;우선, Construct Hub를 소개하기 앞서 AWS의 IaC 도구들에 대하여 간략하게 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-aws-cloudformation&quot;&gt;️📂 AWS CloudFormation&lt;/h2&gt;
-
-&lt;p&gt;2011년 AWS의 리소스를 JSON 또는 YAML 형식으로 인프라를 템플릿화 할 수 있는 CloudFormation을 발표했습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;예) AWS S3 버킷 리소스를 제어하는 CloudFormation 코드&lt;/p&gt;
-  &lt;pre&gt;&lt;code class=&quot;language-YAML&quot;&gt;Resources:
-  HelloBucket:
-    Type: AWS::S3::Bucket
-    Properties:
-      AccessControl: PublicRead
-      WebsiteConfiguration:
-        IndexDocument: index.html
-        ErrorDocument: error.html
-&lt;/code&gt;&lt;/pre&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;그러나, 인프라가 복잡해질수록 CloudFormation 코드의 길이도 길어지고 리소스 간의 관계도 파악하기 어려워 관리의 피로도가 증가하게 되었습니다.
-AWS는 이러한 CloudFormation의 약점을 보완하고 개발자들이 YAML 형식으로 인프라를 정의하는 게 아니라,
-&lt;strong&gt;선호하는 프로그래밍 언어로 클라우드 인프라를 정의할 수 있도록 Cloud Development Kit(CDK)&lt;/strong&gt; 를 2019년에 정식으로 출시했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-aws-cloud-development-kit&quot;&gt;⌨️ AWS Cloud Development Kit&lt;/h2&gt;
-
-&lt;p&gt;CDK는 익숙한 프로그래밍 언어를 사용해 클라우드 애플리케이션 리소스를 정의할 수 있는 오픈 소스 소프트웨어 개발 프레임워크입니다.
-CDK는 어떤 방식으로, 앞서 언급된 CloudFormation의 약점들을 보완하는지 그림과 함께 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/construct/cdk.png&quot; alt=&quot;cdk&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;CDK는 &lt;strong&gt;Construct&lt;/strong&gt;의 집합체라 말할 수 있습니다.
-&lt;strong&gt;Construct&lt;/strong&gt;는 클라우드 서비스를 이루는 컴포넌트라 생각하셔도 좋습니다.&lt;/p&gt;
-
-&lt;p&gt;CDK 프레임워크를 통해 개발자 혹은 클라우드 운영자는 타입스크립트, 파이썬, 닷넷, 자바 등의 익숙한 프로그래밍 언어 중
-하나를 선택하여, construct 라이브러리를 사용해 프로그래밍 합니다.
-하나의 Stack으로 엮어진 소스코드를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cdk synth&lt;/code&gt; 라는 명령어로 CloudFormation에서 사용되는 템플릿으로 변환하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cdk deploy&lt;/code&gt; 명령어로 인프라를 배포합니다.&lt;/p&gt;
-
-&lt;p&gt;CDK로 작성된 인프라 코드는 프로그래밍 언어의 이점을 그대로 채택하여,
-해당 언어에 익숙한 사람이라면 YAML로 작성된 CloudFormation 보다 인프라의 환경을 파악하기 쉽습니다.
-실제로 올해 키노트에 언급된 &lt;a href=&quot;https://youtu.be/8_Xs8Ik0h1w?t=4872&quot;&gt;Liberty Mutual INSURANCE사의 CDK 도입 사례&lt;/a&gt;에서
-1500라인의 CloudFormation 코드를 CDK에서 단 14줄로 구현하며 CDK의 뛰어난 가시성을 알렸습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/construct/cdk2.png&quot; alt=&quot;cdk_migration&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-construct-hub&quot;&gt;🗂 Construct Hub&lt;/h2&gt;
-
-&lt;p&gt;대망의 Construct Hub를 소개하기 위해 먼 길을 돌아왔습니다.😓
-맨 처음에 Construct Hub를 오픈 소스 커뮤니티이자, CDK 라이브러리를 검색하고 공유할 수 있는 장이라고 소개한 말이 맞는지 그림과 함께 확인해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/construct/hub1.png&quot; alt=&quot;construct_hub&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://constructs.dev/&quot;&gt;Construct Hub&lt;/a&gt;의 메인 홈페이지를 확인해 보면 CDK 라이브러리를 검색할 수 있는
-‘서치 바’와 현재 ‘지원하는 언어’와 ‘서비스 프로바이더’(AWS, Datadog, Mongo DB, Aqua Security 등)가 보입니다.&lt;/p&gt;
-
-&lt;p&gt;이 중에서도 화면 왼쪽에 위치한 다양한 CDK들의 종류에 대해 궁금증이 생기실 것 같습니다.&lt;/p&gt;
-
-&lt;p&gt;앞서 소개한 AWS CDK는 프로그래밍 언어로 작성한 인프라 코드를 Cloudformation으로 템플릿을 생성했습니다.
-이처럼 CDK가 생성하는 템플릿이 AWS Cloudformation으로 활용 가능하도록 하는 것을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS CDK&lt;/code&gt;,
-쿠버네티스로 활용 가능하도록 하는 것을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CDK8s&lt;/code&gt;, 테라폼으로 활용 가능하도록 하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CDKtf&lt;/code&gt;라고 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/construct/cdk3.png&quot; alt=&quot;cdk_type&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위와 같이 현재 3가지 Type을 지원하고 있으며, 향후 다른 도구들도 지원할 가능성이 있다고 합니다.&lt;/p&gt;
-
-&lt;p&gt;다음으로는 Construct Hub에 등록된 다양한 Construct 검색 결과입니다. 
-현재는 대부분 Construct는 Hahicorp, Datadog과 같은 클라우드 서비스 Publisher 들이 참여했지만,
-개인도 &lt;a href=&quot;https://aws.github.io/jsii/&quot;&gt;JSII&lt;/a&gt; (CDK가 다중 언어 라이브러리를 제공할 수 있도록 하는 기술)
-기반의 construct를 만들고 aws-cdk, cdk8s, cdktf 등의 키워드와 함께 npm 레지스트리에 공개되어 있다면 약 30분 내에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Construct Hub&lt;/code&gt;에도 개시된다고 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/construct/hub2.png&quot; alt=&quot;construct_hub2&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;화면에 보이는 특이점으로는 HashiCorp가 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CDKtf&lt;/code&gt;를 통해,
-다른 클라우드 서비스들과 통합하여 AWS 서비스 만이 아닌 &lt;strong&gt;모든 클라우드를 CDK로 제어 가능&lt;/strong&gt;하게 하려는 큰 그림을 그려나가고 있다는 것을 알 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 Construct Hub를 간단하게 살펴보며, AWS IaC 도구들의 변천사와 AWS가 그리는 IaC의 미래를 엿볼 수 있었습니다.&lt;/p&gt;
-
-&lt;p&gt;그중에서도 흥미로웠던 요소들은 다음 2가지로 말씀드릴 수 있습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;IaC를 도입한 조직의 경우, Terraform, Ansible 등 여러 IaC 도구를 각각의 IaC 도구들의 특성에 맞게 복합적으로 운영합니다. CDK가 다방면으로 IaC 도구를 지원(AWS CDK, CDK8s, CDKtf) 하게 만들어 관리 복잡도를 줄이려는 노력이 흥미롭습니다.&lt;/li&gt;
-  &lt;li&gt;CDKtf를 통해, 타 클라우드 서비스를 CDK로 제어하게 된다는 점이 흥미롭습니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;사실 CDK8s, CDKtf 모두 Construct Hub가 나오기 이전부터 존재했지만, Construct Hub에 개시된 문서들을 보니 더 흥미롭게 다가옵니다.&lt;/p&gt;
-
-&lt;p&gt;아직 세상에 알려진지 얼마 되지 않은 Construct Hub를 활용하기에는 어려움이 있지만, 누구나 Construct Hub에 기여할 수 있는 오픈소스 생태계를 구축한 만큼 빠른 성장이 기대됩니다. Construct Hub가 기여할 IaC 미래에 긍정적인 기대를 걸어봅니다.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;-references&quot;&gt;📚 References&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2021/12/aws-construct-hub-availability/&quot;&gt;AWS Construct Hub availability&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://constructs.dev/&quot;&gt;Construct Hub&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Tue, 21 Dec 2021 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//ConstructHub</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//ConstructHub</guid>
-                
-                <category>aws</category>
                 
                 
             </item>

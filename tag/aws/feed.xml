@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-06-23T02:22:39+00:00</updated>
+  <updated>2022-07-03T15:57:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,243 @@
   
   
 
+  
+    <entry>
+      <title type="html">ECS on EC2 Walkthrough</title>
+      <link href="https://heuristicwave.github.io/ECS_Walkthrough" rel="alternate" type="text/html" title="ECS on EC2 Walkthrough" />
+      <published>2022-07-03T00:00:00+00:00</published>
+      <updated>2022-07-03T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/ECS_Walkthrough</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/ECS_Walkthrough">&lt;p&gt;EC2 기반의 ECS를 다루기 위한 사소한 지식들 톱아보기!&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;당장 Amazon Elastic Container Service(이하 ECS)를 운영해야 하지만, 공식 문서를 다 읽기에는 벅차고 중요한 운영 포인트들을 빠르게 학습하기 위해 아래와 같은 요소들을 다룹니다.
+&lt;em&gt;ECS 마스터&lt;/em&gt;가 될 수 있는 모든 것을 다루는 것은 아니지만, 최소한의 고민해 볼 만한 지점들을 다뤄보았습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Amazon ECS Container Agent&lt;/li&gt;
+  &lt;li&gt;ECS 리소스 할당&lt;/li&gt;
+  &lt;li&gt;ECS Scaling&lt;/li&gt;
+  &lt;li&gt;ECS 서비스 구성&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-container-agent&quot;&gt;🕋 ECS Container Agent&lt;/h2&gt;
+
+&lt;p&gt;EC2 기반의 ECS를 운용하기 위해서는 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-optimized_AMI.html&quot;&gt;ECS 최적화 AMI&lt;/a&gt;를 사용해야 합니다.
+일반 EC2 인스턴스로도 ECS를 운용할 수 있지만, ECS 최적화 AMI를 사용하는 것이 관리와 운용 측면에서 유리합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;예를 들어 Docker를 운영하다 보면, 미사용 상태인 컨테이너 이미지가 쌓여나가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;prune&lt;/code&gt; 명령어를 통해 이미지를 정리해 주어야 합니다.
+이런 상황에서 컨테이너 에이전트는 다양한 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/automated_image_cleanup.html#automated_image_cleanup_parameters&quot;&gt;자동화된 이미지 정리&lt;/a&gt; 옵션을 제공합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;ECS-optimized AMI에는 &lt;a href=&quot;https://github.com/aws/amazon-ecs-agent&quot;&gt;Amazon ECS Container Agent&lt;/a&gt;가 기본적으로 포함되어 있습니다.
+ECS 인스턴스를 부트스트랩 하는 단계에서 EC2의 user data를 사용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/etc/ecs/ecs.config&lt;/code&gt;에 configuration parameters을 전달합니다.&lt;/p&gt;
+
+&lt;p&gt;아래와 같이 환경 변수를 지정하지 않아도 default 값이 지정되어 있어 운용상의 큰 문제는 없지만,
+&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-agent-config.html&quot;&gt;공식 문서&lt;/a&gt;를 확인해 필요한 configuration 들을 파악해야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;' &amp;gt;&amp;gt; /etc/ecs/ecs.config
+ECS_CLUSTER=MyCluster
+ECS_LOGLEVEL=debug
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;다양한 configuration 중, 운영 환경(GPU, SPOT, 서비스 등)에 따라 필요한 Configuration 값들이 다르겠지만 일반적으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ECS_RESERVED_MEMORY&lt;/code&gt;는 고려하여 지정하는 것이 좋습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 인스턴스의 모든 메모리를 테스크에 배정한다면, 테스크와 중요한 시스템 프로세스 사이에서 메모리 경합이 발생할 수 있습니다.
+이를 예방하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ECS_RESERVED_MEMORY&lt;/code&gt; configuration을 사용해 메모리를 예약함으로써 풀에서 할당 가능한 메모리를 제외할 수 있습니다.
+필요로 하는 최소한의 요구 메모리가 정의되어 있지는 않지만, 저는 문서의 예시처럼 256MiB로 사용하고 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-resource&quot;&gt;🎛 ECS Resource&lt;/h2&gt;
+
+&lt;p&gt;ECS는 3가지 범주로 리소스를 설정할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;🥇 &lt;strong&gt;Container instance&lt;/strong&gt; : ECS 클러스터를 이루고 있는 EC2 인스턴스의 유형 &lt;br /&gt;
+🥈 &lt;strong&gt;Task Size&lt;/strong&gt; : Task Definitions을 통해 정의하는 Size &lt;br /&gt;
+🥉 &lt;strong&gt;Container Size&lt;/strong&gt; : Task Definitions의 Container 정의 부분에서 정의하는 Size &lt;br /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 Container Size의 리소스 할당 파라미터는 각각 다음과 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker run&lt;/code&gt; 명령어 옵션에 매핑됩니다. &lt;br /&gt;
+&lt;strong&gt;cpu&lt;/strong&gt; : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--cpu-shares&lt;/code&gt;, &lt;strong&gt;memory&lt;/strong&gt; : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory&lt;/code&gt;(hard) / &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory-reservation&lt;/code&gt;(soft)
+&lt;br /&gt;&lt;br /&gt;
+💡 ECS on EC2에서는 Task Size와 Container Size 방식 중 선택 가능하지만, Fargate 방식에서 Task Size는 필수입니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;🥇로 갈수록 더 상위 개념이며, Task Definitions에서는 🥈, 🥉을 활용해 리소스를 제어합니다.
+세밀한 제어를 하고 싶다면 🥈, 🥉을 모두 사용하여 제어할 수 있으나,
+🥉 사용해야 하는 특별한 이유가 없다면 🥈만을 사용해 리소스를 제어하는 것이 용이합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;actual-available-memory&quot;&gt;Actual available memory&lt;/h3&gt;
+
+&lt;p&gt;16GiB의 인스턴스를 프로비저닝해도 &lt;strong&gt;실제 사용 가능한 메모리(15318 MiB)&lt;/strong&gt;는 더 적습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Amazon EC2&lt;/th&gt;
+      &lt;th&gt;인스턴스&lt;/th&gt;
+      &lt;th&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;free -m&lt;/code&gt;&lt;/th&gt;
+      &lt;th&gt;Registered&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;c5.2xlarge&lt;/td&gt;
+      &lt;td&gt;16384 MiB&lt;/td&gt;
+      &lt;td&gt;15574 MiB&lt;/td&gt;
+      &lt;td&gt;15318 MiB&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;EC2 인스턴스와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;free -m&lt;/code&gt; 명령어로 확인한 차이&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;ECS 플랫폼 메모리 오버헤드와 OS 커널이 차지하는 메모리로 인해 차이가 발생합니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;free -m&lt;/code&gt; 명령어로 확인한 메모리와 컨테이너 인스턴스(registered)의 차이&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;컨테이너 에이전트를 설정할 때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ECS_RESERVED_MEMORY=256&lt;/code&gt;으로 설정한 만큼 차이가 발생합니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-scaling&quot;&gt;🏘 ECS Scaling&lt;/h2&gt;
+
+&lt;p&gt;ECS의 Scaling 방법은 2가지로 정의할 수 있습니다. 해당 스케일링 기법은 선택 사항이 아니라, 2가지 모두를 고려해 적용해야 합니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Service에 의하여 Task가 Scaling 되는 Horizontal Autoscaling&lt;/li&gt;
+  &lt;li&gt;CapacityProvider에 의하여 컨테이너 인스턴스가 Scaling 되는 Cluster Autoscaling&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;service-auto-scaling&quot;&gt;Service auto scaling&lt;/h3&gt;
+
+&lt;p&gt;서비스 스케일링은 또다시 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/userguide/service-autoscaling-targettracking.html&quot;&gt;Target tracking&lt;/a&gt;과 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/userguide/service-autoscaling-stepscaling.html&quot;&gt;Step&lt;/a&gt; scaling으로 나뉩니다.&lt;/p&gt;
+
+&lt;p&gt;Target tracking은 &lt;strong&gt;CPU/Memory 사용률&lt;/strong&gt; 및 &lt;strong&gt;ALB 요청 횟수&lt;/strong&gt;를 기반의 정책이 있으며, Step 방식은 &lt;strong&gt;Alarm을 활용한 Custom&lt;/strong&gt; 정책들을 작성할 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 Step scaling policies의 문서 첫 문장은 다음과 같습니다. &lt;br /&gt;
+Although Amazon ECS service auto scaling supports using Application Auto Scaling step scaling policies, we recommend using target tracking scaling policies instead. &lt;br /&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Step scaling은 조금 더 공격적인 정책이 필요할 때 대안으로 사용하고, Service auto scaling은 복수의 조정 정책을 동시에 활용할 수 있으므로 하나의 정책에 의존하기보다는 복수의 정책을 사용해 보다 세밀한 Scaling 정책을 만드는 게 어떨까요? 🧐&lt;/p&gt;
+
+&lt;h3 id=&quot;cluster-auto-scaling&quot;&gt;Cluster auto scaling&lt;/h3&gt;
+
+&lt;p&gt;Service auto scaling에 컨테이너 인스턴스 내 자원을 다 할당했을 경우, CapacityProvider EC2 Auto Scaling을 활용해 클러스터 자원을 확보합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/blogs/containers/deep-dive-on-amazon-ecs-cluster-auto-scaling/&quot;&gt;AWS 블로그&lt;/a&gt;에 자세한 작동원리가 나오므로 꼭 한번 읽어보시기 바랍니다.
+해당 내용을 요약하자면 &lt;strong&gt;Capacity Provider&lt;/strong&gt;를 Cluster 인프라를 관리합니다.
+이를 위해 &lt;strong&gt;CapacityProviderReservation 지표&lt;/strong&gt;가 존재하고 사전에 설정한 &lt;strong&gt;Target capacity %&lt;/strong&gt;(1~100사이의 값)에 맞춰 EC2 AutoScalingGroup(ASG)에 Trigger가 작동합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CapacityProviderReservation(%) = M(현재 인스턴스+추가 요청 인스턴스)/N(현재 인스턴스) * 100(%)&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;만약 Target capacity을 100으로 지정했을 때, 현재 Cluster의 Node 개수가 3이고 CapacityProviderReservation가 200이라면
+CapacityProviderReservation를 목표치(Target capacity)인 100에 맞추기 위해 3개의 EC2를 Scale-out 시킵니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ To create an empty Auto Scaling group, set the desired count to zero. &lt;br /&gt; 
+Capacity Provider는 &lt;strong&gt;Desired&lt;/strong&gt; 값이 &lt;strong&gt;0&lt;/strong&gt;인 ASG와 연결되어야 합니다. 또한 CapacityProvider에 의하여 관리형 조정을 enable 한 상태에서,
+ASG를 &lt;strong&gt;수동&lt;/strong&gt;으로 수정한다면 CapacityProviderReservation 계산에 영향을 미칠 수 있으므로 &lt;strong&gt;지양&lt;/strong&gt;해야 합니다. 
+&lt;br /&gt;&lt;br /&gt;
+🚫️ DO NOT EDIT OR DELETE &lt;br /&gt;
+해당 메시지는 Service &amp;amp; Cluster Scaling이 CloudWatch에 자동으로 생성한 TargetTracking의 주석 내용입니다.
+관리형 정책의 기능을 활용 시, 조금 더 세밀한 Scaling 필요하다면 알람 Trigger의 빈도가 아닌 다른 방안을 고민하도록 합니다!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ecs-service-configuration&quot;&gt;🧮 ECS Service Configuration&lt;/h2&gt;
+
+&lt;h3 id=&quot;deployment-configuration&quot;&gt;Deployment Configuration&lt;/h3&gt;
+
+&lt;p&gt;ECS 서비스에서 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/APIReference/API_DeploymentConfiguration.html&quot;&gt;배포와 관련된 설정&lt;/a&gt;을 보면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maximumPercent&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minimumHealthyPercent&lt;/code&gt;가 있습니다.
+제게 비슷하면서도 헷갈리기 쉬운 2개의 설정값 개념은 손에 잡힐듯하면서도 쉽게 잡히지 않는 것 같습니다.😂&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;해당 개념이 조금 더 와닿을 수 있도록, 공식 문서를 읽어보시고 아래 상황이 어떨지 예상해 보세요!&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;🧑🏻‍💻는 ECS &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maximumPercent&lt;/code&gt;가 200%, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minimumHealthyPercent&lt;/code&gt;가 100%로 설정되어 있으며, Rolling update 방식을 사용하고 있다.
+현재 ver01을 운영하는 🧑🏻‍💻는 실수로 오류를 포함한 ver02를 배포했다. 기존 Task 4개일 때, 어떤 상황이 벌어지는가?&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
+
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;minimumHealthyPercent&lt;/code&gt;가 100%이기 때문에 ver02에 프로비저닝되고 정상 상태로 확인될 때까지 ver01은 중단되지 않습니다.
+ver02는 &lt;strong&gt;running&lt;/strong&gt; 상태로 진입하지 못해 &lt;strong&gt;provisioning-pending-stopped&lt;/strong&gt; 단계를 반복합니다.
+이때 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;maximumPercent&lt;/code&gt;가 200%임에 따라 ver02 Task는 4개와 ver01 Task 4개(합, 최대 8개)의 Task가 동시에 올라올 수 있습니다.&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;h3 id=&quot;task-placement&quot;&gt;Task Placement&lt;/h3&gt;
+
+&lt;p&gt;ECS의 서비스가 컨테이너 인스턴스에 Task를 배치하는 전략은 아래와 같이 3가지 분류됩니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;binpack&lt;/code&gt;: CPU 또는 메모리를 최소화하기 위해 유휴 자원을 고려한 배치&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random&lt;/code&gt; : 무작위 배치&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;spread&lt;/code&gt; : ami-id, availability-zone, instance-type, os-type 등을 고려한 배치&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;위 3가지 전략은 단독 혹은 복수로 선택되어 사용될 수 있으며, 가용성을 확보하기 위해 AZ를 고려하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AZ + binpack&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AZ + spread&lt;/code&gt;와 같이 사용되기도 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;쿠버네티스를 공부해 보신 분이라면, 해당 전략은 마치 k8s의 nodeSelector와 비슷하게 동작합니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🔊 CapacityProviderReservation에 영향을 미치는 배포 설정과 배치 전략 &lt;br /&gt;
+ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성 문제와 직결되고 이는 비용 문제로도 이어집니다.
+앞서 언급 한 CapacityProviderReservation 계산에 활용되는 M 값에 배포 설정과 배치 전략이 영향을 미친다는 점을 유의하세요!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;이번 포스팅을 통해 ECS와 관련된 내용을 정리하다 보니, AWS 내의 다른 오케스트레이션 서비스인 EKS의 운용 전략과 무척이나 비슷하다는 느낌을 지울 수 없었습니다.
+쿠버네티스의 HPA 최적화, Pod 배치 및 리소스 할당 전략과 같은 포인트들은 운영을 하며 지속적으로 관리하는 관리 대상인 만큼,
+위에 언급된 ECS의 운영 포인트들도 &lt;strong&gt;서비스를 배포한 이후에도 지속적으로 관심&lt;/strong&gt;을 가져야 하는 포인트임을 강조하며 마칩니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">EC2 기반의 ECS를 다루기 위한 사소한 지식들 톱아보기!</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Export cloudwatch log data to Amazon S3 using lambda</title>
@@ -1716,290 +1953,6 @@ AWS에서는 ENI라는 &lt;em&gt;가상 네트워크 카드를 나타내는 논�
 
       
         <summary type="html">EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까?</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">ECR CodePipeline with Terraform Ⅲ</title>
-      <link href="https://heuristicwave.github.io/CodePipeline" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅲ" />
-      <published>2021-04-09T00:00:00+00:00</published>
-      <updated>2021-04-09T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/CodePipeline</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/CodePipeline">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)&lt;/p&gt;
-
-&lt;h1 id=&quot;preview&quot;&gt;Preview&lt;/h1&gt;
-
-&lt;p&gt;3편에서는 CodePipeline을 생성하고 IAM 정책과 역할을 부여하는 법을 배워보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codepipeline&quot;&gt;문서&lt;/a&gt;를 확인하면 artifact가 담기는 버킷, pipeline을 생성하는 리소스, 관련된 IAM Role과 Policy가 보입니다.
-테라폼은 선언형 언어이므로 Role과 Resource의 작성 순서가 바뀌어도 상관이 없지만, 콘솔에서 작업할 경우 Role을 먼저 작성하고 리소스를 생성하니 3편에서는 IAM을 먼저 작성하겠습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;iam-role&quot;&gt;IAM Role&lt;/h3&gt;
-&lt;p&gt;아래 Role을 방금전 생성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 작성합니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline_role&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-codepipeline&quot;&lt;/span&gt;
-  assume_role_policy &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;
-{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Action&quot;: &quot;sts:AssumeRole&quot;,
-      &quot;Principal&quot;: {
-        &quot;Service&quot;: &quot;codepipeline.amazonaws.com&quot;
-      },
-      &quot;Effect&quot;: &quot;Allow&quot;
-    }
-  ]
-}
-&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
-&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;iam-policy&quot;&gt;IAM Policy&lt;/h3&gt;
-&lt;p&gt;본래 필요한 정책만을 골라 &lt;a href=&quot;https://awspolicygen.s3.amazonaws.com/policygen.html&quot;&gt;정책 생성기&lt;/a&gt;에서 생생된 정책을 활용하는 방법이 있지만, 어떤 정책이 필요한지 한번에 맞추기는 너무 어렵습니다.
-(저의 경우 인터넷에서 타인이 작성한 정책과 에러메시지를 맞아가며 정책을 작성하고 있습니다 😅)&lt;br /&gt;
-➕ 아래 Policy를 방금전 생성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 아래 코드를 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &quot;aws_iam_policy&quot; &quot;codepipeline_policy&quot; {
-  description = &quot;Codepipeline Execution Policy&quot;
-  policy      = &amp;lt;&amp;lt;EOF
-{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Action&quot;: [
-        &quot;s3:GetObject&quot;, &quot;s3:GetObjectVersion&quot;, &quot;s3:PutObject&quot;,
-        &quot;s3:GetBucketVersioning&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_s3_bucket.artifact_bucket.arn}/*&quot;
-    },
-    {
-      &quot;Action&quot; : [
-        &quot;codebuild:StartBuild&quot;, &quot;codebuild:BatchGetBuilds&quot;,
-        &quot;iam:PassRole&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;*&quot;
-    },
-    {
-      &quot;Action&quot; : [
-        &quot;codecommit:CancelUploadArchive&quot;,
-        &quot;codecommit:GetBranch&quot;,
-        &quot;codecommit:GetCommit&quot;,
-        &quot;codecommit:GetUploadArchiveStatus&quot;,
-        &quot;codecommit:UploadArchive&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_codecommit_repository.test.arn}&quot;
-    }
-  ]
-}
-EOF
-}
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role_policy_attachment&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline-attach&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  role       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_role.codepipeline_role.name
-  policy_arn &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_policy.codepipeline_policy.arn
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;codepipeline&quot;&gt;CodePipeline&lt;/h2&gt;
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_codepipeline&lt;/code&gt;리소스의 config에는 artifact store와 암호화 키, Source-Build-Deploy로 이어지는 각 Stage가 선언되어 있습니다.
-리소스 안에 기재된 설정들은 필수가 아니므로 선택하여 사용할 수 있습니다. 이번 포스팅에서는 deploy stage와 암호화 config는 제외하고 진행하겠습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_codepipeline&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;pipeline&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  name     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.source_repo_name&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;${&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;var&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.source_repo_branch&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;-Pipeline&quot;&lt;/span&gt;
-  role_arn &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_role.codepipeline_role.arn
-  artifact_store &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    location &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_s3_bucket.artifact_bucket.bucket
-    &lt;span class=&quot;nb&quot;&gt;type&lt;/span&gt;     &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;S3&quot;&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
-    action &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-      name             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
-      category         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Source&quot;&lt;/span&gt;
-      owner            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;AWS&quot;&lt;/span&gt;
-      version          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;
-      provider         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CodeCommit&quot;&lt;/span&gt;
-      output_artifacts &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SourceOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-      run_order        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
-      configuration &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        RepositoryName       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.source_repo_name
-        BranchName           &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.source_repo_branch
-        PollForSourceChanges &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;false&quot;&lt;/span&gt;
-      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  stage &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
-    action &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-      name             &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
-      category         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Build&quot;&lt;/span&gt;
-      owner            &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;AWS&quot;&lt;/span&gt;
-      version          &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;1&quot;&lt;/span&gt;
-      provider         &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;CodeBuild&quot;&lt;/span&gt;
-      input_artifacts  &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SourceOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-      output_artifacts &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;BuildOutput&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-      run_order        &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; 1
-      configuration &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        ProjectName &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_codebuild_project.codebuild.id
-      &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;1편에서 작성한 CodeCommit을 Stage의 Source, 2편에서 작성한 CodeBuild를 Build단계 지정했습니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply, plan&lt;/code&gt; 명령어를 차례로 반영해 오류가 없는지 확인합니다.&lt;/p&gt;
-
-&lt;p&gt;지금까지 작성된 인프라를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt;명령어를 통해 확인하면 아래와 같습니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ terraform state list
-aws_codebuild_project.codebuild
-aws_codecommit_repository.test
-aws_codepipeline.pipeline
-aws_ecr_repository.image_repo
-aws_iam_policy.codebuild_policy
-aws_iam_policy.codepipeline_policy
-aws_iam_role.codebuild_role
-aws_iam_role.codepipeline_role
-aws_iam_role_policy_attachment.codebuild-attach
-aws_iam_role_policy_attachment.codepipeline-attach
-aws_s3_bucket.artifact_bucket
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipeline 콘솔&lt;/a&gt;에서 확인하면 권한이 없어 실패한 화면이 나올 것 입니다.
-이를 해결하기 위해 또 다른 권한이 필요합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;codepipeline-trigger&quot;&gt;CodePipeline Trigger&lt;/h2&gt;
-&lt;p&gt;CodeCommit에서 발생한 이벤트가 CodePipeline으로 트리거되기 위해서는 아래 정의된 권한이 필요합니다.&lt;/p&gt;
-
-&lt;p&gt;➕ 아래 코드를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 추가하고 인프라를 생성해주세요.&lt;/p&gt;
-&lt;noscript&gt;
-  &lt;pre&gt;resource &amp;quot;aws_iam_role&amp;quot; &amp;quot;trigger_role&amp;quot; {
-  name               = &amp;quot;terraform-trigger&amp;quot;
-  assume_role_policy = &amp;lt;&amp;lt;EOF
-{
-  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
-  &amp;quot;Statement&amp;quot;: [
-    {
-      &amp;quot;Action&amp;quot;: &amp;quot;sts:AssumeRole&amp;quot;,
-      &amp;quot;Principal&amp;quot;: {
-        &amp;quot;Service&amp;quot;: &amp;quot;events.amazonaws.com&amp;quot;
-      },
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Sid&amp;quot;: &amp;quot;&amp;quot;
-    }
-  ]
-}
-EOF
-}
-
-resource &amp;quot;aws_iam_policy&amp;quot; &amp;quot;trigger_policy&amp;quot; {
-  description = &amp;quot;CodePipeline Trigger Execution Policy&amp;quot;
-  policy      = &amp;lt;&amp;lt;EOF
-{
-  &amp;quot;Version&amp;quot;: &amp;quot;2012-10-17&amp;quot;,
-  &amp;quot;Statement&amp;quot;: [
-    {
-      &amp;quot;Action&amp;quot;: [
-        &amp;quot;codepipeline:StartPipelineExecution&amp;quot;
-      ],
-      &amp;quot;Effect&amp;quot;: &amp;quot;Allow&amp;quot;,
-      &amp;quot;Resource&amp;quot;: &amp;quot;${aws_codepipeline.pipeline.arn}&amp;quot;
-    }
-  ]
-}
-EOF
-}
-
-resource &amp;quot;aws_iam_role_policy_attachment&amp;quot; &amp;quot;trigger-attach&amp;quot; {
-  role       = aws_iam_role.trigger_role.name
-  policy_arn = aws_iam_policy.trigger_policy.arn
-}&lt;/pre&gt;
-&lt;/noscript&gt;
-&lt;script src=&quot;https://gist.github.com/heuristicwave/5b566b2cc70337501a4d60b71215930f.js&quot;&gt; &lt;/script&gt;
-
-&lt;h2 id=&quot;result&quot;&gt;Result&lt;/h2&gt;
-&lt;p&gt;Trigger 까지 정상적으로 적용하고 테스트용으로 활용할 아무 Dockerfile을 CodeCommit에 Push합니다.
-다시 &lt;a href=&quot;https://console.aws.amazon.com/codepipeline&quot;&gt;CodePipeline 콘솔&lt;/a&gt;에 접속해 우상단에 위치한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;변경사항 릴리스&lt;/code&gt;를 누르면,
-아래와 같이 정상적으로 코드 파이프라인이 작동하여 운영되는 것을 확인 할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/ecr_terraform_demo.png&quot; alt=&quot;terraform_demo&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;마지막으로, 빌드된 ECR 이미지를 다운받아 로컬에서 실행시켜보며 정상적으로 작성되었는지 확인해보겠습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;ECR에 올라온 이미지를 사용하기 위해 환경변수 세팅 🔨
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;tf_image_repo_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;terraform output &lt;span class=&quot;nt&quot;&gt;-raw&lt;/span&gt; image_repo_url&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;AWSCLI로 ECR 로그인 (Region명 주의!) 🔑
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecr get-login-password &lt;span class=&quot;nt&quot;&gt;--region&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;YOUR_REGION&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; | docker login &lt;span class=&quot;nt&quot;&gt;--username&lt;/span&gt; AWS &lt;span class=&quot;nt&quot;&gt;--password-stdin&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$tf_image_repo_url&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;이미지 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Pull&lt;/code&gt; 후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Run&lt;/code&gt; 명령어 실행 💻
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;docker pull &lt;span class=&quot;nv&quot;&gt;$tf_image_repo_url&lt;/span&gt;
-docker run &lt;span class=&quot;nv&quot;&gt;$tf_image_repo_url&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;🏵 Docker 실행 후, Shell에서 &lt;em&gt;Hello, Go examples!&lt;/em&gt; 메시지를 확인하였다면 성공!&lt;/p&gt;
-
-&lt;h2 id=&quot;cleanup&quot;&gt;Cleanup&lt;/h2&gt;
-&lt;p&gt;S3 bucket은 빈상태여야 제거가 가능하기에 &lt;a href=&quot;https://console.aws.amazon.com/s3/home&quot;&gt;S3 콘솔&lt;/a&gt;에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ecr-pipeline&lt;/code&gt;의 데이터를 모두 삭제합니다.
-이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform destory&lt;/code&gt; 명령어로 모든 리소스를 회수합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;총 3편에 걸쳐서 테라폼으로 &lt;strong&gt;최소한의 리소스&lt;/strong&gt;로 ECR Pipeline 구축법을 알아보았습니다. (CloudWatch 기능을 추가해 CodePipeline을 구축해보세요 👍)
-해당 과정을 통해 AWS 인프라 생성법과, IAM 활용법, Variable, Output, tfvars 등을 활용해 코드를 작성하는 법을 공부했습니다.
-다른 CI/CD 파이프라인 구축법도 이번 포스팅에서 다룬 방법과 크게 다르지 않으니, 해당 포스팅이 도움이 되면 좋겠습니다. 😁&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./3Tier&quot;&gt;3-Tier VPC Architecture with Terraform&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeCommit&quot;&gt;ECR Pipeline with Terraform Ⅰ (CodeCommit)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)</summary>
       
 
       
