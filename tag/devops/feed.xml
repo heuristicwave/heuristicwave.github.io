@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-07-03T15:57:22+00:00</updated>
+  <updated>2022-07-23T15:15:46+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -30,6 +30,210 @@
   
   
 
+  
+    <entry>
+      <title type="html">Terraform Tips 5 - Import</title>
+      <link href="https://heuristicwave.github.io/TerraformTips5" rel="alternate" type="text/html" title="Terraform Tips 5 - Import" />
+      <published>2022-07-23T00:00:00+00:00</published>
+      <updated>2022-07-23T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/TerraformTips5</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips5">&lt;p&gt;Terraform 더 익숙하게 5 - Import&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;IaC를 도입하기 위해 구축 단계부터 코드로 인프라를 작성할 수도 있지만, 기 구축된 인프라를 코드화할 수도 있습니다.
+이때 사용하는 Terraform의 기능이 바로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Import&lt;/code&gt;입니다.&lt;/p&gt;
+
+&lt;p&gt;하지만 저는 구축 단계에도 종종 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Import&lt;/code&gt; 기능을 활용합니다. Terraform으로 코드를 작성하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs&quot;&gt;registry.terraform.io&lt;/a&gt;에서
+가이드 하는 대로 코드를 작성하는 것이 생각보다 어려운 작업이기 때문이죠. 🥲&lt;/p&gt;
+
+&lt;p&gt;그래서 저는 먼저 구축하고자 하는 인프라를 콘솔상에서 구성한 다음, 구축에 필요한 Attribute 들을 파악합니다.
+그다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Import&lt;/code&gt;를 사용해 동작하는 IaC 코드를 얻고 수정합니다.
+즉, 저는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Import&lt;/code&gt; 기능을 Cheat Sheet처럼 사용하고 있습니다. 😅&lt;/p&gt;
+
+&lt;p&gt;이번 포스팅에서는 실제 제가 Cheat Sheet으로 활용하는 &lt;em&gt;‘Import 시나리오’&lt;/em&gt;를 통해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Import&lt;/code&gt;를 학습해 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-조립은-분해의-역순&quot;&gt;⏮ 조립은 분해의 역순&lt;/h2&gt;
+
+&lt;p&gt;AWS Systems Manager의 인스턴스 운영 자동화를 위한 State Manager 기능을 사용하기 위해 &lt;a href=&quot;https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ssm_association&quot;&gt;문서&lt;/a&gt;를
+확인해 보았지만, 다음과 같은 사용법 만이 기재되어 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;resource&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;aws_ssm_association&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;example&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;aws_ssm_document&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;example&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;targets&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;key&lt;/span&gt;    &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;InstanceIds&quot;&lt;/span&gt;
+    &lt;span class=&quot;nx&quot;&gt;values&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;aws_instance&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;example&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;해당 코드를 apply 해도 무수한 Error만 만날 뿐 빠르게 진도가 나가지 않기에, 우선 AWS 웹 콘솔을 활용해 인스턴스 운영 자동화를 위한 State Manager 기능을 구현해 두었습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;0️⃣-준비-작업&quot;&gt;0️⃣ 준비 작업&lt;/h3&gt;
+
+&lt;p&gt;이번 포스팅의 작업 공간(~/terraform)을 생성하고 해당 위치에서 아래 코드 블록을 터미널에 복사합니다. (리소스가 위치한 리전 명에 맞게 세팅해 주세요)&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; provider.tf
+provider &quot;aws&quot; {
+  region  = &quot;ap-northeast-2&quot;
+}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;p&gt;이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform init&lt;/code&gt; 명령어를 실행시켜주세요.&lt;/p&gt;
+
+&lt;h3 id=&quot;1️⃣-skeleton-code-작성&quot;&gt;1️⃣ Skeleton Code 작성&lt;/h3&gt;
+
+&lt;p&gt;웹 콘솔로 작업한 State Manager를 코드화하기 위해 아래와 같이 Skeleton Code를 작성합니다.
+(import 후, 생성되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt;를 담는 일종의 빵틀을 제작하는 단계입니다.)&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; main.tf
+resource &quot;aws_ssm_association&quot; &quot;copycat&quot; {}
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;2️⃣-import-configuration&quot;&gt;2️⃣ Import Configuration&lt;/h3&gt;
+
+&lt;p&gt;사용법(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import [options] ADDRESS ID&lt;/code&gt;)에 따라 아래 명령어를 실행시키면 &lt;strong&gt;root directory&lt;/strong&gt;에 미리 생성된 인프라가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt; 파일에 담깁니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform import aws_ssm_association.copycat &amp;lt;Association ID&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;생성된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt; 파일을 확인하면 json 형태로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_ssm_association&lt;/code&gt; resource block에 작성해야 하는 각종 Config 값들을 알 수 있습니다.
+그러나, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;show&lt;/code&gt; 명령어를 사용해 HCL Syntax에 맞춰 &lt;strong&gt;human-readable&lt;/strong&gt;한 형태로 출력합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform show &lt;span class=&quot;nt&quot;&gt;-no-color&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; main.tf
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;본래 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-no-color&lt;/code&gt; 옵션은 coloring 작업을 비활성화하지만, Editor에 format 맞추기 위해 필수적으로 해당 옵션을 사용합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;3️⃣-modify-arguments&quot;&gt;3️⃣ Modify Arguments&lt;/h3&gt;
+
+&lt;p&gt;이제서야 얼추 모양을 갖춘 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;main.tf&lt;/code&gt;의 &lt;strong&gt;resource block&lt;/strong&gt;에는 리소스가 인프라에 &lt;strong&gt;반영된 이후 단계에 생성되는 각종 result&lt;/strong&gt; 값(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;arn&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;association_id&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id&lt;/code&gt;)
+이 포함되어 있습니다. 해당 값들은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan&lt;/code&gt; 명령어를 수행해 Error 메시지에 명시되므로 지워야 하는 Arguments들을 찾아 코드를 수정합니다.&lt;/p&gt;
+
+&lt;p&gt;이때, Instancd Id, IAM Role ARN 등과 같이 &lt;strong&gt;절대적인 값&lt;/strong&gt;도 &lt;strong&gt;재사용 가능한 변수&lt;/strong&gt;로 처리하는 것이 좋습니다.
+해당 작업을 마치고 나면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; 명령어를 수행하여 다음 메시지를 얻으면 정상적으로 Import 작업이 완료된 것입니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Apply complete! Resources: 0 added, 0 changed, 0 destroyed.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-import-into-module&quot;&gt;🥵 Import into Module&lt;/h2&gt;
+
+&lt;p&gt;지금까지 학습한 절차는 단순 &lt;strong&gt;Resource&lt;/strong&gt;에 Import 시키므로 비교적 수월한 과정이었습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Resource configured with count &lt;br /&gt;
+➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import 'aws_instance.baz[0]' i-abcd1234&lt;/code&gt; &lt;br /&gt;
+Resource configured with for_each &lt;br /&gt;
+➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import 'aws_instance.baz[&quot;example&quot;]' i-abcd1234&lt;/code&gt; &lt;br /&gt;
+Module &lt;br /&gt;
+➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import module.foo.aws_instance.bar i-abcd1234&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Module을 Import 하는 절차도 Resource와 동일하지만, 명백한 &lt;strong&gt;한계점&lt;/strong&gt;이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;흔하게 사용되는 &lt;a href=&quot;https://registry.terraform.io/modules/terraform-aws-modules/ec2-instance/aws/latest&quot;&gt;ec2-instance&lt;/a&gt; 모듈을 사용한다고 가정하겠습니다.
+Resource 때와 동일하게 아래와 같은 Skeleton Code를 작성하고 Import 명령어를 수행하는 부분은 동일합니다. (1️⃣ &amp;amp; 2️⃣ 과정 동일)&lt;/p&gt;
+
+&lt;div class=&quot;language-terraform highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;module&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;ec2_instance&quot;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;source&lt;/span&gt;  &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-aws-modules/ec2-instance/aws&quot;&lt;/span&gt;
+  &lt;span class=&quot;nx&quot;&gt;version&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;~&amp;gt; 3.0&quot;&lt;/span&gt;
+
+  &lt;span class=&quot;nx&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;single-instance&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;foo&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ec2_instance&lt;/code&gt;가 되고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bar&lt;/code&gt;는 해당 모듈의 &lt;strong&gt;aws_instance&lt;/strong&gt;에서 정의한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;this&lt;/code&gt;가 됩니다.&lt;/p&gt;
+
+&lt;p&gt;문제는 &lt;strong&gt;3️⃣ Modify Arguments&lt;/strong&gt; 단계에서 발생합니다. Single Resource에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt;을 통해 수정해야 하는 &lt;strong&gt;Arguments&lt;/strong&gt;들을 알 수 있지만, 
+module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 알 수 없습니다.
+즉, module import 이후 생성되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt; 파일의 &lt;strong&gt;json 값을 일일이 확인&lt;/strong&gt;하여 module의 &lt;strong&gt;input parameter에 해당하는 값&lt;/strong&gt;들을 알아내 &lt;strong&gt;하나씩 다 기재&lt;/strong&gt;하는 방법 외에는 
+온전하게 import 명령어를 사용할 수 없습니다.&lt;/p&gt;
+
+&lt;p&gt;Reverse Engineering으로 원래의 코드를 완벽하게 재현하기 어려운 것처럼, 구성이 복잡한 모듈은 Reverse Terraforming이 매우 어렵습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-reverse-terraform-open-source&quot;&gt;🌏 Reverse Terraform Open Source&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;2️⃣ Import Configuration&lt;/strong&gt; 단계에서 수행한 작업은 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/terraformer&quot;&gt;Terraformer&lt;/a&gt;(작성 시점 기준 ★ 8.1k),
+&lt;a href=&quot;https://github.com/dtan4/terraforming&quot;&gt;Terraforming&lt;/a&gt;(업데이트 종료) 등과 같은 오픈소스 도구를 활용할 수도 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;⚠️ 고려 사항&lt;/strong&gt;&lt;br /&gt;
+&lt;strong&gt;Terraformer&lt;/strong&gt;는 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/terraformer/blob/master/docs/aws.md#profiles-support&quot;&gt;AWS configuration Profiles Select&lt;/a&gt;와 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/terraformer/blob/master/docs/aws.md#attribute-filters&quot;&gt;Attribute filters&lt;/a&gt;과 같은 편리한 기능들을 제공합니다. &lt;br /&gt;
+그러나 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/terraformer/blob/master/docs/aws.md#supported-services&quot;&gt;terraformer AWS 리소스 지원 범위&lt;/a&gt;에서도 확인할 수 있다시피,
+위에서 작업한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_ssm_association&lt;/code&gt;과 같이 지원하지 않는 리소스들도 존재합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;마지막으로 Import Workflow를 다시 한번 정리하면서 마치겠습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Import 대상(이미 프로비저닝 된 인프라)이 되는 Skeleton Code 작성&lt;/li&gt;
+  &lt;li&gt;Write Config : Import &amp;amp; Show 명령어 수행&lt;/li&gt;
+  &lt;li&gt;Modify Arguments&lt;/li&gt;
+  &lt;li&gt;Plan &amp;amp; Apply&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;지금까지 테라폼 더 익숙하게 Import 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;📚 References&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Terraform Documentation &lt;a href=&quot;https://www.terraform.io/cli/commands/import&quot;&gt;Import Command&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;Hashicorp Tutorial 문서 &lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/state-import?in=terraform/state&quot;&gt;Import Terraform Configuration&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="terraform" />
+      
+
+      
+        <summary type="html">Terraform 더 익숙하게 5 - Import</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Terraform Tips 4 - Move (Refactoring)</title>
@@ -174,6 +378,7 @@
     &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -314,6 +519,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
     &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -1021,6 +1227,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
     &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -1177,6 +1384,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
@@ -1792,147 +2000,6 @@ aws_vpc.vpc
 
       
         <summary type="html">본 글은 HashiCorp Learn - Provision Infrastructure with Packer에서 다루는 내용을 기반으로 작성한 글 입니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Look into EKS max pods</title>
-      <link href="https://heuristicwave.github.io/EKS_Max_Pods" rel="alternate" type="text/html" title="Look into EKS max pods" />
-      <published>2021-06-19T18:00:00+00:00</published>
-      <updated>2021-06-19T18:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/EKS_Max_Pods</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/EKS_Max_Pods">&lt;p&gt;EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까?&lt;/p&gt;
-
-&lt;h1 id=&quot;preview&quot;&gt;Preview&lt;/h1&gt;
-
-&lt;p&gt;이번 포스팅에서는 EKS의 노드 그룹에서는 최대 몇 개의 포드(Private IP)가 할당 가능하고 어떠한 방법으로 최대 포드의 개수를 제어할 수 있는지 알아보자.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;build-up&quot;&gt;Build Up&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://kubernetes.io/docs/setup/best-practices/cluster-large/&quot;&gt;쿠버네티스 도규먼트&lt;/a&gt;에 따르면 노드당 110개의 포드를 생성할 수 있으며, 노드는 5000개까지 생성 가능해 총 15만 개의 포드가 생성 가능하다고 한다. &lt;br /&gt;
-&lt;a href=&quot;https://cloud.google.com/kubernetes-engine/docs/how-to/flexible-pod-cidr?hl=en#cidr_ranges_for_clusters&quot;&gt;GCP의 GKE 가이드&lt;/a&gt;에 따르면 기본 클러스터 노드 하나에 최대 110개의 포드가 생성 가능하다고 한다. &lt;br /&gt;
-구글링을 통해 확인하니, 노드에서 포드의 갯수가 증가할수록 kubelet, cAdvisor 등과 같은 K8s 에이전트에 오버헤드를 발생시키므로 110개 정도를 권장한다고 한다.
-그래서 그런지 &lt;a href=&quot;https://kubernetes.io/docs/reference/command-line-tools-reference/kubelet/&quot;&gt;kubelet docs&lt;/a&gt;에서도 아래와 같은 max-pods가 110을 기본값으로 가진다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nt&quot;&gt;--max-pods&lt;/span&gt; int32     Default: 110
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h2 id=&quot;eks-eni-max-pods&quot;&gt;EKS eni max pods&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/using-eni.html#AvailableIpPerENI&quot;&gt;IP addresses per network interface per instance type&lt;/a&gt;을 확인해보면 AWS의 인스턴스 타입별 ENI 개수를 파악할 수 있다.
-&lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/pod-networking.html&quot;&gt;EKS 설명서&lt;/a&gt;를 보면 다음과 같은 공식을 확인할 수 있다. &lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(# of network interfaces for the instance type × (# of IPv4 per network interface - 1)) + 2&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;ENI의 첫 번째 IP는 포드가 사용할 수 없으므로 1을 빼고 AWS CNI와 kube-proxy가 차지하는 2개의 IP를 마지막 수식에 더해 최종 사용 가능한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;max-pod&lt;/code&gt; 값을 알 수 있다. &lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;설명한 공식 이외에도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl&lt;/code&gt; 명령어를 통해 Maximum Pods를 파악할 수 있다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;❯ kubectl get nodes &lt;span class=&quot;nt&quot;&gt;-A&lt;/span&gt;
-NAME                                            STATUS   ROLES    AGE   VERSION
-ip-10-0-0-178.ap-northeast-2.compute.internal   Ready    &amp;lt;none&amp;gt;   18h   v1.19.6-eks-49a6c0
-ip-10-0-1-143.ap-northeast-2.compute.internal   Ready    &amp;lt;none&amp;gt;   18h   v1.19.6-eks-49a6c0
-❯ kubectl describe nodes ip-10-0-0-178.ap-northeast-2.compute.internal | &lt;span class=&quot;nb&quot;&gt;grep&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-i&lt;/span&gt; pods
-  pods:                        17
-  pods:                        17
-Non-terminated Pods:          &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;17 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;total&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;-labs-1&quot;&gt;👀 Labs 1&lt;/h3&gt;
-
-&lt;p&gt;kubectl의 명령어에서 노드(t3.medium)당 17개의 포드를 사용할 수 있다고 했는데, 직접 노드그룹 내에서 포드를 최대로 띄워 확인해보자. 노드그룹 내에 nginx 32개를 올려보았다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/maxPodsTest.png&quot; alt=&quot;EKSMaxPods&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;K9s 쉘을 통해 총 38개의 포드가 확인되었고 38개 중 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws-node&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coredns&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kube-proxy&lt;/code&gt;가 각각 2개의 노드에 위치하고 4개의 nginx 포드가 &lt;strong&gt;Pending&lt;/strong&gt; 상태라는 것을 파악했다.
-즉, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;38(Total) - 4(Pending) = 17(t3.medium Maximum Pods) * 2(# of Node)&lt;/code&gt; 실험 결과와 앞서 알아본 Maximum Pods가 동일하다.&lt;/p&gt;
-
-&lt;h2 id=&quot;maximum-pods-변경하기&quot;&gt;Maximum Pods 변경하기&lt;/h2&gt;
-
-&lt;p&gt;EKS에서 Maximum Pods를 결정 짓는 요소는 ENI다. 그러나 클러스터의 노드그룹을 생성할 때 kubelet의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;max-pods&lt;/code&gt; 값을 변경해 커스터마이징 할 수 있다. 
-&lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/cni-custom-network.html&quot;&gt;AWS Docs&lt;/a&gt;에서 다음과 같은 (불친절한?) 설명을 통해 ENI와 별개로 max-pods를 제어할 수 있는 힌트를 얻었다.
-&lt;img src=&quot;../../assets/built/images/post/bootstrapArg.png&quot; alt=&quot;max-pods.png&quot; /&gt;
-공식 문서에서 설명이 굉장히 빈약하지만, EKS에서 노드 그룹을 커스텀으로 생성할 때 &lt;strong&gt;Launch templates&lt;/strong&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;UserData&lt;/code&gt;를 아래와 같이 정의하면 Maximum Pods가 변경된다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;MIME-Version: 1.0
-Content-Type: multipart/mixed&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;boundary&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;==MYBOUNDARY==&quot;&lt;/span&gt;
-
-&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;MYBOUNDARY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;
-Content-Type: text/x-shellscript&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;charset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;us-ascii&quot;&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-/etc/eks/bootstrap.sh &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;Cluster Name&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--use-max-pods&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--kubelet-extra-args&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'--max-pods=10'&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;MYBOUNDARY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;GCP에서 Max Pods를 제어하는 방법 👈 Click! &lt;/summary&gt;
-
-  &lt;p&gt;&lt;a href=&quot;https://cloud.google.com/kubernetes-engine/docs/how-to/flexible-pod-cidr?hl=en#configuring_maximum_pods_per_node&quot;&gt;GCP에서는 클러스터를 생성할 때&lt;/a&gt;
-아래 명령어의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--default-max-pods-per-node&lt;/code&gt; 파라미터를 통해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;max-pods&lt;/code&gt;(👆 Build Up 단계에서 default 110 👆)를 조절할 수 있다.&lt;/p&gt;
-  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;gcloud container clusters create CLUSTER_NAME &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;c&quot;&gt;# 생략&lt;/span&gt;
-  &lt;span class=&quot;nt&quot;&gt;--default-max-pods-per-node&lt;/span&gt; MAXIMUM_PODS &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;c&quot;&gt;# 생략&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;-labs-2&quot;&gt;👀 Labs 2&lt;/h3&gt;
-
-&lt;p&gt;아래 사진의 왼쪽은 Labs 1의 Pure한 t3.medium, 오른쪽은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;max-pods&lt;/code&gt;를 지정한 Custom t3.medium이다. 콘솔화면에서 스펙은 같지만 할당된 포드의 수가 다르다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/max10pods.png&quot; alt=&quot;max-pods-10.png&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;result&quot;&gt;Result&lt;/h2&gt;
-
-&lt;p&gt;지금까지 다양한 방법을 통해 EKS에서 Maximum Pods를 파악하는 방법과 변경하는 방법 배웠다.
-AWS에서는 ENI라는 &lt;em&gt;가상 네트워크 카드를 나타내는 논리적 네트워크 구성 요소&lt;/em&gt; 덕분에 인스턴스 타입마다 생성될 수 있는 포드의 수가 달랐다.
-그 밖에도 GCP에 쿠버네티스의 설계 철학을 그대로 이어받아 kubelet의 max-pods 값이 동일하고 클러스터 생성 순간에도 max-pods 설정에 대한 자유도가 높다는 사실을 알 수 있었다.&lt;/p&gt;
-
-&lt;p&gt;어떠한 방법이 더 우위에 있는지 결론짓기 어렵지만, CSP의 쿠버네티스 max-pods 생성 원리를 파악하여 최적의 IP 할당에 도움이 되면 좋겠다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;EKS Series&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./EKSMaxPods&quot;&gt;Look into EKS max pods&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-        <category term="backend" />
-      
-
-      
-        <summary type="html">EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까?</summary>
       
 
       

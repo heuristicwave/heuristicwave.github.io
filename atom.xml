@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Terraform Tips 5 - Import</title>
+        
+          <description>&lt;p&gt;Terraform 더 익숙하게 5 - Import&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 23 Jul 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/TerraformTips5</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/TerraformTips5</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>ECS on EC2 Walkthrough</title>
         
           <description>&lt;p&gt;EC2 기반의 ECS를 다루기 위한 사소한 지식들 톱아보기!&lt;/p&gt;
