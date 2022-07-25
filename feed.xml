@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Mon, 25 Jul 2022 05:59:34 +0000</pubDate>
-        <lastBuildDate>Mon, 25 Jul 2022 05:59:34 +0000</lastBuildDate>
+        <pubDate>Mon, 25 Jul 2022 06:11:29 +0000</pubDate>
+        <lastBuildDate>Mon, 25 Jul 2022 06:11:29 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -254,28 +254,21 @@ ECS_LOGLEVEL=debug
 &lt;blockquote&gt;
   &lt;p&gt;💡 Container Size의 리소스 할당 파라미터는 각각 다음과 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker run&lt;/code&gt; 명령어 옵션에 매핑됩니다. &lt;br /&gt;
 &lt;strong&gt;cpu&lt;/strong&gt; : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--cpu-shares&lt;/code&gt;, &lt;strong&gt;memory&lt;/strong&gt; : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory&lt;/code&gt;(hard) / &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory-reservation&lt;/code&gt;(soft)
-&lt;br /&gt;&lt;br /&gt;
-💡 ECS on EC2에서는 Task Size와 Container Size 방식 중 선택 가능하지만, Fargate 방식에서 Task Size는 필수입니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;Hard 🆚 Soft&lt;/summary&gt;
-
-  &lt;p&gt;ECS의 Container Size를 조절하기 위해 Container definitions에서는 다음과 같은 방법으로 제어합니다.&lt;/p&gt;
+&lt;br /&gt;&lt;/p&gt;
   &lt;ul&gt;
     &lt;li&gt;CPU : Unit 단위, 1,024개의 CPU 유닛은 vCPU 1개&lt;/li&gt;
-    &lt;li&gt;Memory : Hard/Soft Limits
+    &lt;li&gt;Memory : Hard 🆚 Soft Limits
       &lt;ul&gt;
-        &lt;li&gt;Hard : Docker의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory&lt;/code&gt; 옵션에 해당하며, 명시한 값만큼 리소스 제약이 생깁니다.
-때문에 클러스터 인스턴스에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker stats&lt;/code&gt; 명령어를 조회하면 LIMIT 값이 &lt;strong&gt;Hard로 명시한 값&lt;/strong&gt;으로 표시됩니다.&lt;/li&gt;
-        &lt;li&gt;Soft : Docker의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--memory-reservation&lt;/code&gt; 옵션에 해당하며, 명시한 값이 클러스터 인스턴스에 예약됩니다.
-soft limit이므로 컨테이너 메모리 사용량이 명시한 값의 제한을 넘겨 사용 가능합니다.
-Hard와는 달리, 클러스터 인스턴스에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker stats&lt;/code&gt; 명령어를 조회하면 LIMIT 값이 &lt;strong&gt;클러스터 인스턴스의 총 자원&lt;/strong&gt;으로 표시됩니다&lt;/li&gt;
+        &lt;li&gt;Hard : 명시한 값만큼 리소스 제약이 생깁니다. 때문에 클러스터 인스턴스에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker stats&lt;/code&gt; 명령어를 조회하면 LIMIT 값이 &lt;strong&gt;Hard로 명시한 값&lt;/strong&gt;으로 표시됩니다.&lt;/li&gt;
+        &lt;li&gt;Soft : 명시한 값이 클러스터 인스턴스에 예약됩니다. Soft limit이므로 컨테이너 메모리 사용량이 명시한 값의 제한을 넘겨 사용 가능합니다.
+ Hard와는 달리, 클러스터 인스턴스에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;docker stats&lt;/code&gt; 명령어를 조회하면 LIMIT 값이 &lt;strong&gt;클러스터 인스턴스의 총 자원&lt;/strong&gt;으로 표시됩니다.&lt;/li&gt;
       &lt;/ul&gt;
     &lt;/li&gt;
   &lt;/ul&gt;
 
-&lt;/details&gt;
+  &lt;p&gt;&lt;br /&gt;
+💡 ECS on EC2에서는 Task Size와 Container Size 방식 중 선택 가능하지만, Fargate 방식에서 Task Size는 필수입니다.&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;🥇로 갈수록 더 상위 개념이며, Task Definitions에서는 🥈, 🥉을 활용해 리소스를 제어합니다.
 세밀한 제어를 하고 싶다면 🥈, 🥉을 모두 사용하여 제어할 수 있으나,
