@@ -262,23 +262,22 @@ ECS_LOGLEVEL=debug
 🥉 <strong>Container Size</strong> : Task Definitions의 Container 정의 부분에서 정의하는 Size <br /></p>
 
 <blockquote>
-  <p>💡 Container Size의 리소스 할당 파라미터는 각각 다음과 같은 <code class="language-plaintext highlighter-rouge">docker run</code> 명령어 옵션에 매핑됩니다. <br />
-<strong>cpu</strong> : <code class="language-plaintext highlighter-rouge">--cpu-shares</code>, <strong>memory</strong> : <code class="language-plaintext highlighter-rouge">--memory</code>(hard) / <code class="language-plaintext highlighter-rouge">--memory-reservation</code>(soft)
-<br /></p>
-  <ul>
-    <li>CPU : Unit 단위, 1,024개의 CPU 유닛은 vCPU 1개</li>
-    <li>Memory : Hard 🆚 Soft Limits
-      <ul>
-        <li>Hard : 명시한 값만큼 리소스 제약이 생깁니다. 때문에 클러스터 인스턴스에서 <code class="language-plaintext highlighter-rouge">docker stats</code> 명령어를 조회하면 LIMIT 값이 <strong>Hard로 명시한 값</strong>으로 표시됩니다.</li>
-        <li>Soft : 명시한 값이 클러스터 인스턴스에 예약됩니다. Soft limit이므로 컨테이너 메모리 사용량이 명시한 값의 제한을 넘겨 사용 가능합니다.
- Hard와는 달리, 클러스터 인스턴스에서 <code class="language-plaintext highlighter-rouge">docker stats</code> 명령어를 조회하면 LIMIT 값이 <strong>클러스터 인스턴스의 총 자원</strong>으로 표시됩니다.</li>
-      </ul>
-    </li>
-  </ul>
-
-  <p><br />
-💡 ECS on EC2에서는 Task Size와 Container Size 방식 중 선택 가능하지만, Fargate 방식에서 Task Size는 필수입니다.</p>
+  <p>💡 ECS on EC2에서는 Task Size와 Container Size 방식 중 선택 가능하지만, Fargate 방식에서 Task Size는 필수입니다.</p>
 </blockquote>
+
+<h3 id="container-definitions">Container definitions</h3>
+
+<p>Container Size의 리소스 할당 파라미터는 각각 다음과 같은 <code class="language-plaintext highlighter-rouge">docker run</code> 명령어 옵션에 매핑됩니다. <br />
+<strong>cpu</strong> : <code class="language-plaintext highlighter-rouge">--cpu-shares</code>, <strong>memory</strong> : <code class="language-plaintext highlighter-rouge">--memory</code>(hard) / <code class="language-plaintext highlighter-rouge">--memory-reservation</code>(soft)</p>
+
+<p><em>CPU : Unit 단위 (1,024개의 CPU 유닛은 vCPU 1개), Memory : Hard/Soft Limits</em> <br /></p>
+
+<p><strong>Hard 🆚 Soft</strong></p>
+<ul>
+  <li>Hard : 명시한 값만큼 리소스 제약이 생깁니다. 때문에 클러스터 인스턴스에서 <code class="language-plaintext highlighter-rouge">docker stats</code> 명령어를 조회하면 LIMIT 값이 <strong>Hard로 명시한 값</strong>으로 표시됩니다.</li>
+  <li>Soft : 명시한 값이 클러스터 인스턴스에 예약됩니다. Soft limit이므로 컨테이너 메모리 사용량이 명시한 값의 제한을 넘겨 사용 가능합니다.
+Hard와 달리, 클러스터 인스턴스에서 <code class="language-plaintext highlighter-rouge">docker stats</code> 명령어를 조회하면 LIMIT 값이 <strong>클러스터 인스턴스의 총 자원</strong>으로 표시됩니다.</li>
+</ul>
 
 <p>🥇로 갈수록 더 상위 개념이며, Task Definitions에서는 🥈, 🥉을 활용해 리소스를 제어합니다.
 세밀한 제어를 하고 싶다면 🥈, 🥉을 모두 사용하여 제어할 수 있으나,
