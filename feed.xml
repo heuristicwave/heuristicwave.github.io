@@ -5,9 +5,239 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 14 Aug 2022 13:42:49 +0000</pubDate>
-        <lastBuildDate>Sun, 14 Aug 2022 13:42:49 +0000</lastBuildDate>
+        <pubDate>Mon, 15 Aug 2022 12:30:20 +0000</pubDate>
+        <lastBuildDate>Mon, 15 Aug 2022 12:30:20 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
+        
+            <item>
+                <title>Declarative vs Imperative in Kubernetes</title>
+                <description>&lt;p&gt;Kubernetes Object Management에서 발견한 명령형/선언형 방식&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;Kubernetes의 리소스들을 제어하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl&lt;/code&gt; 명령어를 다루다 보니,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;replace&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; 등과 같이 비슷하게 동작하는 명령어들에 대해서 어떤 차이가 있는지 궁금증이 생겼습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;help&lt;/code&gt; 명령어를 사용하면 각각 다음과 같이 동작한다는 정보를 얻을 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;apply : Apply a configuration to a resource by file name or stdin &lt;br /&gt;
+create : Create a resource from a file or from stdin&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;해당 설명으로는 궁금증이 말끔히 해소되지 않아 공식 문서를 읽다, 
+&lt;a href=&quot;https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/&quot;&gt;Kubernetes Object Management&lt;/a&gt;를 통해 머리를 스치는 깨달음을 얻었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;kubernetes-object-management&quot;&gt;Kubernetes Object Management&lt;/h2&gt;
+
+&lt;p&gt;문서의 첫 부분은 쿠버네티스 객체를 관리하는 기법으로 다음 3가지 기법을 소개합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Imperative commands&lt;/li&gt;
+  &lt;li&gt;Imperative object configuration&lt;/li&gt;
+  &lt;li&gt;Declarative object configuration&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Imperative(명령형, 절차형), Declarative(선언형)의 개념은 단어 뜻에서도 알 수 있지만, 제가 기존에 숙지하고 있던 개념을 먼저 기술하고 쿠버네티스에서는 어떻게 다른지 적어보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;declarative-vs-imperative&quot;&gt;Declarative vs Imperative&lt;/h3&gt;
+
+&lt;p&gt;Declarative vs Imperative 개념은 프로그래밍에서도 종종 보이지만, AWS 인프라 구축에 빗대 표현해 보겠습니다.
+왼쪽 현재(Current) 상태를 원하는(Desired) 상태로 만들어야 하는 상황을 가정하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/current&amp;amp;desired.png&quot; alt=&quot;CurrentAndDesired&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;여기서 &lt;strong&gt;Imperative&lt;/strong&gt;하게 구성한다면 AWS CLI와 같은 도구를 통해서 다음 &lt;strong&gt;순서&lt;/strong&gt;로 Desired State를 만듭니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;em&gt;웹 서버 2개 추가&lt;/em&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;Rule 추가&lt;/em&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;em&gt;권한 부여&lt;/em&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;반면 &lt;strong&gt;Declarative&lt;/strong&gt;하게 구성한다면 Terraform과 같은 &lt;strong&gt;선언적&lt;/strong&gt; 성격을 가진 도구 다음과 같이 구성합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;웹 서버 3대, Rule, 권한 구성&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;Terraform에서는 Desired State를 코드로 작성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tf&lt;/code&gt; 형식의 파일을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt;하여 &lt;strong&gt;Declarative&lt;/strong&gt;하게 인프라를 다룹니다.
+이제 기존에 제가 제대로 알고 있지 않았던 “Kubernetes에서는 Desired State를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YAML&lt;/code&gt; 형식의 파일을 활용해 &lt;strong&gt;Declarative&lt;/strong&gt;하게 인프라를 다룬다.”
+라는 반쪽짜리 정답에 대하여 알아보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;imperative-commands&quot;&gt;Imperative commands&lt;/h3&gt;
+
+&lt;p&gt;공식 문서의 명령형 명령의 사용법은 다음과 같은 예시와, 해당 방법은 이전 &lt;strong&gt;history를 제공하지 않으므로 일회성 작업&lt;/strong&gt;에만 추천한다고 기재되어 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create deployment nginx &lt;span class=&quot;nt&quot;&gt;--image&lt;/span&gt; nginx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;해당 방법은 명령어 한 줄로 리소스를 생성할 수 있어 비교적 간편한 방법이지만, history를 제공하지 않는 점이 단점이라는 이유는 다른 방법들을 소개한 다음 설명하겠습니다. 😒&lt;/p&gt;
+
+&lt;h3 id=&quot;imperative-object-configuration&quot;&gt;Imperative object configuration&lt;/h3&gt;
+
+&lt;p&gt;명령형 오브젝트 구성 방법 kubectl 명령어와 create, replace 등과 같은 명령과 옵션 플래그 및 파일 이름이 필요합니다.
+파일 이름 YAML 혹은 JSON 형식의 오브젝트에 대한 정의를 포함하고 있어야 합니다.&lt;/p&gt;
+
+&lt;p&gt;명령어와 파일을 활용해 리소스를 Create/Delete/Update 하는 방법&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl create &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; nginx.yaml
+kubectl delete &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; nginx.yaml
+kubectl replace &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; nginx.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;해당 방법은 Imperative Command 방식과 비교하여, YAML 파일을 활용하기 때문에 형상 관리가 가능한 이점이 생겼습니다.
+그렇지만 직접 YAML 파일을 작성해야 하는 추가적인 단계가 발생했습니다.&lt;/p&gt;
+
+&lt;p&gt;여기서 저는 의문이 들었습니다. Terraform의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tf&lt;/code&gt;과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YAML&lt;/code&gt; 파일로 Desired 상태를 만드는 방법이 왜 &lt;strong&gt;명령형&lt;/strong&gt; 오브젝트 구성 방법인지.
+이 떡밥도 마지막 방법을 소개한 이후 회수하도록 하겠습니다. 🤫&lt;/p&gt;
+
+&lt;h3 id=&quot;declarative-object-configuration&quot;&gt;Declarative object configuration&lt;/h3&gt;
+
+&lt;p&gt;공식문서에서는 해당 기법을 설명하기 위해 아래와 같은 쉽게 이해되지 않는 설명이 기재되어 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;When using declarative object configuration, a user operates on object configuration files stored locally,
+however the user does not define the operations to be taken on the files.
+Create, update, and delete operations are automatically detected per-object by kubectl.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;declarative object configuration 방식을 사용할 때, 사용자는 로컬에 저장된 개체 구성 파일에 대해 작업하지만,
+사용자는 파일에 대한 작업들을 정의하지는 않는다. Create, update, and delete 작업들은 객체별로 자동으로 감지된다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;즉, Imperative object configuration 방식에서는 사용자가 Create, Update, Delete를 명령어로 결정했습니다. (사용자의 판단)
+Declarative object configuration 방식에서는 오로지 구성 파일에서 정의한 대로 삭제 혹은 생성 등이 작동합니다. (정의한 대로 작동)&lt;/p&gt;
+
+&lt;p&gt;Declarative object configuration 방식은 configuration 파일이 위치한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/config&lt;/code&gt; 디렉토리에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;diff&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; 명령어로 작동시킵니다.
+구성 파일이 여러 개라면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-R&lt;/code&gt; 옵션을 함께 넣어줍니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl diff &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; configs/    // 정의한 config 적용에 대한 결과 예상
+kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; configs/   // 정의한 config 적용
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;diff&lt;/code&gt;는 마치 테라폼의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt;과 같은 역할을, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; 테라폼의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt;처럼 동작합니다 :) &lt;br /&gt;
+여담으로 저는 과거 테라폼관련 포스팅 당시 apply 하기 전, plan 명령어의 중요성을 여러 번 강조했었는데,
+정작 저는 kubernetes manifest 파일들을 적용할 때, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--dry-run&lt;/code&gt; 옵션만으로 리소스가 현재 상태에 미치는 영향을 판단하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;diff&lt;/code&gt;를 적극적으로 사용하지 않았던 모습이 부끄럽습니다. 😣&lt;/p&gt;
+
+&lt;p&gt;추가적으로 Imperative object configuration 방식과 Declarative object configuration 방식을 혼용하여 사용하는 예시를 통해,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt;와 반대되는 명령어가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delete&lt;/code&gt;가 아닌 이유를 생각해 보며 다음 Annotations 차례로 넘어가겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; nginx.yaml   // Declarative object configuration 방식으로 리소스 생성
+kubectl delete &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; nginx.yaml  // Imperative object configuration 방식으로 리소스 삭제
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;annotations&quot;&gt;Annotations&lt;/h2&gt;
+
+&lt;p&gt;위 3가지 방식을 설명하면서 공식 문서에 기재된 각 방식의 Trade-offs에 대한 내용들을 대부분 생략했습니다.
+상태에 대한 기록을 설명하지 않았기 때문이죠. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl apply&lt;/code&gt;는 이전의 호출 이후 &lt;strong&gt;구성의 변경 사항을 판별&lt;/strong&gt;하기 위해 리소스에 어노테이션을 첨부합니다.
+이를 통해, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Declarative object configuration&lt;/code&gt; 방식은 History를 기록하며 Audit도 가능하게 되었습니다.&lt;/p&gt;
+
+&lt;p&gt;해당 어노테이션은 쿠버네티스 오브젝트 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;metadata&lt;/code&gt; 하위 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;annotations&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl.kubernetes.io/last-applied-configuration&lt;/code&gt; 이름으로 현재 리소스에 적용된 config 값들이 저장되어 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; 명령어로 생성한 리소스를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl get {Type} {Name} -o yaml&lt;/code&gt; 명령어로 조회하면 어떤 값이 적용되었는지 조회 가능합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;-lab&quot;&gt;🧑‍🔬 Lab&lt;/h3&gt;
+
+&lt;p&gt;앞서 설명한 object configuration 방식들을 직접 체험할 수 있도록 예제 코드를 작성해 두었습니다.
+아래 실험용 Manifest 파일들을 생성하고 다음 명령어로 어노테이션을 조회해보세요. &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kubectl get deploy nginx-declarative -o yaml | grep &quot;annotations&quot;&lt;/code&gt;&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🪜 Imperative object configuration&lt;/summary&gt;
+  &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; nginx_imperative.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-imperative
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-imperative
+  template:
+    metadata:
+      labels:
+        app: nginx-imperative
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-imperative
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;kubectl create &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; nginx_imperative.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;📣 Declarative object configuration&lt;/summary&gt;
+  &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; nginx_declarative.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: nginx-declarative
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: nginx-declarative
+  template:
+    metadata:
+      labels:
+        app: nginx-declarative
+    spec:
+      containers:
+      - image: nginx
+        name: nginx-declarative
+&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
+&lt;/span&gt;kubectl apply &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; nginx_declarative.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
+
+&lt;h3 id=&quot;-오답-노트&quot;&gt;🖍 오답 노트&lt;/h3&gt;
+
+&lt;p&gt;이제 떡밥 회수 겸, 기존에 제가 제대로 알고 있지 않았던 “Kubernetes에서는 Desired State를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YAML&lt;/code&gt; 형식의 파일을 활용해 &lt;strong&gt;Declarative&lt;/strong&gt;하게 인프라를 다룬다.”
+라는 반쪽짜리 정답에 대하여 오답노트를 적어보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;Declarative 도구인 Terraform은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tf&lt;/code&gt;에 상태를 &lt;strong&gt;정의함과 동시&lt;/strong&gt;에 apply 이후 자동으로 생성되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt; 파일에 &lt;strong&gt;현재 상태가 함께 기록&lt;/strong&gt;됩니다.
+Kubernetes에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;YAML&lt;/code&gt;로 정의하지만, 적용된 config 정보가 포함되지 않은 방법은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Imperative object configuration&lt;/code&gt; 방식입니다.
+이제서야 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; command를 사용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;last-applied-configuration&lt;/code&gt; 가 함께 기록되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Declarative object configuration&lt;/code&gt; 방식을 제대로 이해한 것 같습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;글을 마치며 주저리주저리 떠오른 생각들을 적어보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;저는 매번 블로그 포스팅 소재를 고민합니다. 실제로 10개의 포스팅 아이디어가 떠오르지만, 블로그 글로 탄생하는것은 1~2개 뿐입니다.
+실제로 뭔가 트러블 슈팅에 대한 글을 작성하려고 해도, 나중에 공식문서를 보니 더 잘 작성된 것 같은 느낌을 종종 받습니다.
+또한 애초에 문서를 제대로 읽었다면, 해당 이슈를 만나지 않았을 것만 같아 업로드를 포기하는 글이 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;이런 고민이 너무 길어져 주기적인 업로딩이 늦어지는 점은 명확한 단점인 것 같습니다. (아 물론! 매일 현실과 타협하여 미루다보니 늦어지는게 가장 큰 이유겠지만요)&lt;/p&gt;
+
+&lt;p&gt;그래서 이번에는 기술블로그를 2주에 1편을 쓰자는 약속을 지키기 위해서… &lt;a href=&quot;https://kubernetes.io/docs/concepts/overview/working-with-objects/object-management/&quot;&gt;Kubernetes Object Management&lt;/a&gt;를 해설과 동시에,
+이번 포스팅은 제가 공식문서를 어떻게 읽는지 읽으면서 어떤 생각을 하는지에 대한 사고의 흐름을 담으며 이해하는 과정을 담았습니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sun, 14 Aug 2022 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//DeclarativeVSImperativeinK8s</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//DeclarativeVSImperativeinK8s</guid>
+                
+                <category>devops</category>
+                
+                <category>container</category>
+                
+                
+            </item>
         
             <item>
                 <title>Terraform Tips 5 - Import</title>
@@ -1356,188 +1586,6 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
                 <category>aws</category>
                 
                 <category>devops</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>Terraform Tips 2 - Data &amp; Index</title>
-                <description>&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index &lt;br /&gt;
-AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. &lt;strong&gt;Terraform Data&lt;/strong&gt;를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
-모든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;공식문서(&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;)에서도 Data 활용방법을 배울 수 있지만,
-이번 포스팅에서는 3가지 예제와 함께 리소스를 Query 하는 방법을 배워 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;query-ami&quot;&gt;Query AMI&lt;/h2&gt;
-
-&lt;p&gt;AWS의 최신 AMI는 주기적으로 갱신됩니다. 따라서 재사용 가능한 코드를 작성하기 위해, 항상 최신 AMI를 참조하는 코드를 작성하는데 다음과 같은 방법을 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-
-  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amzn2-ami-kernel-*-hvm-*-x86_64-gp2&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-output &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_ami.amazon_linux.id
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위와 같은 방법으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS의 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;ECS와 달리 EKS는 AMI 명명 규칙이 약간 달라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt; 기능을 활용해야, 조건에 맞는 Optimized 이미지를 얻을 수 있습니다.
-EKS 이미지의 경우 모든 이미지의 첫 문자열이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-&lt;/code&gt;으로 시작하기 때문에, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt;를 함께 넣어 Optimized AMI를 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux_eks&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-
-  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon-eks-*&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;architecture&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;x86_64&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;그러나 위 Query의 결과 값을 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html&quot;&gt;공식 문서&lt;/a&gt;에 기재된 AMI ID와 비교해 보면,
-&lt;strong&gt;x86&lt;/strong&gt; ID가 아닌, &lt;strong&gt;x86 가속&lt;/strong&gt; ID 값과 일치한 다는 것을 알 수 있을 겁니다.
-문서에 기재된 &lt;strong&gt;x86 가속&lt;/strong&gt;은 gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-gpu&lt;/code&gt;로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.&lt;/p&gt;
-
-&lt;p&gt;그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 🧐 어느 문서에도 기재되어 있지 않지만,
-대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;values = [“amazon-eks-node-1.22-*”]&lt;/p&gt;
-
-  &lt;p&gt;value 값의 &lt;em&gt;prefix&lt;/em&gt; 규칙을 보니 EKS의 버전도 &lt;em&gt;prefix&lt;/em&gt; 안에 포함되어, &lt;br /&gt;
-이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있다는 것을 추측 할 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이외에도 리전마다 다른 Optimized AMI는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt;에는 명시하지 않았지만, &lt;strong&gt;Provider에 명시한 리전에 종속성&lt;/strong&gt;을 갖게 됩니다.
-또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!&lt;/p&gt;
-
-&lt;p&gt;여기까지 제가 자주 사용하는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎&lt;/p&gt;
-
-&lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
-
-&lt;p&gt;AWS의 리전마다 사용가능한 az가 다르기 때문에, 조금 더 유연한 코드를 작성하기 위해 다음 코드를 사용해 사용가능한 az를 검색합니다.
-이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data.&amp;lt;NAME&amp;gt;.&amp;lt;ATTRIBUTE&amp;gt;.names&lt;/code&gt; 로 사용가능한 az 값들을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_availability_zones&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  state &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;output &lt;span class=&quot;s2&quot;&gt;&quot;azs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
- value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_availability_zones.available.names
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names&lt;/code&gt;에는 사용가능한 az가 배열 형태로 들어가 있어, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[0]&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[1]&lt;/code&gt;과 같이 Index 값으로 특정 값을 지정할 수 있습니다.
-그러나, 모든 data가 Index 값을 가지고 있는 것은 아닙니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;query-vpc_id&quot;&gt;Query vpc_id&lt;/h2&gt;
-
-&lt;p&gt;다른 리소스와 AWS 솔루션들을 연계하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt; 값이 필수적으로 들어갑니다.
-vpc의 id를 구하기 위해서는 다음과 같은 방법으로 id를 조회할 수 있습니다.
-(tags 값을 활용해 일종의 필터링을 사용할 수도 있습니다.)&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpcs&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vpcs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    tags &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        Name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.vpc_name
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-output &lt;span class=&quot;s2&quot;&gt;&quot;vpc_id&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpcs.vpcs.ids
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위 코드로 다음과 같이 Output 값을 얻을 수 있지만, 하나의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt; 값을 얻을때와 동일한 방식으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ids[0]&lt;/code&gt; 형식으로 값을 조회하려 하면,
-“This value does not have any indices.” 라는 에러 메시지와 함께 출력을 지원하지 않습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Changes to Outputs:
-  + vpc_id &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-      + &lt;span class=&quot;s2&quot;&gt;&quot;vpc-0x1234567890&quot;&lt;/span&gt;,
-    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;도대체 무엇이 잘못된 것일까요? az와 동일한 방법으로 접근했지만, 왜 지원하지 않는지는 아직까지도 모르겠습니다…
-누구 아시는 분이 있다면 알려주세요.&lt;/p&gt;
-
-&lt;h3 id=&quot;count로-index-부여하기&quot;&gt;count로 index 부여하기&lt;/h3&gt;
-
-&lt;p&gt;위 문제를 해결하기 위해서는 az를 검색할 때보다는 불편하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 사용해 해결할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;target&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; tolist&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)[&lt;/span&gt;count.index]
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# sample code using vpc_id&lt;/span&gt;
-resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sample_resource&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;c&quot;&gt;# Skip Config&lt;/span&gt;
-  vpc_id      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpc.target[count.index].id
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpcs&lt;/code&gt;가 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpc&lt;/code&gt;를 추가하고 index 를 부여하기 위한 내장 함수들을 사용해 index를 부여합니다.
-이후, 리소스에서 data 값들을 식별하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 기입하고 위와 같이 index 값으로 조회가 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt;와 같이 별도의 index 과정 없이,
-간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)&lt;/p&gt;
-
-&lt;p&gt;지금까지 테라폼 더 익숙하게 Data &amp;amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Sun, 02 Jan 2022 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//TerraformTips2</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//TerraformTips2</guid>
-                
-                <category>devops</category>
-                
-                <category>terraform</category>
                 
                 
             </item>
