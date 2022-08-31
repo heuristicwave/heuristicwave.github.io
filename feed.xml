@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 31 Aug 2022 07:19:20 +0000</pubDate>
-        <lastBuildDate>Wed, 31 Aug 2022 07:19:20 +0000</lastBuildDate>
+        <pubDate>Wed, 31 Aug 2022 09:02:49 +0000</pubDate>
+        <lastBuildDate>Wed, 31 Aug 2022 09:02:49 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -353,9 +353,9 @@
                 <link>https://heuristicwave.github.io//GoLangInterface</link>
                 <guid isPermaLink="true">https://heuristicwave.github.io//GoLangInterface</guid>
                 
-                <category>devops</category>
+                <category>backend</category>
                 
-                <category>container</category>
+                <category>programming</category>
                 
                 
             </item>
