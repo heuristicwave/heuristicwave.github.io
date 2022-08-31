@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>GO Lang Interface</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- Custom.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- webfont -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/nanumgothic.css">
+
+    <!-- syntax.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Careful Writer" />
+    <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
+    <link rel="canonical" href="https://heuristicwave.github.io/GoLangInterface" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Heuristic Wave Blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="GO Lang Interface" />
+    <meta property="og:description" content="Explain the “interface” and “abstraction” of the go language. Intro 해당 포스팅은 Tucker의 Go 언어 프로그래밍 20장 인터페이스를 읽고 정리한 내용임을 알립니다. 8월은 31일이고 해당 도서도 31개의 Chapter로 구성되어 있어, 하루에 1장씩 공부하면 Go 언어를 익힐 수 있을 것 같다는 호기로운 생각이 인터페이스를 만나고 나서 사라졌습니다. 이렇게라도 하지 않으면 올해도" />
+    <meta property="og:url" content="https://heuristicwave.github.io/GoLangInterface" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/Go-Logo_Blue.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/" />
+    <meta property="article:author" content="https://www.facebook.com/" />
+    <meta property="article:published_time" content="2022-08-29T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-08-29T00:00:00+00:00" />
+    <meta property="article:tag" content="Devops" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="GO Lang Interface" />
+    <meta name="twitter:description" content="Explain the “interface” and “abstraction” of the go language. Intro 해당 포스팅은 Tucker의 Go 언어 프로그래밍 20장 인터페이스를 읽고 정리한 내용임을 알립니다. 8월은 31일이고 해당 도서도 31개의 Chapter로 구성되어 있어, 하루에 1장씩 공부하면 Go 언어를 익힐 수 있을 것 같다는 호기로운 생각이 인터페이스를 만나고 나서 사라졌습니다. 이렇게라도 하지 않으면 올해도" />
+    <meta name="twitter:url" content="https://heuristicwave.github.io/" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/Go-Logo_Blue.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Heuristic Wave Blog" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:site" content="@" />
+    <meta name="twitter:creator" content="@" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Heuristic Wave Blog",
+        "logo": "https://heuristicwave.github.io/"
+    },
+    "url": "https://heuristicwave.github.io/GoLangInterface",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/Go-Logo_Blue.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://heuristicwave.github.io/GoLangInterface"
+    },
+    "description": "Explain the “interface” and “abstraction” of the go language. Intro 해당 포스팅은 Tucker의 Go 언어 프로그래밍 20장 인터페이스를 읽고 정리한 내용임을 알립니다. 8월은 31일이고 해당 도서도 31개의 Chapter로 구성되어 있어, 하루에 1장씩 공부하면 Go 언어를 익힐 수 있을 것 같다는 호기로운 생각이 인터페이스를 만나고 나서 사라졌습니다. 이렇게라도 하지 않으면 올해도"
+}
+    </script>
+    <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FTXSPJZFY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0FTXSPJZFY');
+    </script>
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="GO Lang Interface" href="https://heuristicwave.github.io/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://heuristicwave.github.io/">Heuristic Wave Blog</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-extracurricular" role="menuitem"><a href="/tag/extracurricular/">Extracurricular</a></li>
+    <li class="nav-devops" role="menuitem"><a href="/tag/devops/">DevOps</a></li>
+    <li class="nav-aws" role="menuitem"><a href="/tag/aws/">AWS</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/backend/">Back-end</a></li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/archive">All Posts</a>
+    </li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/author_archive.html">Tag별 Posts</a>
+    </li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+        </div>
+        
+            <a class="subscribe-button" href="#subscribe">Search</a>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-devops tag-container post tag-devops ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="29 August 2022">29 August 2022</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/devops/'>DEVOPS</a>,
+                            
+                        
+                            
+                               <a href='/tag/container/'>CONTAINER</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">GO Lang Interface</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/Go-Logo_Blue.png)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>Explain the “interface” and “abstraction” of the go language.</p>
+
+<p><br /></p>
+
+<h2 id="intro">Intro</h2>
+
+<p>해당 포스팅은 <a href="http://www.yes24.com/Product/Goods/99108736">Tucker의 Go 언어 프로그래밍</a> 20장 인터페이스를 읽고 정리한 내용임을 알립니다.
+8월은 31일이고 해당 도서도 31개의 Chapter로 구성되어 있어, <em>하루에 1장씩 공부하면 Go 언어를 익힐 수 있을 것 같다는 호기로운 생각</em>이 인터페이스를 만나고 나서 사라졌습니다.
+이렇게라도 하지 않으면 올해도 Go 언어 공부를 미룰 것 같아 작성하게 되었습니다. 😵‍💫</p>
+
+<p><br /></p>
+
+<h2 id="interface">Interface</h2>
+
+<p>인터페이스란 구현을 포함하지 않은 메서드 집합입니다. 구현을 포함하지 않았으므로 인터페이스는 구체화된 타입이 아닙니다. 즉, 추상화된 객체로 상호작용하기 위해 인터페이스를 사용합니다.</p>
+
+<p><strong>선언 방법</strong></p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span><span class="p">(</span><span class="n">타입</span> <span class="n">선언</span><span class="p">)</span> <span class="n">DuckInterface</span><span class="p">(</span><span class="n">인터페이스</span> <span class="n">명</span><span class="p">)</span> <span class="k">interface</span><span class="p">(</span><span class="n">인터페이스</span> <span class="n">키워드</span><span class="p">)</span> <span class="p">{</span>
+    <span class="c">// 메서드 집합</span>
+    <span class="n">Fly</span><span class="p">()</span>
+    <span class="n">Walk</span><span class="p">(</span><span class="n">distance</span> <span class="kt">int</span><span class="p">)</span> <span class="kt">int</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>내부에 선언된 메서드는 반드시 메서드명(<code class="language-plaintext highlighter-rouge">_(x int)</code> 형태 불가)이 있어야 하며, 이름이 같은 메서드는 함께 있을 수 없습니다.</p>
+
+<h3 id="왜-사용할까">왜 사용할까?</h3>
+
+<p>예제를 통해 구체화된 객체가 아닌 인터페이스를 사용함으로써, 프로그램의 변경 요청에 유연하게 대응할 수 있는 방법에 대하여 알아보겠습니다.</p>
+
+<p>Fedex에서 아래와 같은 패키지 코드를 제공한다고 가정하겠습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">fedex</span>
+<span class="k">import</span> <span class="s">"fmt"</span>
+
+<span class="k">type</span> <span class="n">FedexSender</span> <span class="k">struct</span> <span class="p">{}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">FedexSender</span><span class="p">)</span> <span class="n">Send</span><span class="p">(</span><span class="n">parcel</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Fedex sends"</span> <span class="o">%</span><span class="n">v</span><span class="p">,</span> <span class="n">parcel</span><span class="err">\</span><span class="n">n</span><span class="s">", parcel)
+}
+</span></code></pre></div></div>
+
+<p>Fedex가 제공한 패키지를 이용해 상품 배송 기능을 만든다면 다음과 같습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="s">"github.com/tuckersGo/musthaveGo/ch20/fedex"</span>
+
+<span class="k">func</span> <span class="n">SendBook</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">,</span> <span class="n">sender</span> <span class="o">*</span><span class="n">fedex</span><span class="o">.</span><span class="n">FedexSender</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sender</span><span class="o">.</span><span class="n">Send</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">sender</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">fedex</span><span class="o">.</span><span class="n">FedexSender</span><span class="p">{}</span>
+    <span class="n">SendBook</span><span class="p">(</span><span class="s">"Mastering Go"</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+    <span class="n">SendBook</span><span class="p">(</span><span class="s">"Mastering Rust"</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>여기서 한국의 우체국이 Fedex의 패키지를 활용해 아래 코드를 작성했다고 가정하겠습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="s">"github.com/tuckersGo/musthaveGo/ch20/koreaPost"</span>
+<span class="k">import</span> <span class="s">"github.com/tuckersGo/musthaveGo/ch20/fedex"</span>
+
+<span class="k">func</span> <span class="n">SendBook</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">,</span> <span class="n">sender</span> <span class="o">*</span><span class="n">fedex</span><span class="o">.</span><span class="n">FedexSender</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">sender</span><span class="o">.</span><span class="n">Send</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">sender</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">koreaPost</span><span class="o">.</span><span class="n">PostSender</span><span class="p">{}</span>
+    <span class="n">SendBook</span><span class="p">(</span><span class="s">"Mastering Go"</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+    <span class="n">SendBook</span><span class="p">(</span><span class="s">"Mastering Rust"</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>해당 코드를 빌드 하면, 우체국과 Fedex의 타입이 달라 다음과 같은 에러를 발생시킵니다. <code class="language-plaintext highlighter-rouge">cannot use sender (variable of type *koreaPost.PostSender) as type *fedex.FedexSender in argument to SendBook</code></p>
+
+<h3 id="인터페이스로-추상화-계층-만들기">인터페이스로 추상화 계층 만들기</h3>
+
+<p>Fedex 패키지를 오류 없이 사용하기 위해서는 <code class="language-plaintext highlighter-rouge">&amp;fedex.FedexSender{}</code>와 같이 fedex 패키지의 타입과 동일하게 코드를 작성해야 합니다.
+그러나 이런 방법은 Fedex 패키지에 의존성이 존재할뿐더러 관리 측면에서도 유연하지 못한 방법이므로, 인터페이스를 사용해 해당 문제를 해결해 보겠습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Sender</span> <span class="k">interface</span> <span class="p">{</span>
+    <span class="n">Send</span><span class="p">(</span><span class="n">parcel</span> <span class="kt">string</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>우선, <code class="language-plaintext highlighter-rouge">Send()</code> 메서드만 포함하는 인터페이스를 작성해 한국의 우체국 코드에 포함합니다.
+이어서 <code class="language-plaintext highlighter-rouge">SendBook()</code> 함수의 인수 <code class="language-plaintext highlighter-rouge">*fedex.FedexSender</code>를 Sender 인터페이스로 입력받을 수 있도록 코드를 수정하면,
+기존의 <code class="language-plaintext highlighter-rouge">SendBook()</code> 함수는 Sender의 인수가 Fedex 인지, UPS 인지 <strong>어떤 타입이든지 상관없이</strong> 받아들이는 유연한 코드가 됩니다.</p>
+
+<details>
+  <summary>👀 Interface를 적용한 코드 보기</summary>
+
+  <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+  <span class="s">"github.com/tuckersGo/musthaveGo/ch20/koreaPost"</span>
+<span class="p">)</span>
+
+<span class="k">type</span> <span class="n">Sender</span> <span class="k">interface</span> <span class="p">{</span>
+  <span class="n">Send</span><span class="p">(</span><span class="n">parcel</span> <span class="kt">string</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">SendBook</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">,</span> <span class="n">sender</span> <span class="n">Sender</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">sender</span><span class="o">.</span><span class="n">Send</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">sender</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">koreaPost</span><span class="o">.</span><span class="n">PostSender</span><span class="p">{}</span>
+  <span class="n">SendBook</span><span class="p">(</span><span class="s">"Mastering Go"</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+  <span class="n">SendBook</span><span class="p">(</span><span class="s">"Mastering Rust"</span><span class="p">,</span> <span class="n">sender</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+
+</details>
+
+<p>이처럼 Sender 인터페이스 정의 시 인터페이스 구현 여부를 명시적으로 드러내지 않고 메서드 포함 여부로만 결정하는 방식을 <strong>duck typing</strong>이라고 합니다.
+덕 타이핑을 통해 내부 동작을 감춰 서비스 제공자(Fedex)와 사용자(우체국) 모두 자유도가 높아졌는데, 이런 방식을 <strong>추상화(abstraction)</strong>라고 합니다.
+즉, 인터페이스는 추상화를 제공하는 <strong>추상화 계층(abstraction layer)</strong>이며, 기존의 의존 관계를 끊는 <strong>디커플링(decoupling)</strong>을 가능하게 해줍니다.</p>
+
+<p><br /></p>
+
+<h2 id="인터페이스-기능">인터페이스 기능</h2>
+
+<p>지금까지 인터페이스의 기본 기능을 알아보았다면, 이제부터는 아래 3가지 기능에 대해 알아보겠습니다.</p>
+
+<ul>
+  <li>인터페이스를 포함하는 인터페이스</li>
+  <li>비어있는 인터페이스</li>
+  <li>인터페이스 기본값 nil</li>
+</ul>
+
+<h3 id="embedding-interface">Embedding Interface</h3>
+
+<p>구조체에서 다른 구조체를 포함된 필드로 가질 수 있듯이 인터페이스도 다른 인터페이스를 포함할 수 있습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">type</span> <span class="n">Reader</span> <span class="k">interface</span> <span class="p">{</span>
+    <span class="n">Read</span><span class="p">()</span> <span class="p">(</span><span class="n">n</span> <span class="kt">int</span><span class="p">,</span> <span class="n">err</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="n">Close</span><span class="p">()</span> <span class="kt">error</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Writer</span> <span class="k">interface</span> <span class="p">{</span>
+    <span class="n">Write</span><span class="p">()</span> <span class="p">(</span><span class="n">n</span> <span class="kt">int</span><span class="p">,</span> <span class="n">err</span> <span class="kt">error</span><span class="p">)</span>
+    <span class="n">Close</span><span class="p">()</span> <span class="kt">error</span>
+<span class="p">}</span>
+
+<span class="c">// 2개의 인터페이스의 합쳐지면서, 같은 메서드 형식의 Close() error가 하나 메서드만 포합됩니다.</span>
+<span class="k">type</span> <span class="n">ReadWriter</span> <span class="k">interface</span> <span class="p">{</span>
+    <span class="n">Reader</span>
+    <span class="n">Writer</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>위 인터페이스는 아래 각각의 타입에 따라, 사용할 수 있는 인터페이스가 다음과 같이 달라집니다.</p>
+
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">Read()</code>, <code class="language-plaintext highlighter-rouge">Write()</code>, <code class="language-plaintext highlighter-rouge">Close()</code> 메서드를 포함한 타입 : <code class="language-plaintext highlighter-rouge">Reader/Writer/ReadWriter</code> 모두 사용 가능</li>
+  <li><code class="language-plaintext highlighter-rouge">Read()</code>, <code class="language-plaintext highlighter-rouge">Close()</code> 메서드를 포함한 타입 : <code class="language-plaintext highlighter-rouge">Reader</code> 만 사용 가능</li>
+  <li><code class="language-plaintext highlighter-rouge">Write()</code>, <code class="language-plaintext highlighter-rouge">Close()</code> 메서드를 포함한 타입 : <code class="language-plaintext highlighter-rouge">Writer</code> 만 사용 가능</li>
+  <li><code class="language-plaintext highlighter-rouge">Read()</code>, <code class="language-plaintext highlighter-rouge">Write()</code> 메서드를 포함한 타입 : <code class="language-plaintext highlighter-rouge">Close()</code> 메소드가 없으므로, <code class="language-plaintext highlighter-rouge">Reader/Writer/ReadWriter</code> 모두 사용 불가능</li>
+</ol>
+
+<h3 id="empty-interface">Empty Interface</h3>
+
+<p>어떤 값이든 받을 수 있는 함수, 메서드, 변숫값을 만들 때 빈 인터페이스를 사용합니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">Sample</span><span class="p">(</span><span class="n">s</span> <span class="k">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="n">x</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="p">(</span><span class="k">type</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">Sample()</code> 함수는 빈 인터페이스를 인수로 받으므로, 모든 타입을 인수로 사용할 수 있습니다.</p>
+
+<h3 id="nil-interface">nil Interface</h3>
+
+<p>인터페이스 변수의 기본값은 유효하지 않은 메모리 주소를 나타내는 <code class="language-plaintext highlighter-rouge">nil</code>입니다.
+<code class="language-plaintext highlighter-rouge">Attacker</code>라는 인터페이스가 존재할 때, 아래와 같이 변수 att의 초깃값이 없으므로 해당 값은 <strong>nil</strong>이 됩니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+    <span class="k">var</span> <span class="n">att</span> <span class="n">Attacker</span>
+    <span class="n">att</span><span class="o">.</span><span class="n">Attack</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<blockquote>
+  <p>att의 메모리 주소는 nil이므로 <strong>런타임 에러</strong>가 발생하므로, 인터페이스를 사용할 때는 항상 인터페이스 값이 nil이 아닌지 확인해야 합니다.</p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="인터페이스-변환하기">인터페이스 변환하기</h2>
+
+<p>인터페이스 변수는 타입 변환을 통해서 <strong>구체화된 다른 타입</strong>이나 <strong>다른 인터페이스</strong>로 타입 변환이 가능합니다.</p>
+
+<h3 id="구체화된-다른-타입으로-타입-변환하기">구체화된 다른 타입으로 타입 변환하기</h3>
+
+<p><strong>인터페이스 변수 a를 ConcreteType으로 변환하는 예시</strong></p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">a</span> <span class="n">Interface</span>
+<span class="n">t</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="p">(</span><span class="n">ConcreteType</span><span class="p">)</span>
+</code></pre></div></div>
+
+<details>
+  <summary>👀 구체화된 다른 타입으로 변환하는 예시</summary>
+
+  <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="s">"fmt"</span>
+
+<span class="k">type</span> <span class="n">Stringer</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">String</span><span class="p">()</span> <span class="kt">string</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Student</span> <span class="k">struct</span> <span class="p">{</span>
+	<span class="n">Age</span> <span class="kt">int</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Student</span><span class="p">)</span> <span class="n">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"Student Age:%d"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Age</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">PrintAge</span><span class="p">(</span><span class="n">stringer</span> <span class="n">Stringer</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">s</span> <span class="o">:=</span> <span class="n">stringer</span><span class="o">.</span><span class="p">(</span><span class="o">*</span><span class="n">Student</span><span class="p">)</span>                <span class="c">// 3. 인터페이스 변수를 *Student 타입으로 변환</span>
+	<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"Age: %d"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Age</span><span class="p">)</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">s</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">Student</span><span class="p">{</span><span class="m">15</span><span class="p">}</span>                       <span class="c">// 1. *Student 타입 변수 s 선언</span>
+	<span class="n">PrintAge</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>                             <span class="c">// 2. 변수 s를 인터페이스 인수로 제공</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+
+</details>
+
+<h4 id="️-타입-변환-실패-컴파일-타임">❗️ 타입 변환 실패 (컴파일 타임)</h4>
+
+<p>인터페이스 변수를 구체화된 타입으로 변환하려면 해당 타입이 인터페이스 메서드 집합을 포함해야 합니다.
+예를 들어 방금 예시에서 아래와 같이 <strong>Student 구조체</strong>가 <strong>String() 메서드</strong>를 포함하지 않는다면, <strong>컴파일 타임</strong> 에러가 발생합니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Student</span><span class="p">)</span> <span class="n">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
+	<span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"Student Age:%d"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Age</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="다른-인터페이스로-타입-변환하기">다른 인터페이스로 타입 변환하기</h3>
+
+<p><code class="language-plaintext highlighter-rouge">ConcreteType</code>이 <code class="language-plaintext highlighter-rouge">AInterface</code>와 <code class="language-plaintext highlighter-rouge">BInterface</code> 인터페이스 모두를 포함하고 있을 경우에는 아래와 같이 다른 인터페이스로 타입 변환이 가능합니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">a</span> <span class="n">AInterface</span> <span class="o">=</span> <span class="n">ConcreteType</span><span class="p">{}</span>
+<span class="n">b</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="p">(</span><span class="n">BInterface</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h4 id="️-타입-변환-실패-런-타임">❗️ 타입 변환 실패 (런 타임)</h4>
+
+<p>서로 다른 인터페이스로 타입 변환 시, 서로 다른 메서드 집합을 가지고 있어도 문법적으로 문제가 발생하지는 않습니다.
+그러나 경우에 따라, 타입 변환에 실패하여 <strong>런 타임</strong> 에러가 발생할 수 있습니다.</p>
+
+<details>
+  <summary>👀 다른 인터페이스로 타입 변환이 실패하는 예시</summary>
+
+  <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">type</span> <span class="n">Reader</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">Read</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">Closer</span> <span class="k">interface</span> <span class="p">{</span>
+	<span class="n">Close</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">type</span> <span class="n">File</span> <span class="k">struct</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="p">(</span><span class="n">f</span> <span class="o">*</span><span class="n">File</span><span class="p">)</span> <span class="n">Read</span><span class="p">()</span> <span class="p">{</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">ReadFile</span><span class="p">(</span><span class="n">reader</span> <span class="n">Reader</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">c</span> <span class="o">:=</span> <span class="n">reader</span><span class="o">.</span><span class="p">(</span><span class="n">Closer</span><span class="p">)</span>
+	<span class="n">c</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">file</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">File</span><span class="p">{}</span>
+	<span class="n">ReadFile</span><span class="p">(</span><span class="n">file</span><span class="p">)</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+  <blockquote>
+    <p>Reader 인터페이스 변수를 Closer 인터페이스 타입으로 변환하려 하나, reader 인터페이스 변수가 가리키는 *File 타입이 <code class="language-plaintext highlighter-rouge">Close()</code> 메서드를 포함하지 않으므로 타입 변환에 실패</p>
+  </blockquote>
+
+</details>
+
+<p><strong>런 타임</strong> 에러가 발생하는 문제를 방지하기 위해, 아래와 같이 <strong>타입 변환 성공 여부</strong>를 반환하는 코드를 작성할 수 있습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">a</span> <span class="n">Interface</span>
+<span class="n">t</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="p">(</span><span class="n">ConcreteType</span><span class="p">)</span>   <span class="c">// t: 타입 변환 결과, ok: 변환 성공 여부</span>
+</code></pre></div></div>
+
+<details>
+  <summary>👀 타입 변환 성공 여부를 반영한 예시</summary>
+
+  <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">ReadFile</span><span class="p">(</span><span class="n">reader</span> <span class="n">Reader</span><span class="p">)</span> <span class="p">{</span>
+	<span class="n">c</span><span class="p">,</span> <span class="n">ok</span> <span class="o">:=</span> <span class="n">reader</span><span class="o">.</span><span class="p">(</span><span class="n">Closer</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">ok</span> <span class="p">{</span>
+		<span class="n">c</span><span class="o">.</span><span class="n">Close</span><span class="p">()</span>
+	<span class="p">}</span>
+	
+	<span class="c">/**
+	* 한 줄로 표현
+	* if c, ok := reader.(Closer); ok {}
+	*/</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+
+</details>
+
+<h2 id="outro">Outro</h2>
+
+<p>처음으로 책을 읽고 정리한 내용을 작성했는데, 이해한 내용을 바탕으로 재구성하는 것도 쉽지 않은 것 같습니다.
+제가 레퍼런스로 차용한 도서의 저자가 유튜브에 공개한 강의(<a href="https://www.youtube.com/TuckerProgramming">Tucker Programming</a>)와
+요약을 덧붙이며 이번 포스팅을 마무리 짓도록 하겠습니다.</p>
+
+<ol>
+  <li>인터페이스는 구현을 포함하지 않은 메서드 집합니다.</li>
+  <li>인터페이스에서 정의 시, 메서드 포함 여부로만 결정하는 덕 타이핑을 통해 자유도 높은 프로그래밍이 가능하다.</li>
+  <li>인터페이스로 추상화 계층을 만들고 상호작용을 정의한다.</li>
+  <li>인터페이스는 인터페이스 자체를 포함하거나 빈 상태로 사용할 수 있으며, 기본값은 nil이다.</li>
+  <li>인터페이스는 구체화된 다른 타입이나 다른 인터페이스로 변환이 가능하며 타입 변환 시 에러를 고려해야 한다.</li>
+</ol>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
+
+<hr />
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+                <section class="subscribe-form">
+                    <h3 class="subscribe-form-title">Subscribe to Heuristic Wave Blog</h3>
+                    <p>Get the latest posts delivered right via RSS</p>
+                    <form method="post" action="/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" type="url" name="rss url" value="https://heuristicwave.github.io" readonly />
+    </div>
+    <!--To Do Rss Web Font <i class="fas fa-rss"></i> -->
+    <button class="" type="submit" disabled><span>Copy</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+                </section>
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://heuristicwave.github.io/GoLangInterface';
+                            this.page.identifier = '/GoLangInterface';
+                            this.page.title = 'GO Lang Interface';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://heuristicwave-github-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/built/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/DeclarativeVSImperativeinK8s">Declarative vs Imperative in Kubernetes</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/TerraformTips5">Terraform Tips 5 - Import</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/TerraformTips4">Terraform Tips 4 - Move (Refactoring)</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/devops/">
+                                
+                                    See all 16 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/DeclarativeVSImperativeinK8s">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/k8s-horizontal.png)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/DeclarativeVSImperativeinK8s">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Devops</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Container</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">Declarative vs Imperative in Kubernetes</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p></p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      1 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://heuristicwave.github.io/">
+            
+            <span>Heuristic Wave Blog</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">GO Lang Interface</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=GO+Lang+Interface&amp;url=https://heuristicwave.github.ioGoLangInterface"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioGoLangInterface"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://heuristicwave.github.io/">Heuristic Wave Blog</a> &copy; 2022</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+        <div id="subscribe" class="subscribe-overlay">
+            <a class="subscribe-overlay-close" href="#"></a>
+            <div class="subscribe-overlay-content">
+                
+                <h1 class="subscribe-overlay-title">Search on Heuristic Wave Blog</h1>
+                <p class="subscribe-overlay-description">lunr.js를 이용한 posts 검색</p>
+                <span id="searchform" method="post" action="/search/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" onkeyup="myFunc()"
+               id="searchtext" type="text" name="searchtext"
+               placeholder="Search..." />
+    </div>
+    <script type="text/javascript">
+        function myFunc() {
+            if(event.keyCode == 13) {
+                var url = encodeURIComponent($("#searchtext").val());
+                location.href = "/search.html?query=" + url;
+            }
+        }
+    </script>
+</span>
+                <br>
+            </div>
+        </div>
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'G-0FTXSPJZFY', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>
