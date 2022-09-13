@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>The Journey to Know OIDC (작성중)</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- Custom.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- webfont -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/nanumgothic.css">
+
+    <!-- syntax.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Careful Writer" />
+    <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
+    <link rel="canonical" href="https://heuristicwave.github.io/OIDC" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Heuristic Wave Blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="The Journey to Know OIDC (작성중)" />
+    <meta property="og:description" content="Journey to OIDC through authentication, authorization, SAML, and OAuth. Intro 요즘 제 일상에서, OIDC(OpenID Connect)에 대해 많은 이야기가 오고갔습니다. 그동안 동작 원리도 제대로 알지 못한채 사용하고 있던 제 모습을 반성하며, OIDC를 알아가기 위해 조사한 내용들을 다뤄보겠습니다. 🥾 Authentication &amp; Authorization OIDC를 향한 여정의 첫걸음은 인증과 인가입니다. 국어로도 비슷한 두 단어는" />
+    <meta property="og:url" content="https://heuristicwave.github.io/OIDC" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/OIDC.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/" />
+    <meta property="article:author" content="https://www.facebook.com/" />
+    <meta property="article:published_time" content="2022-09-13T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-09-13T00:00:00+00:00" />
+    <meta property="article:tag" content="Security" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="The Journey to Know OIDC (작성중)" />
+    <meta name="twitter:description" content="Journey to OIDC through authentication, authorization, SAML, and OAuth. Intro 요즘 제 일상에서, OIDC(OpenID Connect)에 대해 많은 이야기가 오고갔습니다. 그동안 동작 원리도 제대로 알지 못한채 사용하고 있던 제 모습을 반성하며, OIDC를 알아가기 위해 조사한 내용들을 다뤄보겠습니다. 🥾 Authentication &amp; Authorization OIDC를 향한 여정의 첫걸음은 인증과 인가입니다. 국어로도 비슷한 두 단어는" />
+    <meta name="twitter:url" content="https://heuristicwave.github.io/" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/OIDC.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Heuristic Wave Blog" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Security" />
+    <meta name="twitter:site" content="@" />
+    <meta name="twitter:creator" content="@" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Heuristic Wave Blog",
+        "logo": "https://heuristicwave.github.io/"
+    },
+    "url": "https://heuristicwave.github.io/OIDC",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/OIDC.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://heuristicwave.github.io/OIDC"
+    },
+    "description": "Journey to OIDC through authentication, authorization, SAML, and OAuth. Intro 요즘 제 일상에서, OIDC(OpenID Connect)에 대해 많은 이야기가 오고갔습니다. 그동안 동작 원리도 제대로 알지 못한채 사용하고 있던 제 모습을 반성하며, OIDC를 알아가기 위해 조사한 내용들을 다뤄보겠습니다. 🥾 Authentication &amp; Authorization OIDC를 향한 여정의 첫걸음은 인증과 인가입니다. 국어로도 비슷한 두 단어는"
+}
+    </script>
+    <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FTXSPJZFY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0FTXSPJZFY');
+    </script>
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="The Journey to Know OIDC (작성중)" href="https://heuristicwave.github.io/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://heuristicwave.github.io/">Heuristic Wave Blog</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-extracurricular" role="menuitem"><a href="/tag/extracurricular/">Extracurricular</a></li>
+    <li class="nav-aws" role="menuitem"><a href="/tag/aws/">AWS</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/backend/">Back-end</a></li>
+    <li class="nav-devops" role="menuitem"><a href="/tag/devops/">DevOps</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/security/">Security</a></li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/archive">All Posts</a>
+    </li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/author_archive.html">Tag별 Posts</a>
+    </li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+        </div>
+        
+            <a class="subscribe-button" href="#subscribe">Search</a>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-security post tag-backend ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="13 September 2022">13 September 2022</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/security/'>SECURITY</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">The Journey to Know OIDC (작성중)</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/OIDC.png)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>Journey to OIDC through authentication, authorization, SAML, and OAuth.</p>
+
+<p><br /></p>
+
+<h2 id="intro">Intro</h2>
+
+<p>요즘 제 일상에서, OIDC(OpenID Connect)에 대해 많은 이야기가 오고갔습니다. 그동안 동작 원리도 제대로 알지 못한채 사용하고 있던 제 모습을 반성하며,
+OIDC를 알아가기 위해 조사한 내용들을 다뤄보겠습니다.</p>
+
+<p><br /></p>
+
+<h2 id="-authentication--authorization">🥾 Authentication &amp; Authorization</h2>
+
+<p>OIDC를 향한 여정의 첫걸음은 인증과 인가입니다. 국어로도 비슷한 두 단어는 영어로도 비슷하며 다음과 같이 줄여서 표현하기도 합니다.
+AuthN(인증) &amp; AuthZ(인가, 권한 부여)</p>
+
+<p>인증과 인가에 관한 설명은 온라인에 굉장히 많지만, 저는 그 중에서도 <a href="https://auth0.com/docs/get-started/identity-fundamentals/authentication-and-authorization#authentication-vs-authorization"><strong>Auth0(오스제로)</strong>사의 문서의 비교표</a>를 인용하였습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Authentication</th>
+      <th>Authorization</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>사용자가 자신이 주장하는 사람이 맞는지 결정합니다.</td>
+      <td>사용자가 접근 할 수 있는지 없는지 결정합니다.</td>
+    </tr>
+    <tr>
+      <td>사용자의 자격증명이 유효한지 확인합니다.</td>
+      <td>정책과 룰을 통해 접근 여부를 확인합니다.</td>
+    </tr>
+    <tr>
+      <td>통상 인가 전 단계에 진행합니다.</td>
+      <td>통상 인증 이후 단계에 진행합니다.</td>
+    </tr>
+    <tr>
+      <td>일반적으로 <strong>ID Token</strong>을 통해 정보를 전송합니다.</td>
+      <td>일반적으로 <strong>Access Token</strong>을 통해 정보를 전달합니다.</td>
+    </tr>
+    <tr>
+      <td>일반적으로 <strong>OIDC 프로토콜</strong>에 의해 관리됩니다.</td>
+      <td>일반적으로 <strong>OAuth 2.0 프레임워크</strong>에 의해 관리됩니다.</td>
+    </tr>
+  </tbody>
+</table>
+
+<blockquote>
+  <p>💡 위 비교표에 <strong>Bold</strong>처리 된 키워드가 오늘 포스팅을 이해하기 위한 핵심 용어이므로 주목해주세요!</p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="-oauth-20">⛰ OAuth 2.0</h2>
+
+<p><strong>OAuth 2.0 Authorization Framework</strong>의 <a href="https://www.rfc-editor.org/rfc/rfc6749">RFC 문서</a>의 Abstract 부분을 확인하면 다음과 같이 정의합니다.
+<em>“OAuth 2.0 인가 프레임워크는 서드파티 앱들이 제한된 권한을 얻는 것을 가능하게 해줍니다.”</em></p>
+
+<p>여러분들은 특정 서비스회사의 어플리케이션을 이용할 때, 구글이나 페이스북으로부터 특정 권한을 받아 서비스를 이용한 경험이 있을 것 입니다.
+<strong>구글 계정</strong> 정보의 <a href="https://myaccount.google.com/permissions">내 계정에 액세스할 수 있는 앱</a>에 들어가 확인해 보시면,
+내 계정이 어떤 앱들이 액세스 할 수 있게 권한을 주었는지 확인 가능 합니다.</p>
+
+<p><img src="../../assets/built/images/post/security/oauth.png" alt="OAuth 2.0" /></p>
+
+<p>위 사진을 통해, 구글이 <strong>OAuth 프레임워크</strong>를 사용해 Meetup, Notion, Slack과 같은 <strong>서드파티 앱</strong>들에게
+계정의 이메일 주소확인, 개인정보 보기 등과 같은 <strong>제한된 권한</strong>에 대하여 <strong>인가</strong>를 해줬다는 사실을 알 수 있습니다.</p>
+
+<h3 id="slack으로-알아보는-oauth-20-flow">Slack으로 알아보는 OAuth 2.0 Flow</h3>
+
+<p>OAuth에 워크플로를 알아보기 전에, 자주 언급되는 핵심 용어들을 언급하고 넘어가겠습니다.</p>
+
+<ul>
+  <li>Client : 인가를 받는 애플리케이션 (배달의 민족, 야놀자, 오늘의 집 등)</li>
+  <li>Resource Server : 제어하고자 하는 자원(Protected Resource)을 가진 서버 (구글, 페이스북, 깃헙)</li>
+  <li>Resource Owner : 자원의 소유자 (end-user)</li>
+  <li>Authorization Server : AuthZ 처리를 하는 서버</li>
+</ul>
+
+<p>다시 <a href="https://www.rfc-editor.org/rfc/rfc6749">RFC 문서</a>로 돌아와서 해당 프로토콜의 Flow를 앞서 보여드린 예시처럼 우리의 경험에 빗대어 설명해보겠습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Abstract Protocol Flow</span>
++--------+                               +---------------+
+|        |--<span class="o">(</span>A<span class="o">)</span>- Authorization Request -&gt;|   Resource    |
+|        |                               |     Owner     |
+|        |&lt;-<span class="o">(</span>B<span class="o">)</span><span class="nt">--</span> Authorization Grant <span class="nt">---</span>|               |
+|        |                               +---------------+
+|        |
+|        |                               +---------------+
+|        |--<span class="o">(</span>C<span class="o">)</span><span class="nt">--</span> Authorization Grant <span class="nt">--</span><span class="o">&gt;</span>| Authorization |
+| Client |                               |     Server    |
+|        |&lt;-<span class="o">(</span>D<span class="o">)</span><span class="nt">-----</span> Access Token <span class="nt">-------</span>|               |
+|        |                               +---------------+
+|        |
+|        |                               +---------------+
+|        |--<span class="o">(</span>E<span class="o">)</span><span class="nt">-----</span> Access Token <span class="nt">------</span><span class="o">&gt;</span>|    Resource   |
+|        |                               |     Server    |
+|        |&lt;-<span class="o">(</span>F<span class="o">)</span><span class="nt">---</span> Protected Resource <span class="nt">---</span>|               |
++--------+                               +---------------+
+</code></pre></div></div>
+
+<p>A &amp; B에 해당하는 Client가 Resource Owner에게 AuthZ를 요청하고 승인 절차를 Slack 로그인을 통해서 알아보겠습니다.</p>
+
+<p><img src="../../assets/built/images/post/security/googleOAuth.png" alt="login" /></p>
+
+<p>위 이미지에서 Client인 slack은 Google과 Apple 2가지 방식의 OAuth를 제공합니다.
+‘Google로 계속’이라는 버튼(A단계, AuthZ 요청)을 누르면, slack이 계정의 이름, 이메일, 프로필 사진 등의 정보 공유를 요청했다는 것을 구글의 Authorization Server로부터 받습니다.
+해당 시점의 웹브라우저 URI를 확인 하면 다음과 같습니다. <em>(편의상 URI을 쿼리스트링 단위로 나누고, Decode하여 표기했습니다.)</em></p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount? <span class="se">\ </span>
+  <span class="nv">client_id</span><span class="o">=</span>6XXXXXXXX.apps.googleusercontent.com&amp; <span class="se">\</span>
+  <span class="nv">redirect_uri</span><span class="o">=</span>https://oauth2.slack.com/get-started/oauth/google/end&amp; <span class="se">\</span>
+  <span class="nv">scope</span><span class="o">=</span>openid email profile&amp; <span class="se">\</span>
+  <span class="nv">response_type</span><span class="o">=</span>code&amp; <span class="se">\</span>
+  <span class="nv">access_type</span><span class="o">=</span>offline&amp; <span class="se">\</span>
+  <span class="nv">state</span><span class="o">=</span>&amp; <span class="se">\</span>
+  <span class="nv">prompt</span><span class="o">=</span>consent&amp; <span class="se">\</span>
+  <span class="nv">flowName</span><span class="o">=</span>GeneralOAuthFlow
+</code></pre></div></div>
+
+<p>슬랙의 권한 부여의 경우, <code class="language-plaintext highlighter-rouge">https://accounts.google.com/{이하 생략}</code> 이라는 Authorization Server의 주소와 <code class="language-plaintext highlighter-rouge">client_id</code>를 포함한 8개의 querystring으로 구성되어 있습니다.
+여기서 상위 4개의 querystring은 인가를 위한 <strong>필수 파라미터</strong> 입니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">client_id</code> : client를 식별하기 위해 Register 단계에서 생성된 애플리케이션의 식별자</li>
+  <li><code class="language-plaintext highlighter-rouge">redirect_uri</code> : authorization code를 전달 받을 client 서버의 URI</li>
+  <li><code class="language-plaintext highlighter-rouge">scope</code> : 인가할 권한을 명시</li>
+  <li><code class="language-plaintext highlighter-rouge">response_type</code> : code, token 등 OAuth에 적용할 방식의 타입</li>
+</ul>
+
+<p>캡처화면에서는 우리의 웹 브라우저를 통해 A와 B의 단계가 클릭 2번으로 끝나지만, 사실 A와 B사이에는 더 복잡한 단계들이 숨겨져 있습니다.
+아래 RFC 문서에 기재된 <strong>Implicit Grant Flow</strong>를 살펴보며 A 이후의 단계들을 살펴 보겠습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c"># Implicit Grant Flow</span>
+ +----------+
+ | Resource |
+ |  Owner   |
+ |          |
+ +----------+
+      ^
+      |
+     <span class="o">(</span>B<span class="o">)</span>
+ +----|-----+          Client Identifier     +---------------+
+ |         -+----<span class="o">(</span>A<span class="o">)</span><span class="nt">--</span> &amp; Redirection URI <span class="nt">---</span><span class="o">&gt;</span>|               |
+ |  User-   |                                | Authorization |
+ |  Agent  -|----<span class="o">(</span>B<span class="o">)</span><span class="nt">--</span> User authenticates <span class="nt">--</span><span class="o">&gt;</span>|     Server    |
+ |          |                                |               |
+ |          |&lt;<span class="nt">---</span><span class="o">(</span>C<span class="o">)</span><span class="nt">---</span> Redirection URI <span class="nt">----</span>&lt;|               |
+ |          |          with Access Token     +---------------+
+ |          |            <span class="k">in </span>Fragment
+ |          |                                +---------------+
+ |          |----<span class="o">(</span>D<span class="o">)</span><span class="nt">---</span> Redirection URI <span class="nt">----</span><span class="o">&gt;</span>|   Web-Hosted  |
+ |          |          without Fragment      |     Client    |
+ |          |                                |    Resource   |
+ |     <span class="o">(</span>F<span class="o">)</span>  |&lt;<span class="nt">---</span><span class="o">(</span>E<span class="o">)</span><span class="nt">-------</span> Script <span class="nt">---------</span>&lt;|               |
+ |          |                                +---------------+
+ +-|--------+
+   |    |
+  <span class="o">(</span>A<span class="o">)</span>  <span class="o">(</span>G<span class="o">)</span> Access Token
+   |    |
+   ^    v
+ +---------+
+ |         |
+ |  Client |
+ |         |
+ +---------+
+</code></pre></div></div>
+
+<p>간략하게 몇 가지를 더 설명하자면, 위 승인 Flow의 User-Agent는 우리의 웹브라우저 입니다.
+User-Agent와 인가 서버 사이에서 querystring에 담긴 <code class="language-plaintext highlighter-rouge">client_id</code>와 <code class="language-plaintext highlighter-rouge">redirect_uri</code>를 가지고 <strong>검증</strong> 작업을 하며, 이후 생성된 <strong>Access Token</strong>을 활용해
+scope에 명시된 기능을 Resource Server로 부터 제공받습니다. 해당 절차가 <code class="language-plaintext highlighter-rouge">Abstract Protocol Flow</code> 그림의 B ~ F에 해당합니다.</p>
+
+<blockquote>
+  <p>🛎 위 2가지 Flow가 OAuth 2.0의 전체 Flow는 아닙니다. Autorization Code, Refresh Token 등 <strong>중요 개념들이 상당히 생략</strong> 되어 있습니다.</p>
+</blockquote>
+
+<h3 id="more-information">More Information</h3>
+
+<p>지금까지 생소한 정보들을 쏟아내다 보니, 독자 여려분들이 굉장히 혼란스러울 것 같습니다. (처음 OAuth를 공부했던 제가 그랬습니다 😵‍💫)
+이 시점에서 okta의 identity-101 문서인 <a href="https://www.okta.com/identity-101/saml-vs-oauth/">SAML vs. OAuth: Comparison and Differences</a>를 읽는 것을 추천드립니다.</p>
+
+<p><br /></p>
+
+<h2 id="openid-connectoidc">OpenID Connect(OIDC)</h2>
+
+<p>얼렁뚱땅 OAuth를 넘기고 드디어 OpenID Connect 순서에 다다르었습니다. OIDC를 다루기 전, <strong>OpenID</strong>가 무엇인지 <a href="https://openid.net/what-is-openid/">OpenID 재단의 설명</a>에서 몇가지 살펴보겠습니다.</p>
+
+<h3 id="openid">OpenID</h3>
+
+<ul>
+  <li>OpenID는 새 비밀번호를 만들 필요 없이, 기존 계정을 사용해 여러 웹사이트에 로그인 할 수 있습니다.</li>
+  <li>OpenID를 사용하면 웹사이트와 공유되는 정보의 양을 제어할 수 있습니다.</li>
+  <li>당신의 비밀번호은 Identity provider(Idp)에게만 주어지며, Idp가 신원을 확인하므로 안전하지 않은 웹사이트가 당신의 신원을 훼손하는 것에 대해 걱정할 필요가 없습니다.</li>
+</ul>
+
+<blockquote>
+  <p>⚡️ OpenID 2.0은 OpenID Connect로 대체되었습니다. <a href="https://openid.net/developers/libraries/obsolete/">Ref. Libraries for Obsolete Specifications</a></p>
+</blockquote>
+
+<h3 id="oauth-20">OAuth 2.0</h3>
+
+<p>이어서, <a href="https://openid.net/connect/">OpenID 재단의 설명</a>의 OIDC는 다음과 같이 정의 되어 있습니다.
+“OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol.” OIDC가 OAuth 프로토콜의 상위 간단한 신원 계층이라는 말이 무엇을 의미할까요?
+여기서 앞서 slack 예시에서 만난 OAuth의 <code class="language-plaintext highlighter-rouge">scope</code> 부분으로 거슬러 올라가 보겠습니다. (<code class="language-plaintext highlighter-rouge">scope=openid email profile</code>) 해당 파라미터에는 인가할 리소스가 <code class="language-plaintext highlighter-rouge">openid</code>로 기재되어 있습니다.
+즉, slack은 제 프로필 정보를 얻기 위해 <strong>OAuth 2.0</strong>을 사용해 <code class="language-plaintext highlighter-rouge">Google OAuth2 API v2</code>를 호출했고, 액세스 하려는 API의 <code class="language-plaintext highlighter-rouge">scope</code>을 <code class="language-plaintext highlighter-rouge">openid</code>로 지정했습니다.</p>
+
+<p>Playground &amp; id_token</p>
+
+<h2 id="outro">Outro</h2>
+
+<p>SDS, ODC
+레퍼런스 붙이기</p>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
+
+<hr />
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+                <section class="subscribe-form">
+                    <h3 class="subscribe-form-title">Subscribe to Heuristic Wave Blog</h3>
+                    <p>Get the latest posts delivered right via RSS</p>
+                    <form method="post" action="/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" type="url" name="rss url" value="https://heuristicwave.github.io" readonly />
+    </div>
+    <!--To Do Rss Web Font <i class="fas fa-rss"></i> -->
+    <button class="" type="submit" disabled><span>Copy</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+                </section>
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://heuristicwave.github.io/OIDC';
+                            this.page.identifier = '/OIDC';
+                            this.page.title = 'The Journey to Know OIDC (작성중)';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://heuristicwave-github-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/GoLangInterface">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/Go-Logo_Blue.png)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/GoLangInterface">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Backend</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Programming</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">GO Lang Interface</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p></p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      1 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://heuristicwave.github.io/">
+            
+            <span>Heuristic Wave Blog</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">The Journey to Know OIDC (작성중)</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=The+Journey+to+Know+OIDC+%28%EC%9E%91%EC%84%B1%EC%A4%91%29&amp;url=https://heuristicwave.github.ioOIDC"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioOIDC"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://heuristicwave.github.io/">Heuristic Wave Blog</a> &copy; 2022</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+        <div id="subscribe" class="subscribe-overlay">
+            <a class="subscribe-overlay-close" href="#"></a>
+            <div class="subscribe-overlay-content">
+                
+                <h1 class="subscribe-overlay-title">Search on Heuristic Wave Blog</h1>
+                <p class="subscribe-overlay-description">lunr.js를 이용한 posts 검색</p>
+                <span id="searchform" method="post" action="/search/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" onkeyup="myFunc()"
+               id="searchtext" type="text" name="searchtext"
+               placeholder="Search..." />
+    </div>
+    <script type="text/javascript">
+        function myFunc() {
+            if(event.keyCode == 13) {
+                var url = encodeURIComponent($("#searchtext").val());
+                location.href = "/search.html?query=" + url;
+            }
+        }
+    </script>
+</span>
+                <br>
+            </div>
+        </div>
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'G-0FTXSPJZFY', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2022-08-31T09:02:49+00:00</updated>
+  <updated>2022-09-13T05:58:02+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -30,6 +30,256 @@
   
   
 
+  
+    <entry>
+      <title type="html">The Journey to Know OIDC (작성중)</title>
+      <link href="https://heuristicwave.github.io/OIDC" rel="alternate" type="text/html" title="The Journey to Know OIDC (작성중)" />
+      <published>2022-09-13T00:00:00+00:00</published>
+      <updated>2022-09-13T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/OIDC</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/OIDC">&lt;p&gt;Journey to OIDC through authentication, authorization, SAML, and OAuth.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;요즘 제 일상에서, OIDC(OpenID Connect)에 대해 많은 이야기가 오고갔습니다. 그동안 동작 원리도 제대로 알지 못한채 사용하고 있던 제 모습을 반성하며,
+OIDC를 알아가기 위해 조사한 내용들을 다뤄보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-authentication--authorization&quot;&gt;🥾 Authentication &amp;amp; Authorization&lt;/h2&gt;
+
+&lt;p&gt;OIDC를 향한 여정의 첫걸음은 인증과 인가입니다. 국어로도 비슷한 두 단어는 영어로도 비슷하며 다음과 같이 줄여서 표현하기도 합니다.
+AuthN(인증) &amp;amp; AuthZ(인가, 권한 부여)&lt;/p&gt;
+
+&lt;p&gt;인증과 인가에 관한 설명은 온라인에 굉장히 많지만, 저는 그 중에서도 &lt;a href=&quot;https://auth0.com/docs/get-started/identity-fundamentals/authentication-and-authorization#authentication-vs-authorization&quot;&gt;&lt;strong&gt;Auth0(오스제로)&lt;/strong&gt;사의 문서의 비교표&lt;/a&gt;를 인용하였습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Authentication&lt;/th&gt;
+      &lt;th&gt;Authorization&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;사용자가 자신이 주장하는 사람이 맞는지 결정합니다.&lt;/td&gt;
+      &lt;td&gt;사용자가 접근 할 수 있는지 없는지 결정합니다.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;사용자의 자격증명이 유효한지 확인합니다.&lt;/td&gt;
+      &lt;td&gt;정책과 룰을 통해 접근 여부를 확인합니다.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;통상 인가 전 단계에 진행합니다.&lt;/td&gt;
+      &lt;td&gt;통상 인증 이후 단계에 진행합니다.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;일반적으로 &lt;strong&gt;ID Token&lt;/strong&gt;을 통해 정보를 전송합니다.&lt;/td&gt;
+      &lt;td&gt;일반적으로 &lt;strong&gt;Access Token&lt;/strong&gt;을 통해 정보를 전달합니다.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;일반적으로 &lt;strong&gt;OIDC 프로토콜&lt;/strong&gt;에 의해 관리됩니다.&lt;/td&gt;
+      &lt;td&gt;일반적으로 &lt;strong&gt;OAuth 2.0 프레임워크&lt;/strong&gt;에 의해 관리됩니다.&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 위 비교표에 &lt;strong&gt;Bold&lt;/strong&gt;처리 된 키워드가 오늘 포스팅을 이해하기 위한 핵심 용어이므로 주목해주세요!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-oauth-20&quot;&gt;⛰ OAuth 2.0&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;OAuth 2.0 Authorization Framework&lt;/strong&gt;의 &lt;a href=&quot;https://www.rfc-editor.org/rfc/rfc6749&quot;&gt;RFC 문서&lt;/a&gt;의 Abstract 부분을 확인하면 다음과 같이 정의합니다.
+&lt;em&gt;“OAuth 2.0 인가 프레임워크는 서드파티 앱들이 제한된 권한을 얻는 것을 가능하게 해줍니다.”&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;여러분들은 특정 서비스회사의 어플리케이션을 이용할 때, 구글이나 페이스북으로부터 특정 권한을 받아 서비스를 이용한 경험이 있을 것 입니다.
+&lt;strong&gt;구글 계정&lt;/strong&gt; 정보의 &lt;a href=&quot;https://myaccount.google.com/permissions&quot;&gt;내 계정에 액세스할 수 있는 앱&lt;/a&gt;에 들어가 확인해 보시면,
+내 계정이 어떤 앱들이 액세스 할 수 있게 권한을 주었는지 확인 가능 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/security/oauth.png&quot; alt=&quot;OAuth 2.0&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 사진을 통해, 구글이 &lt;strong&gt;OAuth 프레임워크&lt;/strong&gt;를 사용해 Meetup, Notion, Slack과 같은 &lt;strong&gt;서드파티 앱&lt;/strong&gt;들에게
+계정의 이메일 주소확인, 개인정보 보기 등과 같은 &lt;strong&gt;제한된 권한&lt;/strong&gt;에 대하여 &lt;strong&gt;인가&lt;/strong&gt;를 해줬다는 사실을 알 수 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;slack으로-알아보는-oauth-20-flow&quot;&gt;Slack으로 알아보는 OAuth 2.0 Flow&lt;/h3&gt;
+
+&lt;p&gt;OAuth에 워크플로를 알아보기 전에, 자주 언급되는 핵심 용어들을 언급하고 넘어가겠습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Client : 인가를 받는 애플리케이션 (배달의 민족, 야놀자, 오늘의 집 등)&lt;/li&gt;
+  &lt;li&gt;Resource Server : 제어하고자 하는 자원(Protected Resource)을 가진 서버 (구글, 페이스북, 깃헙)&lt;/li&gt;
+  &lt;li&gt;Resource Owner : 자원의 소유자 (end-user)&lt;/li&gt;
+  &lt;li&gt;Authorization Server : AuthZ 처리를 하는 서버&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;다시 &lt;a href=&quot;https://www.rfc-editor.org/rfc/rfc6749&quot;&gt;RFC 문서&lt;/a&gt;로 돌아와서 해당 프로토콜의 Flow를 앞서 보여드린 예시처럼 우리의 경험에 빗대어 설명해보겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Abstract Protocol Flow&lt;/span&gt;
++--------+                               +---------------+
+|        |--&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;A&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;- Authorization Request -&amp;gt;|   Resource    |
+|        |                               |     Owner     |
+|        |&amp;lt;-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;B&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Grant &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;|               |
+|        |                               +---------------+
+|        |
+|        |                               +---------------+
+|        |--&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Grant &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;| Authorization |
+| Client |                               |     Server    |
+|        |&amp;lt;-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;D&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt; Access Token &lt;span class=&quot;nt&quot;&gt;-------&lt;/span&gt;|               |
+|        |                               +---------------+
+|        |
+|        |                               +---------------+
+|        |--&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;E&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt; Access Token &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;|    Resource   |
+|        |                               |     Server    |
+|        |&amp;lt;-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt; Protected Resource &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;|               |
++--------+                               +---------------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;A &amp;amp; B에 해당하는 Client가 Resource Owner에게 AuthZ를 요청하고 승인 절차를 Slack 로그인을 통해서 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/security/googleOAuth.png&quot; alt=&quot;login&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 이미지에서 Client인 slack은 Google과 Apple 2가지 방식의 OAuth를 제공합니다.
+‘Google로 계속’이라는 버튼(A단계, AuthZ 요청)을 누르면, slack이 계정의 이름, 이메일, 프로필 사진 등의 정보 공유를 요청했다는 것을 구글의 Authorization Server로부터 받습니다.
+해당 시점의 웹브라우저 URI를 확인 하면 다음과 같습니다. &lt;em&gt;(편의상 URI을 쿼리스트링 단위로 나누고, Decode하여 표기했습니다.)&lt;/em&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount? &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;client_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;6XXXXXXXX.apps.googleusercontent.com&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;redirect_uri&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;https://oauth2.slack.com/get-started/oauth/google/end&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;openid email profile&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;response_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;code&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;access_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;offline&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;prompt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;consent&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;flowName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;GeneralOAuthFlow
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;슬랙의 권한 부여의 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://accounts.google.com/{이하 생략}&lt;/code&gt; 이라는 Authorization Server의 주소와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;client_id&lt;/code&gt;를 포함한 8개의 querystring으로 구성되어 있습니다.
+여기서 상위 4개의 querystring은 인가를 위한 &lt;strong&gt;필수 파라미터&lt;/strong&gt; 입니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;client_id&lt;/code&gt; : client를 식별하기 위해 Register 단계에서 생성된 애플리케이션의 식별자&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redirect_uri&lt;/code&gt; : authorization code를 전달 받을 client 서버의 URI&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt; : 인가할 권한을 명시&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;response_type&lt;/code&gt; : code, token 등 OAuth에 적용할 방식의 타입&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;캡처화면에서는 우리의 웹 브라우저를 통해 A와 B의 단계가 클릭 2번으로 끝나지만, 사실 A와 B사이에는 더 복잡한 단계들이 숨겨져 있습니다.
+아래 RFC 문서에 기재된 &lt;strong&gt;Implicit Grant Flow&lt;/strong&gt;를 살펴보며 A 이후의 단계들을 살펴 보겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Implicit Grant Flow&lt;/span&gt;
+ +----------+
+ | Resource |
+ |  Owner   |
+ |          |
+ +----------+
+      ^
+      |
+     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;B&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
+ +----|-----+          Client Identifier     +---------------+
+ |         -+----&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;A&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; &amp;amp; Redirection URI &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;|               |
+ |  User-   |                                | Authorization |
+ |  Agent  -|----&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;B&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; User authenticates &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;|     Server    |
+ |          |                                |               |
+ |          |&amp;lt;&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt; Redirection URI &lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt;&amp;lt;|               |
+ |          |          with Access Token     +---------------+
+ |          |            &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;Fragment
+ |          |                                +---------------+
+ |          |----&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;D&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt; Redirection URI &lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;|   Web-Hosted  |
+ |          |          without Fragment      |     Client    |
+ |          |                                |    Resource   |
+ |     &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  |&amp;lt;&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;E&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-------&lt;/span&gt; Script &lt;span class=&quot;nt&quot;&gt;---------&lt;/span&gt;&amp;lt;|               |
+ |          |                                +---------------+
+ +-|--------+
+   |    |
+  &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;A&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;G&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; Access Token
+   |    |
+   ^    v
+ +---------+
+ |         |
+ |  Client |
+ |         |
+ +---------+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;간략하게 몇 가지를 더 설명하자면, 위 승인 Flow의 User-Agent는 우리의 웹브라우저 입니다.
+User-Agent와 인가 서버 사이에서 querystring에 담긴 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;client_id&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redirect_uri&lt;/code&gt;를 가지고 &lt;strong&gt;검증&lt;/strong&gt; 작업을 하며, 이후 생성된 &lt;strong&gt;Access Token&lt;/strong&gt;을 활용해
+scope에 명시된 기능을 Resource Server로 부터 제공받습니다. 해당 절차가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Abstract Protocol Flow&lt;/code&gt; 그림의 B ~ F에 해당합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🛎 위 2가지 Flow가 OAuth 2.0의 전체 Flow는 아닙니다. Autorization Code, Refresh Token 등 &lt;strong&gt;중요 개념들이 상당히 생략&lt;/strong&gt; 되어 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;more-information&quot;&gt;More Information&lt;/h3&gt;
+
+&lt;p&gt;지금까지 생소한 정보들을 쏟아내다 보니, 독자 여려분들이 굉장히 혼란스러울 것 같습니다. (처음 OAuth를 공부했던 제가 그랬습니다 😵‍💫)
+이 시점에서 okta의 identity-101 문서인 &lt;a href=&quot;https://www.okta.com/identity-101/saml-vs-oauth/&quot;&gt;SAML vs. OAuth: Comparison and Differences&lt;/a&gt;를 읽는 것을 추천드립니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;openid-connectoidc&quot;&gt;OpenID Connect(OIDC)&lt;/h2&gt;
+
+&lt;p&gt;얼렁뚱땅 OAuth를 넘기고 드디어 OpenID Connect 순서에 다다르었습니다. OIDC를 다루기 전, &lt;strong&gt;OpenID&lt;/strong&gt;가 무엇인지 &lt;a href=&quot;https://openid.net/what-is-openid/&quot;&gt;OpenID 재단의 설명&lt;/a&gt;에서 몇가지 살펴보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;openid&quot;&gt;OpenID&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;OpenID는 새 비밀번호를 만들 필요 없이, 기존 계정을 사용해 여러 웹사이트에 로그인 할 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;OpenID를 사용하면 웹사이트와 공유되는 정보의 양을 제어할 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;당신의 비밀번호은 Identity provider(Idp)에게만 주어지며, Idp가 신원을 확인하므로 안전하지 않은 웹사이트가 당신의 신원을 훼손하는 것에 대해 걱정할 필요가 없습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚡️ OpenID 2.0은 OpenID Connect로 대체되었습니다. &lt;a href=&quot;https://openid.net/developers/libraries/obsolete/&quot;&gt;Ref. Libraries for Obsolete Specifications&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;oauth-20&quot;&gt;OAuth 2.0&lt;/h3&gt;
+
+&lt;p&gt;이어서, &lt;a href=&quot;https://openid.net/connect/&quot;&gt;OpenID 재단의 설명&lt;/a&gt;의 OIDC는 다음과 같이 정의 되어 있습니다.
+“OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol.” OIDC가 OAuth 프로토콜의 상위 간단한 신원 계층이라는 말이 무엇을 의미할까요?
+여기서 앞서 slack 예시에서 만난 OAuth의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt; 부분으로 거슬러 올라가 보겠습니다. (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope=openid email profile&lt;/code&gt;) 해당 파라미터에는 인가할 리소스가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openid&lt;/code&gt;로 기재되어 있습니다.
+즉, slack은 제 프로필 정보를 얻기 위해 &lt;strong&gt;OAuth 2.0&lt;/strong&gt;을 사용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Google OAuth2 API v2&lt;/code&gt;를 호출했고, 액세스 하려는 API의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openid&lt;/code&gt;로 지정했습니다.&lt;/p&gt;
+
+&lt;p&gt;Playground &amp;amp; id_token&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;SDS, ODC
+레퍼런스 붙이기&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">Journey to OIDC through authentication, authorization, SAML, and OAuth.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">GO Lang Interface</title>
@@ -1842,139 +2092,6 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
 
       
         <summary type="html">ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다. Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 아래 요소들을 고민해 볼 수 있습니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Using Amazon ECS Exec for debugging</title>
-      <link href="https://heuristicwave.github.io/ECS_Exec" rel="alternate" type="text/html" title="Using Amazon ECS Exec for debugging" />
-      <published>2022-02-22T00:00:00+00:00</published>
-      <updated>2022-02-22T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/ECS_Exec</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/ECS_Exec">&lt;p&gt;Docker에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
-21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.&lt;/p&gt;
-
-&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/cli/latest/reference/ecs/execute-command.html&quot;&gt;AWS CLI Cmd Ref : excute-commnad&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;exec-활성화&quot;&gt;Exec 활성화&lt;/h2&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여&lt;/li&gt;
-  &lt;li&gt;task-definition config 추가
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s2&quot;&gt;&quot;linuxParameters&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s2&quot;&gt;&quot;initProcessEnabled&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;CLI로 execute-command enable 후, 점검
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs create-service &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--task-definition&lt;/span&gt; task-definition-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--enable-execute-command&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--service-name&lt;/span&gt; service-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--desired-count&lt;/span&gt; 1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;아래 명령어로 활성화 여부 확인. (grep option 활용, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep -F4 &quot;managedAgents&quot;&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep &quot;enableExecuteCommand&quot;&lt;/code&gt;)&lt;/p&gt;
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs describe-tasks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--tasks&lt;/span&gt; task-id 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;활성화 상태일 때의 Snippet&lt;/p&gt;
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s2&quot;&gt;&quot;tasks&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            ...
-            &lt;span class=&quot;s2&quot;&gt;&quot;containers&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                    ...
-                    &lt;span class=&quot;s2&quot;&gt;&quot;managedAgents&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-                        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStartedAt&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;2021-03-01T14:49:44.574000-06:00&quot;&lt;/span&gt;,
-                            &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;ExecuteCommandAgent&quot;&lt;/span&gt;,
-                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStatus&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;RUNNING&quot;&lt;/span&gt;
-                        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-                    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,
-            ...
-            &lt;span class=&quot;s2&quot;&gt;&quot;enableExecuteCommand&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
-            ...
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Running ECS Exec
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs execute-command &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--task&lt;/span&gt; task-id &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--container&lt;/span&gt; container-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--interactive&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--command&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/bin/sh&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;문제-해결&quot;&gt;문제 해결&lt;/h2&gt;
-
-&lt;p&gt;Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;An error occurred &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ClusterNotFoundException&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; when calling the ExecuteCommand operation: Cluster not found.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-
-      
-        <summary type="html">Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</summary>
       
 
       
