@@ -384,7 +384,20 @@ into the {body} of the default.hbs template -->
 <span class="p">}</span>
 </code></pre></div></div>
 
-<p><code class="language-plaintext highlighter-rouge">Sample()</code> 함수는 빈 인터페이스를 인수로 받으므로, 모든 타입을 인수로 사용할 수 있습니다.</p>
+<p><code class="language-plaintext highlighter-rouge">Sample()</code> 함수는 빈 인터페이스를 인수로 받으므로, 모든 타입을 인수로 사용할 수 있습니다.
+이런 특징을 활용하여 <code class="language-plaintext highlighter-rouge">switch</code> 구문에서 타입별로 다른 로직을 수행하도록 할 수 있습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="n">Sample</span><span class="p">(</span><span class="n">s</span> <span class="k">interface</span><span class="p">{})</span> <span class="p">{</span>
+    <span class="k">switch</span> <span class="n">x</span> <span class="o">:=</span> <span class="n">s</span><span class="o">.</span><span class="p">(</span><span class="k">type</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">case</span> <span class="kt">int</span><span class="o">:</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">PrintF</span><span class="p">(</span><span class="s">"s is int %d</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="kt">int</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">case</span> <span class="kt">string</span><span class="o">:</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">PrintF</span><span class="p">(</span><span class="s">"s is string %s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="kt">string</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">default</span><span class="o">:</span>
+        <span class="n">fmt</span><span class="o">.</span><span class="n">PrintF</span><span class="p">(</span><span class="s">"Not supported type: %T:%s</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
 
 <h3 id="nil-interface">nil Interface</h3>
 
@@ -409,16 +422,15 @@ into the {body} of the default.hbs template -->
 
 <h3 id="구체화된-다른-타입으로-타입-변환하기">구체화된 다른 타입으로 타입 변환하기</h3>
 
-<p><strong>인터페이스 변수 a를 ConcreteType으로 변환하는 예시</strong></p>
+<p><strong>인터페이스 변수 a를 ConcreteType으로 변환하 법</strong></p>
 
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">a</span> <span class="n">Interface</span>
 <span class="n">t</span> <span class="o">:=</span> <span class="n">a</span><span class="o">.</span><span class="p">(</span><span class="n">ConcreteType</span><span class="p">)</span>
 </code></pre></div></div>
 
-<details>
-  <summary>👀 구체화된 다른 타입으로 변환하는 예시</summary>
+<p>👀 구체화된 다른 타입으로 변환하는 예시</p>
 
-  <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
 
 <span class="k">import</span> <span class="s">"fmt"</span>
 
@@ -443,19 +455,23 @@ into the {body} of the default.hbs template -->
 	<span class="n">s</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">Student</span><span class="p">{</span><span class="m">15</span><span class="p">}</span>                       <span class="c">// 1. *Student 타입 변수 s 선언</span>
 	<span class="n">PrintAge</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>                             <span class="c">// 2. 변수 s를 인터페이스 인수로 제공</span>
 <span class="p">}</span>
-</code></pre></div>  </div>
+</code></pre></div></div>
 
-</details>
+<p><code class="language-plaintext highlighter-rouge">main()</code> 내부에 선언된 구조체 포인터 <code class="language-plaintext highlighter-rouge">*Student</code> 타입 변수 s를 선언하고(주석 1번), 주석 2번에서 <code class="language-plaintext highlighter-rouge">Stringer</code> 인터페이스 변수로 <code class="language-plaintext highlighter-rouge">PrintAge()</code> 함수를 호출했습니다.
+이어서 <code class="language-plaintext highlighter-rouge">Stringer</code> 인터페이스 변수는 <code class="language-plaintext highlighter-rouge">Age</code>값에 접근할 수 없으므로 주석 3번에서 <code class="language-plaintext highlighter-rouge">*Student</code>로 타입이 변환되었습니다.
+이어서 이러한 구조체 변환 시, 자주 만나는 컴파일 에러를 알아보겠습니다.</p>
 
 <h4 id="️-타입-변환-실패-컴파일-타임">❗️ 타입 변환 실패 (컴파일 타임)</h4>
 
 <p>인터페이스 변수를 구체화된 타입으로 변환하려면 해당 타입이 인터페이스 메서드 집합을 포함해야 합니다.
-예를 들어 방금 예시에서 아래와 같이 <strong>Student 구조체</strong>가 <strong>String() 메서드</strong>를 포함하지 않는다면, <strong>컴파일 타임</strong> 에러가 발생합니다.</p>
+예를 들어 방금 예시에서 아래와 같이 가 <strong>String() 메서드</strong>를 포함하지 않는다면, <strong>컴파일 타임</strong> 에러가 발생합니다.</p>
 
 <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">func</span> <span class="p">(</span><span class="n">s</span> <span class="o">*</span><span class="n">Student</span><span class="p">)</span> <span class="n">String</span><span class="p">()</span> <span class="kt">string</span> <span class="p">{</span>
 	<span class="k">return</span> <span class="n">fmt</span><span class="o">.</span><span class="n">Sprintf</span><span class="p">(</span><span class="s">"Student Age:%d"</span><span class="p">,</span> <span class="n">s</span><span class="o">.</span><span class="n">Age</span><span class="p">)</span>
 <span class="p">}</span>
 </code></pre></div></div>
+
+<p>즉, 위 메서드가 없다면 주석 3번과 같은 <code class="language-plaintext highlighter-rouge">Stringer 인터페이스</code>에서 <code class="language-plaintext highlighter-rouge">*Student</code>로 타입 변환이 불가합니다.</p>
 
 <h3 id="다른-인터페이스로-타입-변환하기">다른 인터페이스로 타입 변환하기</h3>
 
