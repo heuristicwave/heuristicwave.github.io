@@ -5,9 +5,118 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 02 Oct 2022 06:55:56 +0000</pubDate>
-        <lastBuildDate>Sun, 02 Oct 2022 06:55:56 +0000</lastBuildDate>
+        <pubDate>Sun, 02 Oct 2022 09:05:40 +0000</pubDate>
+        <lastBuildDate>Sun, 02 Oct 2022 09:05:40 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
+        
+            <item>
+                <title>글또 7기 회고</title>
+                <description>&lt;p&gt;회고 글을 쓰며 드는 생각&lt;/p&gt;
+
+&lt;h2 id=&quot;글또-7기를-마무리해가며-&quot;&gt;글또 7기를 마무리해가며… 🏃🏻&lt;/h2&gt;
+
+&lt;p&gt;이번 글을 포함하여, 총 2회 제출만이 남았습니다. 본래 회고 글은 맨 마지막 제출에 작성하려 했으나, 마감 8시간을 남기고 이미 패스권은 다 소진해 계획을 수정했습니다.
+해당 포스팅은 22년 5월 5일에 작성한 &lt;a href=&quot;https://heuristicwave.github.io/geultto&quot;&gt;글또 7기 다짐글&lt;/a&gt; 템플릿을 수정해 작성한 글로,
+해당 글을 같이 띄워두고 보면 조금 더 재미?있지 않을까 싶습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;-계획-점검&quot;&gt;🧩 계획 점검&lt;/h2&gt;
+
+&lt;p&gt;지금까지 2번의 패스권 사용과 8번의 제출이 있었습니다. 다짐 글에서 아래와 같이 콘텐츠를 계획했는데, 얼마나 달성했는지 점검해 보겠습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;기술 도서 리뷰 &lt;br /&gt;
+밀린 기술 서적 부채(?)를 청산한다 했는데, 여전히 쌓여 있습니다. 한 권도 제대로 읽은 책이 없지만,
+“&lt;a href=&quot;http://www.yes24.com/Product/Goods/110243880&quot;&gt;이펙티브 엔지니어&lt;/a&gt;“와 “&lt;a href=&quot;http://www.yes24.com/Product/Goods/99108736&quot;&gt;Tucker의 Go 언어 프로그래밍&lt;/a&gt;“거
+을 거의 다? 읽어가니, 자체 평가로 &lt;strong&gt;B&lt;/strong&gt;를 부여하겠습니다. &lt;br /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;기존 시리즈물 마감 &lt;br /&gt;
+2편에 머물러 있던, ‘테라폼 더 익숙하게’ 라는 시리즈물에 추가 3편을 연재하며, 총 5편의 시리즈물을 만들었습니다.
+추가로 앞서 작성했던 기존 2편도 수정을 통해 완성도를 조금 더 높였습니다. 연재가 끝난 건 아니지만, 해당 5편을 통해 &lt;a href=&quot;https://www.hashicorp.com/certification/terraform-associate&quot;&gt;Terraform Associate&lt;/a&gt; 자격증을
+취득하는 데 도움이 되었으므로 &lt;strong&gt;S&lt;/strong&gt;를 부여하겠습니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;관심 기술 스터디 &lt;br /&gt;
+“Kubernetes, Terraform, Istio, AWS 서비스들에 대한 글을 작성하며, 성장의 기록들을 남기겠습니다.”라고 다짐했는데,
+Kubernetes 1편, Terraform 3편, AWS 서비스 1편을 작성했습니다. Istio에 대해서 작성하지 못했지만, 그래도 비교적 다짐을 지킨 것 같아 &lt;strong&gt;A&lt;/strong&gt;를 제 스스로에게 주겠습니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;주제를 추천받아 작성 &lt;br /&gt;
+최근 OIDC에 대한 글이 4번 다짐에 부합하는 것 같습니다. OIDC에 대한 글을 작성하는데, 가장 많은 시간을 쏟았으므로 &lt;strong&gt;A&lt;/strong&gt; 등급으로 평가를 마무리하겠습니다.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;종합-평가&quot;&gt;종합 평가&lt;/h3&gt;
+
+&lt;p&gt;4가지 항목에 대하여, 각각 B, S, A, A 등급으로 평균 &lt;strong&gt;A&lt;/strong&gt; 판정을 받았습니다. 저는 저 스스로에게 굉장히 관대한 사람인 것 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-잠깐&quot;&gt;✋ 잠깐!&lt;/h2&gt;
+
+&lt;p&gt;정말 제 스스로에 대한 평가가 맞는지, 다짐 글에 다짐을 다시 보며 검토를 해보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;자발적-번아웃-&quot;&gt;자발적 번아웃 🔥&lt;/h3&gt;
+
+&lt;p&gt;자발적 번아웃이 올 정도로 열심히 글을 작성한다 했는데, 결국 오지 않은 것 같습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;글또에는 여러 기수를 걸쳐 지속적으로 활동하고 계신 분들이 꽤나 많습니다.
+저도 이번 7기가 끝이 아니라 지속적인 활동으로 글또를 이어가고 싶습니다.
+그렇지만, 7기 활동이 끝날 무렵 회고를 하는 시점에서 7기 활동 간 생산된 12편의 글로 인하여 후회 없는 활동을 하고 싶습니다.
+다시 바꾸어 말하면, &lt;em&gt;“너무 힘들어서 8기는 쉬어야겠다.”&lt;/em&gt; 싶을 정도의 감정을 느끼도록 열심히 활동하고 싶습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;2주마다 겪은 창작의 고통만 본다면, 후회 없는 활동에 가까운 노력을 한 것 같습니다. 그러나, 다짐 글 당시에 작성한 &lt;em&gt;“너무 힘들어서 8기는 쉬어야겠다.”&lt;/em&gt; 싶을 정도의 감정은
+아직 느끼지 못했습니다. 패스권을 2회나 사용했기 때문에, 제 스스로 열심히 했다고 말하기가 부끄럽습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;부끄러움을-늦추는-글의-유효기간-&quot;&gt;부끄러움을 늦추는 글의 유효기간 🙈&lt;/h3&gt;
+
+&lt;p&gt;과거 저는 아래 그래프와 함께 글의 완성도와 부끄러움의 발현 시기는 양의 상관관계를 갖고 있다고 말했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/graph.png&quot; alt=&quot;posting_quality&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;더불어 이런 목표를 가지고 이번 7기에 임했습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;작년에 제가 작성한 글 들의 경우, 아무리 길어도 대략 한 계절정도 지나면 부끄러움이 스멀스멀 올라오는것 같더군요.
+그래서, 이번 활동 기간 동안에는 과거 제가 썻던 글보다 더 부끄러움이 오는 시기가 늦는 글을 작성해 보려합니다. 
+활동기간이 약 6개월 정도되니 아마 5월 말에 쓰는 글에 대한 부끄러움의 정도를 7기 활동이 끝날 무렵인 회고 때 다뤄보면 좋을 것 같습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;5월부터 글을 작성하다 보니, 글또 초창기에 작성한 글들은 벌써 한 계절을 넘었습니다. 해당 글들을 지금 다시 보니 앞서 언급한 목표는 달성한 것 같습니다.
+앞선 종합 평가에서 스스로에게 A를 부여했으나, 검토를 진행하다 보니 부끄러움이 몰려와 B 정도로 수정해야겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;ps&quot;&gt;P.S.&lt;/h2&gt;
+
+&lt;p&gt;사실 이번 포스팅에는 “이펙티브 엔지니어” 독후감을 계획하고 있었지만, 썩 초안이 마음에 들지 않아 없던 일로 돌아갔습니다.
+독후감 계획은 무산되었지만, 책 본문에 나온 내용을 소개하며 마치겠습니다.&lt;/p&gt;
+
+&lt;p&gt;“우리가 집중하기 어려운 것은 앞서 말한 것처럼 연속 시간이 부족하거나 맥락이 너무 자주 전환되어서도 있지만, 
+가끔은 어려운 일을 시작하는 데 필요한 &lt;strong&gt;활성화 에너지&lt;/strong&gt;를 모을 동기가 부족해서일 수도 있다.”
+심리학 교수 피터 골비처(Peter Gollwitzer)는 연구에 참여하는 학생들에게 크리스마스이가 지나고 이틀 내에 휴가를 어떻게 보냈는지 에세이를 우편으로 보내라고 했다.
+학생 중 절반에게는 에세이를 언제 어디서 어떻게 구체적으로 명시하게 하니, ‘실행 의사’를 구체적으로 표현한 학생 중 71%는 에세이를 우편으로 보냈다.
+표현하지 않은 학생 중 에세이를 보낸 학생은 32% 뿐이었다. 행동에 아주 작은 변화를 주었을 뿐인데 완료율이 2배 이상 증가한 것이다.&lt;/p&gt;
+
+&lt;p&gt;결과론이기는 하지만, 이번 글또 활동도 나름의 계획을 ‘다짐 글’이라는 ‘실행 의사’로 표현하니 작년보다 더 많은 글을 작성하게 된 것 같습니다. 🥲&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+</description>
+                <pubDate>Sun, 02 Oct 2022 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//geultto2</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//geultto2</guid>
+                
+                <category>uncategorized</category>
+                
+                <category>extracurricular</category>
+                
+                
+            </item>
         
             <item>
                 <title>The Journey to Know OIDC</title>
@@ -1874,144 +1983,6 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, &lt
                 <guid isPermaLink="true">https://heuristicwave.github.io//Export_data_to_S3_Lambda</guid>
                 
                 <category>aws</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>Using the awslogs log driver in ECS(Fargate)</title>
-                <description>&lt;p&gt;ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다.
-Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 
-아래 요소들을 고민해 볼 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html&quot;&gt;Using the awslogs log driver&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Regular_expression&quot;&gt;Regular expression Wikipedia&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;fargate에서-필요한-awslogs-로그-드라이버&quot;&gt;Fargate에서 필요한 awslogs 로그 드라이버&lt;/h2&gt;
-
-&lt;p&gt;공식 문서에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-region&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-group&lt;/code&gt; 만이 필요하다고 하지만, &lt;strong&gt;Fargate&lt;/strong&gt;를 사용하는 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-stream-prefix&lt;/code&gt;이 추가적으로 필요합니다.
-또한, 가시성을 확보하기 위해 CloudWatch Logs에 수집된 여러 줄의 로그를 하나의 메시지로 보기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-multiline-pattern&lt;/code&gt;이 필수적으로 필요합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;awslogs-multiline-pattern&quot;&gt;awslogs-multiline-pattern&lt;/h3&gt;
-
-&lt;p&gt;공식 문서의 Note 부분을 보면 다음과 같은 메모를 확인할 수 있습니다. &lt;em&gt;(정말 공식 문서는 한 줄도 그냥 지나칠 수 없는 것 같습니다!)&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Multiline logging performs regular expression parsing and matching of all log messages.
-This may have a negative impact on logging performance.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;실제로 저는 정규 표현식을 간과하고 검증되지 않은 정규식들을 적용했다가 다음과 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Negative Impact&lt;/code&gt;를 만났습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;로그가 수집되기까지의 지나친 지연 시간 발생 (10분 이상)&lt;/li&gt;
-  &lt;li&gt;지연시간으로 인한 Timestamp 불일치 (Ingestion time과 Event Timestamp의 과도한 오차)&lt;/li&gt;
-  &lt;li&gt;1, 2번 이유로 인한 로그 미수집&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;regular-expression-lab&quot;&gt;Regular Expression Lab&lt;/h2&gt;
-
-&lt;p&gt;지금부터 예시들을 통해, CW Logs를 운영하며 만날 수 있는 상황들을 체험해 보겠습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;em&gt;샘플 로그를 복사하여 &lt;a href=&quot;https://regexr.com&quot;&gt;RegExr&lt;/a&gt;에서 match 여부를 테스트해 볼 수 있습니다.&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;case-1️⃣&quot;&gt;Case 1️⃣&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-multiline-pattern&lt;/code&gt;의 &lt;strong&gt;value&lt;/strong&gt;로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;^INFO&lt;/code&gt;를 설정할 경우 3개의 Line 중 match 되는 라인은 몇 라인일까요?&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;# Line 1&lt;/span&gt;
-INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;# Line 2&lt;/span&gt;
-12:15:10 UTC | INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# Line 3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;details&gt;
-  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
-
-  &lt;blockquote&gt;
-    &lt;p&gt;&lt;strong&gt;INFO&lt;/strong&gt; | (pkg/trace/info/stats.go:104 in LogStats)                # Line 1&lt;/p&gt;
-  &lt;/blockquote&gt;
-
-  &lt;p&gt;^(caret) 은 전체 문자열의 시작 위치에만 일치하므로, Line 1 만이 match 됩니다.&lt;/p&gt;
-
-&lt;/details&gt;
-
-&lt;h3 id=&quot;case-2️⃣&quot;&gt;Case 2️⃣&lt;/h3&gt;
-
-&lt;p&gt;다음은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;시:분:초&lt;/code&gt;를 표현하는 정규 표현식 입니다. 해당 정규 표현식은 아래 3줄을 모두 Match 시킬 수 있을까요? &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[1-9]|1[0-9]|2[0-4]):(0[1-9]|[1-5][0-9]):(0[1-9]|[1-5][0-9])&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;07:36:35 | Which line will match? Line 1
-08:00:01 | I am Line 2!
-08:01:00 | I am Line 3!
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
-
-  &lt;blockquote&gt;
-    &lt;p&gt;&lt;strong&gt;07:36:35&lt;/strong&gt; | I was matched &lt;br /&gt;
-08:00:01 | I was not matched! &lt;br /&gt;
-08:01:00 | I was not matched! &lt;br /&gt;&lt;/p&gt;
-  &lt;/blockquote&gt;
-
-  &lt;p&gt;그렇다면 왜? 첫 번째 라인만이 매칭되었을까요? &lt;strong&gt;분, 초&lt;/strong&gt;에 해당하는 표현식을 유심히 살펴보면 00분 00시는 매칭되지 않습니다.
-때문에 각각 (분 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[0-9]|[1-5][0-9])&lt;/code&gt;, 초 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[0-9]|[1-5][0-9])&lt;/code&gt;)로 수정해야 위 3줄을 매칭 시킬 수 있습니다.&lt;/p&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;other-case&quot;&gt;Other Case&lt;/h3&gt;
-
-&lt;p&gt;위 2가지 케이스만 준비된다면 모든 로그들을 제대로 분리하여 수집할 수 있을까요?&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;🤔 생각해보기&lt;/summary&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;Flag가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INFO&lt;/code&gt; 형식이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WARN&lt;/code&gt;이 발생할 경우&lt;/li&gt;
-    &lt;li&gt;Timestamp로 매칭 작업을 하는데 한 줄에 1회 이상 Timestamp가 포함된 경우
-      &lt;blockquote&gt;
-        &lt;p&gt;ex) &lt;strong&gt;08:00:01&lt;/strong&gt; | It’s &lt;strong&gt;08:02:03&lt;/strong&gt; right now.&lt;/p&gt;
-      &lt;/blockquote&gt;
-    &lt;/li&gt;
-    &lt;li&gt;Application Crash로 인한 예상치 못한 메시지가 포함될 경우&lt;/li&gt;
-    &lt;li&gt;awslogs 로그 드라이버 내의 우선순위&lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;아마도 위에 기재한 것들 외에도 더 고려 할 것들이 많을 것 같습니다.
-개발이나 알고리즘 문제를 풀 때와 마찬가지로 항상 예상치 못한 실패 지점을 예상하는 습관이 필요한 것 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Tue, 01 Mar 2022 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//ECS_CW_Logs</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//ECS_CW_Logs</guid>
-                
-                <category>aws</category>
-                
-                <category>devops</category>
                 
                 
             </item>
