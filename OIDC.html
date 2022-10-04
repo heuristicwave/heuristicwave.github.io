@@ -336,54 +336,10 @@ AuthN(인증) &amp; AuthZ(인가, 권한 부여)</p>
   <li><code class="language-plaintext highlighter-rouge">response_type</code> : code, token 등 OAuth에 적용할 방식의 타입</li>
 </ul>
 
-<h3 id="implicit-grant-flow">Implicit Grant Flow</h3>
-
-<p>캡처화면에서는 우리의 웹 브라우저를 통해 A와 B의 단계가 클릭 2번으로 끝나지만, 사실 A와 B 사이에는 더 복잡한 단계들이 숨겨져 있습니다.
-아래 RFC 문서에 기재된 <strong>Implicit Grant Flow</strong>를 살펴보며 A 이후의 단계들을 살짝 보고 넘어가겠습니다. 🫣</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> +----------+
- | Resource |
- |  Owner   |
- |          |
- +----------+
-      ^
-      |
-     <span class="o">(</span>B<span class="o">)</span>
- +----|-----+          Client Identifier     +---------------+
- |         -+----<span class="o">(</span>A<span class="o">)</span><span class="nt">--</span> &amp; Redirection URI <span class="nt">---</span><span class="o">&gt;</span>|               |
- |  User-   |                                | Authorization |
- |  Agent  -|----<span class="o">(</span>B<span class="o">)</span><span class="nt">--</span> User authenticates <span class="nt">--</span><span class="o">&gt;</span>|     Server    |
- |          |                                |               |
- |          |&lt;<span class="nt">---</span><span class="o">(</span>C<span class="o">)</span><span class="nt">---</span> Redirection URI <span class="nt">----</span>&lt;|               |
- |          |          with Access Token     +---------------+
- |          |            <span class="k">in </span>Fragment
- |          |                                +---------------+
- |          |----<span class="o">(</span>D<span class="o">)</span><span class="nt">---</span> Redirection URI <span class="nt">----</span><span class="o">&gt;</span>|   Web-Hosted  |
- |          |          without Fragment      |     Client    |
- |          |                                |    Resource   |
- |     <span class="o">(</span>F<span class="o">)</span>  |&lt;<span class="nt">---</span><span class="o">(</span>E<span class="o">)</span><span class="nt">-------</span> Script <span class="nt">---------</span>&lt;|               |
- |          |                                +---------------+
- +-|--------+
-   |    |
-  <span class="o">(</span>A<span class="o">)</span>  <span class="o">(</span>G<span class="o">)</span> Access Token
-   |    |
-   ^    v
- +---------+
- |         |
- |  Client |
- |         |
- +---------+
-</code></pre></div></div>
-
-<p>간략하게 몇 가지를 더 설명하자면, 위 승인 Flow의 User-Agent는 우리의 웹브라우저입니다.
-브라우저는 인가 서버의 URI에 querystring으로 <code class="language-plaintext highlighter-rouge">client_id</code>와 <code class="language-plaintext highlighter-rouge">redirect_uri</code>를 붙여 인가 서버에 전달하면(A),
-인가 서버는 <strong>검증</strong> 작업을 거쳐 <strong>Access Token</strong>을 발급(C) 합니다.
-이후 Client는 생성된 <strong>Access Token</strong>을 활용해 scope에 명시된 기능을 Resource Server로부터 제공받습니다.(위 그림, Implicit Grant Flow에서는 나오지 않음)
-해당 절차가 <code class="language-plaintext highlighter-rouge">Abstract Protocol Flow</code> 그림의 B ~ F에 해당합니다.</p>
-
 <h3 id="authorization-code-grant">Authorization Code Grant</h3>
 
-<p>사실, Implicit Grant Flow의 <strong>C 단계</strong>에는 아래와 같은 인가 코드 발급 과정이 생략되어 있습니다.</p>
+<p>캡처화면에서는 우리의 웹 브라우저를 통해 A와 B의 단계가 클릭 2번으로 끝나지만, 사실 A와 B 사이에는 더 복잡한 단계들이 숨겨져 있습니다.
+아래 RFC 문서에 기재된 <strong>Authorization Code Grant</strong>를 살펴보며 A 이후의 단계들을 살짝 보고 넘어가겠습니다. 🫣</p>
 
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>+----------+
 | Resource |
@@ -411,10 +367,14 @@ AuthN(인증) &amp; AuthZ(인가, 권한 부여)</p>
 |         |&lt;---(E)----- Access Token -------------------'</span>
 +---------+       <span class="o">(</span>w/ Optional Refresh Token<span class="o">)</span>
 </code></pre></div></div>
-<p>브라우저는 인가 서버의 URI에 querystring으로 <code class="language-plaintext highlighter-rouge">client_id</code>와 <code class="language-plaintext highlighter-rouge">redirect_uri</code>를 붙여 인가 서버에 전달(A) 하는 것은 동일합니다.
-이어서 인가 서버는 <strong>검증</strong> 작업을 거쳐 <strong>Authorization Code</strong>을 발급(C) 합니다.
+
+<p>위 승인 Flow의 User-Agent는 우리의 웹브라우저입니다. 
+브라우저는 인가 서버의 URI에 querystring으로 <code class="language-plaintext highlighter-rouge">client_id</code>와 <code class="language-plaintext highlighter-rouge">redirect_uri</code>를 붙여 인가 서버에 전달하면(A),
+인가 서버는 <strong>검증</strong> 작업을 거쳐 <strong>Authorization Code</strong>을 발급(C) 합니다.
 <strong>Authorization Code</strong>를 받은 브라우저는 Client에게 전달(C) 하고, Client는 다시 인가 서버에게 Code를 보내고(D)
-Access Token을 돌려받습니다.</p>
+Access Token을 돌려받습니다(E).
+이후 Client는 생성된 <strong>Access Token</strong>을 활용해 scope에 명시된 기능을 Resource Server로부터 제공받습니다.
+해당 절차가 <code class="language-plaintext highlighter-rouge">Abstract Protocol Flow</code> 그림의 B ~ F에 해당합니다.</p>
 
 <p>지금까지 생소한 정보들을 쏟아내다 보니, 독자 여려분들이 굉장히 혼란스러울 것 같습니다. (처음 OAuth를 공부했던 제가 그랬습니다 😵‍💫)
 처음부터 모든 과정을 이해하려 하면 어려우니, 대략적인 흐름만 파악하고 넘어가셔도 좋습니다. 이후 OIDC에서 예시와 함께 또 다룰 예정이거든요 🙃</p>
