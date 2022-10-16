@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 16 Oct 2022 06:25:58 +0000</pubDate>
-        <lastBuildDate>Sun, 16 Oct 2022 06:25:58 +0000</lastBuildDate>
+        <pubDate>Sun, 16 Oct 2022 06:35:58 +0000</pubDate>
+        <lastBuildDate>Sun, 16 Oct 2022 06:35:58 +0000</lastBuildDate>
         <generator>Jekyll v3.9.0</generator>
         
             <item>
@@ -205,7 +205,7 @@
 &lt;h2 id=&quot;동시성-프로그래밍-주의점&quot;&gt;동시성 프로그래밍 주의점&lt;/h2&gt;
 
 &lt;p&gt;여러 고루틴이 동일한 메모리 자원에 접근하면 값을 변경시키면 &lt;strong&gt;동시성 문제&lt;/strong&gt;를 일으킵니다. 이런 문제를 해결하기 위해 한 고루틴이 접근할 때,
-&lt;strong&gt;뮤텍스(mutex, 상호 배)&lt;/strong&gt;를 이용하면 다른 고루틴이 자원에 접근하지 못하게 권한을 통제할 수 있습니다.&lt;/p&gt;
+&lt;strong&gt;뮤텍스(mutex, 상호 배제)&lt;/strong&gt;를 이용하면 다른 고루틴이 자원에 접근하지 못하게 권한을 통제할 수 있습니다.&lt;/p&gt;
 
 &lt;h3 id=&quot;mutex&quot;&gt;Mutex&lt;/h3&gt;
 
@@ -285,7 +285,7 @@ fatal error: all goroutines are asleep - deadlock!
 각 고루틴에게 서로 다른 자원에 접근하도록 만들기 위해 아래 2가지 방법이 있습니다.&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;영역 나누기 : 할당된 작업만 진행하여, 고루틴 간 간섭이 발생하지 않게 각 작업을 각각의 고루틴으로 실행&lt;/li&gt;
+  &lt;li&gt;영역 나누기 : 고루틴 간 간섭이 발생하지 않게 각각의 고루틴으로 할당된 작업만 실행&lt;/li&gt;
   &lt;li&gt;역할 나누기 : &lt;strong&gt;채널&lt;/strong&gt;을 활용해 고루틴 간의 간섭을 없애기&lt;/li&gt;
 &lt;/ol&gt;
 
