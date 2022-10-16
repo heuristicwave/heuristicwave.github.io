@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Goroutines</title>
+        
+          <description>&lt;p&gt;Goroutines, Concurrent Programming in Go&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sun, 16 Oct 2022 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/Goroutines</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/Goroutines</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>글또 7기 회고</title>
         
           <description>&lt;p&gt;회고 글을 쓰며 드는 생각&lt;/p&gt;

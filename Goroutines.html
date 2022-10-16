@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Goroutines</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- Custom.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- webfont -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/nanumgothic.css">
+
+    <!-- syntax.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Careful Writer" />
+    <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
+    <link rel="canonical" href="https://heuristicwave.github.io/Goroutines" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Heuristic Wave Blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Goroutines" />
+    <meta property="og:description" content="Goroutines, Concurrent Programming in Go Intro 해당 포스팅은 Tucker의 Go 언어 프로그래밍 24장 고루틴과 동시성 프로그래밍 읽고 정리한 내용임을 알립니다. 미루고 미루던 Go 언어 학습을, 글또 덕분에 올해 Go 언어 학습을 끝마칠 수 있을 것 같습니다. 😵‍💫 Goroutines 고루틴은 Go 언어에서 관리하는 경량 스레드입니다. 함수나 명령을 동시에 수행할 때 사용하며," />
+    <meta property="og:url" content="https://heuristicwave.github.io/Goroutines" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/Go-Logo_Blue.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/" />
+    <meta property="article:author" content="https://www.facebook.com/" />
+    <meta property="article:published_time" content="2022-10-16T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2022-10-16T00:00:00+00:00" />
+    <meta property="article:tag" content="Backend" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Goroutines" />
+    <meta name="twitter:description" content="Goroutines, Concurrent Programming in Go Intro 해당 포스팅은 Tucker의 Go 언어 프로그래밍 24장 고루틴과 동시성 프로그래밍 읽고 정리한 내용임을 알립니다. 미루고 미루던 Go 언어 학습을, 글또 덕분에 올해 Go 언어 학습을 끝마칠 수 있을 것 같습니다. 😵‍💫 Goroutines 고루틴은 Go 언어에서 관리하는 경량 스레드입니다. 함수나 명령을 동시에 수행할 때 사용하며," />
+    <meta name="twitter:url" content="https://heuristicwave.github.io/" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/Go-Logo_Blue.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Heuristic Wave Blog" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Backend" />
+    <meta name="twitter:site" content="@" />
+    <meta name="twitter:creator" content="@" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Heuristic Wave Blog",
+        "logo": "https://heuristicwave.github.io/"
+    },
+    "url": "https://heuristicwave.github.io/Goroutines",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/Go-Logo_Blue.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://heuristicwave.github.io/Goroutines"
+    },
+    "description": "Goroutines, Concurrent Programming in Go Intro 해당 포스팅은 Tucker의 Go 언어 프로그래밍 24장 고루틴과 동시성 프로그래밍 읽고 정리한 내용임을 알립니다. 미루고 미루던 Go 언어 학습을, 글또 덕분에 올해 Go 언어 학습을 끝마칠 수 있을 것 같습니다. 😵‍💫 Goroutines 고루틴은 Go 언어에서 관리하는 경량 스레드입니다. 함수나 명령을 동시에 수행할 때 사용하며,"
+}
+    </script>
+    <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FTXSPJZFY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0FTXSPJZFY');
+    </script>
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Goroutines" href="https://heuristicwave.github.io/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://heuristicwave.github.io/">Heuristic Wave Blog</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-extracurricular" role="menuitem"><a href="/tag/uncategorized/">Uncategorized</a></li>
+    <li class="nav-aws" role="menuitem"><a href="/tag/aws/">AWS</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/backend/">Back-end</a></li>
+    <li class="nav-devops" role="menuitem"><a href="/tag/devops/">DevOps</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/security/">Security</a></li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/archive">All Posts</a>
+    </li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/author_archive.html">Tag별 Posts</a>
+    </li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+        </div>
+        
+            <a class="subscribe-button" href="#subscribe">Search</a>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-backend tag-programming post tag-backend ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="16 October 2022">16 October 2022</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/backend/'>BACKEND</a>,
+                            
+                        
+                            
+                               <a href='/tag/programming/'>PROGRAMMING</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Goroutines</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/Go-Logo_Blue.png)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>Goroutines, Concurrent Programming in Go</p>
+
+<p><br /></p>
+
+<h2 id="intro">Intro</h2>
+
+<p>해당 포스팅은 <a href="http://www.yes24.com/Product/Goods/99108736">Tucker의 Go 언어 프로그래밍</a> 24장 고루틴과 동시성 프로그래밍 읽고 정리한 내용임을 알립니다.
+미루고 미루던 Go 언어 학습을, <a href="https://heuristicwave.github.io/geultto2">글또</a> 덕분에 올해 Go 언어 학습을 끝마칠 수 있을 것 같습니다. 😵‍💫</p>
+
+<p><br /></p>
+
+<h2 id="goroutines">Goroutines</h2>
+
+<p>고루틴은 Go 언어에서 관리하는 경량 스레드입니다. 함수나 명령을 동시에 수행할 때 사용하며, 여러 고루틴을 갖는 프로그램 코딩을 <strong>동시성 프로그래밍</strong>이라고 합니다.
+고루틴을 이해하기 위해, 선수 지식들을 알아보겠습니다.</p>
+
+<h3 id="thread">Thread</h3>
+
+<p>메모리 공간에 로딩되어 동작하는 프로그램을 프로세스라고 합니다. 프로세스는 1개 이상의 작업 단위를 가지고 있으며, 이 작업 단위를 스레드라고 합니다.
+스레드가 하나면 싱글 스레드 프로세스, 여럿이면 멀티 스레드 프로세스라 합니다.</p>
+
+<p>원래 CPU 코어는 한 번에 한 명령밖에 수행할 수 없습니다. 그러나 스레드가 CPU 코어를 빠르게 교대로 점유하면 동시에 모든 스레드가 실행되는 것처럼 보입니다.</p>
+
+<h3 id="context-switching">Context switching</h3>
+
+<p>CPU 코어가 여러 스레드를 전환하는 것을 <strong>컨텍스트 스위칭</strong>이라고 합니다. 스레드를 전환하려면 현재 상태를 보관해야 다시 스레드가 전환되어 돌아올 때 마지막 실행 상태부터 이어서 실행이 가능합니다.
+이를 위해 스레드의 명령 포인터(instruction pointer), 스택 메모리 등의 정보를 저장하는 데 이것을 <strong>스레드 컨텍스트</strong>라고 합니다.</p>
+
+<p>스레드가 전환될 때마다 스레드 컨텍스트를 저장하고 복원하기 때문에 전환 비용이 발생하고 적정 개수를 넘어 너무 많은 스레드를 수행하면 성능이 저하됩니다.
+하지만 <strong>Go 언어에서는 CPU 코어마다 OS 스레드를 하나만 할당해 사용하므로 컨텍스트 스위칭 비용이 발생하지 않습니다.</strong></p>
+
+<p><br /></p>
+
+<h2 id="goroutines-example">Goroutines Example</h2>
+
+<p>모든 프로그램은 최소 하나의 고루틴을 가지고 있습니다. 이는 메인 루틴으로 <code class="language-plaintext highlighter-rouge">main()</code> 함수와 함께 고루틴이 시작되고 종료됩니다.
+이미 하나의 고루틴이 있으며, 추가로 고루틴을 생성하는 방법은 다음과 같이, <code class="language-plaintext highlighter-rouge">go functionName()</code> go 키워드와 함께 함수를 호출하는 것입니다.</p>
+
+<p>아래 코드는 2개의 서브 고루틴을 사용한 예시입니다. 어떤 결과가 나올지 예상해 보고, 하단의 결과를 열어 확인해 보세요 😎</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"time"</span>
+<span class="p">)</span>
+
+<span class="k">func</span> <span class="n">PrintHangul</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">hanguls</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">rune</span><span class="p">{</span><span class="sc">'가'</span><span class="p">,</span> <span class="sc">'나'</span><span class="p">,</span> <span class="sc">'다'</span><span class="p">,</span> <span class="sc">'라'</span><span class="p">,</span> <span class="sc">'마'</span><span class="p">,</span> <span class="sc">'바'</span><span class="p">,</span> <span class="sc">'사'</span><span class="p">}</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">hanguls</span> <span class="p">{</span>
+		<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">300</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">PrintNumbers</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="m">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">400</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+	<span class="p">}</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">go</span> <span class="n">PrintNumbers</span><span class="p">()</span>
+	<span class="k">go</span> <span class="n">PrintHangul</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<details>
+  <summary>👀 실행 결과 보기</summary>
+
+  <p>해당 코드는 고루틴이 생성되어 있지만, 메인 함수가 먼저 종료되어 아무런 결과도 출력되지 않습니다.
+결과를 출력하기 위해서는 서브 고루틴이 모두 실행되고 완료되는 2000ms 보다 많은 시간을 <code class="language-plaintext highlighter-rouge">main()</code> 함수에 넣으면 됩니다.</p>
+
+  <p>이렇게 <code class="language-plaintext highlighter-rouge">time.Sleep(3 * time.Second)</code> 3000ms를 보장하는 코드를 삽입하면 모든 실행을 보장합니다.</p>
+
+</details>
+
+<h3 id="실행-시간-보장하기">실행 시간 보장하기</h3>
+
+<p>생성한 서브 고루틴들의 실행을 보장하기 위해서는 <code class="language-plaintext highlighter-rouge">WaitGroup</code> 객체를 사용하면 됩니다.</p>
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">wg</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span>
+
+<span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">3</span><span class="p">)</span>   <span class="c">// 작업 개수 설정</span>
+<span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>   <span class="c">// 작업이 완료될 때마다 호출</span>
+<span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>   <span class="c">// 모든 작업이 완료될 때까지 대기</span>
+</code></pre></div></div>
+
+<p>해당 방법을 통해 위에 예시로 소개한 고루틴을 다음과 같이 수정하면 모든 실행을 보장할 수 있습니다.</p>
+
+<details>
+  <summary>👀 서브 고루틴 기다리기</summary>
+
+  <div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"sync"</span>
+	<span class="s">"time"</span>
+<span class="p">)</span>
+
+<span class="k">var</span> <span class="n">wg</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span>
+
+<span class="k">func</span> <span class="n">PrintHangul</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">hanguls</span> <span class="o">:=</span> <span class="p">[]</span><span class="kt">rune</span><span class="p">{</span><span class="sc">'가'</span><span class="p">,</span> <span class="sc">'나'</span><span class="p">,</span> <span class="sc">'다'</span><span class="p">,</span> <span class="sc">'라'</span><span class="p">,</span> <span class="sc">'마'</span><span class="p">,</span> <span class="sc">'바'</span><span class="p">,</span> <span class="sc">'사'</span><span class="p">}</span>
+	<span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">v</span> <span class="o">:=</span> <span class="k">range</span> <span class="n">hanguls</span> <span class="p">{</span>
+		<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">300</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%c"</span><span class="p">,</span> <span class="n">v</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">PrintNumbers</span><span class="p">()</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">1</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;=</span> <span class="m">5</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="m">400</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%d "</span><span class="p">,</span> <span class="n">i</span><span class="p">)</span>
+	<span class="p">}</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
+	<span class="k">go</span> <span class="n">PrintNumbers</span><span class="p">()</span>
+	<span class="k">go</span> <span class="n">PrintHangul</span><span class="p">()</span>
+
+	<span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+	<span class="c">// time.Sleep(3 * time.Second)</span>
+<span class="p">}</span>
+</code></pre></div>  </div>
+
+</details>
+
+<p><br /></p>
+
+<h2 id="mechanism">Mechanism</h2>
+
+<p>고루틴은 명령을 수행하는 단일 흐름으로 <strong>OS 스레드</strong>를 이용하는 <strong>경량 스레드</strong>입니다. 해당 정의를 이해하기 위해 OS 스레드와 고루틴이 어떻게 다른지 알아보겠습니다.
+2개의 코어에서 2개의 고루틴이 존재한다 가정하면, 아래 그림과 같이 각 코어 별, OS 스레드에 하나의 고루틴이 실행됩니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ________           ______________         .<span class="s1">''''''''</span><span class="nb">.</span>
+|        |         /             /        /    Go    <span class="se">\</span>
+| CORE 1 |--------/ OS Thread 1 /---------<span class="se">\ </span>routine1 /
+|________|       /_____________/           <span class="s1">'........'</span>
+ ________           ______________         .<span class="s1">''''''''</span><span class="nb">.</span>
+|        |         /             /        /    Go    <span class="se">\</span>
+| CORE 2 |--------/ OS Thread 2 /---------<span class="se">\ </span>routine2 /
+|________|       /_____________/           <span class="s1">'........'</span>
+</code></pre></div></div>
+
+<p>위 상황에서 고루틴을 하나 더 생성하면, 남는 코어가 없으므로 3번째 고루틴은 다른 고루틴이 실행 완료될 때까지 대기 상태로 멈춰 있습니다.
+만약 고루틴 2가 실행 완료되면, 그제야 대기하던 고루틴 3이 실행됩니다.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ________           ______________         .<span class="s1">''''''''</span><span class="nb">.</span>
+|        |         /             /        /    Go    <span class="se">\</span>
+| CORE 1 |--------/ OS Thread 1 /---------<span class="se">\ </span>routine1 /
+|________|       /_____________/           <span class="s1">'........'</span>
+ ________           ______________         .<span class="s1">''''''''</span><span class="nb">.</span>
+|        |         /             /        /    Go    <span class="se">\</span>
+| CORE 2 |--------/ OS Thread 2 /---------<span class="se">\ </span>routine2 /
+|________|       /_____________/           <span class="s1">'........'</span>
+                                                ^
+ .<span class="s1">'!Wait!'</span><span class="nb">.</span>                                     |
+/    Go    <span class="se">\_</span>_____After Goroutin 2 is removed___|
+<span class="se">\ </span>routine3 /
+ <span class="s1">'.!Wait!.'</span>
+</code></pre></div></div>
+
+<h3 id="system-call">System Call</h3>
+
+<p>커널 서비스를 사용하기 위해 <strong>시스템 콜</strong>을 호출하면, 해당 서비스가 완료될 때까지 대기 상태가 됩니다.
+앞선 예시에서는 실행 중인 고루틴이 완료되기까지 대기 상태를 유지했다면, 시스템 콜이 발생한 상황(고루틴 3)에서는 해당 고루틴을 대기열로 보내고
+대기하던 다른 고루틴(고루틴 4)을 실행하며 <strong>코어와 스레드 변경 없이</strong> 고루틴만을 이동시킵니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code> ________           ______________         .<span class="s1">''''''''</span><span class="nb">.</span>
+|        |         /             /        /    Go    <span class="se">\</span>
+| CORE 1 |--------/ OS Thread 1 /---------<span class="se">\ </span>routine1 /
+|________|       /_____________/           <span class="s1">'........'</span>
+ ________           ______________         .<span class="s1">''''''''</span><span class="nb">.</span>
+|        |         /             /        /    Go    <span class="se">\</span>
+| CORE 2 |--------/ OS Thread 2 /---------<span class="se">\ </span>routine3 /
+|________|       /_____________/           <span class="s1">'........'</span>
+                                                ^
+ .<span class="s1">'!Wait!'</span><span class="nb">.</span>                                     |
+/    Go    <span class="se">\&lt;</span><span class="nt">------</span> Switch only Goroutin <span class="nt">-------</span>|
+<span class="se">\ </span>routine4 /  without changing cores and threads
+ <span class="s1">'.!Wait!.'</span>
+</code></pre></div></div>
+
+<p>이와 같이 고루틴을 이용하면 컨텍스트 스위칭과 없이 오직 고루틴만 옮겨 다니므로, 컨텍스트 스위칭 비용이 증가하면서 발생하는 프로그램 성능 저하로부터 자유로워지게 됩니다.</p>
+
+<p><br /></p>
+
+<h2 id="동시성-프로그래밍-주의점">동시성 프로그래밍 주의점</h2>
+
+<p>여러 고루틴이 동일한 메모리 자원에 접근하면 값을 변경시키면 <strong>동시성 문제</strong>를 일으킵니다. 이런 문제를 해결하기 위해 한 고루틴이 접근할 때,
+<strong>뮤텍스(mutex, 상호 배)</strong>를 이용하면 다른 고루틴이 자원에 접근하지 못하게 권한을 통제할 수 있습니다.</p>
+
+<h3 id="mutex">Mutex</h3>
+
+<p>뮤텍스는 <code class="language-plaintext highlighter-rouge">Lock()</code> 메서드를 호출해 뮤텍스를 회득하면, 이후에 <code class="language-plaintext highlighter-rouge">Lock()</code> 메서드를 호출한 고루틴은 앞서 획득한 뮤텍스가 반납될 때까지 대기하게 됩니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">var</span> <span class="n">mutex</span> <span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span>        <span class="c">// 패키지 전역 변수 뮤텍스</span>
+
+<span class="k">func</span> <span class="n">mutexExample</span><span class="p">()</span> <span class="p">{</span>
+    <span class="n">mutex</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>            <span class="c">// 뮤텍스를 확보할 때까지 대기</span>
+    <span class="k">defer</span> <span class="n">mutex</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>    <span class="c">// 이하 로직은 뮤텍스를 확보한 단 하나의 고루틴만 실행</span>
+    <span class="o">...</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>위 예시의 3줄만 작성한다면 프로그램에 뮤텍스를 이용해 <strong>동시성 문제</strong>를 해결할 수 있습니다. 그러나 또 다른 문제가 발생할 수 있습니다.</p>
+
+<ol>
+  <li>오직 하나의 고루틴만 공유 자원에 접근하므로, 동시성 프로그래밍으로 얻는 성능 향상을 얻을 수 없음</li>
+  <li>뮤텍스를 잘못 사용하면, <strong>데드락(Deadlock, 교착 상태)</strong>에 빠져 무한정 대기하게 됨</li>
+</ol>
+
+<h3 id="deadlock">Deadlock</h3>
+
+<p>하나의 프로세스가 2개 이상의 자원을 얻어야 하는 상황에서, 서로 원하는 자원이 상대방에 할당되어 무한히 다음 자원을 기다리는 데드락을 예시를 통해 발생시켜 보겠습니다.</p>
+
+<div class="language-go highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">package</span> <span class="n">main</span>
+
+<span class="k">import</span> <span class="p">(</span>
+	<span class="s">"fmt"</span>
+	<span class="s">"math/rand"</span>
+	<span class="s">"sync"</span>
+	<span class="s">"time"</span>
+<span class="p">)</span>
+
+<span class="k">var</span> <span class="n">wg</span> <span class="n">sync</span><span class="o">.</span><span class="n">WaitGroup</span>
+
+<span class="k">func</span> <span class="n">diningProblem</span><span class="p">(</span><span class="n">name</span> <span class="kt">string</span><span class="p">,</span> <span class="n">first</span><span class="p">,</span> <span class="n">second</span> <span class="o">*</span><span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span><span class="p">,</span> <span class="n">firstName</span><span class="p">,</span> <span class="n">secondName</span> <span class="kt">string</span><span class="p">)</span> <span class="p">{</span>
+	<span class="k">for</span> <span class="n">i</span> <span class="o">:=</span> <span class="m">0</span><span class="p">;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="m">100</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span> <span class="p">{</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s 밥을 먹으려 합니다.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+		<span class="n">first</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s %s 획득</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">firstName</span><span class="p">)</span>
+		<span class="n">second</span><span class="o">.</span><span class="n">Lock</span><span class="p">()</span>
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s %s 획득</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">secondName</span><span class="p">)</span>
+
+		<span class="n">fmt</span><span class="o">.</span><span class="n">Printf</span><span class="p">(</span><span class="s">"%s 밥을 먹습니다.</span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+		<span class="n">time</span><span class="o">.</span><span class="n">Sleep</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Duration</span><span class="p">(</span><span class="n">rand</span><span class="o">.</span><span class="n">Intn</span><span class="p">(</span><span class="m">1000</span><span class="p">))</span> <span class="o">*</span> <span class="n">time</span><span class="o">.</span><span class="n">Millisecond</span><span class="p">)</span>
+
+		<span class="n">second</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+		<span class="n">first</span><span class="o">.</span><span class="n">Unlock</span><span class="p">()</span>
+	<span class="p">}</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Done</span><span class="p">()</span>
+<span class="p">}</span>
+
+<span class="k">func</span> <span class="n">main</span><span class="p">()</span> <span class="p">{</span>
+	<span class="n">rand</span><span class="o">.</span><span class="n">Seed</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">Now</span><span class="p">()</span><span class="o">.</span><span class="n">UnixNano</span><span class="p">())</span>
+
+	<span class="n">wg</span><span class="o">.</span><span class="n">Add</span><span class="p">(</span><span class="m">2</span><span class="p">)</span>
+	<span class="n">fork</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span><span class="p">{}</span>
+	<span class="n">spoon</span> <span class="o">:=</span> <span class="o">&amp;</span><span class="n">sync</span><span class="o">.</span><span class="n">Mutex</span><span class="p">{}</span>
+
+	<span class="k">go</span> <span class="n">diningProblem</span><span class="p">(</span><span class="s">"A"</span><span class="p">,</span> <span class="n">fork</span><span class="p">,</span> <span class="n">spoon</span><span class="p">,</span> <span class="s">"포크"</span><span class="p">,</span> <span class="s">"수저"</span><span class="p">)</span>
+	<span class="k">go</span> <span class="n">diningProblem</span><span class="p">(</span><span class="s">"B"</span><span class="p">,</span> <span class="n">spoon</span><span class="p">,</span> <span class="n">fork</span><span class="p">,</span> <span class="s">"수저"</span><span class="p">,</span> <span class="s">"포크"</span><span class="p">)</span>
+	<span class="n">wg</span><span class="o">.</span><span class="n">Wait</span><span class="p">()</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>위 예제는 실행시키면 아래와 같이 어떤 고루틴도 원하는 만큼의 뮤텍스를 확보하지 못해 무한히 대기하게 됩니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>B 수저 획득
+A 포크 획득
+fatal error: all goroutines are asleep - deadlock!
+</code></pre></div></div>
+
+<h3 id="서로-다른-자원에-접근하기">서로 다른 자원에 접근하기</h3>
+
+<p>애초에 같은 자원을 여러 고루틴이 접근하지 않는다면, 멀티코어의 이점을 얻으면서 뮤텍스로 인해 발생하는 문제도 피할 수 있습니다.
+각 고루틴에게 서로 다른 자원에 접근하도록 만들기 위해 아래 2가지 방법이 있습니다.</p>
+
+<ol>
+  <li>영역 나누기 : 할당된 작업만 진행하여, 고루틴 간 간섭이 발생하지 않게 각 작업을 각각의 고루틴으로 실행</li>
+  <li>역할 나누기 : <strong>채널</strong>을 활용해 고루틴 간의 간섭을 없애기</li>
+</ol>
+
+<p>Go 언어에서 동시성 프로그래밍을 도와주는 채널과 컨텍스트에 대해서는 다음 포스팅에서 다루도록 하겠습니다.</p>
+
+<p><br /></p>
+
+<h2 id="outro">Outro</h2>
+
+<p>요약을 덧붙이며 이번 포스팅을 마무리 짓도록 하겠습니다.</p>
+
+<ol>
+  <li>고루틴은 경량 스레드로 컨텍스트 스위칭 비용이 발생하지 않습니다.</li>
+  <li>멀티 코어 머신에서 여러 고루틴을 사용해 성능을 증가시킬 수 있으나, 같은 메모리 영역을 조정하면 문제가 발생합니다.</li>
+  <li>뮤텍스는 동시에 고루틴 하나만 자원에 접근하도록 조정합니다.</li>
+  <li>뮤텍스를 잘못 사용하면 데드락 문제가 발생합니다.</li>
+  <li>작업 분할 방식과 역할 분할 방식으로 뮤텍스 없이 동시 프로그래밍을 가능하게 할 수 있습니다.</li>
+</ol>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+
+<hr />
+
+                </div>
+            </section>
+
+            <!-- Email subscribe form at the bottom of the page -->
+            
+                <section class="subscribe-form">
+                    <h3 class="subscribe-form-title">Subscribe to Heuristic Wave Blog</h3>
+                    <p>Get the latest posts delivered right via RSS</p>
+                    <form method="post" action="/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" type="url" name="rss url" value="https://heuristicwave.github.io" readonly />
+    </div>
+    <!--To Do Rss Web Font <i class="fas fa-rss"></i> -->
+    <button class="" type="submit" disabled><span>Copy</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+                </section>
+            
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://heuristicwave.github.io/Goroutines';
+                            this.page.identifier = '/Goroutines';
+                            this.page.title = 'Goroutines';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://heuristicwave-github-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/built/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/backend/">Backend</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/GoLangInterface">GO Lang Interface</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/EKS_Max_Pods">Look into EKS max pods</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/pipenv01">Pipenv, Nginx, Gunicorn 서버 운영하기</a></li>
+                                        
+                                    
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/backend/">
+                                
+                                    See all 3 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
+        
+            <a class="post-card-image-link" href="/geultto2">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/geultto.png)"></div>
+            </a>
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/geultto2">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Uncategorized</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Extracurricular</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">글또 7기 회고</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p></p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      1 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://heuristicwave.github.io/">
+            
+            <span>Heuristic Wave Blog</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Goroutines</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Goroutines&amp;url=https://heuristicwave.github.ioGoroutines"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioGoroutines"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://heuristicwave.github.io/">Heuristic Wave Blog</a> &copy; 2022</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+        <div id="subscribe" class="subscribe-overlay">
+            <a class="subscribe-overlay-close" href="#"></a>
+            <div class="subscribe-overlay-content">
+                
+                <h1 class="subscribe-overlay-title">Search on Heuristic Wave Blog</h1>
+                <p class="subscribe-overlay-description">lunr.js를 이용한 posts 검색</p>
+                <span id="searchform" method="post" action="/search/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" onkeyup="myFunc()"
+               id="searchtext" type="text" name="searchtext"
+               placeholder="Search..." />
+    </div>
+    <script type="text/javascript">
+        function myFunc() {
+            if(event.keyCode == 13) {
+                var url = encodeURIComponent($("#searchtext").val());
+                location.href = "/search.html?query=" + url;
+            }
+        }
+    </script>
+</span>
+                <br>
+            </div>
+        </div>
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'G-0FTXSPJZFY', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>
