@@ -5,9 +5,50 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 16 Oct 2022 06:35:58 +0000</pubDate>
-        <lastBuildDate>Sun, 16 Oct 2022 06:35:58 +0000</lastBuildDate>
-        <generator>Jekyll v3.9.0</generator>
+        <pubDate>Thu, 26 Jan 2023 03:01:33 +0000</pubDate>
+        <lastBuildDate>Thu, 26 Jan 2023 03:01:33 +0000</lastBuildDate>
+        <generator>Jekyll v3.9.2</generator>
+        
+            <item>
+                <title>DIY Amazon EKS with eksctl</title>
+                <description>&lt;p&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표자료&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;eksctl을 현업에서 적용하기 위해 필수적으로 필요한 최소한의 요소들을 다룹니다.&lt;/p&gt;
+
+&lt;iframe src=&quot;https://www.slideshare.net/slideshow/embed_code/key/KnHQ8gpSIFKpbE?hostedIn=slideshare&amp;amp;page=upload&quot; width=&quot;840&quot; height=&quot;523&quot; frameborder=&quot;0&quot; marginwidth=&quot;0&quot; marginheight=&quot;0&quot; scrolling=&quot;no&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;💡 SlideShare 링크를 통해 다운로드 받을 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;AWSKRUG에서는 첫 발표였는데, 부족한 발표임에도 19일 당일 소중한 시간을 내주셔서 감사합니다. 
+추후, 해당 장표들을 설명하는 블로그 포스팅을 함께 개제할 예정입니다.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;EKSCTL Tips&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./eksctl_ppt&quot;&gt;DIY Amazon EKS with eksctl (Deck)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+</description>
+                <pubDate>Thu, 19 Jan 2023 19:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//eksctl_ppt</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//eksctl_ppt</guid>
+                
+                <category>devops</category>
+                
+                <category>eks</category>
+                
+                <category>aws</category>
+                
+                
+            </item>
         
             <item>
                 <title>Goroutines</title>
@@ -2028,94 +2069,6 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                 <category>devops</category>
                 
                 <category>terraform</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>글또 7기 다짐글</title>
-                <description>&lt;p&gt;글또 7기 다짐글 입니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;글또를-시작하며-&quot;&gt;글또를 시작하며… 🏃🏻&lt;/h2&gt;
-
-&lt;p&gt;저는 최근 &lt;strong&gt;‘글 쓰는 개발자 모임, 글또’&lt;/strong&gt; 7기로 활동할 수 있는 기회를 얻었습니다. &lt;br /&gt;
-글또가 어떤 활동인지는 &lt;a href=&quot;https://www.notion.so/zzsza/ac5b18a482fb4df497d4e8257ad4d516&quot;&gt;글또 페이지&lt;/a&gt;에서 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;글또의 존재는 2기 때부터 알고 있었지만, 스스로 활동을 하기에는 아직 부족하다 생각되어
-지난 1년간 한 달에 글 1편씩을 작성하는 습관을 만들고 나서 7기에 가입하게 되었습니다.&lt;/p&gt;
-
-&lt;p&gt;활동은 올해 5월부터 10월까지 약 6개월간 활동하게 되는데요, 첫 미션으로 다짐글 작성이라는 주제를 받았습니다.
-그 동안 이 기술 블로그에 개인적인 얘기는 담지 않을뿐더러,
-평상시에도 일기와 같은 자신의 마음(다짐 포함)을 적어 본 적이 없어 글을 써 내려가기가 부끄럽네요.&lt;/p&gt;
-
-&lt;h2 id=&quot;-계획&quot;&gt;🧩 계획&lt;/h2&gt;
-
-&lt;p&gt;계획하고 있는 콘텐츠는 다음과 같습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;
-    &lt;p&gt;기술 도서 리뷰 &lt;br /&gt;
-현재 제 책상 위에는 구입해두고 읽지 못한 책들이 꽤나 쌓였습니다.
-‘컨테이너 보안’, ‘Go 언어를 활용한 네트워크 프로그래밍’ 등 밀린 기술 서적 부채(?)를 청산하도록 노력하겠습니다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;기존 시리즈물 마감 &lt;br /&gt;
-작년 제 블로그에 ‘테라폼 더 익숙하게’ 라는 시리즈물을 연재하기로 하고 게으른 탓 2편 밖에 작성하지 못했습니다.
-머릿속에만 남아있는 후속 글 들을 작성해 시리즈물 다운 글을 작성해 보도록 하겠습니다. &lt;br /&gt;&lt;/p&gt;
-
-    &lt;p&gt;&lt;em&gt;아직 2편 밖에 없는 작고 초라한 나의 시리즈물&lt;/em&gt;
-&lt;img src=&quot;../../assets/built/images/post/etc/series.png&quot; alt=&quot;posting_quality&quot; /&gt;&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;관심 기술 스터디 &lt;br /&gt;
-Kubernetes, Terraform, Istio, AWS 서비스들에 대한 글을 작성하며, 성장의 기록들을 남기겠습니다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;주제를 추천받아 작성 &lt;br /&gt;
-저는 어떻게 보면 글을 작성하는 것보다, 주제를 선정하는 게 더욱 어려운 것 같습니다.
-글또를 통해 비슷한 직군의 엔지니어 분들이 고민하는 혹은 알고 싶은 주제들이 무엇인지 파악해 관련 글을 작성하고 싶습니다.&lt;/p&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;-다짐&quot;&gt;✋ 다짐&lt;/h2&gt;
-
-&lt;h3 id=&quot;자발적-번아웃-&quot;&gt;자발적 번아웃 🔥&lt;/h3&gt;
-
-&lt;p&gt;글또에는 여러 기수를 걸쳐 지속적으로 활동하고 계신 분들이 꽤나 많습니다.
-저도 이번 7기가 끝이 아니라 지속적인 활동으로 글또를 이어가고 싶습니다.
-그렇지만, 7기 활동이 끝날 무렵 회고를 하는 시점에서 7기 활동 간 생산된 12편의 글로 인하여 후회 없는 활동을 하고 싶습니다.
-다시 바꾸어 말하면, &lt;em&gt;“너무 힘들어서 8기는 쉬어야겠다.”&lt;/em&gt; 싶을 정도의 감정을 느끼도록 열심히 활동하고 싶습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;부끄러움을-늦추는-글의-유효기간-&quot;&gt;부끄러움을 늦추는 글의 유효기간 🙈&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://heuristicwave.github.io/archive&quot;&gt;이 페이지&lt;/a&gt;를 보면 제가 한 해 동안, 작성한 글들이 나옵니다. &lt;br /&gt;
-당시에도 한편 한편 공들여 작성하며 &lt;em&gt;“이정도면 꽤나 괜찮은 글 아닐까?”&lt;/em&gt; 라는 생각을 종종했었는데,
-시간이 지난 시점에 다시 읽어보면 부끄럽다는 생각이 들때가 있습니다.&lt;/p&gt;
-
-&lt;p&gt;온라인 어디선가 본 내용인데, 좋은 글을 작성한 것으로 평가 받는 작가들도 과거 자신이 작성한 글을 보면 부끄럽다고 합니다.
-이런 것들을 보면 자신의 글을 부끄러워 하는게 당연한 것일 수도 있는데, 다음과 같은 생각이 들었습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/graph.png&quot; alt=&quot;posting_quality&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 그래프에서 보이다시피, 글의 완성도와 부끄러움의 발현 시기는 양의 상관관계를 갖고 있다고 생각합니다.
-작년에 제가 작성한 글 들의 경우, 아무리 길어도 대략 한 계절정도 지나면 부끄러움이 스멀스멀 올라오는것 같더군요.&lt;/p&gt;
-
-&lt;p&gt;그래서, 이번 활동 기간 동안에는 과거 제가 썻던 글보다 더 부끄러움이 오는 시기가 늦는 글을 작성해 보려합니다.
-활동기간이 약 6개월 정도되니 아마 5월 말에 쓰는 글에 대한 부끄러움의 정도를 7기 활동이 끝날 무렵인 회고 때 다뤄보면 좋을 것 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-</description>
-                <pubDate>Thu, 05 May 2022 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//geultto</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//geultto</guid>
-                
-                <category>uncategorized</category>
-                
-                <category>extracurricular</category>
                 
                 
             </item>

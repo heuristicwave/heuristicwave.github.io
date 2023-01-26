@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator>
+  <link href="https://heuristicwave.github.io/tag/eks/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
+  <updated>2023-01-26T03:01:33+00:00</updated>
+  <id>https://heuristicwave.github.io/tag/eks/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Heuristic Wave Blog | </title>
+  
+
+  
+    <subtitle>Careful Writer</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">DIY Amazon EKS with eksctl</title>
+      <link href="https://heuristicwave.github.io/eksctl_ppt" rel="alternate" type="text/html" title="DIY Amazon EKS with eksctl" />
+      <published>2023-01-19T19:00:00+00:00</published>
+      <updated>2023-01-19T19:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/eksctl_ppt</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표자료&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;eksctl을 현업에서 적용하기 위해 필수적으로 필요한 최소한의 요소들을 다룹니다.&lt;/p&gt;
+
+&lt;iframe src=&quot;https://www.slideshare.net/slideshow/embed_code/key/KnHQ8gpSIFKpbE?hostedIn=slideshare&amp;amp;page=upload&quot; width=&quot;840&quot; height=&quot;523&quot; frameborder=&quot;0&quot; marginwidth=&quot;0&quot; marginheight=&quot;0&quot; scrolling=&quot;no&quot;&gt;&lt;/iframe&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;💡 SlideShare 링크를 통해 다운로드 받을 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;AWSKRUG에서는 첫 발표였는데, 부족한 발표임에도 19일 당일 소중한 시간을 내주셔서 감사합니다. 
+추후, 해당 장표들을 설명하는 블로그 포스팅을 함께 개제할 예정입니다.&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;EKSCTL Tips&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./eksctl_ppt&quot;&gt;DIY Amazon EKS with eksctl (Deck)&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="eks" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표자료</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>
