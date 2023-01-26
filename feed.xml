@@ -5,13 +5,13 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Thu, 26 Jan 2023 03:01:33 +0000</pubDate>
-        <lastBuildDate>Thu, 26 Jan 2023 03:01:33 +0000</lastBuildDate>
+        <pubDate>Thu, 26 Jan 2023 03:12:38 +0000</pubDate>
+        <lastBuildDate>Thu, 26 Jan 2023 03:12:38 +0000</lastBuildDate>
         <generator>Jekyll v3.9.2</generator>
         
             <item>
                 <title>DIY Amazon EKS with eksctl</title>
-                <description>&lt;p&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표자료&lt;/p&gt;
+                <description>&lt;p&gt;&lt;a href=&quot;https://www.meetup.com/awskrug/events/290666942/&quot;&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)&lt;/a&gt; 발표 자료&lt;/p&gt;
 
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
 

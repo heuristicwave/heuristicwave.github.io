@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/eks/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-01-26T03:01:33+00:00</updated>
+  <updated>2023-01-26T03:12:38+00:00</updated>
   <id>https://heuristicwave.github.io/tag/eks/feed.xml</id>
 
   
@@ -37,7 +37,7 @@
       <published>2023-01-19T19:00:00+00:00</published>
       <updated>2023-01-19T19:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/eksctl_ppt</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표자료&lt;/p&gt;
+      <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;&lt;a href=&quot;https://www.meetup.com/awskrug/events/290666942/&quot;&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)&lt;/a&gt; 발표 자료&lt;/p&gt;
 
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
 
@@ -86,7 +86,7 @@
       
 
       
-        <summary type="html">AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표자료</summary>
+        <summary type="html">AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표 자료</summary>
       
 
       
