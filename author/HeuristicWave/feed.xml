@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-01-26T03:12:38+00:00</updated>
+  <updated>2023-02-04T17:10:29+09:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -32,10 +32,178 @@
 
   
     <entry>
+      <title type="html">Using OpenAI API with AWS Lambda</title>
+      <link href="https://heuristicwave.github.io/OpenAI_Lambda" rel="alternate" type="text/html" title="Using OpenAI API with AWS Lambda" />
+      <published>2023-02-03T05:00:00+09:00</published>
+      <updated>2023-02-03T05:00:00+09:00</updated>
+      <id>https://heuristicwave.github.io/OpenAI_Lambda</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/OpenAI_Lambda">&lt;p&gt;AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;2월 2일 &lt;a href=&quot;https://www.facebook.com/groups/awskrug/&quot;&gt;AWSKRUG&lt;/a&gt;의 Slack 채널에서 ChatGPT Slack App 테스트를 시작했다는 글을 보고,
+저도 메신저와 연동하여 ChatGPT를 사용해 보고 싶은 욕심이 생겼습니다. (아직, ChatGPT를 개인 봇에 적용하지는 않았습니다.)&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/awskrug.png&quot; alt=&quot;awskrug&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🖍 해당 포스팅에서는 &lt;strong&gt;ChatGPT&lt;/strong&gt;가 아닌 GPT-3 모델 중, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text-davinci-003&lt;/code&gt; 모델을 사용했습니다.
+&lt;br /&gt;&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;배경 지식 : &lt;a href=&quot;https://www.reddit.com/r/OpenAI/comments/zdrnsf/difference_between_chatgpt_and_the_new_davinci_3/&quot;&gt;Difference between ChatGPT and the new davinci 3 model?&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이미 인터넷에 OpenAI API를 Slack과 연동하여 사용하고 있는 사례들은 많아,
+제가 근무하는 회사에서 사용하고 있는 &lt;a href=&quot;https://dooray.com/main/&quot;&gt;NHN의 협업 툴 Dooray&lt;/a&gt;와 연동하기로 했습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 해당 포스팅에서는 Dooray와 AWS Lambda의 통합 방법을 다루지만,
+두레이 외의 다른 메신저 도구와도 연동하는 방법이 유사하므로 해당 방법을 응용하여 활용할 수 있습니다!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-workflow&quot;&gt;🧭 Workflow&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/dooraygpt.png&quot; alt=&quot;DoorayGPT&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위크플로우는 위와 같습니다. 사용자가 메신저에서 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/&lt;/code&gt; 커맨드로 질의를 하면,
+해당 요청이 AWS Lambda를 통해 OpenAI의 API를 활용해 질의에 대한 대답을 받아 메신저로 전달합니다.&lt;/p&gt;
+
+&lt;p&gt;해당 기능을 구현하기 위해서는 &lt;a href=&quot;https://platform.openai.com/account/api-keys&quot;&gt;OpenAI API keys&lt;/a&gt;와 AWS Lambda가 필요합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;작업 순서&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Lambda Layer 추가&lt;/li&gt;
+  &lt;li&gt;Lambda Function 배포&lt;/li&gt;
+  &lt;li&gt;Lambda Function URL 생성&lt;/li&gt;
+  &lt;li&gt;Messenger 서비스와 Lambda 통합&lt;/li&gt;
+  &lt;li&gt;Messenger 서비스의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POST&lt;/code&gt;에 맞춰 Lambda Function 수정&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-aws-lambda로-openai-api-활용하기&quot;&gt;🛠️ AWS Lambda로 OpenAI API 활용하기&lt;/h2&gt;
+
+&lt;p&gt;OpenAI의 &lt;a href=&quot;https://platform.openai.com/docs/api-reference/introduction&quot;&gt;API REFERENCE&lt;/a&gt;를 확인하면 
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Python&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Node.js&lt;/code&gt;를 활용한 예시가 상세하게 나옵니다.
+예시에 나오는 대로 해당 코드를 Amazon EC2를 대여하여 상시 운영 서버에서 활용해도 되지만, 메신저에 연동하여 잠깐만 활용할 예정이므로 Serverless 컴퓨팅 서비스인 Lambda를 사용하겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;aws-lambda-layer-추가하기&quot;&gt;AWS Lambda Layer 추가하기&lt;/h3&gt;
+
+&lt;p&gt;Python으로 OpenAI를 사용하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openai&lt;/code&gt; 파이썬 바인딩이 필요합니다.
+이를 위해 람다에서 여러 함수가 공유하는 코드 및 데이터를 중앙에서 관리하는 방식인 &lt;strong&gt;Lambda Layers&lt;/strong&gt; 기능을 활용합니다.&lt;/p&gt;
+
+&lt;p&gt;저는 OpenAI 패키지에 대한 종속성을 해결하기 위해서, &lt;a href=&quot;https://github.com/erenyasarkurt/OpenAI-AWS-Lambda-Layer&quot;&gt;OpenAI-AWS-Lambda-Layer&lt;/a&gt;를 사용했습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 해당 레포의 &lt;a href=&quot;https://github.com/erenyasarkurt/OpenAI-AWS-Lambda-Layer/blob/main/README.md&quot;&gt;README.md&lt;/a&gt;에 기재된 대로 진행하면 curl로 OpenAI를 사용할 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;우선, AWS Lambda 콘솔의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Addtional resources&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Layers&lt;/code&gt;를 클릭하여 빌드 한 zip 파일을 업로드하고 호환성(python3.8, x86_64)을 체크해 준 다음 Layer를 생성합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/lambda/layers.png&quot; alt=&quot;Layers&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;aws-lambda-functions-배포&quot;&gt;AWS Lambda Functions 배포&lt;/h3&gt;
+
+&lt;p&gt;이어서 람다 콘솔 화면에서 &lt;strong&gt;Create function&lt;/strong&gt;으로 함수를 생성하고 &lt;strong&gt;Add layer&lt;/strong&gt; 버튼을 눌러,
+사전에 생성한 layer를 추가해 줍니다. &lt;em&gt;아래 사진과 같이 Layers 아이콘에 (1)이 추가되었습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/lambda/code.png&quot; alt=&quot;code&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;⬆️ 앞서 언급한 오픈소스 파이썬 코드를 복사하고 &lt;a href=&quot;https://github.com/erenyasarkurt/OpenAI-AWS-Lambda-Layer/blob/main/lambda_function.py#L27&quot;&gt;27라인&lt;/a&gt;에 OpenAI로부터 발급받은 Key로 바꿔 적고 &lt;strong&gt;Deploy&lt;/strong&gt; 버튼을 눌러 배포합니다.&lt;/p&gt;
+
+&lt;p&gt;⬇️ 이어서 &lt;strong&gt;Configuration&lt;/strong&gt;에서 Memory와 Timeout 값을 수정합니다.
+&lt;em&gt;통상 129MB 정도의 메모리를 사용해 256MB와 OpenAPI로부터 응답이 늦어질 수 있으므로 1분이라는 넉넉한 시간을 주었습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/lambda/config.png&quot; alt=&quot;config&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;마지막으로 &lt;strong&gt;Configuration&lt;/strong&gt; 탭의 &lt;strong&gt;Function URL&lt;/strong&gt;에서 URL을 생성합니다.
+이때, &lt;strong&gt;Auth type&lt;/strong&gt;은 별도 인증 로직이 없는 &lt;strong&gt;NONE&lt;/strong&gt;으로 설정해 주었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-messengerdooray와-lambda-통합하기&quot;&gt;🔄 Messenger(Dooray)와 Lambda 통합하기&lt;/h2&gt;
+
+&lt;p&gt;저는 통합할 메신저로 두레이를 사용했습니다. 두레이에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/command&lt;/code&gt; 기능을 구현하는 방법은 다음 링크를 참고합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://helpdesk.dooray.com/share/pages/9wWo-xwiR66BO5LGshgVTg/2900080163559890590&quot;&gt;두레이 커맨드 추가하기 가이드&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;Slack을 비롯한 대부분의 메신저가 외부 서버와 통합하기 위해 &lt;strong&gt;RequestUrl&lt;/strong&gt;을 요구합니다.
+사전에 생성한 람다의 &lt;strong&gt;Function URL&lt;/strong&gt;을 &lt;strong&gt;RequestUrl&lt;/strong&gt;에 기재하면 통합이 완료됩니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;messengerdooray-request-형식-파악하기&quot;&gt;Messenger(Dooray) Request 형식 파악하기&lt;/h3&gt;
+
+&lt;p&gt;이전 단계에서 테스트 없이 코드를 배포했지만, 사실 람다를 코드를 개발하고 나면 Test event를 주입하여 작성한 람다가 의도한 대로 동작하는지 확인해 봐야 합니다.
+그러나 외부 서비스와 연동하여 어떠한 형식으로 Event(json)가 날라오는지 모르는 상황에서는 모니터링을 통해 파악해야 합니다.
+이벤트를 1회 발생시키고 &lt;strong&gt;CloudWatch Log groups&lt;/strong&gt;에서 Event를 확인합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/lambda/lambda_cw.png&quot; alt=&quot;lambda_cw&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;두레이 유저가 생성한 command는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text&lt;/code&gt;라는 필드에 담기고 이는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;body&lt;/code&gt;로 감싸져 전달됩니다.
+Event가 어떤 형식으로 전달되는지 알게 되었으니, 오픈소스를 해당 형식에 맞게 수정합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;body&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;loads&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'body'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;prompt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'text'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;기존 작성된 코드를 두레이 형식에 맞춰 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text&lt;/code&gt;로 바꿔주니 아래와 같이 구현된 모습을 확인할 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/mybot.png&quot; alt=&quot;mybot&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;이번 포스팅에서 OpenAI API를 사용함에 있어 두레이라는 메신저와 람다를 통합하는 부분을 다뤘습니다.
+하지만 Lambda와 외부 서비스가 어떻게 연동되는지 원리를 알면 어떤 서비스던지 연동이 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;이 밖에 현재 코드는 PoC 수준의 코드라 부족한 점이 많습니다.
+API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 있으므로, AWS Secrets Manager를 활용한 별도의 환경 변수 처리가 필요합니다.
+또한 외부 서비스에서 Function URL을 호출할 때도, 인증 작업을 추가해 줘야 합니다.
+추후 ChatGPT 유료 버전이 나오면 결제하여 사용한 후기를 적기 약속하며 글을 마치겠습니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="serverless" />
+      
+
+      
+        <summary type="html">AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
       <title type="html">DIY Amazon EKS with eksctl</title>
       <link href="https://heuristicwave.github.io/eksctl_ppt" rel="alternate" type="text/html" title="DIY Amazon EKS with eksctl" />
-      <published>2023-01-19T19:00:00+00:00</published>
-      <updated>2023-01-19T19:00:00+00:00</updated>
+      <published>2023-01-20T04:00:00+09:00</published>
+      <updated>2023-01-20T04:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/eksctl_ppt</id>
       <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;&lt;a href=&quot;https://www.meetup.com/awskrug/events/290666942/&quot;&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)&lt;/a&gt; 발표 자료&lt;/p&gt;
 
@@ -96,8 +264,8 @@
     <entry>
       <title type="html">Goroutines</title>
       <link href="https://heuristicwave.github.io/Goroutines" rel="alternate" type="text/html" title="Goroutines" />
-      <published>2022-10-16T00:00:00+00:00</published>
-      <updated>2022-10-16T00:00:00+00:00</updated>
+      <published>2022-10-16T09:00:00+09:00</published>
+      <updated>2022-10-16T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/Goroutines</id>
       <content type="html" xml:base="https://heuristicwave.github.io/Goroutines">&lt;p&gt;Goroutines, Concurrent Programming in Go&lt;/p&gt;
 
@@ -428,8 +596,8 @@ fatal error: all goroutines are asleep - deadlock!
     <entry>
       <title type="html">글또 7기 회고</title>
       <link href="https://heuristicwave.github.io/geultto2" rel="alternate" type="text/html" title="글또 7기 회고" />
-      <published>2022-10-02T00:00:00+00:00</published>
-      <updated>2022-10-02T00:00:00+00:00</updated>
+      <published>2022-10-02T09:00:00+09:00</published>
+      <updated>2022-10-02T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/geultto2</id>
       <content type="html" xml:base="https://heuristicwave.github.io/geultto2">&lt;p&gt;회고 글을 쓰며 드는 생각&lt;/p&gt;
 
@@ -558,8 +726,8 @@ Kubernetes 1편, Terraform 3편, AWS 서비스 1편을 작성했습니다. Istio
     <entry>
       <title type="html">The Journey to Know OIDC</title>
       <link href="https://heuristicwave.github.io/OIDC" rel="alternate" type="text/html" title="The Journey to Know OIDC" />
-      <published>2022-09-14T00:00:00+00:00</published>
-      <updated>2022-09-14T00:00:00+00:00</updated>
+      <published>2022-09-14T09:00:00+09:00</published>
+      <updated>2022-09-14T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/OIDC</id>
       <content type="html" xml:base="https://heuristicwave.github.io/OIDC">&lt;p&gt;Journey to OIDC through authentication, authorization, SAML, and OAuth.&lt;/p&gt;
 
@@ -900,8 +1068,8 @@ Step2에서 받은 &lt;code class=&quot;language-plaintext highlighter-rouge&quo
     <entry>
       <title type="html">GO Lang Interface</title>
       <link href="https://heuristicwave.github.io/GoLangInterface" rel="alternate" type="text/html" title="GO Lang Interface" />
-      <published>2022-08-29T00:00:00+00:00</published>
-      <updated>2022-08-29T00:00:00+00:00</updated>
+      <published>2022-08-29T09:00:00+09:00</published>
+      <updated>2022-08-29T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/GoLangInterface</id>
       <content type="html" xml:base="https://heuristicwave.github.io/GoLangInterface">&lt;p&gt;Explain the “interface” and “abstraction” of the go language.&lt;/p&gt;
 
@@ -1288,8 +1456,8 @@ Step2에서 받은 &lt;code class=&quot;language-plaintext highlighter-rouge&quo
     <entry>
       <title type="html">Declarative vs Imperative in Kubernetes</title>
       <link href="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s" rel="alternate" type="text/html" title="Declarative vs Imperative in Kubernetes" />
-      <published>2022-08-14T00:00:00+00:00</published>
-      <updated>2022-08-14T00:00:00+00:00</updated>
+      <published>2022-08-14T09:00:00+09:00</published>
+      <updated>2022-08-14T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/DeclarativeVSImperativeinK8s</id>
       <content type="html" xml:base="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s">&lt;p&gt;Kubernetes Object Management에서 발견한 명령형/선언형 방식&lt;/p&gt;
 
@@ -1539,8 +1707,8 @@ Kubernetes에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&qu
     <entry>
       <title type="html">Terraform Tips 5 - Import</title>
       <link href="https://heuristicwave.github.io/TerraformTips5" rel="alternate" type="text/html" title="Terraform Tips 5 - Import" />
-      <published>2022-07-23T00:00:00+00:00</published>
-      <updated>2022-07-23T00:00:00+00:00</updated>
+      <published>2022-07-23T09:00:00+09:00</published>
+      <updated>2022-07-23T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips5</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips5">&lt;p&gt;Terraform 더 익숙하게 5 - Import&lt;/p&gt;
 
@@ -1743,8 +1911,8 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     <entry>
       <title type="html">ECS on EC2 Walkthrough</title>
       <link href="https://heuristicwave.github.io/ECS_Walkthrough" rel="alternate" type="text/html" title="ECS on EC2 Walkthrough" />
-      <published>2022-07-03T00:00:00+00:00</published>
-      <updated>2022-07-03T00:00:00+00:00</updated>
+      <published>2022-07-03T09:00:00+09:00</published>
+      <updated>2022-07-03T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/ECS_Walkthrough</id>
       <content type="html" xml:base="https://heuristicwave.github.io/ECS_Walkthrough">&lt;p&gt;EC2 기반의 ECS를 다루기 위한 사소한 지식들 톱아보기!&lt;/p&gt;
 
@@ -1991,8 +2159,8 @@ ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성
     <entry>
       <title type="html">Terraform Tips 4 - Move (Refactoring)</title>
       <link href="https://heuristicwave.github.io/TerraformTips4" rel="alternate" type="text/html" title="Terraform Tips 4 - Move (Refactoring)" />
-      <published>2022-06-07T00:00:00+00:00</published>
-      <updated>2022-06-07T00:00:00+00:00</updated>
+      <published>2022-06-07T09:00:00+09:00</published>
+      <updated>2022-06-07T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips4</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips4">&lt;p&gt;Terraform 더 익숙하게 4 - Move (Refactoring)&lt;/p&gt;
 
@@ -2158,147 +2326,6 @@ ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성
 
       
         <summary type="html">Terraform 더 익숙하게 4 - Move (Refactoring)</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Terraform Tips 3 - Refresh &amp;amp; Replace</title>
-      <link href="https://heuristicwave.github.io/TerraformTips3" rel="alternate" type="text/html" title="Terraform Tips 3 - Refresh &amp; Replace" />
-      <published>2022-05-28T00:00:00+00:00</published>
-      <updated>2022-05-28T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/TerraformTips3</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips3">&lt;p&gt;Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, &lt;strong&gt;코드로 정의한 형상&lt;/strong&gt;과 &lt;strong&gt;실제 인프라의 형상&lt;/strong&gt;을 동일하게 유지하는 것입니다.
-Terraform에서는 &lt;strong&gt;Configuration Drift&lt;/strong&gt;(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다.
-이번 포스팅에서는 형상을 유지하는 다양한 기법 중 하나인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Refresh&lt;/code&gt;와 비슷하면서도 헷갈리는 개념인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Replace&lt;/code&gt;에 대하여 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-refresh&quot;&gt;♻️ Refresh&lt;/h2&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;refresh&lt;/code&gt; 명령어는 Configuration Drift가 발생했을 때, 현재 상태를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform.tfstate&lt;/code&gt;에 반영해 현재 인프라의 상태로 최신화시키는 명령어입니다.
-문서에는 다음과 같이 기재되어 있지만, 처음 접한다면 무엇을 말하는지 쉽게 와닿지 않습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform refresh&lt;/code&gt; command reads the current settings from all managed remote objects and updates the Terraform state to match. &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform refresh&lt;/code&gt; 명령어는 원격 객체의 현재 상태를 읽어 Terraform state와 일치시킵니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Refresh 명령어는 다음과 같은 상황에서 사용합니다. 클라우드 환경에서 클러스터를 운용하면 인스턴스의 Scale이 변화함에 따라 인스턴스 ID 값도 변합니다.
-이 경우 코드로 정의한 상태는 프로비저닝 당시 시점을 기억하지만, 실제 인프라의 현상은 최신 인스턴스의 상태를 가지고 있으므로 Drift가 발생합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/state.png&quot; alt=&quot;state&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 상황에서 Refresh 명령어로 &lt;em&gt;코드의 상태와 인프라의 현재 상태를 일치&lt;/em&gt;시킬 수 있지만, 해당 명령어는 &lt;strong&gt;deprecate&lt;/strong&gt; 되었습니다. 왜냐하면 관리자가 무엇이 변경되는지 알지 못하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tfstate&lt;/code&gt;가 최신화되기 때문입니다.
-그래서 테라폼 v0.15.4.에서부터는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-refresh-only&lt;/code&gt; 옵션을 제공하기 시작했습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;refresh-only&quot;&gt;–refresh-only&lt;/h3&gt;
-
-&lt;p&gt;왼쪽은 프로비저닝 당시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt;입니다. 오른쪽은 해당 환경을 콘솔에서 health check를 하는 간격을 120초로 변경한 화면입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/refresh.png&quot; alt=&quot;refresh&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;의도적으로 Drfit 상황을 만들었기 때문에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform plan --refresh-only&lt;/code&gt; 명령어로 점검하면 다음과 같이 어떤 리소스 객체가 변경될 것인지 확인 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/refresh-only.png&quot; alt=&quot;refresh-only&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 사진에서는 elb의 AutoScalingGroup 내의 인스턴스가 바뀌어 최신화됨과, 제가 의도적으로 콘솔에서 변경한 health_check 값을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;이처럼 항상 IaC의 형상을 변경하기 전, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt;을 통한 사전 검토 기능을 제공하기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--refresh-only&lt;/code&gt; 옵션이 제공되었습니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt;으로 문제없음을 확인했다면, 이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply --refresh-only&lt;/code&gt; 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt;를 최신화 시킵니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;️-주의&quot;&gt;⚠️ 주의&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt;는 Refresh로 최신화되었지만, 여전히 코드로 정의한 interval 값은 180입니다.
-그러므로 코드로 정의된 부분을 변경하지 않은 상황에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform apply&lt;/code&gt; 명렁어를 치면, 현재 120의 interval 값이 180으로 원복 됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-taint&quot;&gt;☠️ Taint&lt;/h2&gt;
-
-&lt;p&gt;Replace를 설명하기 앞서, 기존 테라폼에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;taint&lt;/code&gt;라는 명령어가 있습니다. 문서에는 다음과 같이 기재되어 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;The &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform taint&lt;/code&gt; command informs Terraform that a particular object has become degraded or damaged. &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform taint&lt;/code&gt; 명령어는 특정 객체가 저하되거나 손상되었음을 Terraform에 알립니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Taint 명령어는 &lt;strong&gt;인프라를 정의한 코드는 그대로&lt;/strong&gt;인 상태에서 &lt;strong&gt;리소스만 교체&lt;/strong&gt;할 경우에 사용합니다.
-저의 경우 스파이크성 트래픽을 갑자기 받아 로드밸런서의 성능이 저하되었을 때, ELB를 교체한 경험이 있습니다.&lt;/p&gt;
-
-&lt;p&gt;이런 상황에서 성능이 저하된 혹은 &lt;strong&gt;교체가 필요한 리소스&lt;/strong&gt; 객체만을 on/off 방식으로 &lt;strong&gt;주석 처리 및 해제&lt;/strong&gt;하며 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;apply&lt;/code&gt; 명령어로 교체할 수 있지만,
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;taint(교체 리소스를 마킹)&lt;/code&gt; 명령어로 교체하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;untaint(교체 리소스 마킹 해제)&lt;/code&gt; 명령어로 교체할 필요가 없다고 명령할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;그러나 위와 같은 워크플로우는 테라폼 v0.15.2.에서 deprecate 되었고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-replace&lt;/code&gt; 옵션을 제공하며 더 직관적인 사용자 경험을 제공하게 됩니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;--replace&quot;&gt;🌗 -replace&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-replace&lt;/code&gt; 옵션은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;taint&lt;/code&gt; 명령어와 동일하게 작용하며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;untaint&lt;/code&gt; 명령어를 칠 필요가 없습니다.
-코드는 그대로지만 리소스 객체가 변경되는 Replace 명령어 사용법은 다음과 같습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform apply &lt;span class=&quot;nt&quot;&gt;-replace&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;aws_instance.example[0]&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;교체할 리소스 인자값를 찾기 위해, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform state list&lt;/code&gt; 명령어로 target을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/terraform/replace.png&quot; alt=&quot;replace&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;💡 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-replace&lt;/code&gt; 옵션 역시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--refresh-only&lt;/code&gt; 옵션과 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;plan&lt;/code&gt; 명령어와 함께 적용하여 변경 지점을 미리 파악하고
-변경되는 리소스에 대한 검토를 하는 습관을 들입시다!&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;Refresh와 Replace 비슷하면서도 전혀 다른 두 명령어의 변천사를 확인하며 인프라의 동일한 형상을 유지하기 위한 방법을 알아보았습니다.
-이번 포스팅에서 언급한 방법 외에도 형상을 일치시키는 방법들이 존재하지만, 위 2가지 명령어만 제대로 활용하면 대부분의 인프라의 형상이 달라지는 사태를 예방할 수 있습니다. 
-IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한 검토를 하는 습관이 매우 중요하다는 것을 강조하며 이번 3편을 마칩니다.&lt;/p&gt;
-
-&lt;p&gt;지금까지 테라폼 더 익숙하게 Refresh &amp;amp; Replace 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="devops" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace</summary>
       
 
       

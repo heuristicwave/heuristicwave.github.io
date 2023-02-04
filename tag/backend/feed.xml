@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/backend/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-01-26T03:12:38+00:00</updated>
+  <updated>2023-02-04T17:10:29+09:00</updated>
   <id>https://heuristicwave.github.io/tag/backend/feed.xml</id>
 
   
@@ -34,8 +34,8 @@
     <entry>
       <title type="html">Goroutines</title>
       <link href="https://heuristicwave.github.io/Goroutines" rel="alternate" type="text/html" title="Goroutines" />
-      <published>2022-10-16T00:00:00+00:00</published>
-      <updated>2022-10-16T00:00:00+00:00</updated>
+      <published>2022-10-16T09:00:00+09:00</published>
+      <updated>2022-10-16T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/Goroutines</id>
       <content type="html" xml:base="https://heuristicwave.github.io/Goroutines">&lt;p&gt;Goroutines, Concurrent Programming in Go&lt;/p&gt;
 
@@ -366,8 +366,8 @@ fatal error: all goroutines are asleep - deadlock!
     <entry>
       <title type="html">GO Lang Interface</title>
       <link href="https://heuristicwave.github.io/GoLangInterface" rel="alternate" type="text/html" title="GO Lang Interface" />
-      <published>2022-08-29T00:00:00+00:00</published>
-      <updated>2022-08-29T00:00:00+00:00</updated>
+      <published>2022-08-29T09:00:00+09:00</published>
+      <updated>2022-08-29T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/GoLangInterface</id>
       <content type="html" xml:base="https://heuristicwave.github.io/GoLangInterface">&lt;p&gt;Explain the “interface” and “abstraction” of the go language.&lt;/p&gt;
 
@@ -754,8 +754,8 @@ fatal error: all goroutines are asleep - deadlock!
     <entry>
       <title type="html">Look into EKS max pods</title>
       <link href="https://heuristicwave.github.io/EKS_Max_Pods" rel="alternate" type="text/html" title="Look into EKS max pods" />
-      <published>2021-06-19T18:00:00+00:00</published>
-      <updated>2021-06-19T18:00:00+00:00</updated>
+      <published>2021-06-20T03:00:00+09:00</published>
+      <updated>2021-06-20T03:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/EKS_Max_Pods</id>
       <content type="html" xml:base="https://heuristicwave.github.io/EKS_Max_Pods">&lt;p&gt;EKS 노드에서 사용 가능한 Pod의 개수는 몇 개일까?&lt;/p&gt;
 
@@ -895,8 +895,8 @@ AWS에서는 ENI라는 &lt;em&gt;가상 네트워크 카드를 나타내는 논�
     <entry>
       <title type="html">Pipenv, Nginx, Gunicorn 서버 운영하기</title>
       <link href="https://heuristicwave.github.io/pipenv01" rel="alternate" type="text/html" title="Pipenv, Nginx, Gunicorn 서버 운영하기" />
-      <published>2021-01-04T00:40:00+00:00</published>
-      <updated>2021-01-04T00:40:00+00:00</updated>
+      <published>2021-01-04T09:40:00+09:00</published>
+      <updated>2021-01-04T09:40:00+09:00</updated>
       <id>https://heuristicwave.github.io/pipenv01</id>
       <content type="html" xml:base="https://heuristicwave.github.io/pipenv01">&lt;p&gt;&lt;strong&gt;Virtualenv&lt;/strong&gt; 환경이 아닌 &lt;strong&gt;Pipenv&lt;/strong&gt;를 사용하며 만난 에러 해결 과정 정리&lt;/p&gt;
 

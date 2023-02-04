@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-01-26T03:12:38+00:00</updated>
+  <updated>2023-02-04T17:10:29+09:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -34,8 +34,8 @@
     <entry>
       <title type="html">DIY Amazon EKS with eksctl</title>
       <link href="https://heuristicwave.github.io/eksctl_ppt" rel="alternate" type="text/html" title="DIY Amazon EKS with eksctl" />
-      <published>2023-01-19T19:00:00+00:00</published>
-      <updated>2023-01-19T19:00:00+00:00</updated>
+      <published>2023-01-20T04:00:00+09:00</published>
+      <updated>2023-01-20T04:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/eksctl_ppt</id>
       <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;&lt;a href=&quot;https://www.meetup.com/awskrug/events/290666942/&quot;&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)&lt;/a&gt; 발표 자료&lt;/p&gt;
 
@@ -96,8 +96,8 @@
     <entry>
       <title type="html">Declarative vs Imperative in Kubernetes</title>
       <link href="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s" rel="alternate" type="text/html" title="Declarative vs Imperative in Kubernetes" />
-      <published>2022-08-14T00:00:00+00:00</published>
-      <updated>2022-08-14T00:00:00+00:00</updated>
+      <published>2022-08-14T09:00:00+09:00</published>
+      <updated>2022-08-14T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/DeclarativeVSImperativeinK8s</id>
       <content type="html" xml:base="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s">&lt;p&gt;Kubernetes Object Management에서 발견한 명령형/선언형 방식&lt;/p&gt;
 
@@ -347,8 +347,8 @@ Kubernetes에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&qu
     <entry>
       <title type="html">Terraform Tips 5 - Import</title>
       <link href="https://heuristicwave.github.io/TerraformTips5" rel="alternate" type="text/html" title="Terraform Tips 5 - Import" />
-      <published>2022-07-23T00:00:00+00:00</published>
-      <updated>2022-07-23T00:00:00+00:00</updated>
+      <published>2022-07-23T09:00:00+09:00</published>
+      <updated>2022-07-23T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips5</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips5">&lt;p&gt;Terraform 더 익숙하게 5 - Import&lt;/p&gt;
 
@@ -551,8 +551,8 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     <entry>
       <title type="html">Terraform Tips 4 - Move (Refactoring)</title>
       <link href="https://heuristicwave.github.io/TerraformTips4" rel="alternate" type="text/html" title="Terraform Tips 4 - Move (Refactoring)" />
-      <published>2022-06-07T00:00:00+00:00</published>
-      <updated>2022-06-07T00:00:00+00:00</updated>
+      <published>2022-06-07T09:00:00+09:00</published>
+      <updated>2022-06-07T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips4</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips4">&lt;p&gt;Terraform 더 익숙하게 4 - Move (Refactoring)&lt;/p&gt;
 
@@ -727,8 +727,8 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     <entry>
       <title type="html">Terraform Tips 3 - Refresh &amp;amp; Replace</title>
       <link href="https://heuristicwave.github.io/TerraformTips3" rel="alternate" type="text/html" title="Terraform Tips 3 - Refresh &amp; Replace" />
-      <published>2022-05-28T00:00:00+00:00</published>
-      <updated>2022-05-28T00:00:00+00:00</updated>
+      <published>2022-05-28T09:00:00+09:00</published>
+      <updated>2022-05-28T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips3</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips3">&lt;p&gt;Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace&lt;/p&gt;
 
@@ -868,8 +868,8 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
     <entry>
       <title type="html">Using the awslogs log driver in ECS(Fargate)</title>
       <link href="https://heuristicwave.github.io/ECS_CW_Logs" rel="alternate" type="text/html" title="Using the awslogs log driver in ECS(Fargate)" />
-      <published>2022-03-01T00:00:00+00:00</published>
-      <updated>2022-03-01T00:00:00+00:00</updated>
+      <published>2022-03-01T09:00:00+09:00</published>
+      <updated>2022-03-01T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/ECS_CW_Logs</id>
       <content type="html" xml:base="https://heuristicwave.github.io/ECS_CW_Logs">&lt;p&gt;ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다.
 Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 
@@ -1027,8 +1027,8 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
     <entry>
       <title type="html">Using Amazon ECS Exec for debugging</title>
       <link href="https://heuristicwave.github.io/ECS_Exec" rel="alternate" type="text/html" title="Using Amazon ECS Exec for debugging" />
-      <published>2022-02-22T00:00:00+00:00</published>
-      <updated>2022-02-22T00:00:00+00:00</updated>
+      <published>2022-02-22T09:00:00+09:00</published>
+      <updated>2022-02-22T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/ECS_Exec</id>
       <content type="html" xml:base="https://heuristicwave.github.io/ECS_Exec">&lt;p&gt;Docker에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.&lt;/p&gt;
@@ -1160,8 +1160,8 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
     <entry>
       <title type="html">Create Immutable Server using AWS Image Builder &amp;amp; Auto Scaling Group</title>
       <link href="https://heuristicwave.github.io/ImageBuilder" rel="alternate" type="text/html" title="Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group" />
-      <published>2022-02-21T00:00:00+00:00</published>
-      <updated>2022-02-21T00:00:00+00:00</updated>
+      <published>2022-02-21T09:00:00+09:00</published>
+      <updated>2022-02-21T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/ImageBuilder</id>
       <content type="html" xml:base="https://heuristicwave.github.io/ImageBuilder">&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;에
 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
@@ -1373,8 +1373,8 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
     <entry>
       <title type="html">Terraform Tips 2 - Data &amp;amp; Index</title>
       <link href="https://heuristicwave.github.io/TerraformTips2" rel="alternate" type="text/html" title="Terraform Tips 2 - Data &amp; Index" />
-      <published>2022-01-02T00:00:00+00:00</published>
-      <updated>2022-01-02T00:00:00+00:00</updated>
+      <published>2022-01-02T09:00:00+09:00</published>
+      <updated>2022-01-02T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips2</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips2">&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index &lt;br /&gt;
 AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
@@ -1576,8 +1576,8 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
     <entry>
       <title type="html">Terraform Tips 1 - Module &amp;amp; Output</title>
       <link href="https://heuristicwave.github.io/TerraformTips1" rel="alternate" type="text/html" title="Terraform Tips 1 - Module &amp; Output" />
-      <published>2022-01-01T00:00:00+00:00</published>
-      <updated>2022-01-01T00:00:00+00:00</updated>
+      <published>2022-01-01T09:00:00+09:00</published>
+      <updated>2022-01-01T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips1</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips1">&lt;p&gt;Terraform 더 익숙하게 1 - Module &amp;amp; Output &lt;br /&gt;
 AWS 리소스로 알아보는 terraform Module 연계 팁&lt;/p&gt;

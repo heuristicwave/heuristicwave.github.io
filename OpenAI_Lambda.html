@@ -11,7 +11,7 @@
 
 
 
-    <title>Self-service Infrastructure</title>
+    <title>Using OpenAI API with AWS Lambda</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/SelfService" />
+    <link rel="canonical" href="https://heuristicwave.github.io/OpenAI_Lambda" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Self-service Infrastructure" />
-    <meta property="og:description" content="본 글은 Kief Morris의 Infrastructure as Code와 HashiCorp 백서를 읽고 학습한 내용을 기반으로 작성한 글 입니다. 서문 IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 Self-service Infra라는 말을 자주 만나게 됩니다. 몇 개월째 와닿지 않는 개념이였지만, 최근 키프 모리스의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에" />
-    <meta property="og:url" content="https://heuristicwave.github.io/SelfService" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/self.png" />
+    <meta property="og:title" content="Using OpenAI API with AWS Lambda" />
+    <meta property="og:description" content="AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기 Intro 2월 2일 AWSKRUG의 Slack 채널에서 ChatGPT Slack App 테스트를 시작했다는 글을 보고, 저도 메신저와 연동하여 ChatGPT를 사용해 보고 싶은 욕심이 생겼습니다. (아직, ChatGPT를 개인 봇에 적용하지는 않았습니다.) 🖍 해당 포스팅에서는 ChatGPT가 아닌 GPT-3 모델 중, text-davinci-003 모델을 사용했습니다. 배경 지식" />
+    <meta property="og:url" content="https://heuristicwave.github.io/OpenAI_Lambda" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/OpenAI.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-10-25T09:00:00+09:00" />
-    <meta property="article:modified_time" content="2021-10-25T09:00:00+09:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2023-02-03T05:00:00+09:00" />
+    <meta property="article:modified_time" content="2023-02-03T05:00:00+09:00" />
+    <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Self-service Infrastructure" />
-    <meta name="twitter:description" content="본 글은 Kief Morris의 Infrastructure as Code와 HashiCorp 백서를 읽고 학습한 내용을 기반으로 작성한 글 입니다. 서문 IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 Self-service Infra라는 말을 자주 만나게 됩니다. 몇 개월째 와닿지 않는 개념이였지만, 최근 키프 모리스의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에" />
+    <meta name="twitter:title" content="Using OpenAI API with AWS Lambda" />
+    <meta name="twitter:description" content="AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기 Intro 2월 2일 AWSKRUG의 Slack 채널에서 ChatGPT Slack App 테스트를 시작했다는 글을 보고, 저도 메신저와 연동하여 ChatGPT를 사용해 보고 싶은 욕심이 생겼습니다. (아직, ChatGPT를 개인 봇에 적용하지는 않았습니다.) 🖍 해당 포스팅에서는 ChatGPT가 아닌 GPT-3 모델 중, text-davinci-003 모델을 사용했습니다. 배경 지식" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/self.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/OpenAI.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Aws" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/SelfService",
+    "url": "https://heuristicwave.github.io/OpenAI_Lambda",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/self.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/OpenAI.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/SelfService"
+        "@id": "https://heuristicwave.github.io/OpenAI_Lambda"
     },
-    "description": "본 글은 Kief Morris의 Infrastructure as Code와 HashiCorp 백서를 읽고 학습한 내용을 기반으로 작성한 글 입니다. 서문 IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 Self-service Infra라는 말을 자주 만나게 됩니다. 몇 개월째 와닿지 않는 개념이였지만, 최근 키프 모리스의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에"
+    "description": "AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기 Intro 2월 2일 AWSKRUG의 Slack 채널에서 ChatGPT Slack App 테스트를 시작했다는 글을 보고, 저도 메신저와 연동하여 ChatGPT를 사용해 보고 싶은 욕심이 생겼습니다. (아직, ChatGPT를 개인 봇에 적용하지는 않았습니다.) 🖍 해당 포스팅에서는 ChatGPT가 아닌 GPT-3 모델 중, text-davinci-003 모델을 사용했습니다. 배경 지식"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Self-service Infrastructure" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Using OpenAI API with AWS Lambda" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -181,150 +181,167 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops post tag-devops ">
+        <article class="post-full  tag-aws tag-serverless post tag-aws ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="25 October 2021">25 October 2021</time>
+                    <time class="post-full-meta-date" datetime=" 3 February 2023"> 3 February 2023</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>
+                               <a href='/tag/aws/'>AWS</a>,
+                            
+                        
+                            
+                               <a href='/tag/serverless/'>SERVERLESS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Self-service Infrastructure</h1>
+                <h1 class="post-full-title">Using OpenAI API with AWS Lambda</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/self.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/OpenAI.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>본 글은 <a href="https://www.oreilly.com/library/view/infrastructure-as-code/9781491924334/">Kief Morris의 Infrastructure as Code</a>와 <a href="https://www.hashicorp.com/resources/unlocking-the-cloud-operating-model-provisioning">HashiCorp 백서</a>를 읽고 학습한 내용을 기반으로 작성한 글 입니다.</p>
+                    <p>AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기</p>
 
-<p><br /></p>
+<h1 id="intro">Intro</h1>
 
-<h2 id="서문">서문</h2>
+<p>2월 2일 <a href="https://www.facebook.com/groups/awskrug/">AWSKRUG</a>의 Slack 채널에서 ChatGPT Slack App 테스트를 시작했다는 글을 보고,
+저도 메신저와 연동하여 ChatGPT를 사용해 보고 싶은 욕심이 생겼습니다. (아직, ChatGPT를 개인 봇에 적용하지는 않았습니다.)</p>
 
-<p>IaC(Infrastructure as Code)에 관심을 갖고 공부를 하다보면 <strong>Self-service Infra</strong>라는 말을 자주 만나게 됩니다.
-몇 개월째 와닿지 않는 개념이였지만, 최근 <strong>키프 모리스</strong>의 책을 다시 읽고 조금은 알게 된 거 같아 그동안 공부한 Self-service Infra에 대한 자료들을 바탕으로 작성해 보았습니다.</p>
-
-<p><strong>Self-service Infra</strong>에 관한 배경지식을 넓히는 데 도움이 되었으면 좋겠습니다.</p>
-
-<p><br /></p>
-
-<h2 id="dynamic-infrastructure">Dynamic Infrastructure</h2>
-
-<p><strong>동적 인프라</strong>는 서버, 스토리지, 네트워크와 같은 인프라 자원을 관리할 수 있는 시스템을 말합니다.
-동적 인프라의 종류로는 Public/Private 클라우드, 오픈스택을 활용하는 사설 클라우드, 베어메탈 등이 있습니다.</p>
-
-<p>앞선 정의만 보면 동적 인프라는 클라우드와 굉장히 유사하지만, <strong>키프 모리스</strong>는 동적 인프라가 클라우드보다 범위가 더 넓다고 합니다.</p>
-
-<p>📣 <em>동적 인프라를 소개하며 알려드리고 싶은 문장이 있습니다.</em></p>
-
-<p><strong>클라우드로의 전환</strong>이라는 의미에 대해 많은 사람들이 여러 측면에서 설명을 하지만,
-저는 HashiCorp의 <a href="https://www.hashicorp.com/resources/unlocking-the-cloud-operating-model-provisioning">Unlocking the Cloud Operating Model: Provisioning</a>
-백서에 소개된 다음 표현에 참 공감이 갑니다.</p>
+<p><img src="../../assets/built/images/post/etc/awskrug.png" alt="awskrug" /></p>
 
 <blockquote>
-  <p>클라우드로의 전환의 본질적인 의미는 “정적” 인프라에서 “동적” 인프라로의 전환입니다.</p>
+  <p>🖍 해당 포스팅에서는 <strong>ChatGPT</strong>가 아닌 GPT-3 모델 중, <code class="language-plaintext highlighter-rouge">text-davinci-003</code> 모델을 사용했습니다.
+<br /></p>
+  <ul>
+    <li>배경 지식 : <a href="https://www.reddit.com/r/OpenAI/comments/zdrnsf/difference_between_chatgpt_and_the_new_davinci_3/">Difference between ChatGPT and the new davinci 3 model?</a></li>
+  </ul>
+</blockquote>
 
-  <p>The essential implications of the transition to the cloud is the shift from “static” infrastructure to “dynamic” infrastructure</p>
+<p>이미 인터넷에 OpenAI API를 Slack과 연동하여 사용하고 있는 사례들은 많아,
+제가 근무하는 회사에서 사용하고 있는 <a href="https://dooray.com/main/">NHN의 협업 툴 Dooray</a>와 연동하기로 했습니다.</p>
+
+<blockquote>
+  <p>💡 해당 포스팅에서는 Dooray와 AWS Lambda의 통합 방법을 다루지만,
+두레이 외의 다른 메신저 도구와도 연동하는 방법이 유사하므로 해당 방법을 응용하여 활용할 수 있습니다!</p>
 </blockquote>
 
 <p><br /></p>
 
-<h2 id="동적-인프라-플랫폼-요구-사항">동적 인프라 플랫폼 요구 사항</h2>
+<h2 id="-workflow">🧭 Workflow</h2>
 
-<p>동적 인프라 플랫폼은 다음과 같은 특성이 있습니다.</p>
+<p><img src="../../assets/built/images/post/etc/dooraygpt.png" alt="DoorayGPT" /></p>
 
-<ul>
-  <li>Programmable</li>
-  <li>On-Demand</li>
-  <li>Self-Service</li>
-</ul>
+<p>위크플로우는 위와 같습니다. 사용자가 메신저에서 제공하는 <code class="language-plaintext highlighter-rouge">/</code> 커맨드로 질의를 하면,
+해당 요청이 AWS Lambda를 통해 OpenAI의 API를 활용해 질의에 대한 대답을 받아 메신저로 전달합니다.</p>
 
-<h3 id="-programmable">💻 Programmable</h3>
+<p>해당 기능을 구현하기 위해서는 <a href="https://platform.openai.com/account/api-keys">OpenAI API keys</a>와 AWS Lambda가 필요합니다.</p>
 
-<p>동적 인프라 플랫폼은 프로그래밍을 쉽게 할 수 있어야 합니다. 유저 인터페이스 외에도 스크립트, CLI와 같은 도구들과도 상호 작용 할 수 있도록 프로그래밍 API가 필요합니다.
-아래 각 플랫폼 별 SDK를 사용하면 클라우드 내 자원을 생성하고 관리하는 코드를 작성할 수 있습니다.</p>
+<p><strong>작업 순서</strong></p>
 
-<ul>
-  <li><a href="https://aws.amazon.com/tools/">AWS SDK</a></li>
-  <li><a href="https://azure.microsoft.com/en-us/downloads/">Azure SDK</a></li>
-  <li><a href="https://cloud.google.com/sdk/">GCP SDK</a></li>
-  <li><a href="https://docs.openstack.org/openstacksdk/latest/">Openstack SDK</a></li>
-</ul>
+<ol>
+  <li>Lambda Layer 추가</li>
+  <li>Lambda Function 배포</li>
+  <li>Lambda Function URL 생성</li>
+  <li>Messenger 서비스와 Lambda 통합</li>
+  <li>Messenger 서비스의 <code class="language-plaintext highlighter-rouge">POST</code>에 맞춰 Lambda Function 수정</li>
+</ol>
 
-<h3 id="-on-demand">⏰ On-Demand</h3>
+<p><br /></p>
 
-<p>동적 인프라 플랫폼에서 자원을 즉시 생성하고 삭제하는 기능은 필수입니다.
-또한 전통적인 인프라의 과금 정책이 일정 기간 동안의 계약을 기반으로 한다면, 동적 인프라에서는 시간당 과금 체계를 지원합니다.</p>
+<h2 id="️-aws-lambda로-openai-api-활용하기">🛠️ AWS Lambda로 OpenAI API 활용하기</h2>
 
-<p>🎊 <em>드디어 대망의 셀프 서비스가 처음 소개 됩니다!</em></p>
+<p>OpenAI의 <a href="https://platform.openai.com/docs/api-reference/introduction">API REFERENCE</a>를 확인하면 
+<code class="language-plaintext highlighter-rouge">Python</code>, <code class="language-plaintext highlighter-rouge">Node.js</code>를 활용한 예시가 상세하게 나옵니다.
+예시에 나오는 대로 해당 코드를 Amazon EC2를 대여하여 상시 운영 서버에서 활용해도 되지만, 메신저에 연동하여 잠깐만 활용할 예정이므로 Serverless 컴퓨팅 서비스인 Lambda를 사용하겠습니다.</p>
 
-<h3 id="-self-service">🏃🏻 Self-Service</h3>
+<h3 id="aws-lambda-layer-추가하기">AWS Lambda Layer 추가하기</h3>
 
-<p>셀프서비스는 온디맨드 요구 사항을 좀 더 발전시킨 개념입니다. 전통적인 방법에서 인프라를 요구하기 위해서는 세부 요청 양식, 설계 및 명세 문서, 구현 계획 수립 등을 필요로 했습니다.
-셀프서비스는 전통적인 방법에서 더 진화하여 <strong>필요한 인프라를 즉시 프로비저닝하고 쉽게 수정할 수 있는 자동화된 절차</strong>를 의미합니다.</p>
+<p>Python으로 OpenAI를 사용하기 위해서는 <code class="language-plaintext highlighter-rouge">openai</code> 파이썬 바인딩이 필요합니다.
+이를 위해 람다에서 여러 함수가 공유하는 코드 및 데이터를 중앙에서 관리하는 방식인 <strong>Lambda Layers</strong> 기능을 활용합니다.</p>
 
-<p>🛠 <em>셀프 서비스는 인프라 템플릿을 운용할 수 있는 IaC 도구를 기반으로 구현합니다.</em></p>
+<p>저는 OpenAI 패키지에 대한 종속성을 해결하기 위해서, <a href="https://github.com/erenyasarkurt/OpenAI-AWS-Lambda-Layer">OpenAI-AWS-Lambda-Layer</a>를 사용했습니다.</p>
 
-<p>예를 들어 개발자가 로드밸런서로 ALB를 사용하고 있다가 NLB로 바꾸고 싶은 경우, 다음과 같이 정의된 인프라 코드를 재배포 하면 됩니다.</p>
+<blockquote>
+  <p>⚠️ 해당 레포의 <a href="https://github.com/erenyasarkurt/OpenAI-AWS-Lambda-Layer/blob/main/README.md">README.md</a>에 기재된 대로 진행하면 curl로 OpenAI를 사용할 수 있습니다.</p>
+</blockquote>
 
-<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">resource</span> <span class="s2">"aws_lb"</span> <span class="s2">"test"</span> <span class="p">{</span>
-  <span class="nx">name</span>               <span class="p">=</span> <span class="s2">"test-lb-tf"</span>
-  <span class="nx">internal</span>           <span class="p">=</span> <span class="kc">false</span>
-  
-  <span class="c1"># load_balancer_type = "application"</span>
-  <span class="nx">load_balancer_type</span> <span class="p">=</span> <span class="s2">"network"</span>
-  
-  <span class="c1"># Leave out other config ...</span>
-<span class="p">}</span>
+<p>우선, AWS Lambda 콘솔의 <code class="language-plaintext highlighter-rouge">Addtional resources</code>의 <code class="language-plaintext highlighter-rouge">Layers</code>를 클릭하여 빌드 한 zip 파일을 업로드하고 호환성(python3.8, x86_64)을 체크해 준 다음 Layer를 생성합니다.</p>
+
+<p><img src="../../assets/built/images/post/lambda/layers.png" alt="Layers" /></p>
+
+<h3 id="aws-lambda-functions-배포">AWS Lambda Functions 배포</h3>
+
+<p>이어서 람다 콘솔 화면에서 <strong>Create function</strong>으로 함수를 생성하고 <strong>Add layer</strong> 버튼을 눌러,
+사전에 생성한 layer를 추가해 줍니다. <em>아래 사진과 같이 Layers 아이콘에 (1)이 추가되었습니다.</em></p>
+
+<p><img src="../../assets/built/images/post/lambda/code.png" alt="code" /></p>
+
+<p>⬆️ 앞서 언급한 오픈소스 파이썬 코드를 복사하고 <a href="https://github.com/erenyasarkurt/OpenAI-AWS-Lambda-Layer/blob/main/lambda_function.py#L27">27라인</a>에 OpenAI로부터 발급받은 Key로 바꿔 적고 <strong>Deploy</strong> 버튼을 눌러 배포합니다.</p>
+
+<p>⬇️ 이어서 <strong>Configuration</strong>에서 Memory와 Timeout 값을 수정합니다.
+<em>통상 129MB 정도의 메모리를 사용해 256MB와 OpenAPI로부터 응답이 늦어질 수 있으므로 1분이라는 넉넉한 시간을 주었습니다.</em></p>
+
+<p><img src="../../assets/built/images/post/lambda/config.png" alt="config" /></p>
+
+<p>마지막으로 <strong>Configuration</strong> 탭의 <strong>Function URL</strong>에서 URL을 생성합니다.
+이때, <strong>Auth type</strong>은 별도 인증 로직이 없는 <strong>NONE</strong>으로 설정해 주었습니다.</p>
+
+<p><br /></p>
+
+<h2 id="-messengerdooray와-lambda-통합하기">🔄 Messenger(Dooray)와 Lambda 통합하기</h2>
+
+<p>저는 통합할 메신저로 두레이를 사용했습니다. 두레이에서 <code class="language-plaintext highlighter-rouge">/command</code> 기능을 구현하는 방법은 다음 링크를 참고합니다.</p>
+
+<p><a href="https://helpdesk.dooray.com/share/pages/9wWo-xwiR66BO5LGshgVTg/2900080163559890590">두레이 커맨드 추가하기 가이드</a></p>
+
+<p>Slack을 비롯한 대부분의 메신저가 외부 서버와 통합하기 위해 <strong>RequestUrl</strong>을 요구합니다.
+사전에 생성한 람다의 <strong>Function URL</strong>을 <strong>RequestUrl</strong>에 기재하면 통합이 완료됩니다.</p>
+
+<h3 id="messengerdooray-request-형식-파악하기">Messenger(Dooray) Request 형식 파악하기</h3>
+
+<p>이전 단계에서 테스트 없이 코드를 배포했지만, 사실 람다를 코드를 개발하고 나면 Test event를 주입하여 작성한 람다가 의도한 대로 동작하는지 확인해 봐야 합니다.
+그러나 외부 서비스와 연동하여 어떠한 형식으로 Event(json)가 날라오는지 모르는 상황에서는 모니터링을 통해 파악해야 합니다.
+이벤트를 1회 발생시키고 <strong>CloudWatch Log groups</strong>에서 Event를 확인합니다.</p>
+
+<p><img src="../../assets/built/images/post/lambda/lambda_cw.png" alt="lambda_cw" /></p>
+
+<p>두레이 유저가 생성한 command는 <code class="language-plaintext highlighter-rouge">text</code>라는 필드에 담기고 이는 <code class="language-plaintext highlighter-rouge">body</code>로 감싸져 전달됩니다.
+Event가 어떤 형식으로 전달되는지 알게 되었으니, 오픈소스를 해당 형식에 맞게 수정합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">body</span> <span class="o">=</span> <span class="n">json</span><span class="p">.</span><span class="n">loads</span><span class="p">(</span><span class="n">event</span><span class="p">[</span><span class="s">'body'</span><span class="p">])</span>
+<span class="n">prompt</span> <span class="o">=</span> <span class="n">body</span><span class="p">[</span><span class="s">'text'</span><span class="p">]</span>
 </code></pre></div></div>
 
+<p>기존 작성된 코드를 두레이 형식에 맞춰 <code class="language-plaintext highlighter-rouge">text</code>로 바꿔주니 아래와 같이 구현된 모습을 확인할 수 있었습니다.</p>
+
+<p><img src="../../assets/built/images/post/etc/mybot.png" alt="mybot" /></p>
+
+<h2 id="outro">Outro</h2>
+
+<p>이번 포스팅에서 OpenAI API를 사용함에 있어 두레이라는 메신저와 람다를 통합하는 부분을 다뤘습니다.
+하지만 Lambda와 외부 서비스가 어떻게 연동되는지 원리를 알면 어떤 서비스던지 연동이 가능합니다.</p>
+
+<p>이 밖에 현재 코드는 PoC 수준의 코드라 부족한 점이 많습니다.
+API Key를 그대로 기재하면 <strong>보안 이슈</strong>가 있으므로, AWS Secrets Manager를 활용한 별도의 환경 변수 처리가 필요합니다.
+또한 외부 서비스에서 Function URL을 호출할 때도, 인증 작업을 추가해 줘야 합니다.
+추후 ChatGPT 유료 버전이 나오면 결제하여 사용한 후기를 적기 약속하며 글을 마치겠습니다.</p>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+
 <p><br /></p>
-
-<p><strong>HashiCorp</strong>가 정의한 <a href="https://www.hashicorp.com/products/terraform/self-service-infrastructure">Self-Service Infrastructure</a> 게시물을 보면,
-Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨부된 링크를 통해 셀프서비스의 장점을 꼭 한번 읽어보세요!)</em></p>
-
-<h4 id="기존-방법">기존 방법</h4>
-
-<p>개발자는 인프라 담당자가 인프라를 할당할 때까지 기다려야 합니다.</p>
-
-<p><img src="https://www.hashicorp.com/img/products/terraform/use-cases/self-service-infrastructure/self-service-challenge.png" width="600" height="300" /></p>
-
-<h4 id="셀프-서비스-적용">셀프 서비스 적용</h4>
-
-<p>작성된 인프라 템플릿을 활용해 온디맨드로 프로비저닝 할 수 있습니다.</p>
-
-<p><img src="https://www.hashicorp.com/img/products/terraform/use-cases/self-service-infrastructure/self-service-solution.png" width="600" height="300" /></p>
-
-<p><br /></p>
-
-<h2 id="글을-마치며">글을 마치며</h2>
-<p>저는 테라폼을 공부한 이후, 간단한 웹서비스를 운영하는 토이프로젝트를 진행할 때 다음과 같은 인프라 환경을 자주 사용합니다.</p>
-
-<p><img src="https://github.com/GSNextLevel/neoTerraform/blob/main/image/webserver_cluster.png?raw=true" width="500" height="550" /></p>
-
-<p>미리 코드로 정의한 인프라 덕분에 개발에만 집중할 수 있는 환경과 생산성 향상을 경험했습니다.
-또한 테라폼 모듈 덕분에 제가 원하는 대로 인프라 스펙을 변경하고 각종 클라우드 서비스 추가 혹은 제거가 가능했습니다.</p>
-
-<p>셀프서비스 인프라가 기존 승인 체계(<em>리소스 요청 ➡️ 담당자 승인</em>)를 부정하는 것은 아니라고 생각합니다.
-기존 체계가 갖고 있는 보안적 이점을 포함한 장점들을 유지하며, 유연하고 신속하게 인프라를 운용하는 Self-service 환경이 불러올 장점을 고민해 봐야겠습니다.</p>
-
-<p>마지막으로, DevOps 문화가 정착해가며 <strong>CI/CD</strong> 를 통해 지속적 배포가 가능해지며 더 잦은 서비스 출시가 가능해졌습니다.
-또한, <strong>IaC</strong>를 통해 Immutable Infra를 추구하며 인프라의 일관성과 안정성을 보장하게 되었습니다.
-앞선 두 개의 개념에 더해 <strong>Self-service</strong>를 추구한다면 조직의 민첩성과 생산성 향상에 도움이 될 것이라고 생각합니다.</p>
-
-<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
 
 <hr />
+
+<p><br /></p>
 
                 </div>
             </section>
@@ -367,9 +384,9 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/SelfService';
-                            this.page.identifier = '/SelfService';
-                            this.page.title = 'Self-service Infrastructure';
+                            this.page.url = 'https://heuristicwave.github.io/OpenAI_Lambda';
+                            this.page.identifier = '/OpenAI_Lambda';
+                            this.page.title = 'Using OpenAI API with AWS Lambda';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -403,7 +420,7 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -412,6 +429,8 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                             <ul>
                                 
                                 
+                                  
+                                    
                                   
                                 
                                   
@@ -432,22 +451,6 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                            <li><a href="/DeclarativeVSImperativeinK8s">Declarative vs Imperative in Kubernetes</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/TerraformTips5">Terraform Tips 5 - Import</a></li>
-                                        
-                                    
-                                  
                                 
                                   
                                 
@@ -455,14 +458,11 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                                     
                                         
                                         
+                                            <li><a href="/ECS_Walkthrough">ECS on EC2 Walkthrough</a></li>
+                                        
                                     
                                   
                                 
-                                  
-                                    
-                                        
-                                        
-                                    
                                   
                                 
                                   
@@ -473,12 +473,7 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/Export_data_to_S3_Lambda">Export cloudwatch log data to Amazon S3 using lambda</a></li>
                                         
                                     
                                   
@@ -509,9 +504,26 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
                                 
                                   
                                     
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
                                   
                                 
                                   
@@ -561,9 +573,9 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
+                            <a href="/tag/aws/">
                                 
-                                    See all 16 posts  →
+                                    See all 15 posts  →
                                 
                             </a>
                         </footer>
@@ -573,48 +585,6 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/EC2_Clocksource">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/clock.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/EC2_Clocksource">
-                <header class="post-card-header">
-                    
-                        
-                            
-                                <span class="post-card-tags">Aws</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">EC2 Clocksource</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -622,12 +592,12 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/Packer">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/packer&terraform.png)"></div>
+            <a class="post-card-image-link" href="/eksctl_ppt">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/eksctl.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/Packer">
+            <a class="post-card-content-link" href="/eksctl_ppt">
                 <header class="post-card-header">
                     
                         
@@ -636,12 +606,16 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
                             
                         
                             
+                               <span class="post-card-tags">Eks</span>
+                            
+                        
+                            
                                 <span class="post-card-tags">Aws</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Provision Infrastructure with Packer</h2>
+                    <h2 class="post-card-title">DIY Amazon EKS with eksctl</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -678,18 +652,18 @@ Self-Service Infra가 어떤 의미인지 더 쉽게 다가옵니다. <em>(첨�
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Self-service Infrastructure</div>
+    <div class="floating-header-title">Using OpenAI API with AWS Lambda</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Self-service+Infrastructure&amp;url=https://heuristicwave.github.ioSelfService"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Using+OpenAI+API+with+AWS+Lambda&amp;url=https://heuristicwave.github.ioOpenAI_Lambda"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioSelfService"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioOpenAI_Lambda"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

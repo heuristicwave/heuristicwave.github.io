@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.2">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/extracurricular/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-01-26T03:12:38+00:00</updated>
+  <updated>2023-02-04T17:10:29+09:00</updated>
   <id>https://heuristicwave.github.io/tag/extracurricular/feed.xml</id>
 
   
@@ -34,8 +34,8 @@
     <entry>
       <title type="html">글또 7기 회고</title>
       <link href="https://heuristicwave.github.io/geultto2" rel="alternate" type="text/html" title="글또 7기 회고" />
-      <published>2022-10-02T00:00:00+00:00</published>
-      <updated>2022-10-02T00:00:00+00:00</updated>
+      <published>2022-10-02T09:00:00+09:00</published>
+      <updated>2022-10-02T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/geultto2</id>
       <content type="html" xml:base="https://heuristicwave.github.io/geultto2">&lt;p&gt;회고 글을 쓰며 드는 생각&lt;/p&gt;
 
@@ -164,8 +164,8 @@ Kubernetes 1편, Terraform 3편, AWS 서비스 1편을 작성했습니다. Istio
     <entry>
       <title type="html">글또 7기 다짐글</title>
       <link href="https://heuristicwave.github.io/geultto" rel="alternate" type="text/html" title="글또 7기 다짐글" />
-      <published>2022-05-05T00:00:00+00:00</published>
-      <updated>2022-05-05T00:00:00+00:00</updated>
+      <published>2022-05-05T09:00:00+09:00</published>
+      <updated>2022-05-05T09:00:00+09:00</updated>
       <id>https://heuristicwave.github.io/geultto</id>
       <content type="html" xml:base="https://heuristicwave.github.io/geultto">&lt;p&gt;글또 7기 다짐글 입니다.&lt;/p&gt;
 
