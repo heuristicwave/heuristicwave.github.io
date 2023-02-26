@@ -4,6 +4,22 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
         <url>
+            <loc>https://heuristicwave.github.io/EKS_Upgrade.html</loc>
+            
+                <lastmod>2023-02-25T09:00:00+09:00</lastmod>
+            
+
+            
+                <changefreq>weekly</changefreq>
+            
+
+            
+                <priority>0.5</priority>
+            
+
+        </url>
+    
+        <url>
             <loc>https://heuristicwave.github.io/OpenAI_Lambda.html</loc>
             
                 <lastmod>2023-02-03T05:00:00+09:00</lastmod>
