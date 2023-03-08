@@ -15,7 +15,6 @@ phases:
       - mkdir buildZone && cd buildZone
       - git init
       - git remote add origin https://$GITHUB_TOKEN@github.com/heuristicwave/GitHubPageMaker.git
-      - git config --global credential.helper cache
       - git fetch
       - git checkout -t origin/master
       - git submodule init
