@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/eks/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-02-26T16:29:27+09:00</updated>
+  <updated>2023-03-08T15:42:09+00:00</updated>
   <id>https://heuristicwave.github.io/tag/eks/feed.xml</id>
 
   
@@ -34,8 +34,8 @@
     <entry>
       <title type="html">Amazon EKS Multi Cluster Upgrade with ExternalDNS</title>
       <link href="https://heuristicwave.github.io/EKS_Upgrade" rel="alternate" type="text/html" title="Amazon EKS Multi Cluster Upgrade with ExternalDNS" />
-      <published>2023-02-25T09:00:00+09:00</published>
-      <updated>2023-02-25T09:00:00+09:00</updated>
+      <published>2023-02-25T00:00:00+00:00</published>
+      <updated>2023-02-25T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/EKS_Upgrade</id>
       <content type="html" xml:base="https://heuristicwave.github.io/EKS_Upgrade">&lt;p&gt;ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기&lt;/p&gt;
 
@@ -213,8 +213,8 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
     <entry>
       <title type="html">DIY Amazon EKS with eksctl</title>
       <link href="https://heuristicwave.github.io/eksctl_ppt" rel="alternate" type="text/html" title="DIY Amazon EKS with eksctl" />
-      <published>2023-01-20T04:00:00+09:00</published>
-      <updated>2023-01-20T04:00:00+09:00</updated>
+      <published>2023-01-19T19:00:00+00:00</published>
+      <updated>2023-01-19T19:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/eksctl_ppt</id>
       <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;&lt;a href=&quot;https://www.meetup.com/awskrug/events/290666942/&quot;&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)&lt;/a&gt; 발표 자료&lt;/p&gt;
 

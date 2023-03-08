@@ -1,0 +1,29 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      ruby: 2.7
+    commands:
+      - echo Installing dependencies...
+      - gem install bundler
+      - bundle install --quiet
+  pre_build:
+    commands:
+      - export LC_ALL="en_US.utf8"
+      - echo Git Setting...
+      - mkdir buildZone && cd buildZone
+      - git init
+      - git remote add origin https://$GITHUB_TOKEN@github.com/heuristicwave/GitHubPageMaker.git
+      - git config --global credential.helper cache
+      - git fetch
+      - git checkout -t origin/master
+      - git submodule init
+      - git submodule update --recursive
+  build:
+    commands:
+      - echo Building...
+      - bundle exec rake site:deploy # --quiet --trace
+  post_build:
+    commands:
+      - echo Finish

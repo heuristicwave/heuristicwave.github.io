@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-02-26T16:29:27+09:00</updated>
+  <updated>2023-03-08T15:42:09+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -34,8 +34,8 @@
     <entry>
       <title type="html">Terraform Tips 5 - Import</title>
       <link href="https://heuristicwave.github.io/TerraformTips5" rel="alternate" type="text/html" title="Terraform Tips 5 - Import" />
-      <published>2022-07-23T09:00:00+09:00</published>
-      <updated>2022-07-23T09:00:00+09:00</updated>
+      <published>2022-07-23T00:00:00+00:00</published>
+      <updated>2022-07-23T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips5</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips5">&lt;p&gt;Terraform 더 익숙하게 5 - Import&lt;/p&gt;
 
@@ -238,8 +238,8 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     <entry>
       <title type="html">Terraform Tips 4 - Move (Refactoring)</title>
       <link href="https://heuristicwave.github.io/TerraformTips4" rel="alternate" type="text/html" title="Terraform Tips 4 - Move (Refactoring)" />
-      <published>2022-06-07T09:00:00+09:00</published>
-      <updated>2022-06-07T09:00:00+09:00</updated>
+      <published>2022-06-07T00:00:00+00:00</published>
+      <updated>2022-06-07T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips4</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips4">&lt;p&gt;Terraform 더 익숙하게 4 - Move (Refactoring)&lt;/p&gt;
 
@@ -414,8 +414,8 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     <entry>
       <title type="html">Terraform Tips 3 - Refresh &amp;amp; Replace</title>
       <link href="https://heuristicwave.github.io/TerraformTips3" rel="alternate" type="text/html" title="Terraform Tips 3 - Refresh &amp; Replace" />
-      <published>2022-05-28T09:00:00+09:00</published>
-      <updated>2022-05-28T09:00:00+09:00</updated>
+      <published>2022-05-28T00:00:00+00:00</published>
+      <updated>2022-05-28T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips3</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips3">&lt;p&gt;Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace&lt;/p&gt;
 
@@ -555,8 +555,8 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
     <entry>
       <title type="html">Terraform Tips 2 - Data &amp;amp; Index</title>
       <link href="https://heuristicwave.github.io/TerraformTips2" rel="alternate" type="text/html" title="Terraform Tips 2 - Data &amp; Index" />
-      <published>2022-01-02T09:00:00+09:00</published>
-      <updated>2022-01-02T09:00:00+09:00</updated>
+      <published>2022-01-02T00:00:00+00:00</published>
+      <updated>2022-01-02T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips2</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips2">&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index &lt;br /&gt;
 AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
@@ -758,8 +758,8 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
     <entry>
       <title type="html">Terraform Tips 1 - Module &amp;amp; Output</title>
       <link href="https://heuristicwave.github.io/TerraformTips1" rel="alternate" type="text/html" title="Terraform Tips 1 - Module &amp; Output" />
-      <published>2022-01-01T09:00:00+09:00</published>
-      <updated>2022-01-01T09:00:00+09:00</updated>
+      <published>2022-01-01T00:00:00+00:00</published>
+      <updated>2022-01-01T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips1</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips1">&lt;p&gt;Terraform 더 익숙하게 1 - Module &amp;amp; Output &lt;br /&gt;
 AWS 리소스로 알아보는 terraform Module 연계 팁&lt;/p&gt;
@@ -915,8 +915,8 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
     <entry>
       <title type="html">ECR CodePipeline with Terraform Ⅲ</title>
       <link href="https://heuristicwave.github.io/CodePipeline" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅲ" />
-      <published>2021-04-09T09:00:00+09:00</published>
-      <updated>2021-04-09T09:00:00+09:00</updated>
+      <published>2021-04-09T00:00:00+00:00</published>
+      <updated>2021-04-09T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/CodePipeline</id>
       <content type="html" xml:base="https://heuristicwave.github.io/CodePipeline">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 3 (CodePipeline)&lt;/p&gt;
 
@@ -1199,8 +1199,8 @@ docker run &lt;span class=&quot;nv&quot;&gt;$tf_image_repo_url&lt;/span&gt;
     <entry>
       <title type="html">ECR CodePipeline with Terraform Ⅱ</title>
       <link href="https://heuristicwave.github.io/CodeBuild" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅱ" />
-      <published>2021-04-08T09:00:00+09:00</published>
-      <updated>2021-04-08T09:00:00+09:00</updated>
+      <published>2021-04-08T00:00:00+00:00</published>
+      <updated>2021-04-08T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/CodeBuild</id>
       <content type="html" xml:base="https://heuristicwave.github.io/CodeBuild">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)&lt;/p&gt;
 
@@ -1478,8 +1478,8 @@ aws_s3_bucket.artifact_bucket
     <entry>
       <title type="html">ECR CodePipeline with Terraform Ⅰ</title>
       <link href="https://heuristicwave.github.io/CodeCommit" rel="alternate" type="text/html" title="ECR CodePipeline with Terraform Ⅰ" />
-      <published>2021-04-08T03:00:00+09:00</published>
-      <updated>2021-04-08T03:00:00+09:00</updated>
+      <published>2021-04-07T18:00:00+00:00</published>
+      <updated>2021-04-07T18:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/CodeCommit</id>
       <content type="html" xml:base="https://heuristicwave.github.io/CodeCommit">&lt;p&gt;Terraform으로 ECR 파이프라인 구축하기 1 (CodeCommit)&lt;/p&gt;
 
@@ -1579,22 +1579,22 @@ git remote &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt;   &lt;span class=&qu
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;해당 포스팅의 2 &amp;amp; 3편에서 ECR에 올릴 이미지 파일 생성하기 위해 아래 샘플 &lt;strong&gt;Dockerfile&lt;/strong&gt;을 생성하겠습니다.&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&quot;language-Dockerfile&quot;&gt;cat &amp;lt;&amp;lt;EOF &amp;gt; Dockerfile
-FROM golang:1.12-alpine AS build
-#Install git
-RUN apk add --no-cache git
-#Get the hello world package from a GitHub repository
-RUN go get github.com/golang/example/hello
-WORKDIR /go/src/github.com/golang/example/hello
-# Build the project and send the output to /bin/HelloWorld 
-RUN go build -o /bin/HelloWorld
+&lt;div class=&quot;language-Dockerfile highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;cat &amp;lt;&amp;lt;EOF &amp;gt; Dockerfile
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang:1.12-alpine AS build&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#Install git&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;apk add &lt;span class=&quot;nt&quot;&gt;--no-cache&lt;/span&gt; git
+&lt;span class=&quot;c&quot;&gt;#Get the hello world package from a GitHub repository&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go get github.com/golang/example/hello
+&lt;span class=&quot;k&quot;&gt;WORKDIR&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; /go/src/github.com/golang/example/hello&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;# Build the project and send the output to /bin/HelloWorld &lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go build &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /bin/HelloWorld
 
-FROM golang:1.12-alpine
-#Copy the build's output binary from the previous build container
-COPY --from=build /bin/HelloWorld /bin/HelloWorld
-ENTRYPOINT [&quot;/bin/HelloWorld&quot;]
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang:1.12-alpine&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#Copy the build's output binary from the previous build container&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; --from=build /bin/HelloWorld /bin/HelloWorld&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/bin/HelloWorld&quot;]&lt;/span&gt;
 EOF
-&lt;/code&gt;&lt;/pre&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;작성된 &lt;strong&gt;Dockerfile&lt;/strong&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Commit&lt;/code&gt;하고, CodeCommit에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Push&lt;/code&gt;합니다.&lt;/p&gt;
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add Dockerfile
@@ -1665,8 +1665,8 @@ git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.Use
     <entry>
       <title type="html">3-Tier VPC Architecture with Terraform</title>
       <link href="https://heuristicwave.github.io/3Tier" rel="alternate" type="text/html" title="3-Tier VPC Architecture with Terraform" />
-      <published>2021-01-28T03:00:00+09:00</published>
-      <updated>2021-01-28T03:00:00+09:00</updated>
+      <published>2021-01-27T18:00:00+00:00</published>
+      <updated>2021-01-27T18:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/3Tier</id>
       <content type="html" xml:base="https://heuristicwave.github.io/3Tier">&lt;p&gt;본 글은 &lt;a href=&quot;https://www.aws.training/Details/eLearning?id=61799&quot;&gt;Configure and Deploying VPCs with Multiple Subnets&lt;/a&gt;에서 다루는
 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Production-Ready: The 3-Tier VPC&lt;/code&gt; 강의를 바탕으로, 테라폼으로 구축하는 3계층 VPC 아키텍처에 대한 글입니다.&lt;/p&gt;

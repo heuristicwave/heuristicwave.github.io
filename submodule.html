@@ -11,7 +11,7 @@
 
 
 
-    <title>Terraform Tips 2 - Data & Index</title>
+    <title>Using git submodule with AWS Code Pipeline</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,26 +49,26 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips2" />
+    <link rel="canonical" href="https://heuristicwave.github.io/submodule" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Terraform Tips 2 - Data & Index" />
-    <meta property="og:description" content="Terraform 더 익숙하게 2 - Data &amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁 Intro 이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. Terraform Data를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다. 모든" />
-    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips2" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta property="og:title" content="Using git submodule with AWS Code Pipeline" />
+    <meta property="og:description" content="AWS CodePipeline으로 git submodule 사용하 Intro 여러분이 보고계신 이 블로그(GitHub Pages 활용)는 2개의 깃헙 레포지토리를 통해 배포되고 있습니다. 첫번째 레포지토리는 원본 소스코드를 담고 있으며, 블로그 글을 작성할 때 마다 build exec jekyll exec라는 명령어로 localhost에서 퇴고를 진행합니다. 이어서 원본 소스코드에서 build exec jekyll build라는 명령어로 빌드하면 빌드 결과물이 output 파일에" />
+    <meta property="og:url" content="https://heuristicwave.github.io/submodule" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/k8s-horizontal.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-01-02T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-01-02T00:00:00+00:00" />
+    <meta property="article:published_time" content="2023-03-07T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2023-03-07T00:00:00+00:00" />
     <meta property="article:tag" content="Devops" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Terraform Tips 2 - Data & Index" />
-    <meta name="twitter:description" content="Terraform 더 익숙하게 2 - Data &amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁 Intro 이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. Terraform Data를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다. 모든" />
+    <meta name="twitter:title" content="Using git submodule with AWS Code Pipeline" />
+    <meta name="twitter:description" content="AWS CodePipeline으로 git submodule 사용하 Intro 여러분이 보고계신 이 블로그(GitHub Pages 활용)는 2개의 깃헙 레포지토리를 통해 배포되고 있습니다. 첫번째 레포지토리는 원본 소스코드를 담고 있으며, 블로그 글을 작성할 때 마다 build exec jekyll exec라는 명령어로 localhost에서 퇴고를 진행합니다. 이어서 원본 소스코드에서 build exec jekyll build라는 명령어로 빌드하면 빌드 결과물이 output 파일에" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/k8s-horizontal.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/TerraformTips2",
+    "url": "https://heuristicwave.github.io/submodule",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/k8s-horizontal.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/TerraformTips2"
+        "@id": "https://heuristicwave.github.io/submodule"
     },
-    "description": "Terraform 더 익숙하게 2 - Data &amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁 Intro 이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. Terraform Data를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다. 모든"
+    "description": "AWS CodePipeline으로 git submodule 사용하 Intro 여러분이 보고계신 이 블로그(GitHub Pages 활용)는 2개의 깃헙 레포지토리를 통해 배포되고 있습니다. 첫번째 레포지토리는 원본 소스코드를 담고 있으며, 블로그 글을 작성할 때 마다 build exec jekyll exec라는 명령어로 localhost에서 퇴고를 진행합니다. 이어서 원본 소스코드에서 build exec jekyll build라는 명령어로 빌드하면 빌드 결과물이 output 파일에"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Terraform Tips 2 - Data & Index" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Using git submodule with AWS Code Pipeline" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -181,11 +181,11 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-terraform post tag-devops ">
+        <article class="post-full  tag-devops tag-aws post tag-devops ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 2 January 2022"> 2 January 2022</time>
+                    <time class="post-full-meta-date" datetime=" 7 March 2023"> 7 March 2023</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -194,189 +194,46 @@ into the {body} of the default.hbs template -->
                             
                         
                             
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/aws/'>AWS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Terraform Tips 2 - Data & Index</h1>
+                <h1 class="post-full-title">Using git submodule with AWS Code Pipeline</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/k8s-horizontal.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform 더 익숙하게 2 - Data &amp; Index <br />
-AWS 리소스로 알아보는 terraform Data 활용 팁</p>
-
-<h2 id="intro">Intro</h2>
-
-<p>이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. <strong>Terraform Data</strong>를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
-모든 <code class="language-plaintext highlighter-rouge">Data Sources</code>가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.</p>
-
-<p>공식문서(<a href="https://learn.hashicorp.com/tutorials/terraform/data-sources">Tutorial : Query Data Sources</a>)에서도 Data 활용방법을 배울 수 있지만,
-이번 포스팅에서는 3가지 예제와 함께 리소스를 Query 하는 방법을 배워 보겠습니다.</p>
+                    <p>AWS CodePipeline으로 git submodule 사용하</p>
 
 <p><br /></p>
 
-<h2 id="query-ami">Query AMI</h2>
+<h2 id="intro">Intro</h2>
 
-<p>AWS의 최신 AMI는 주기적으로 갱신됩니다. 따라서 재사용 가능한 코드를 작성하기 위해, 항상 최신 AMI를 참조하는 코드를 작성하는데 다음과 같은 방법을 사용할 수 있습니다.</p>
+<p>여러분이 보고계신 이 블로그(GitHub Pages 활용)는 2개의 깃헙 레포지토리를 통해 배포되고 있습니다. 첫번째 레포지토리는 원본 소스코드를 담고 있으며,
+블로그 글을 작성할 때 마다 <code class="language-plaintext highlighter-rouge">build exec jekyll exec</code>라는 명령어로 localhost에서 퇴고를 진행합니다.
+이어서 원본 소스코드에서 <code class="language-plaintext highlighter-rouge">build exec jekyll build</code>라는 명령어로 빌드하면 빌드 결과물이 <code class="language-plaintext highlighter-rouge">output</code> 파일에 떨어집니다.
+<code class="language-plaintext highlighter-rouge">output</code> 파일에는 markdown 형식으로 작성한 글들이 <code class="language-plaintext highlighter-rouge">html</code> 파일로 빌드되어 2번째 레포지토리에 커밋됩니다.</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_ami"</span> <span class="s2">"amazon_linux"</span> <span class="o">{</span>
-  most_recent <span class="o">=</span> <span class="nb">true
-
-  </span>owners <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon"</span><span class="o">]</span>
-
-  filter <span class="o">{</span>
-    name   <span class="o">=</span> <span class="s2">"name"</span>
-    values <span class="o">=</span> <span class="o">[</span><span class="s2">"amzn2-ami-kernel-*-hvm-*-x86_64-gp2"</span><span class="o">]</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-
-output <span class="s2">"name"</span> <span class="o">{</span>
-  value <span class="o">=</span> data.aws_ami.amazon_linux.id
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>위와 같은 방법으로 <code class="language-plaintext highlighter-rouge">filter</code>와 <code class="language-plaintext highlighter-rouge">owners</code> 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS의 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.</p>
+<p>저는 이것을 자동화 하기 위해 기존에는 Travis CI를 사용하고 있었습니다.
+현재 블로그로 CI/CD 파이프라인을 구축하고 약 2년간 88회의 Commit까지 잘 쓰고 있다가 어느새 다음과 같은 알람을 받아 보니, 크레딧 소진 ㅠ</p>
 
 <blockquote>
-  <p>values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]</p>
+  <p>Builds have been temporarily disabled for private and public repositories due to a negative credit balance. Please go to the Plan page to replenish your credit balance.</p>
 </blockquote>
-
-<p>ECS와 달리 EKS는 AMI 명명 규칙이 약간 달라 <code class="language-plaintext highlighter-rouge">filter</code> 기능을 활용해야, 조건에 맞는 Optimized 이미지를 얻을 수 있습니다.
-EKS 이미지의 경우 모든 이미지의 첫 문자열이 <code class="language-plaintext highlighter-rouge">amazon-eks-</code>으로 시작하기 때문에, <code class="language-plaintext highlighter-rouge">*</code>를 함께 넣어 Optimized AMI를 얻을 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_ami"</span> <span class="s2">"amazon_linux_eks"</span> <span class="o">{</span>
-  most_recent <span class="o">=</span> <span class="nb">true
-
-  </span>owners <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon"</span><span class="o">]</span>
-
-  filter <span class="o">{</span>
-    name   <span class="o">=</span> <span class="s2">"name"</span>
-    values <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon-eks-*"</span><span class="o">]</span>
-  <span class="o">}</span>
-
-  filter <span class="o">{</span>
-    name   <span class="o">=</span> <span class="s2">"architecture"</span>
-    values <span class="o">=</span> <span class="o">[</span><span class="s2">"x86_64"</span><span class="o">]</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>그러나 위 Query의 결과 값을 <a href="https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html">공식 문서</a>에 기재된 AMI ID와 비교해 보면,
-<strong>x86</strong> ID가 아닌, <strong>x86 가속</strong> ID 값과 일치한 다는 것을 알 수 있을 겁니다.
-문서에 기재된 <strong>x86 가속</strong>은 gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 <code class="language-plaintext highlighter-rouge">amazon-eks-gpu</code>로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.</p>
-
-<p>그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 🧐 어느 문서에도 기재되어 있지 않지만,
-대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다.</p>
-
-<blockquote>
-  <p>values = [“amazon-eks-node-1.22-*”]</p>
-
-  <p>value 값의 <em>prefix</em> 규칙을 보니 EKS의 버전도 <em>prefix</em> 안에 포함되어, <br />
-이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있다는 것을 추측 할 수 있습니다.</p>
-</blockquote>
-
-<p>이외에도 리전마다 다른 Optimized AMI는 <code class="language-plaintext highlighter-rouge">data</code>에는 명시하지 않았지만, <strong>Provider에 명시한 리전에 종속성</strong>을 갖게 됩니다.
-또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!</p>
-
-<p>여기까지 제가 자주 사용하는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎</p>
-
-<h2 id="query-az">Query AZ</h2>
-
-<p>AWS의 리전마다 사용가능한 az가 다르기 때문에, 조금 더 유연한 코드를 작성하기 위해 다음 코드를 사용해 사용가능한 az를 검색합니다.
-이후, <code class="language-plaintext highlighter-rouge">data.&lt;NAME&gt;.&lt;ATTRIBUTE&gt;.names</code> 로 사용가능한 az 값들을 확인할 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>data <span class="s2">"aws_availability_zones"</span> <span class="s2">"available"</span> <span class="o">{</span>
-  state <span class="o">=</span> <span class="s2">"available"</span>
-<span class="o">}</span>
-
-<span class="nv">$ </span>output <span class="s2">"azs"</span> <span class="o">{</span>
- value <span class="o">=</span> data.aws_availability_zones.available.names
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">names</code>에는 사용가능한 az가 배열 형태로 들어가 있어, <code class="language-plaintext highlighter-rouge">names[0]</code>, <code class="language-plaintext highlighter-rouge">names[1]</code>과 같이 Index 값으로 특정 값을 지정할 수 있습니다.
-그러나, 모든 data가 Index 값을 가지고 있는 것은 아닙니다.</p>
-
-<h2 id="query-vpc_id">Query vpc_id</h2>
-
-<p>다른 리소스와 AWS 솔루션들을 연계하기 위해서는 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값이 필수적으로 들어갑니다.
-vpc의 id를 구하기 위해서는 다음과 같은 방법으로 id를 조회할 수 있습니다.
-(tags 값을 활용해 일종의 필터링을 사용할 수도 있습니다.)</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_vpcs"</span> <span class="s2">"vpcs"</span> <span class="o">{</span>
-    tags <span class="o">=</span> <span class="o">{</span>
-        Name <span class="o">=</span> var.vpc_name
-    <span class="o">}</span>
-<span class="o">}</span>
-
-output <span class="s2">"vpc_id"</span> <span class="o">{</span>
-    value <span class="o">=</span> data.aws_vpcs.vpcs.ids
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>위 코드로 다음과 같이 Output 값을 얻을 수 있지만, 하나의 <code class="language-plaintext highlighter-rouge">az</code> 값을 얻을때와 동일한 방식으로 <code class="language-plaintext highlighter-rouge">ids[0]</code> 형식으로 값을 조회하려 하면,
-“This value does not have any indices.” 라는 에러 메시지와 함께 출력을 지원하지 않습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Changes to Outputs:
-  + vpc_id <span class="o">=</span> <span class="o">[</span>
-      + <span class="s2">"vpc-0x1234567890"</span>,
-    <span class="o">]</span>
-</code></pre></div></div>
-
-<p>도대체 무엇이 잘못된 것일까요? az와 동일한 방법으로 접근했지만, 왜 지원하지 않는지는 아직까지도 모르겠습니다…
-누구 아시는 분이 있다면 알려주세요.</p>
-
-<h3 id="count로-index-부여하기">count로 index 부여하기</h3>
-
-<p>위 문제를 해결하기 위해서는 az를 검색할 때보다는 불편하지만, <code class="language-plaintext highlighter-rouge">count</code>를 사용해 해결할 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_vpc"</span> <span class="s2">"target"</span> <span class="o">{</span>
-  count <span class="o">=</span> length<span class="o">(</span>data.aws_vpcs.vpcs.ids<span class="o">)</span>
-  <span class="nb">id</span>    <span class="o">=</span> tolist<span class="o">(</span>data.aws_vpcs.vpcs.ids<span class="o">)[</span>count.index]
-<span class="o">}</span>
-
-<span class="c"># sample code using vpc_id</span>
-resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_resource"</span> <span class="o">{</span>
-  count <span class="o">=</span> length<span class="o">(</span>data.aws_vpcs.vpcs.ids<span class="o">)</span>
-  <span class="c"># Skip Config</span>
-  vpc_id      <span class="o">=</span> data.aws_vpc.target[count.index].id
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">aws_vpcs</code>가 아닌 <code class="language-plaintext highlighter-rouge">aws_vpc</code>를 추가하고 index 를 부여하기 위한 내장 함수들을 사용해 index를 부여합니다.
-이후, 리소스에서 data 값들을 식별하기 위한 <code class="language-plaintext highlighter-rouge">count</code>를 기입하고 위와 같이 index 값으로 조회가 가능합니다.</p>
 
 <p><br /></p>
 
 <h2 id="outro">Outro</h2>
 
-<p>지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.<code class="language-plaintext highlighter-rouge">vpc_id</code>도 <code class="language-plaintext highlighter-rouge">az</code>와 같이 별도의 index 과정 없이,
-간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)</p>
-
-<p>지금까지 테라폼 더 익숙하게 Data &amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
-
-<p><br /></p>
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
 
 <hr />
-
-<p><span class="table-of-contents-list">Terraform Tips</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./TerraformTips1">Module &amp; Output</a></li>
-    <li><a href="./TerraformTips2">Data &amp; Index</a></li>
-    <li><a href="./TerraformTips3">Refresh &amp; Replace</a></li>
-    <li><a href="./TerraformTips4">Move (Refactoring)</a></li>
-    <li><a href="./TerraformTips5">Import</a></li>
-</ul>
-
-<p><br /></p>
 
                 </div>
             </section>
@@ -419,9 +276,9 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/TerraformTips2';
-                            this.page.identifier = '/TerraformTips2';
-                            this.page.title = 'Terraform Tips 2 - Data & Index';
+                            this.page.url = 'https://heuristicwave.github.io/submodule';
+                            this.page.identifier = '/submodule';
+                            this.page.title = 'Using git submodule with AWS Code Pipeline';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -466,11 +323,6 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/submodule">Using git submodule with AWS Code Pipeline</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -505,21 +357,7 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/DeclarativeVSImperativeinK8s">Declarative vs Imperative in Kubernetes</a></li>
                                         
                                     
                                   
@@ -529,8 +367,6 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                         
                                         
                                     
-                                  
-                                
                                   
                                 
                                   
@@ -550,6 +386,10 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                   
                                 
                                   
+                                
+                                  
+                                
+                                  
                                     
                                         
                                         
@@ -557,6 +397,23 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                     
                                   
                                 
@@ -639,16 +496,19 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
                 
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/ImageBuilder">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/imagebuilder.png)"></div>
+            <a class="post-card-image-link" href="/EKS_Upgrade">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/external-dns.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/ImageBuilder">
+            <a class="post-card-content-link" href="/EKS_Upgrade">
                 <header class="post-card-header">
                     
                         
@@ -657,61 +517,16 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                             
                         
                             
-                                <span class="post-card-tags">Devops</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Create Immutable Server using AWS Image Builder & Auto Scaling Group</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
-
-            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
-            
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/TerraformTips1">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/TerraformTips1">
-                <header class="post-card-header">
-                    
-                        
-                            
                                <span class="post-card-tags">Devops</span>
                             
                         
                             
-                                <span class="post-card-tags">Terraform</span>
+                                <span class="post-card-tags">Eks</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Terraform Tips 1 - Module & Output</h2>
+                    <h2 class="post-card-title">Amazon EKS Multi Cluster Upgrade with ExternalDNS</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -748,18 +563,18 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Terraform Tips 2 - Data & Index</div>
+    <div class="floating-header-title">Using git submodule with AWS Code Pipeline</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Tips+2+-+Data+%26+Index&amp;url=https://heuristicwave.github.ioTerraformTips2"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Using+git+submodule+with+AWS+Code+Pipeline&amp;url=https://heuristicwave.github.iosubmodule"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips2"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.iosubmodule"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

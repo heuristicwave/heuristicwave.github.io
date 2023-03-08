@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/container/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-02-26T16:29:27+09:00</updated>
+  <updated>2023-03-08T15:42:09+00:00</updated>
   <id>https://heuristicwave.github.io/tag/container/feed.xml</id>
 
   
@@ -34,8 +34,8 @@
     <entry>
       <title type="html">Declarative vs Imperative in Kubernetes</title>
       <link href="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s" rel="alternate" type="text/html" title="Declarative vs Imperative in Kubernetes" />
-      <published>2022-08-14T09:00:00+09:00</published>
-      <updated>2022-08-14T09:00:00+09:00</updated>
+      <published>2022-08-14T00:00:00+00:00</published>
+      <updated>2022-08-14T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/DeclarativeVSImperativeinK8s</id>
       <content type="html" xml:base="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s">&lt;p&gt;Kubernetes Object Management에서 발견한 명령형/선언형 방식&lt;/p&gt;
 

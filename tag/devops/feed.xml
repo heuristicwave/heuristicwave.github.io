@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.0">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-02-26T16:29:27+09:00</updated>
+  <updated>2023-03-08T15:42:09+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -32,10 +32,70 @@
 
   
     <entry>
+      <title type="html">Using git submodule with AWS Code Pipeline</title>
+      <link href="https://heuristicwave.github.io/submodule" rel="alternate" type="text/html" title="Using git submodule with AWS Code Pipeline" />
+      <published>2023-03-07T00:00:00+00:00</published>
+      <updated>2023-03-07T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/submodule</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/submodule">&lt;p&gt;AWS CodePipeline으로 git submodule 사용하&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;여러분이 보고계신 이 블로그(GitHub Pages 활용)는 2개의 깃헙 레포지토리를 통해 배포되고 있습니다. 첫번째 레포지토리는 원본 소스코드를 담고 있으며,
+블로그 글을 작성할 때 마다 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build exec jekyll exec&lt;/code&gt;라는 명령어로 localhost에서 퇴고를 진행합니다.
+이어서 원본 소스코드에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;build exec jekyll build&lt;/code&gt;라는 명령어로 빌드하면 빌드 결과물이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt; 파일에 떨어집니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt; 파일에는 markdown 형식으로 작성한 글들이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;html&lt;/code&gt; 파일로 빌드되어 2번째 레포지토리에 커밋됩니다.&lt;/p&gt;
+
+&lt;p&gt;저는 이것을 자동화 하기 위해 기존에는 Travis CI를 사용하고 있었습니다.
+현재 블로그로 CI/CD 파이프라인을 구축하고 약 2년간 88회의 Commit까지 잘 쓰고 있다가 어느새 다음과 같은 알람을 받아 보니, 크레딧 소진 ㅠ&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Builds have been temporarily disabled for private and public repositories due to a negative credit balance. Please go to the Plan page to replenish your credit balance.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS CodePipeline으로 git submodule 사용하</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
       <title type="html">Amazon EKS Multi Cluster Upgrade with ExternalDNS</title>
       <link href="https://heuristicwave.github.io/EKS_Upgrade" rel="alternate" type="text/html" title="Amazon EKS Multi Cluster Upgrade with ExternalDNS" />
-      <published>2023-02-25T09:00:00+09:00</published>
-      <updated>2023-02-25T09:00:00+09:00</updated>
+      <published>2023-02-25T00:00:00+00:00</published>
+      <updated>2023-02-25T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/EKS_Upgrade</id>
       <content type="html" xml:base="https://heuristicwave.github.io/EKS_Upgrade">&lt;p&gt;ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기&lt;/p&gt;
 
@@ -213,8 +273,8 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
     <entry>
       <title type="html">DIY Amazon EKS with eksctl</title>
       <link href="https://heuristicwave.github.io/eksctl_ppt" rel="alternate" type="text/html" title="DIY Amazon EKS with eksctl" />
-      <published>2023-01-20T04:00:00+09:00</published>
-      <updated>2023-01-20T04:00:00+09:00</updated>
+      <published>2023-01-19T19:00:00+00:00</published>
+      <updated>2023-01-19T19:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/eksctl_ppt</id>
       <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;&lt;a href=&quot;https://www.meetup.com/awskrug/events/290666942/&quot;&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)&lt;/a&gt; 발표 자료&lt;/p&gt;
 
@@ -275,8 +335,8 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
     <entry>
       <title type="html">Declarative vs Imperative in Kubernetes</title>
       <link href="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s" rel="alternate" type="text/html" title="Declarative vs Imperative in Kubernetes" />
-      <published>2022-08-14T09:00:00+09:00</published>
-      <updated>2022-08-14T09:00:00+09:00</updated>
+      <published>2022-08-14T00:00:00+00:00</published>
+      <updated>2022-08-14T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/DeclarativeVSImperativeinK8s</id>
       <content type="html" xml:base="https://heuristicwave.github.io/DeclarativeVSImperativeinK8s">&lt;p&gt;Kubernetes Object Management에서 발견한 명령형/선언형 방식&lt;/p&gt;
 
@@ -526,8 +586,8 @@ Kubernetes에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&qu
     <entry>
       <title type="html">Terraform Tips 5 - Import</title>
       <link href="https://heuristicwave.github.io/TerraformTips5" rel="alternate" type="text/html" title="Terraform Tips 5 - Import" />
-      <published>2022-07-23T09:00:00+09:00</published>
-      <updated>2022-07-23T09:00:00+09:00</updated>
+      <published>2022-07-23T00:00:00+00:00</published>
+      <updated>2022-07-23T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips5</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips5">&lt;p&gt;Terraform 더 익숙하게 5 - Import&lt;/p&gt;
 
@@ -730,8 +790,8 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     <entry>
       <title type="html">Terraform Tips 4 - Move (Refactoring)</title>
       <link href="https://heuristicwave.github.io/TerraformTips4" rel="alternate" type="text/html" title="Terraform Tips 4 - Move (Refactoring)" />
-      <published>2022-06-07T09:00:00+09:00</published>
-      <updated>2022-06-07T09:00:00+09:00</updated>
+      <published>2022-06-07T00:00:00+00:00</published>
+      <updated>2022-06-07T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips4</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips4">&lt;p&gt;Terraform 더 익숙하게 4 - Move (Refactoring)&lt;/p&gt;
 
@@ -906,8 +966,8 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     <entry>
       <title type="html">Terraform Tips 3 - Refresh &amp;amp; Replace</title>
       <link href="https://heuristicwave.github.io/TerraformTips3" rel="alternate" type="text/html" title="Terraform Tips 3 - Refresh &amp; Replace" />
-      <published>2022-05-28T09:00:00+09:00</published>
-      <updated>2022-05-28T09:00:00+09:00</updated>
+      <published>2022-05-28T00:00:00+00:00</published>
+      <updated>2022-05-28T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/TerraformTips3</id>
       <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips3">&lt;p&gt;Terraform 더 익숙하게 3 - Refresh &amp;amp; Replace&lt;/p&gt;
 
@@ -1047,8 +1107,8 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
     <entry>
       <title type="html">Using the awslogs log driver in ECS(Fargate)</title>
       <link href="https://heuristicwave.github.io/ECS_CW_Logs" rel="alternate" type="text/html" title="Using the awslogs log driver in ECS(Fargate)" />
-      <published>2022-03-01T09:00:00+09:00</published>
-      <updated>2022-03-01T09:00:00+09:00</updated>
+      <published>2022-03-01T00:00:00+00:00</published>
+      <updated>2022-03-01T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/ECS_CW_Logs</id>
       <content type="html" xml:base="https://heuristicwave.github.io/ECS_CW_Logs">&lt;p&gt;ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다.
 Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 
@@ -1206,8 +1266,8 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
     <entry>
       <title type="html">Using Amazon ECS Exec for debugging</title>
       <link href="https://heuristicwave.github.io/ECS_Exec" rel="alternate" type="text/html" title="Using Amazon ECS Exec for debugging" />
-      <published>2022-02-22T09:00:00+09:00</published>
-      <updated>2022-02-22T09:00:00+09:00</updated>
+      <published>2022-02-22T00:00:00+00:00</published>
+      <updated>2022-02-22T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/ECS_Exec</id>
       <content type="html" xml:base="https://heuristicwave.github.io/ECS_Exec">&lt;p&gt;Docker에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.&lt;/p&gt;
@@ -1339,8 +1399,8 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
     <entry>
       <title type="html">Create Immutable Server using AWS Image Builder &amp;amp; Auto Scaling Group</title>
       <link href="https://heuristicwave.github.io/ImageBuilder" rel="alternate" type="text/html" title="Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group" />
-      <published>2022-02-21T09:00:00+09:00</published>
-      <updated>2022-02-21T09:00:00+09:00</updated>
+      <published>2022-02-21T00:00:00+00:00</published>
+      <updated>2022-02-21T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/ImageBuilder</id>
       <content type="html" xml:base="https://heuristicwave.github.io/ImageBuilder">&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;에
 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
@@ -1543,209 +1603,6 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
 
       
         <summary type="html">본 글은 2021년 4월 30일 EC2 Image Builder supports Auto Scaling launch template에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고, 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Terraform Tips 2 - Data &amp;amp; Index</title>
-      <link href="https://heuristicwave.github.io/TerraformTips2" rel="alternate" type="text/html" title="Terraform Tips 2 - Data &amp; Index" />
-      <published>2022-01-02T09:00:00+09:00</published>
-      <updated>2022-01-02T09:00:00+09:00</updated>
-      <id>https://heuristicwave.github.io/TerraformTips2</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips2">&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index &lt;br /&gt;
-AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. &lt;strong&gt;Terraform Data&lt;/strong&gt;를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
-모든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;공식문서(&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;)에서도 Data 활용방법을 배울 수 있지만,
-이번 포스팅에서는 3가지 예제와 함께 리소스를 Query 하는 방법을 배워 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;query-ami&quot;&gt;Query AMI&lt;/h2&gt;
-
-&lt;p&gt;AWS의 최신 AMI는 주기적으로 갱신됩니다. 따라서 재사용 가능한 코드를 작성하기 위해, 항상 최신 AMI를 참조하는 코드를 작성하는데 다음과 같은 방법을 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-
-  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amzn2-ami-kernel-*-hvm-*-x86_64-gp2&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-output &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_ami.amazon_linux.id
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위와 같은 방법으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS의 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;ECS와 달리 EKS는 AMI 명명 규칙이 약간 달라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt; 기능을 활용해야, 조건에 맞는 Optimized 이미지를 얻을 수 있습니다.
-EKS 이미지의 경우 모든 이미지의 첫 문자열이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-&lt;/code&gt;으로 시작하기 때문에, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt;를 함께 넣어 Optimized AMI를 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux_eks&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-
-  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon-eks-*&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;architecture&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;x86_64&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;그러나 위 Query의 결과 값을 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html&quot;&gt;공식 문서&lt;/a&gt;에 기재된 AMI ID와 비교해 보면,
-&lt;strong&gt;x86&lt;/strong&gt; ID가 아닌, &lt;strong&gt;x86 가속&lt;/strong&gt; ID 값과 일치한 다는 것을 알 수 있을 겁니다.
-문서에 기재된 &lt;strong&gt;x86 가속&lt;/strong&gt;은 gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-gpu&lt;/code&gt;로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.&lt;/p&gt;
-
-&lt;p&gt;그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 🧐 어느 문서에도 기재되어 있지 않지만,
-대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;values = [“amazon-eks-node-1.22-*”]&lt;/p&gt;
-
-  &lt;p&gt;value 값의 &lt;em&gt;prefix&lt;/em&gt; 규칙을 보니 EKS의 버전도 &lt;em&gt;prefix&lt;/em&gt; 안에 포함되어, &lt;br /&gt;
-이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있다는 것을 추측 할 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이외에도 리전마다 다른 Optimized AMI는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt;에는 명시하지 않았지만, &lt;strong&gt;Provider에 명시한 리전에 종속성&lt;/strong&gt;을 갖게 됩니다.
-또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!&lt;/p&gt;
-
-&lt;p&gt;여기까지 제가 자주 사용하는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎&lt;/p&gt;
-
-&lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
-
-&lt;p&gt;AWS의 리전마다 사용가능한 az가 다르기 때문에, 조금 더 유연한 코드를 작성하기 위해 다음 코드를 사용해 사용가능한 az를 검색합니다.
-이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data.&amp;lt;NAME&amp;gt;.&amp;lt;ATTRIBUTE&amp;gt;.names&lt;/code&gt; 로 사용가능한 az 값들을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_availability_zones&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  state &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;output &lt;span class=&quot;s2&quot;&gt;&quot;azs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
- value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_availability_zones.available.names
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names&lt;/code&gt;에는 사용가능한 az가 배열 형태로 들어가 있어, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[0]&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[1]&lt;/code&gt;과 같이 Index 값으로 특정 값을 지정할 수 있습니다.
-그러나, 모든 data가 Index 값을 가지고 있는 것은 아닙니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;query-vpc_id&quot;&gt;Query vpc_id&lt;/h2&gt;
-
-&lt;p&gt;다른 리소스와 AWS 솔루션들을 연계하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt; 값이 필수적으로 들어갑니다.
-vpc의 id를 구하기 위해서는 다음과 같은 방법으로 id를 조회할 수 있습니다.
-(tags 값을 활용해 일종의 필터링을 사용할 수도 있습니다.)&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpcs&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vpcs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    tags &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        Name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.vpc_name
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-output &lt;span class=&quot;s2&quot;&gt;&quot;vpc_id&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpcs.vpcs.ids
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위 코드로 다음과 같이 Output 값을 얻을 수 있지만, 하나의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt; 값을 얻을때와 동일한 방식으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ids[0]&lt;/code&gt; 형식으로 값을 조회하려 하면,
-“This value does not have any indices.” 라는 에러 메시지와 함께 출력을 지원하지 않습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Changes to Outputs:
-  + vpc_id &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-      + &lt;span class=&quot;s2&quot;&gt;&quot;vpc-0x1234567890&quot;&lt;/span&gt;,
-    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;도대체 무엇이 잘못된 것일까요? az와 동일한 방법으로 접근했지만, 왜 지원하지 않는지는 아직까지도 모르겠습니다…
-누구 아시는 분이 있다면 알려주세요.&lt;/p&gt;
-
-&lt;h3 id=&quot;count로-index-부여하기&quot;&gt;count로 index 부여하기&lt;/h3&gt;
-
-&lt;p&gt;위 문제를 해결하기 위해서는 az를 검색할 때보다는 불편하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 사용해 해결할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;target&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; tolist&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)[&lt;/span&gt;count.index]
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# sample code using vpc_id&lt;/span&gt;
-resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sample_resource&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;c&quot;&gt;# Skip Config&lt;/span&gt;
-  vpc_id      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpc.target[count.index].id
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpcs&lt;/code&gt;가 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpc&lt;/code&gt;를 추가하고 index 를 부여하기 위한 내장 함수들을 사용해 index를 부여합니다.
-이후, 리소스에서 data 값들을 식별하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 기입하고 위와 같이 index 값으로 조회가 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt;와 같이 별도의 index 과정 없이,
-간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)&lt;/p&gt;
-
-&lt;p&gt;지금까지 테라폼 더 익숙하게 Data &amp;amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="devops" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">Terraform 더 익숙하게 2 - Data &amp;amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁</summary>
       
 
       
