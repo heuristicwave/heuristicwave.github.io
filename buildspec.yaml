@@ -22,7 +22,4 @@ phases:
   build:
     commands:
       - echo Building...
-      - bundle exec rake site:deploy # --quiet --trace
-  post_build:
-    commands:
-      - echo Finish
+      - bundle exec rake site:deploy
