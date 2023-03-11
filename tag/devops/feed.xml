@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-03-10T17:07:10+00:00</updated>
+  <updated>2023-03-11T01:46:18+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -30,6 +30,199 @@
   
   
 
+  
+    <entry>
+      <title type="html">Automating git submodules with AWS Code Series (Build, Pipeline)</title>
+      <link href="https://heuristicwave.github.io/migrateCodebuild" rel="alternate" type="text/html" title="Automating git submodules with AWS Code Series (Build, Pipeline)" />
+      <published>2023-03-11T00:00:00+00:00</published>
+      <updated>2023-03-11T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/migrateCodebuild</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/migrateCodebuild">&lt;p&gt;AWS Code Series (Build, Pipeline)으로 git submodule 자동화&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;여러분이 보고 계신 이 블로그(GitHub Pages 활용)는 2개의 깃헙 레포지토리를 통해 배포되고 있습니다. 첫 번째 레포지토리는 원본 소스코드를 담고 있으며,
+블로그 글을 작성할 때마다 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle exec jekyll serve&lt;/code&gt;라는 명령어로 &lt;strong&gt;localhost&lt;/strong&gt;에서 퇴고를 진행합니다.
+해당 명령어는 static page를 생성할 때, url을 제 도메인이 아닌 localhost로 생성해 GitHub Pages에서는 사용할 수 없습니다.
+그러므로 저는 빌드 결과물이 떨어지는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt; 파일을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.ignore&lt;/code&gt;로 처리합니다.&lt;/p&gt;
+
+&lt;p&gt;static page를 제 도메인으로 생성하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle exec jekyll build&lt;/code&gt;라는 명령어로 빌드 해야 합니다.
+저는 이 절차를 CI 도구에게 위임했고, CI 도구는 markdown 형식으로 작성한 글들을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;html&lt;/code&gt; 파일로 생성하여 2번째 레포지토리에 배포합니다.&lt;/p&gt;
+
+&lt;p&gt;저는 이것을 자동화하기 위해 기존에는 Travis CI를 사용하고 있었습니다.
+현재 블로그로 CI/CD 파이프라인을 구축하고 약 2년간 88회의 Commit까지 잘 쓰고 있다가,
+어느새 다음과 같은 알람을 받아 보니 크레딧 소진으로 인하여 Travis CI를 AWS 솔루션으로 대체하기로 했습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Builds have been temporarily disabled for private and public repositories due to a negative credit balance. Please go to the Plan page to replenish your credit balance.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-workflow&quot;&gt;📜 Workflow&lt;/h2&gt;
+
+&lt;p&gt;과거 제가 &lt;strong&gt;AS-IS&lt;/strong&gt; 상황에서 &lt;strong&gt;Travis CI&lt;/strong&gt;로 다음과 같은 과정을 통해 블로그에 글을 배포했었습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;사용자가 원격 저장소(GitHub)에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git push&lt;/code&gt; 명령어로 새로운 코드를 반영&lt;/li&gt;
+  &lt;li&gt;GitHub과 연결해둔 Travis CI가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.travis.yml&lt;/code&gt; 파일에 정의한 대로 command 수행
+    &lt;ul&gt;
+      &lt;li&gt;빌드 환경 구축&lt;/li&gt;
+      &lt;li&gt;소스 코드 빌드&lt;/li&gt;
+      &lt;li&gt;빌드 결과물을 배포용 레포지토리에 commit &amp;amp; push&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;위 과정의 &lt;strong&gt;TO-BE&lt;/strong&gt;로 Travis CI 역할을 &lt;strong&gt;CodeBuild&lt;/strong&gt;와 &lt;strong&gt;CodePipeline&lt;/strong&gt;으로 대체하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.travis.yml&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yaml&lt;/code&gt; 파일을 정의하겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;-hands-on&quot;&gt;💻 Hands-on&lt;/h2&gt;
+
+&lt;p&gt;Travis CI는 Source 연계(GitHub 연결)와 Build가 별도로 분리되어 있지 않습니다.
+그러나 AWS의 Code Series는 CodePipeline으로 Source와 Build를 연계하고, CodeBuild에서 Build를 정의해야 합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;1️⃣-build-정의&quot;&gt;1️⃣ Build 정의&lt;/h3&gt;
+
+&lt;p&gt;해당 단계는 CodeBuild 생성 시, &lt;strong&gt;Buildspec&lt;/strong&gt; 단계의 &lt;strong&gt;Insert build commands, editor&lt;/strong&gt;로 구성할 수 있습니다.
+그러나 본 글에서는 직접 작성하여 &lt;strong&gt;Source 레포지토리 루트 위치&lt;/strong&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yaml&lt;/code&gt; 파일을 위치 시켜 진행하겠습니다.
+빌드 스펙은 &lt;a href=&quot;https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html&quot;&gt;공식 문서&lt;/a&gt;를 참고하여 필요한 내용들을 정의합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;2️⃣-codebuild&quot;&gt;2️⃣ CodeBuild&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create build projects&lt;/code&gt;를 누르고 &lt;strong&gt;Project configuration&lt;/strong&gt;에서 프로젝트 이름을 정의합니다. 이름 이외의 설정은 비워두었습니다.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Source&lt;/strong&gt;에서 ‘Github’을 선택하면 OAuth로 연결 혹은 personal access token으로 연결 중 한 가지 방법을 선택합니다. 2가지 방법 모두 가능하므로 편리한 것을 선택합니다.&lt;/li&gt;
+  &lt;li&gt;GitHub이 연동되면 연결하고자 하는 repository를 선택하고 나머지 옵션은 비워두었습니다.&lt;/li&gt;
+  &lt;li&gt;‘Git submodules’ 기능을 사용한다면, &lt;strong&gt;Additional configuration&lt;/strong&gt; 토글을 눌러 submodules을 체크합니다.&lt;/li&gt;
+  &lt;li&gt;본 글에서는 Source 이벤트로 CodePipeline을 사용하므로, &lt;strong&gt;Primary source webhook events&lt;/strong&gt;는 넘어갑니다.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Environment&lt;/strong&gt;에서는 다음과 같은 설정값을 주었습니다.
+&lt;img src=&quot;../../assets/built/images/post/aws/codebuild.png&quot; alt=&quot;codebuild&quot; /&gt;&lt;/p&gt;
+
+    &lt;blockquote&gt;
+      &lt;p&gt;❗️해당 단계에서 빌드하고 자 하는 런타임 환경을 꼭 &lt;a href=&quot;https://docs.aws.amazon.com/codebuild/latest/userguide/available-runtimes.html&quot;&gt;공식 문서&lt;/a&gt;에서 확인 후, 선택하세요.
+&lt;br /&gt;
+❗빌드에 환경 변수를 명시했다면, &lt;strong&gt;Additional configuration&lt;/strong&gt; 토글을 눌러 환경 변수를 추가해 주세요.
+이 단계는 생성 당시 추가하지 않더라도, 생성 이후 ‘Build details’ 탭에서 추가 혹은 변경이 가능합니다.&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Buildspec&lt;/strong&gt;과 &lt;strong&gt;Batch configuration&lt;/strong&gt;은 비워두었습니다.&lt;/li&gt;
+  &lt;li&gt;로깅과 산출물이 필요하면 &lt;strong&gt;Artifacts&lt;/strong&gt;와 &lt;strong&gt;Logs&lt;/strong&gt;를 사용하면 되지만, 저는 CodeBuild 내의 Build history만으로도 충분하기 때문에 사용하지 않았습니다.&lt;/li&gt;
+  &lt;li&gt;마지막으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create build projects&lt;/code&gt; 버튼을 눌러 빌드 프로젝트를 생성합니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;3️⃣-codepipeline&quot;&gt;3️⃣ CodePipeline&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create pipeline&lt;/code&gt;을 누르고 Step 1 단계에서 ‘이름’과 ‘Service role’을 지정합니다. 기본 값으로 설정하고 다음(Step 2) 페이지로 넘어갑니다.&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Step 2 단계에서는 ‘Source provider’로 &lt;strong&gt;GitHub (Version 2)&lt;/strong&gt;을 선택하고 ‘Connection’에서 깃헙과 연결해 줍니다. 
+이어서 상황에 맞게 ‘Repository name’과 ‘Branch name’을 선택하고 ‘Output artifact’로 default를 선택합니다.
+&lt;img src=&quot;../../assets/built/images/post/aws/codepipeline.png&quot; alt=&quot;codepipeline&quot; /&gt;&lt;/p&gt;
+
+    &lt;p&gt;default를 선택할 경우 고려 사항이 있지만, 자세한 내용은 아래 &lt;em&gt;Troubleshooting - Issue 1&lt;/em&gt;단계에서 설명하겠습니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Step 3 &lt;strong&gt;Build&lt;/strong&gt; 단계에서는 앞서 생성한 Codebuild를 지정하고 다른 값들을 기본값으로 설정하고 다음 단계로 넘어갑니다.&lt;/li&gt;
+  &lt;li&gt;Step 4 &lt;strong&gt;Deploy&lt;/strong&gt; 단계에서는 CodeDeploy와 같은 CD 도구 대신 Build의 command로 제어하므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Skip deploy stage&lt;/code&gt; 버튼을 눌러 넘어갑니다.&lt;/li&gt;
+  &lt;li&gt;Step 5 &lt;strong&gt;Deploy&lt;/strong&gt; 단계에서는 검토를 마치고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create pipeline&lt;/code&gt; 버튼을 누르면 바로 정의한 파이프라인이 실행됩니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;️-troubleshooting&quot;&gt;⛹🏾‍♂️ Troubleshooting&lt;/h2&gt;
+
+&lt;h3 id=&quot;issue-1&quot;&gt;Issue 1&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;fatal: not a git repository (or any parent up to mount point /codebuild)&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🖍️ CodePipeline의 Output artifact를 default 선택 시, 다음과 같은 안내 문구가 있습니다.
+&lt;em&gt;Does not include git metadata about the repository.&lt;/em&gt; 즉, git metadata 정보가 없으므로 git과 관련된 명령어를 사용할 수 없습니다. &lt;br /&gt;
+🖋️ metadata 정보만 없을 뿐, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ls&lt;/code&gt; 명령어를 삽입해 파일 시스템을 확인하면 Source로 지정한 레포지토리의 구조가 담겨 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;✏️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git init&lt;/code&gt; 명령어를 주입해 초기 세팅 명령어를 작성합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;issue-2&quot;&gt;Issue 2&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;error: The following untracked working tree files would be overwritten by checkout&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🖍️ 위 에러로 구글링을 하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git clean  -d  -f&lt;/code&gt; 명령어로 해결하라 하지만, 근본적인 해결 방법이 아닙니다. &lt;br /&gt; 
+상황에 따라 다르지만, 제 경우 루비의 라이브러리를 설치하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;이 삭제되어 후속 빌드 단계에서 문제가 됩니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;✏️ 해당 문제의 근본적 원인은 Issue 1과 같이 git metadata 정보는 없지만, source repo의 파일이 담겨 발생하는 문제입니다. &lt;br /&gt;
+이를 해결하기 위해 다음과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mkdir buildZone &amp;amp;&amp;amp; cd buildZone&lt;/code&gt; 새 폴더를 만들어 해당 오류를 우회할 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;issue-3&quot;&gt;Issue 3&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;ArgumentError: invalid byte sequence in US-ASCII&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🖍️ CodeBuild가 빌드 환경을 구성하는 데 사용하는 도커이미지는 기본 &lt;strong&gt;locale&lt;/strong&gt;이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POSIX&lt;/code&gt;로 설정되어 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;✏️ &lt;a href=&quot;https://docs.aws.amazon.com/codebuild/latest/userguide/troubleshooting.html#troubleshooting-utf-8&quot;&gt;공식 문서&lt;/a&gt;에서 가이드 하는 데로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pre_build&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export LC_ALL=&quot;en_US.utf8&quot;&lt;/code&gt; 환경 변수 주입으로 해결할 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;issue-4&quot;&gt;Issue 4&lt;/h3&gt;
+
+&lt;p&gt;&lt;em&gt;각종 인증 이슈, 예) fatal: could not read Password for ~~~&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🖍️ 인증 정보가 잘 못 되었거나, 관련 값들을 주입하지 못했을 때 발생합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;✏️ 토큰 값 인증 방법 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git {command} https://$GITHUB_TOKEN@github.com/#{username}/#{reponame}&lt;/code&gt;&lt;br /&gt;
+✏️ GitHub 비밀번호 설정 방법 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git config --global credential.helper cache&lt;/code&gt; &lt;br /&gt;
+🖋️ 토큰 값과 같은 기밀성 정보는 &lt;strong&gt;parameter store, secrets-manager&lt;/strong&gt; 등을 활용해 값을 보호하세요.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;Travis CI의 경우 가이드 하는 대로 간편하게 설정이 가능했습니다. GitHub Actions의 경우 &lt;a href=&quot;https://docs.github.com/en/actions/migrating-to-github-actions&quot;&gt;공식 문서&lt;/a&gt;에서 타 CI/CD 도구에서 마이그레이션 하는 법이 굉장히 잘 명세되어 비교적 사용이 쉽습니다.
+CodeBuild의 경우 일일이 다 확인하며 설정해 줘야 하는 점은 어려웠지만, 그만큼 커스텀 하여 사용할 수 있을 것 같습니다. 마지막으로 Travis CI에서 AWS Code Series로 마이그레이션 하기까지 33번의 실패가 있었던 화면을 공유하며 마치겠습니다. 🤪&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/trying.png&quot; alt=&quot;try&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS Code Series (Build, Pipeline)으로 git submodule 자동화</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Amazon EKS Multi Cluster Upgrade with ExternalDNS</title>
@@ -1543,209 +1736,6 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
 
       
         <summary type="html">본 글은 2021년 4월 30일 EC2 Image Builder supports Auto Scaling launch template에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고, 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Terraform Tips 2 - Data &amp;amp; Index</title>
-      <link href="https://heuristicwave.github.io/TerraformTips2" rel="alternate" type="text/html" title="Terraform Tips 2 - Data &amp; Index" />
-      <published>2022-01-02T00:00:00+00:00</published>
-      <updated>2022-01-02T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/TerraformTips2</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/TerraformTips2">&lt;p&gt;Terraform 더 익숙하게 2 - Data &amp;amp; Index &lt;br /&gt;
-AWS 리소스로 알아보는 terraform Data 활용 팁&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. &lt;strong&gt;Terraform Data&lt;/strong&gt;를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
-모든 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Data Sources&lt;/code&gt;가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;공식문서(&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/data-sources&quot;&gt;Tutorial : Query Data Sources&lt;/a&gt;)에서도 Data 활용방법을 배울 수 있지만,
-이번 포스팅에서는 3가지 예제와 함께 리소스를 Query 하는 방법을 배워 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;query-ami&quot;&gt;Query AMI&lt;/h2&gt;
-
-&lt;p&gt;AWS의 최신 AMI는 주기적으로 갱신됩니다. 따라서 재사용 가능한 코드를 작성하기 위해, 항상 최신 AMI를 참조하는 코드를 작성하는데 다음과 같은 방법을 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-
-  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amzn2-ami-kernel-*-hvm-*-x86_64-gp2&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-output &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_ami.amazon_linux.id
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위와 같은 방법으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;owners&lt;/code&gt; 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS의 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;ECS와 달리 EKS는 AMI 명명 규칙이 약간 달라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;filter&lt;/code&gt; 기능을 활용해야, 조건에 맞는 Optimized 이미지를 얻을 수 있습니다.
-EKS 이미지의 경우 모든 이미지의 첫 문자열이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-&lt;/code&gt;으로 시작하기 때문에, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt;를 함께 넣어 Optimized AMI를 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_ami&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon_linux_eks&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  most_recent &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;true
-
-  &lt;/span&gt;owners &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon-eks-*&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-  filter &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    name   &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;architecture&quot;&lt;/span&gt;
-    values &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;x86_64&quot;&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-  &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;그러나 위 Query의 결과 값을 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html&quot;&gt;공식 문서&lt;/a&gt;에 기재된 AMI ID와 비교해 보면,
-&lt;strong&gt;x86&lt;/strong&gt; ID가 아닌, &lt;strong&gt;x86 가속&lt;/strong&gt; ID 값과 일치한 다는 것을 알 수 있을 겁니다.
-문서에 기재된 &lt;strong&gt;x86 가속&lt;/strong&gt;은 gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-eks-gpu&lt;/code&gt;로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.&lt;/p&gt;
-
-&lt;p&gt;그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 🧐 어느 문서에도 기재되어 있지 않지만,
-대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;values = [“amazon-eks-node-1.22-*”]&lt;/p&gt;
-
-  &lt;p&gt;value 값의 &lt;em&gt;prefix&lt;/em&gt; 규칙을 보니 EKS의 버전도 &lt;em&gt;prefix&lt;/em&gt; 안에 포함되어, &lt;br /&gt;
-이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있다는 것을 추측 할 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이외에도 리전마다 다른 Optimized AMI는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data&lt;/code&gt;에는 명시하지 않았지만, &lt;strong&gt;Provider에 명시한 리전에 종속성&lt;/strong&gt;을 갖게 됩니다.
-또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!&lt;/p&gt;
-
-&lt;p&gt;여기까지 제가 자주 사용하는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎&lt;/p&gt;
-
-&lt;h2 id=&quot;query-az&quot;&gt;Query AZ&lt;/h2&gt;
-
-&lt;p&gt;AWS의 리전마다 사용가능한 az가 다르기 때문에, 조금 더 유연한 코드를 작성하기 위해 다음 코드를 사용해 사용가능한 az를 검색합니다.
-이후, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;data.&amp;lt;NAME&amp;gt;.&amp;lt;ATTRIBUTE&amp;gt;.names&lt;/code&gt; 로 사용가능한 az 값들을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_availability_zones&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  state &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;available&quot;&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;output &lt;span class=&quot;s2&quot;&gt;&quot;azs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
- value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_availability_zones.available.names
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names&lt;/code&gt;에는 사용가능한 az가 배열 형태로 들어가 있어, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[0]&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;names[1]&lt;/code&gt;과 같이 Index 값으로 특정 값을 지정할 수 있습니다.
-그러나, 모든 data가 Index 값을 가지고 있는 것은 아닙니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;query-vpc_id&quot;&gt;Query vpc_id&lt;/h2&gt;
-
-&lt;p&gt;다른 리소스와 AWS 솔루션들을 연계하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt; 값이 필수적으로 들어갑니다.
-vpc의 id를 구하기 위해서는 다음과 같은 방법으로 id를 조회할 수 있습니다.
-(tags 값을 활용해 일종의 필터링을 사용할 수도 있습니다.)&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpcs&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;vpcs&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    tags &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-        Name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; var.vpc_name
-    &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-output &lt;span class=&quot;s2&quot;&gt;&quot;vpc_id&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    value &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpcs.vpcs.ids
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위 코드로 다음과 같이 Output 값을 얻을 수 있지만, 하나의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt; 값을 얻을때와 동일한 방식으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ids[0]&lt;/code&gt; 형식으로 값을 조회하려 하면,
-“This value does not have any indices.” 라는 에러 메시지와 함께 출력을 지원하지 않습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Changes to Outputs:
-  + vpc_id &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-      + &lt;span class=&quot;s2&quot;&gt;&quot;vpc-0x1234567890&quot;&lt;/span&gt;,
-    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;도대체 무엇이 잘못된 것일까요? az와 동일한 방법으로 접근했지만, 왜 지원하지 않는지는 아직까지도 모르겠습니다…
-누구 아시는 분이 있다면 알려주세요.&lt;/p&gt;
-
-&lt;h3 id=&quot;count로-index-부여하기&quot;&gt;count로 index 부여하기&lt;/h3&gt;
-
-&lt;p&gt;위 문제를 해결하기 위해서는 az를 검색할 때보다는 불편하지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 사용해 해결할 수 있습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;data &lt;span class=&quot;s2&quot;&gt;&quot;aws_vpc&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;target&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;nb&quot;&gt;id&lt;/span&gt;    &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; tolist&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)[&lt;/span&gt;count.index]
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-
-&lt;span class=&quot;c&quot;&gt;# sample code using vpc_id&lt;/span&gt;
-resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sample_resource&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  count &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; length&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;data.aws_vpcs.vpcs.ids&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-  &lt;span class=&quot;c&quot;&gt;# Skip Config&lt;/span&gt;
-  vpc_id      &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; data.aws_vpc.target[count.index].id
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpcs&lt;/code&gt;가 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws_vpc&lt;/code&gt;를 추가하고 index 를 부여하기 위한 내장 함수들을 사용해 index를 부여합니다.
-이후, 리소스에서 data 값들을 식별하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;count&lt;/code&gt;를 기입하고 위와 같이 index 값으로 조회가 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vpc_id&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;az&lt;/code&gt;와 같이 별도의 index 과정 없이,
-간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)&lt;/p&gt;
-
-&lt;p&gt;지금까지 테라폼 더 익숙하게 Data &amp;amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips1&quot;&gt;Module &amp;amp; Output&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips2&quot;&gt;Data &amp;amp; Index&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="devops" />
-      
-        <category term="terraform" />
-      
-
-      
-        <summary type="html">Terraform 더 익숙하게 2 - Data &amp;amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁</summary>
       
 
       
