@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-03-11T01:46:18+00:00</updated>
+  <updated>2023-03-11T02:11:07+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -88,6 +88,40 @@
 &lt;p&gt;해당 단계는 CodeBuild 생성 시, &lt;strong&gt;Buildspec&lt;/strong&gt; 단계의 &lt;strong&gt;Insert build commands, editor&lt;/strong&gt;로 구성할 수 있습니다.
 그러나 본 글에서는 직접 작성하여 &lt;strong&gt;Source 레포지토리 루트 위치&lt;/strong&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yaml&lt;/code&gt; 파일을 위치 시켜 진행하겠습니다.
 빌드 스펙은 &lt;a href=&quot;https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html&quot;&gt;공식 문서&lt;/a&gt;를 참고하여 필요한 내용들을 정의합니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;↪️ Git submodule 기능을 활용하기 위한 buildspec 예시&lt;/summary&gt;
+  &lt;p&gt;&lt;br /&gt;
+ruby 2.7, jekyll로 블로그를 git submodule로 운영하는 최소한의 설정입니다. &lt;br /&gt;
+아래와 같은 commands를 기재한 이유는 troubleshooting 단계에서 설명합니다.&lt;/p&gt;
+
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: 0.2
+
+phases:
+  &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt;:
+    runtime-versions:
+      ruby: 2.7
+    commands:
+      - &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;Installing dependencies...
+      - gem &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;bundler
+      - bundle &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--quiet&lt;/span&gt;
+  pre_build:
+    commands:
+      - &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LC_ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;en_US.utf8&quot;&lt;/span&gt;
+      - &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;Git Setting...
+      - &lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;buildZone &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;buildZone
+      - git init
+      - git remote add origin https://&lt;span class=&quot;nv&quot;&gt;$GITHUB_TOKEN&lt;/span&gt;@github.com/heuristicwave/GitHubPageMaker.git
+      - git fetch
+      - git checkout &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; origin/master
+      - git submodule init
+      - git submodule update &lt;span class=&quot;nt&quot;&gt;--recursive&lt;/span&gt;
+  build:
+    commands:
+      - &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;Building...
+      - bundle &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;rake site:deploy
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
 
 &lt;h3 id=&quot;2️⃣-codebuild&quot;&gt;2️⃣ CodeBuild&lt;/h3&gt;
 

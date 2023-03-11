@@ -261,6 +261,40 @@ into the {body} of the default.hbs template -->
 그러나 본 글에서는 직접 작성하여 <strong>Source 레포지토리 루트 위치</strong>에 <code class="language-plaintext highlighter-rouge">buildspec.yaml</code> 파일을 위치 시켜 진행하겠습니다.
 빌드 스펙은 <a href="https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html">공식 문서</a>를 참고하여 필요한 내용들을 정의합니다.</p>
 
+<details>
+  <summary>↪️ Git submodule 기능을 활용하기 위한 buildspec 예시</summary>
+  <p><br />
+ruby 2.7, jekyll로 블로그를 git submodule로 운영하는 최소한의 설정입니다. <br />
+아래와 같은 commands를 기재한 이유는 troubleshooting 단계에서 설명합니다.</p>
+
+  <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>version: 0.2
+
+phases:
+  <span class="nb">install</span>:
+    runtime-versions:
+      ruby: 2.7
+    commands:
+      - <span class="nb">echo </span>Installing dependencies...
+      - gem <span class="nb">install </span>bundler
+      - bundle <span class="nb">install</span> <span class="nt">--quiet</span>
+  pre_build:
+    commands:
+      - <span class="nb">export </span><span class="nv">LC_ALL</span><span class="o">=</span><span class="s2">"en_US.utf8"</span>
+      - <span class="nb">echo </span>Git Setting...
+      - <span class="nb">mkdir </span>buildZone <span class="o">&amp;&amp;</span> <span class="nb">cd </span>buildZone
+      - git init
+      - git remote add origin https://<span class="nv">$GITHUB_TOKEN</span>@github.com/heuristicwave/GitHubPageMaker.git
+      - git fetch
+      - git checkout <span class="nt">-t</span> origin/master
+      - git submodule init
+      - git submodule update <span class="nt">--recursive</span>
+  build:
+    commands:
+      - <span class="nb">echo </span>Building...
+      - bundle <span class="nb">exec </span>rake site:deploy
+</code></pre></div>  </div>
+</details>
+
 <h3 id="2️⃣-codebuild">2️⃣ CodeBuild</h3>
 
 <ol>
