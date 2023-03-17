@@ -270,6 +270,11 @@ resource "aws_ssm_association" "copycat" {}
 
 <p>사용법(<code class="language-plaintext highlighter-rouge">terraform import [options] ADDRESS ID</code>)에 따라 아래 명령어를 실행시키면 <strong>root directory</strong>에 미리 생성된 인프라가 <code class="language-plaintext highlighter-rouge">*.tfstate</code> 파일에 담깁니다.</p>
 
+<blockquote>
+  <p>⚠️ 본 예시는 SSM을 기준으로 작성되었습니다. SSM인 경우 아래와 같이 Association ID를 기재합니다.
+다른 리소스일 경우, 인스턴스 넘버, 파이프라인 이름 등과 같은 고유한 이름을 기재해야 합니다.</p>
+</blockquote>
+
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform import aws_ssm_association.copycat &lt;Association ID&gt;
 </code></pre></div></div>
 

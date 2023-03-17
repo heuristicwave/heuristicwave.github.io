@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/eks/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-03-11T02:11:07+00:00</updated>
+  <updated>2023-03-17T08:24:09+00:00</updated>
   <id>https://heuristicwave.github.io/tag/eks/feed.xml</id>
 
   
@@ -75,7 +75,7 @@
 &lt;ol&gt;
   &lt;li&gt;DNS의 &lt;strong&gt;캐시를 최소화&lt;/strong&gt;하기 위해 &lt;strong&gt;TTL은 1m&lt;/strong&gt;(60 seconds)를 권장&lt;/li&gt;
   &lt;li&gt;각 다른 환경에서 &lt;strong&gt;50:50 가중치&lt;/strong&gt;를 주고 싶을 경우, &lt;strong&gt;2개의 가중치 레코드에 Weighted 값 1&lt;/strong&gt;을 부여&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;는 레코드의 &lt;strong&gt;주석&lt;/strong&gt;과 같은 역할을 하지만 &lt;strong&gt;필수&lt;/strong&gt;로 작성해야  (이어서 이 값의 중요성을~~ 😱)&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;는 레코드의 &lt;strong&gt;주석&lt;/strong&gt;과 같은 역할을 하지만 &lt;strong&gt;필수&lt;/strong&gt;로 작성해야 함 (이어서 이 값의 중요성을~~ 😱)&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h2 id=&quot;externaldns&quot;&gt;ExternalDNS&lt;/h2&gt;

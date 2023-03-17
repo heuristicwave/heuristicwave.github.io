@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-03-11T02:11:07+00:00</updated>
+  <updated>2023-03-17T08:24:09+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -97,6 +97,11 @@ resource &quot;aws_ssm_association&quot; &quot;copycat&quot; {}
 &lt;h3 id=&quot;2️⃣-import-configuration&quot;&gt;2️⃣ Import Configuration&lt;/h3&gt;
 
 &lt;p&gt;사용법(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import [options] ADDRESS ID&lt;/code&gt;)에 따라 아래 명령어를 실행시키면 &lt;strong&gt;root directory&lt;/strong&gt;에 미리 생성된 인프라가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*.tfstate&lt;/code&gt; 파일에 담깁니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 본 예시는 SSM을 기준으로 작성되었습니다. SSM인 경우 아래와 같이 Association ID를 기재합니다.
+다른 리소스일 경우, 인스턴스 넘버, 파이프라인 이름 등과 같은 고유한 이름을 기재해야 합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;terraform import aws_ssm_association.copycat &amp;lt;Association ID&amp;gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
