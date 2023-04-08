@@ -8,6 +8,22 @@
     
       
       <item>
+        <title>SRD Protocol 알아보기</title>
+        
+          <description>&lt;p&gt;Elastic Network Adapter (ENA) Express를 지탱하는 SRD 프로토콜 &lt;br /&gt;
+Get read with me~ 🧐&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 08 Apr 2023 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/SRD</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/SRD</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Automating git submodules with AWS Code Series (Build, Pipeline)</title>
         
           <description>&lt;p&gt;AWS Code Series (Build, Pipeline)으로 git submodule 자동화&lt;/p&gt;
