@@ -11,7 +11,7 @@
 
 
 
-    <title>Terraform Tips 3 - Refresh & Replace</title>
+    <title>AWS Fully Certified</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips3" />
+    <link rel="canonical" href="https://heuristicwave.github.io/FullyCertified" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Terraform Tips 3 - Refresh & Replace" />
-    <meta property="og:description" content="Terraform 더 익숙하게 3 - Refresh &amp; Replace Intro IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, 코드로 정의한 형상과 실제 인프라의 형상을 동일하게 유지하는 것입니다. Terraform에서는 Configuration Drift(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다. 이번 포스팅에서는 형상을 유지하는 다양한 기법 중 하나인 Refresh와 비슷하면서도 헷갈리는 개념인" />
-    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips3" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta property="og:title" content="AWS Fully Certified" />
+    <meta property="og:description" content="AWS Certification 12종 취득 회고 Intro AWS 자격증 페이지에 들어가 보면 총 12개의 자격증이 소개되어 있습니다. 저는 20년 9월 29일 Solutions Architect - Associate 자격증을 시작으로, 23년 4월 10일 Advanced Networking - Specialty 자격증까지 약 3년에 걸쳐 모든 자격증을 취득했습니다. 제가 첫 번째 자격증 SAA를 취득한 20년 9월 무렵, 약" />
+    <meta property="og:url" content="https://heuristicwave.github.io/FullyCertified" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/allcerti.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-05-28T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-05-28T00:00:00+00:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2023-04-12T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2023-04-12T00:00:00+00:00" />
+    <meta property="article:tag" content="Uncategorized" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Terraform Tips 3 - Refresh & Replace" />
-    <meta name="twitter:description" content="Terraform 더 익숙하게 3 - Refresh &amp; Replace Intro IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, 코드로 정의한 형상과 실제 인프라의 형상을 동일하게 유지하는 것입니다. Terraform에서는 Configuration Drift(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다. 이번 포스팅에서는 형상을 유지하는 다양한 기법 중 하나인 Refresh와 비슷하면서도 헷갈리는 개념인" />
+    <meta name="twitter:title" content="AWS Fully Certified" />
+    <meta name="twitter:description" content="AWS Certification 12종 취득 회고 Intro AWS 자격증 페이지에 들어가 보면 총 12개의 자격증이 소개되어 있습니다. 저는 20년 9월 29일 Solutions Architect - Associate 자격증을 시작으로, 23년 4월 10일 Advanced Networking - Specialty 자격증까지 약 3년에 걸쳐 모든 자격증을 취득했습니다. 제가 첫 번째 자격증 SAA를 취득한 20년 9월 무렵, 약" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/allcerti.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Uncategorized" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/TerraformTips3",
+    "url": "https://heuristicwave.github.io/FullyCertified",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/allcerti.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/TerraformTips3"
+        "@id": "https://heuristicwave.github.io/FullyCertified"
     },
-    "description": "Terraform 더 익숙하게 3 - Refresh &amp; Replace Intro IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, 코드로 정의한 형상과 실제 인프라의 형상을 동일하게 유지하는 것입니다. Terraform에서는 Configuration Drift(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다. 이번 포스팅에서는 형상을 유지하는 다양한 기법 중 하나인 Refresh와 비슷하면서도 헷갈리는 개념인"
+    "description": "AWS Certification 12종 취득 회고 Intro AWS 자격증 페이지에 들어가 보면 총 12개의 자격증이 소개되어 있습니다. 저는 20년 9월 29일 Solutions Architect - Associate 자격증을 시작으로, 23년 4월 10일 Advanced Networking - Specialty 자격증까지 약 3년에 걸쳐 모든 자격증을 취득했습니다. 제가 첫 번째 자격증 SAA를 취득한 20년 9월 무렵, 약"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Terraform Tips 3 - Refresh & Replace" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="AWS Fully Certified" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -181,138 +181,131 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-terraform post tag-devops ">
+        <article class="post-full  tag-uncategorized tag-aws post tag-aws ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="28 May 2022">28 May 2022</time>
+                    <time class="post-full-meta-date" datetime="12 April 2023">12 April 2023</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
+                               <a href='/tag/uncategorized/'>UNCATEGORIZED</a>,
                             
                         
                             
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/aws/'>AWS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Terraform Tips 3 - Refresh & Replace</h1>
+                <h1 class="post-full-title">AWS Fully Certified</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/allcerti.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform 더 익숙하게 3 - Refresh &amp; Replace</p>
+                    <p>AWS Certification 12종 취득 회고</p>
 
 <h2 id="intro">Intro</h2>
 
-<p>IaC(Infrastructure as Code)를 운용하며 중요하게 생각하는 포인트 중 하나는, <strong>코드로 정의한 형상</strong>과 <strong>실제 인프라의 형상</strong>을 동일하게 유지하는 것입니다.
-Terraform에서는 <strong>Configuration Drift</strong>(정의한 형상과 달라지는 경우)를 방지하기 위해 다양한 명령어를 제공합니다.
-이번 포스팅에서는 형상을 유지하는 다양한 기법 중 하나인 <code class="language-plaintext highlighter-rouge">Refresh</code>와 비슷하면서도 헷갈리는 개념인 <code class="language-plaintext highlighter-rouge">Replace</code>에 대하여 알아보겠습니다.</p>
+<p><a href="https://aws.amazon.com/ko/certification/">AWS 자격증 페이지</a>에 들어가 보면 총 12개의 자격증이 소개되어 있습니다.
+저는 20년 9월 29일 Solutions Architect - Associate 자격증을 시작으로, 23년 4월 10일 Advanced Networking - Specialty 자격증까지 약 3년에 걸쳐 모든 자격증을 취득했습니다.</p>
+
+<p><img src="../../assets/built/images/post/etc/certi.png" alt="certi" /></p>
+
+<p>제가 첫 번째 자격증 SAA를 취득한 20년 9월 무렵, 약 1년 3개월 동안 AWS 자격증을 모두 취득한 김태우 님의 <a href="https://dev.classmethod.jp/articles/epilogue-in-korean-aws-12x-certified/">AWS 공인 자격증 12종에 전부 합격하면 무엇이 달라질까요?</a>
+글을 본 당시까지만 해도 <strong>저와는 상관없는 이야기</strong>인 줄 알았습니다. <strong>태우 님의 합격 후기에는 참 공감 가는 내용이 많으니,</strong> 꼭 읽어보시길 추천드립니다!!</p>
+
+<p>처음에 저도 후기를 작성하려 했다가 3년이 지난 현시점에서, 태우 님의 합격 후기를 다시보니 정말 비슷하게 느껴지는 게 많아 제가 따로 후기를 적을 필요가 없는 것 같더라고요…
+그래서 제가 시험에 응시한 순서대로 회고를 진행하기로 했습니다!</p>
+
+<h2 id="회고-">회고 📝</h2>
+
+<p><em>시험 코드는 상단 ‘시험 기록’ 사진의 ‘시험 이름’을 통해 확인할 수 있습니다.</em></p>
+
+<h3 id="2020--2021">2020 ~ 2021</h3>
+
+<ul>
+  <li>SAA : 첫 시험을 준비하던 당시, 이미 AWS의 VPC, EC2, ELB, S3 등을 활용하여 프로젝트를 진행한 경험이 있었습니다. Udemy에서 판매하는 SAA 강의를 구입해 3개월 정도 수강하고 시험을 봤습니다. 
+초반에는 강의를 통해 기초적인 개념을 잡으면 큰 도움이 됩니다. 저는 유료 강의를 구매했으나, <a href="https://explore.skillbuilder.aws/learn/course/external/view/elearning/15366/aws-technical-essentials-na-Korean?trk=8ab981f0-9b77-46d4-8d98-0bf8a9128363&amp;sc_channel=sm">AWS Technical Essentials</a>라는 굉장히 좋은 무료 강의가 있으니, 
+이것을 수강하면 모든 시험에 대하여 기초적인 지식을 쌓을 수 있습니다.</li>
+  <li>SAP : 지문이 길고 헷갈리는 개념이 많아 굉장히 고생했던 기억이 납니다. 자격증 취득 사이트로 유명한 <a href="https://www.examtopics.com/">EXAMTOPICS</a>에서 결제하지 않아도 일부 문제를 확인할 수 있습니다.
+SAP와 관련된 문제를 풀며 관련 공식 문서를 찾아 스스로 해설을 하며 학습했습니다.</li>
+  <li>DOP : DOP의 경우 개발 관련 경험과 SAP의 지식이 남아있다 보니, SAP와 비교하여 비교적 수월하게 취득할 수 있었습니다. 개발자분들의 경우, SAP 보다 DOP 취득이 훨씬 쉬울 것 같습니다.</li>
+</ul>
+
+<h3 id="왜-12개의-자격증-취득에-도전했나-">왜? 12개의 자격증 취득에 도전했나 🤔</h3>
+
+<p>제가 첫 자격증을 취득하고, 다음 해 2개의 Pro 자격증을 취득할 때만 해도 모든 자격증을 다 취득할 생각은 없었습니다.
+실제로 제 시험 기록 타임라인을 확인해 보면 20년에 Associate 1개, 21년에 Professional 2개를 취득하고 활동이 없다가 22년 4분기부터 올해 4월까지 9개의 자격증을 몰아서 취득하였습니다.
+작년 하반기 무슨 일이 있었길래 12개의 자격증 취득을 시작한 것일까요?</p>
+
+<p>저는 <a href="https://aws.amazon.com/ko/blogs/apn/meet-our-newest-aws-ambassadors-from-2q-2022-and-explore-the-latest-ambassador-activities/">22년부터 AWS Ambassador로 활동</a>하며, <a href="https://aws.amazon.com/ko/partners/ambassadors/">Global Ambassador</a> 들과 교류할 기회를 가질 수 있었습니다.
+그중 작년 9월 시애틀에서 열린 AWS Ambassador Global Summit 2022의 Lightning Talk 시간에 <a href="https://tech.nri-net.com/entry/outputs_seattle">우에노 상의 발표</a>에 적지 않은 충격을 받았습니다.
+22년 5월 기준으로 <a href="https://aws.amazon.com/jp/blogs/psa/2022-apn-all-aws-certifications-engineers/">일본에만 11종(22년 집계 당시, SAP on AWS를 제외하고 11종)의 AWS 자격증을 모두 취득한 엔지니어가 무려 340명</a>이나 된다는 사실을…</p>
+
+<p>AWS 자격증을 다 취득한다는 이유만으로 AWS의 전문가가 되는 것은 아니지만, 궁금했습니다. 일본 사람들은 왜 그렇게 자격증 취득에 열을 올릴까?
+‘내가 직접 12개를 다 따보면 알 수 있지 않을까?’라는 생각과 ‘다시는 한국인을 무시하지 마라!(인터넷 밈)’라는 생각이 겹치며, 시애틀에서 돌아오며 모든 자격증을 취득하기로 결심했습니다.
+아니, 사실은 AWS Ambassador가 모든 자격증을 취득하면 자격이 주어지는 <strong>Gold Jacket Club</strong>이 부러웠습니다. <a href="https://aws.amazon.com/ko/blogs/apn/congrats-to-our-2022-aws-ambassador-award-winners-and-meet-the-newest-ambassadors/">👉 관련 링크</a></p>
+
+<h3 id="2022">2022</h3>
+
+<ul>
+  <li>DVA : DOP를 수월하게 딴 기억이 있어, 상대적으로 만만해 보이는 Associate 단계에 도전했습니다.</li>
+  <li>CLF : 12종의 자격증 중 가장 기초 과정이라 별다른 공부 없이 바로 도전했습니다. 이 당시 이미 Pro 자격증 2개가 있는 저에게는, 쉬어가기 찬스와 같은 느낌이었습니다.</li>
+  <li>SCS : 실습형 시험이 존재하는 SOA를 바로 도전하기는 두려워, Specialty 중에서도 제가 가장 자신 있었던 ‘보안’에 먼저 도전했습니다.
+과거 보안 기사 필기를 무난하게 합격한 경험(실기는 떨어짐😭)이 있는 저에게는 기존 보안 지식에 AWS 보안 솔루션 지식만 탑재하면 되는지라 그리 어렵지 않았습니다.</li>
+</ul>
+
+<p>SCS 이후 저는 AWS re:Invent 2022에 참석하게 됩니다. 행사장에는 ‘AWS Certification Lounge’라고 AWS 자격증이 하나라도 있다면, 간식과 아래와 같은 사진을 찍을 수 있는 라운지가 있습니다.
+당시 6개의 자격증을 보유했으므로, 손가락 6개를 펴고 사진을 찍었습니다.(S3 버킷과도 📸) 다음에 또 찍으러 가면, 12개는 어떤 포즈를 취해야 할까요?</p>
+
+<p><img src="../../assets/built/images/post/etc/certi2.png" alt="certi2" /></p>
+
+<h3 id="2023">2023</h3>
+
+<ul>
+  <li>DBS : 라스베이거스로 가는 비행기 안에서도 공부했는데, 연말에 느슨해져서 그런지 SCS 이후 3개월이 더 걸렸습니다. Database와 관련한 기초 지식 위주의 문제라 Specialty 6종 중에서는 가장 무난한 시험 같습니다.</li>
+  <li>SOA : C02로 시험이 개편되고 AWS의 첫 실습형 시험이 두렵게 느껴져, 응시를 매번 미뤘습니다. 이후 업무를 하며, 나름 AWS Systems Manager의 기능을 이것저것 사용해 보았다는 사실에 자신 있게 도전했습니다.
+역시 Associate는 Associate입니다. Pro와 비교하여 간단하게 답이 도출되고, 걱정했던 실습형 시험도 콘솔 환경을 만지작거리다 보면 답을 제출할 수 있습니다.
+13인치 맥북으로 시험을 응시하니, 실습 환경에서 <strong>제출 버튼이 보이지 않아</strong>(<strong>시험 환경 외부</strong> 스크롤 바로 조정) 애를 먹었던 것 외에는 가장 재미있었던 시험이었습니다.</li>
+  <li>DAS : 해당 도메인에 대하여 관련 지식이 가장 부족해, 시험을 준비하며 가장 막막했던 시험이었습니다. 또한, 이쯤 되니 퇴근 이후 및 주말에 자격증 공부를 하는 것이 매우 지겨웠습니다.
+DAS의 경우 SOA 취득 이후 2주 뒤에 합격했으나, 실제로는 SOA만 공부하기 너무 지겨워 SOA, DAS, MLS를 돌아가며 공부했습니다.</li>
+  <li>MLS : ML 관련 도메인 지식이 없다면 굉장히 어렵습니다. 저는 과거 <a href="http://www.yes24.com/Product/Goods/96024871">혼자 공부하는 머신러닝+딥러닝</a> &amp; <a href="http://www.yes24.com/Product/Goods/65050162">케라스 창시자에게 배우는 딥러닝</a>
+두 권의 책으로 ML과 딥러닝에 대하여 학습한 경험이 있습니다. 운 좋게도 저는 ML 엔지니어 동기에게 과외를 받아 해당 시험을 통과할 수 있었습니다.</li>
+  <li>PAS : SAP 지식이 필요할 것 같지만 대부분의 문제 출제 포인트가 DR 전략 및 기본적인 고가용성을 보장하기 위한 설계에 관한 문제라 비교적 수월했습니다.
+부족한 Sap on AWS 지식을 채우기 위해서, <a href="https://docs.aws.amazon.com/sap/latest/general/welcome.html">SAP 가이드 문서</a>와 <a href="https://explore.skillbuilder.aws/learn/course/external/view/elearning/12164/sap-on-aws-technical">AWS Skill Builder에 올라온 SAP 강의</a>를 수강했습니다.</li>
+  <li>ANS : 자격증을 취득하고 다음 자격증을 취득하기까지, 가장 짧은 시간이 소요된 시험입니다. 시험이 쉬워 빠르게 딴 것이 아니라, 11개를 취득하고 나니 빨리 12개를 취득하고 싶은 엄청난 동기 부여가 생겨 출퇴근 지하철, 주말, 퇴근 이후 모든 시간을 투자했습니다. 
+또한, 3년간 AWS 시험공부와 업무를 하다 보니 대부분 알고 있는 네트워크 지식이라 비교적 수월하게 합격할 수 있었습니다.</li>
+</ul>
+
+<h3 id="유튜브-주도-학습-️">유튜브 주도 학습 📽️</h3>
+
+<p><code class="language-plaintext highlighter-rouge">유튜브 주도 학습</code>은 <strong>유튜브 중독자</strong>인 제가 자주 사용하는 말입니다. 유튜브에는 AWS가 올려놓은 강의 영상이 무척 많습니다.
+AWS가 제작한 영상은 자격증 시험을 준비하는데도 굉장한 도움이 됩니다. 특히 DAS 시험을 준비할 때, <a href="https://youtu.be/cRIXhMfUEcE">실시간 스트리밍 분석 : Amazon Kinesis Data Analytics Deep Dive - 전소영 &amp; 주혜령, AWS</a> 영상이 엄청난 도움이 되었습니다.</p>
+
+<p>AWS 채널과 달리, AWS Korea 채널의 영상에는 Timestamp가 제공되지 않습니다. 그래서 저는 제가 학습한 일부 영상에 대하여 아래와 같이 타임스탬프를 댓글로 남겨 둡니다.
+이렇게 하면, 나중에 기억이 흐릿해질 때 다시 찾아와 빠르게 지식 보충이 가능할뿐더러, 그냥 영상을 주입식으로 시청할 때보다 머릿속에 오래 남아있게 되는 것 같습니다.</p>
+
+<p><img src="../../assets/built/images/post/etc/youtube.png" alt="youtube" /></p>
 
 <p><br /></p>
 
-<h2 id="️-refresh">♻️ Refresh</h2>
+<h2 id="thanks-to-">Thanks To 💐</h2>
 
-<p><code class="language-plaintext highlighter-rouge">refresh</code> 명령어는 Configuration Drift가 발생했을 때, 현재 상태를 <code class="language-plaintext highlighter-rouge">terraform.tfstate</code>에 반영해 현재 인프라의 상태로 최신화시키는 명령어입니다.
-문서에는 다음과 같이 기재되어 있지만, 처음 접한다면 무엇을 말하는지 쉽게 와닿지 않습니다.</p>
+<p>12종의 자격증을 취득해나가며, 각 분야에서 도움을 준 고마운 분들이 많습니다. 고맙습니다 🙏</p>
 
-<blockquote>
-  <p>The <code class="language-plaintext highlighter-rouge">terraform refresh</code> command reads the current settings from all managed remote objects and updates the Terraform state to match. <br />
-<code class="language-plaintext highlighter-rouge">terraform refresh</code> 명령어는 원격 객체의 현재 상태를 읽어 Terraform state와 일치시킵니다.</p>
-</blockquote>
-
-<p>Refresh 명령어는 다음과 같은 상황에서 사용합니다. 클라우드 환경에서 클러스터를 운용하면 인스턴스의 Scale이 변화함에 따라 인스턴스 ID 값도 변합니다.
-이 경우 코드로 정의한 상태는 프로비저닝 당시 시점을 기억하지만, 실제 인프라의 현상은 최신 인스턴스의 상태를 가지고 있으므로 Drift가 발생합니다.</p>
-
-<p><img src="../../assets/built/images/post/terraform/state.png" alt="state" /></p>
-
-<p>위 상황에서 Refresh 명령어로 <em>코드의 상태와 인프라의 현재 상태를 일치</em>시킬 수 있지만, 해당 명령어는 <strong>deprecate</strong> 되었습니다. 왜냐하면 관리자가 무엇이 변경되는지 알지 못하고 <code class="language-plaintext highlighter-rouge">tfstate</code>가 최신화되기 때문입니다.
-그래서 테라폼 v0.15.4.에서부터는 <code class="language-plaintext highlighter-rouge">plan</code>과 <code class="language-plaintext highlighter-rouge">apply</code>에 <code class="language-plaintext highlighter-rouge">-refresh-only</code> 옵션을 제공하기 시작했습니다.</p>
-
-<h3 id="refresh-only">–refresh-only</h3>
-
-<p>왼쪽은 프로비저닝 당시 <code class="language-plaintext highlighter-rouge">*.tfstate</code>입니다. 오른쪽은 해당 환경을 콘솔에서 health check를 하는 간격을 120초로 변경한 화면입니다.</p>
-
-<p><img src="../../assets/built/images/post/terraform/refresh.png" alt="refresh" /></p>
-
-<p>의도적으로 Drfit 상황을 만들었기 때문에 <code class="language-plaintext highlighter-rouge">terraform plan --refresh-only</code> 명령어로 점검하면 다음과 같이 어떤 리소스 객체가 변경될 것인지 확인 가능합니다.</p>
-
-<p><img src="../../assets/built/images/post/terraform/refresh-only.png" alt="refresh-only" /></p>
-
-<p>위 사진에서는 elb의 AutoScalingGroup 내의 인스턴스가 바뀌어 최신화됨과, 제가 의도적으로 콘솔에서 변경한 health_check 값을 확인할 수 있습니다.</p>
-
-<p>이처럼 항상 IaC의 형상을 변경하기 전, <code class="language-plaintext highlighter-rouge">plan</code>을 통한 사전 검토 기능을 제공하기 위해 <code class="language-plaintext highlighter-rouge">--refresh-only</code> 옵션이 제공되었습니다.
-<code class="language-plaintext highlighter-rouge">plan</code>으로 문제없음을 확인했다면, 이어서 <code class="language-plaintext highlighter-rouge">terraform apply --refresh-only</code> 명령어로 <code class="language-plaintext highlighter-rouge">*.tfstate</code>를 최신화 시킵니다.</p>
-
-<h3 id="️-주의">⚠️ 주의</h3>
-
-<p><code class="language-plaintext highlighter-rouge">*.tfstate</code>는 Refresh로 최신화되었지만, 여전히 코드로 정의한 interval 값은 180입니다.
-그러므로 코드로 정의된 부분을 변경하지 않은 상황에서 <code class="language-plaintext highlighter-rouge">terraform apply</code> 명렁어를 치면, 현재 120의 interval 값이 180으로 원복 됩니다.</p>
-
-<p><br /></p>
-
-<h2 id="️-taint">☠️ Taint</h2>
-
-<p>Replace를 설명하기 앞서, 기존 테라폼에는 <code class="language-plaintext highlighter-rouge">taint</code>라는 명령어가 있습니다. 문서에는 다음과 같이 기재되어 있습니다.</p>
-
-<blockquote>
-  <p>The <code class="language-plaintext highlighter-rouge">terraform taint</code> command informs Terraform that a particular object has become degraded or damaged. <br />
-<code class="language-plaintext highlighter-rouge">terraform taint</code> 명령어는 특정 객체가 저하되거나 손상되었음을 Terraform에 알립니다.</p>
-</blockquote>
-
-<p>Taint 명령어는 <strong>인프라를 정의한 코드는 그대로</strong>인 상태에서 <strong>리소스만 교체</strong>할 경우에 사용합니다.
-저의 경우 스파이크성 트래픽을 갑자기 받아 로드밸런서의 성능이 저하되었을 때, ELB를 교체한 경험이 있습니다.</p>
-
-<p>이런 상황에서 성능이 저하된 혹은 <strong>교체가 필요한 리소스</strong> 객체만을 on/off 방식으로 <strong>주석 처리 및 해제</strong>하며 <code class="language-plaintext highlighter-rouge">apply</code> 명령어로 교체할 수 있지만,
-<code class="language-plaintext highlighter-rouge">taint(교체 리소스를 마킹)</code> 명령어로 교체하고 <code class="language-plaintext highlighter-rouge">untaint(교체 리소스 마킹 해제)</code> 명령어로 교체할 필요가 없다고 명령할 수 있습니다.</p>
-
-<p>그러나 위와 같은 워크플로우는 테라폼 v0.15.2.에서 deprecate 되었고, <code class="language-plaintext highlighter-rouge">-replace</code> 옵션을 제공하며 더 직관적인 사용자 경험을 제공하게 됩니다.</p>
-
-<h3 id="--replace">🌗 -replace</h3>
-
-<p><code class="language-plaintext highlighter-rouge">-replace</code> 옵션은 <code class="language-plaintext highlighter-rouge">taint</code> 명령어와 동일하게 작용하며, <code class="language-plaintext highlighter-rouge">untaint</code> 명령어를 칠 필요가 없습니다.
-코드는 그대로지만 리소스 객체가 변경되는 Replace 명령어 사용법은 다음과 같습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform apply <span class="nt">-replace</span><span class="o">=</span><span class="s2">"aws_instance.example[0]"</span>
-</code></pre></div></div>
-
-<p>교체할 리소스 인자값를 찾기 위해, <code class="language-plaintext highlighter-rouge">terraform state list</code> 명령어로 target을 확인할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/terraform/replace.png" alt="replace" /></p>
-
-<p>💡 <code class="language-plaintext highlighter-rouge">-replace</code> 옵션 역시, <code class="language-plaintext highlighter-rouge">--refresh-only</code> 옵션과 동일하게 <code class="language-plaintext highlighter-rouge">plan</code> 명령어와 함께 적용하여 변경 지점을 미리 파악하고
-변경되는 리소스에 대한 검토를 하는 습관을 들입시다!</p>
-
-<p><br /></p>
-
-<h2 id="outro">Outro</h2>
-
-<p>Refresh와 Replace 비슷하면서도 전혀 다른 두 명령어의 변천사를 확인하며 인프라의 동일한 형상을 유지하기 위한 방법을 알아보았습니다.
-이번 포스팅에서 언급한 방법 외에도 형상을 일치시키는 방법들이 존재하지만, 위 2가지 명령어만 제대로 활용하면 대부분의 인프라의 형상이 달라지는 사태를 예방할 수 있습니다. 
-IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한 검토를 하는 습관이 매우 중요하다는 것을 강조하며 이번 3편을 마칩니다.</p>
-
-<p>지금까지 테라폼 더 익숙하게 Refresh &amp; Replace 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+<p>12종 도전을 시작하도록 열정과 응원을 준, 일본의 Ambassador <a href="https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;cards-body.sort-order=asc&amp;awsf.apn-ambassadors-location=*all&amp;cards-body.q=Ueno&amp;cards-body.q_operator=AND">Ueno</a>, <a href="https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;cards-body.sort-order=asc&amp;awsf.apn-ambassadors-location=*all&amp;cards-body.q=Kumagai&amp;cards-body.q_operator=AND">Kumagai</a> <br />
+지루한 여정 동안, 퇴근 이후까지 남으며 스터디메이트가 되어준 <a href="https://medium.com/@nuatmochoi">nuatmochoi</a>, <a href="https://blog.naver.com/jogilsang">길팡</a>, MLS 과외해준 <a href="https://user-bin-ksh.medium.com/">ksh</a></p>
 
 <p><br /></p>
 
 <hr />
-
-<p><span class="table-of-contents-list">Terraform Tips</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./TerraformTips1">Module &amp; Output</a></li>
-    <li><a href="./TerraformTips2">Data &amp; Index</a></li>
-    <li><a href="./TerraformTips3">Refresh &amp; Replace</a></li>
-    <li><a href="./TerraformTips4">Move (Refactoring)</a></li>
-    <li><a href="./TerraformTips5">Import</a></li>
-</ul>
 
 <p><br /></p>
 
@@ -357,9 +350,9 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/TerraformTips3';
-                            this.page.identifier = '/TerraformTips3';
-                            this.page.title = 'Terraform Tips 3 - Refresh & Replace';
+                            this.page.url = 'https://heuristicwave.github.io/FullyCertified';
+                            this.page.identifier = '/FullyCertified';
+                            this.page.title = 'AWS Fully Certified';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -393,7 +386,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/uncategorized/">Uncategorized</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -403,36 +396,11 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                                 
                                 
                                   
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/migrateCodebuild">Automating git submodules with AWS Code Series (Build, Pipeline)</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/EKS_Upgrade">Amazon EKS Multi Cluster Upgrade with ExternalDNS</a></li>
-                                        
                                     
                                   
                                 
                                   
                                 
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/eksctl_ppt">DIY Amazon EKS with eksctl</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -447,26 +415,8 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                    
+                                            <li><a href="/geultto2">글또 7기 회고</a></li>
                                         
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
                                     
                                   
                                 
@@ -475,38 +425,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
-                                  
                                 
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
                                   
                                 
                                   
@@ -519,49 +438,41 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/geultto">글또 7기 다짐글</a></li>
                                         
                                     
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
                                   
                                 
                                   
@@ -569,9 +480,9 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
+                            <a href="/tag/uncategorized/">
                                 
-                                    See all 18 posts  →
+                                    See all 2 posts  →
                                 
                             </a>
                         </footer>
@@ -581,52 +492,6 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/TerraformTips4">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/TerraformTips4">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Devops</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Terraform</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Terraform Tips 4 - Move (Refactoring)</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -634,26 +499,26 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/geultto">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/geultto.png)"></div>
+            <a class="post-card-image-link" href="/SRD">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/aws.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/geultto">
+            <a class="post-card-content-link" href="/SRD">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Uncategorized</span>
+                               <span class="post-card-tags">Aws</span>
                             
                         
                             
-                                <span class="post-card-tags">Extracurricular</span>
+                                <span class="post-card-tags">Network</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">글또 7기 다짐글</h2>
+                    <h2 class="post-card-title">SRD Protocol 알아보기</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -690,18 +555,18 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Terraform Tips 3 - Refresh & Replace</div>
+    <div class="floating-header-title">AWS Fully Certified</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Tips+3+-+Refresh+%26+Replace&amp;url=https://heuristicwave.github.ioTerraformTips3"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=AWS+Fully+Certified&amp;url=https://heuristicwave.github.ioFullyCertified"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips3"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioFullyCertified"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

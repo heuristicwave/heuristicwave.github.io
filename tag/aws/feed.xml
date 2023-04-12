@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-04-08T07:29:08+00:00</updated>
+  <updated>2023-04-12T04:01:29+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,140 @@
   
   
 
+  
+    <entry>
+      <title type="html">AWS Fully Certified</title>
+      <link href="https://heuristicwave.github.io/FullyCertified" rel="alternate" type="text/html" title="AWS Fully Certified" />
+      <published>2023-04-12T00:00:00+00:00</published>
+      <updated>2023-04-12T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/FullyCertified</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/FullyCertified">&lt;p&gt;AWS Certification 12종 취득 회고&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/ko/certification/&quot;&gt;AWS 자격증 페이지&lt;/a&gt;에 들어가 보면 총 12개의 자격증이 소개되어 있습니다.
+저는 20년 9월 29일 Solutions Architect - Associate 자격증을 시작으로, 23년 4월 10일 Advanced Networking - Specialty 자격증까지 약 3년에 걸쳐 모든 자격증을 취득했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/certi.png&quot; alt=&quot;certi&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;제가 첫 번째 자격증 SAA를 취득한 20년 9월 무렵, 약 1년 3개월 동안 AWS 자격증을 모두 취득한 김태우 님의 &lt;a href=&quot;https://dev.classmethod.jp/articles/epilogue-in-korean-aws-12x-certified/&quot;&gt;AWS 공인 자격증 12종에 전부 합격하면 무엇이 달라질까요?&lt;/a&gt;
+글을 본 당시까지만 해도 &lt;strong&gt;저와는 상관없는 이야기&lt;/strong&gt;인 줄 알았습니다. &lt;strong&gt;태우 님의 합격 후기에는 참 공감 가는 내용이 많으니,&lt;/strong&gt; 꼭 읽어보시길 추천드립니다!!&lt;/p&gt;
+
+&lt;p&gt;처음에 저도 후기를 작성하려 했다가 3년이 지난 현시점에서, 태우 님의 합격 후기를 다시보니 정말 비슷하게 느껴지는 게 많아 제가 따로 후기를 적을 필요가 없는 것 같더라고요…
+그래서 제가 시험에 응시한 순서대로 회고를 진행하기로 했습니다!&lt;/p&gt;
+
+&lt;h2 id=&quot;회고-&quot;&gt;회고 📝&lt;/h2&gt;
+
+&lt;p&gt;&lt;em&gt;시험 코드는 상단 ‘시험 기록’ 사진의 ‘시험 이름’을 통해 확인할 수 있습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2020--2021&quot;&gt;2020 ~ 2021&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;SAA : 첫 시험을 준비하던 당시, 이미 AWS의 VPC, EC2, ELB, S3 등을 활용하여 프로젝트를 진행한 경험이 있었습니다. Udemy에서 판매하는 SAA 강의를 구입해 3개월 정도 수강하고 시험을 봤습니다. 
+초반에는 강의를 통해 기초적인 개념을 잡으면 큰 도움이 됩니다. 저는 유료 강의를 구매했으나, &lt;a href=&quot;https://explore.skillbuilder.aws/learn/course/external/view/elearning/15366/aws-technical-essentials-na-Korean?trk=8ab981f0-9b77-46d4-8d98-0bf8a9128363&amp;amp;sc_channel=sm&quot;&gt;AWS Technical Essentials&lt;/a&gt;라는 굉장히 좋은 무료 강의가 있으니, 
+이것을 수강하면 모든 시험에 대하여 기초적인 지식을 쌓을 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;SAP : 지문이 길고 헷갈리는 개념이 많아 굉장히 고생했던 기억이 납니다. 자격증 취득 사이트로 유명한 &lt;a href=&quot;https://www.examtopics.com/&quot;&gt;EXAMTOPICS&lt;/a&gt;에서 결제하지 않아도 일부 문제를 확인할 수 있습니다.
+SAP와 관련된 문제를 풀며 관련 공식 문서를 찾아 스스로 해설을 하며 학습했습니다.&lt;/li&gt;
+  &lt;li&gt;DOP : DOP의 경우 개발 관련 경험과 SAP의 지식이 남아있다 보니, SAP와 비교하여 비교적 수월하게 취득할 수 있었습니다. 개발자분들의 경우, SAP 보다 DOP 취득이 훨씬 쉬울 것 같습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;왜-12개의-자격증-취득에-도전했나-&quot;&gt;왜? 12개의 자격증 취득에 도전했나 🤔&lt;/h3&gt;
+
+&lt;p&gt;제가 첫 자격증을 취득하고, 다음 해 2개의 Pro 자격증을 취득할 때만 해도 모든 자격증을 다 취득할 생각은 없었습니다.
+실제로 제 시험 기록 타임라인을 확인해 보면 20년에 Associate 1개, 21년에 Professional 2개를 취득하고 활동이 없다가 22년 4분기부터 올해 4월까지 9개의 자격증을 몰아서 취득하였습니다.
+작년 하반기 무슨 일이 있었길래 12개의 자격증 취득을 시작한 것일까요?&lt;/p&gt;
+
+&lt;p&gt;저는 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/apn/meet-our-newest-aws-ambassadors-from-2q-2022-and-explore-the-latest-ambassador-activities/&quot;&gt;22년부터 AWS Ambassador로 활동&lt;/a&gt;하며, &lt;a href=&quot;https://aws.amazon.com/ko/partners/ambassadors/&quot;&gt;Global Ambassador&lt;/a&gt; 들과 교류할 기회를 가질 수 있었습니다.
+그중 작년 9월 시애틀에서 열린 AWS Ambassador Global Summit 2022의 Lightning Talk 시간에 &lt;a href=&quot;https://tech.nri-net.com/entry/outputs_seattle&quot;&gt;우에노 상의 발표&lt;/a&gt;에 적지 않은 충격을 받았습니다.
+22년 5월 기준으로 &lt;a href=&quot;https://aws.amazon.com/jp/blogs/psa/2022-apn-all-aws-certifications-engineers/&quot;&gt;일본에만 11종(22년 집계 당시, SAP on AWS를 제외하고 11종)의 AWS 자격증을 모두 취득한 엔지니어가 무려 340명&lt;/a&gt;이나 된다는 사실을…&lt;/p&gt;
+
+&lt;p&gt;AWS 자격증을 다 취득한다는 이유만으로 AWS의 전문가가 되는 것은 아니지만, 궁금했습니다. 일본 사람들은 왜 그렇게 자격증 취득에 열을 올릴까?
+‘내가 직접 12개를 다 따보면 알 수 있지 않을까?’라는 생각과 ‘다시는 한국인을 무시하지 마라!(인터넷 밈)’라는 생각이 겹치며, 시애틀에서 돌아오며 모든 자격증을 취득하기로 결심했습니다.
+아니, 사실은 AWS Ambassador가 모든 자격증을 취득하면 자격이 주어지는 &lt;strong&gt;Gold Jacket Club&lt;/strong&gt;이 부러웠습니다. &lt;a href=&quot;https://aws.amazon.com/ko/blogs/apn/congrats-to-our-2022-aws-ambassador-award-winners-and-meet-the-newest-ambassadors/&quot;&gt;👉 관련 링크&lt;/a&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2022&quot;&gt;2022&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;DVA : DOP를 수월하게 딴 기억이 있어, 상대적으로 만만해 보이는 Associate 단계에 도전했습니다.&lt;/li&gt;
+  &lt;li&gt;CLF : 12종의 자격증 중 가장 기초 과정이라 별다른 공부 없이 바로 도전했습니다. 이 당시 이미 Pro 자격증 2개가 있는 저에게는, 쉬어가기 찬스와 같은 느낌이었습니다.&lt;/li&gt;
+  &lt;li&gt;SCS : 실습형 시험이 존재하는 SOA를 바로 도전하기는 두려워, Specialty 중에서도 제가 가장 자신 있었던 ‘보안’에 먼저 도전했습니다.
+과거 보안 기사 필기를 무난하게 합격한 경험(실기는 떨어짐😭)이 있는 저에게는 기존 보안 지식에 AWS 보안 솔루션 지식만 탑재하면 되는지라 그리 어렵지 않았습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;SCS 이후 저는 AWS re:Invent 2022에 참석하게 됩니다. 행사장에는 ‘AWS Certification Lounge’라고 AWS 자격증이 하나라도 있다면, 간식과 아래와 같은 사진을 찍을 수 있는 라운지가 있습니다.
+당시 6개의 자격증을 보유했으므로, 손가락 6개를 펴고 사진을 찍었습니다.(S3 버킷과도 📸) 다음에 또 찍으러 가면, 12개는 어떤 포즈를 취해야 할까요?&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/certi2.png&quot; alt=&quot;certi2&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;2023&quot;&gt;2023&lt;/h3&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;DBS : 라스베이거스로 가는 비행기 안에서도 공부했는데, 연말에 느슨해져서 그런지 SCS 이후 3개월이 더 걸렸습니다. Database와 관련한 기초 지식 위주의 문제라 Specialty 6종 중에서는 가장 무난한 시험 같습니다.&lt;/li&gt;
+  &lt;li&gt;SOA : C02로 시험이 개편되고 AWS의 첫 실습형 시험이 두렵게 느껴져, 응시를 매번 미뤘습니다. 이후 업무를 하며, 나름 AWS Systems Manager의 기능을 이것저것 사용해 보았다는 사실에 자신 있게 도전했습니다.
+역시 Associate는 Associate입니다. Pro와 비교하여 간단하게 답이 도출되고, 걱정했던 실습형 시험도 콘솔 환경을 만지작거리다 보면 답을 제출할 수 있습니다.
+13인치 맥북으로 시험을 응시하니, 실습 환경에서 &lt;strong&gt;제출 버튼이 보이지 않아&lt;/strong&gt;(&lt;strong&gt;시험 환경 외부&lt;/strong&gt; 스크롤 바로 조정) 애를 먹었던 것 외에는 가장 재미있었던 시험이었습니다.&lt;/li&gt;
+  &lt;li&gt;DAS : 해당 도메인에 대하여 관련 지식이 가장 부족해, 시험을 준비하며 가장 막막했던 시험이었습니다. 또한, 이쯤 되니 퇴근 이후 및 주말에 자격증 공부를 하는 것이 매우 지겨웠습니다.
+DAS의 경우 SOA 취득 이후 2주 뒤에 합격했으나, 실제로는 SOA만 공부하기 너무 지겨워 SOA, DAS, MLS를 돌아가며 공부했습니다.&lt;/li&gt;
+  &lt;li&gt;MLS : ML 관련 도메인 지식이 없다면 굉장히 어렵습니다. 저는 과거 &lt;a href=&quot;http://www.yes24.com/Product/Goods/96024871&quot;&gt;혼자 공부하는 머신러닝+딥러닝&lt;/a&gt; &amp;amp; &lt;a href=&quot;http://www.yes24.com/Product/Goods/65050162&quot;&gt;케라스 창시자에게 배우는 딥러닝&lt;/a&gt;
+두 권의 책으로 ML과 딥러닝에 대하여 학습한 경험이 있습니다. 운 좋게도 저는 ML 엔지니어 동기에게 과외를 받아 해당 시험을 통과할 수 있었습니다.&lt;/li&gt;
+  &lt;li&gt;PAS : SAP 지식이 필요할 것 같지만 대부분의 문제 출제 포인트가 DR 전략 및 기본적인 고가용성을 보장하기 위한 설계에 관한 문제라 비교적 수월했습니다.
+부족한 Sap on AWS 지식을 채우기 위해서, &lt;a href=&quot;https://docs.aws.amazon.com/sap/latest/general/welcome.html&quot;&gt;SAP 가이드 문서&lt;/a&gt;와 &lt;a href=&quot;https://explore.skillbuilder.aws/learn/course/external/view/elearning/12164/sap-on-aws-technical&quot;&gt;AWS Skill Builder에 올라온 SAP 강의&lt;/a&gt;를 수강했습니다.&lt;/li&gt;
+  &lt;li&gt;ANS : 자격증을 취득하고 다음 자격증을 취득하기까지, 가장 짧은 시간이 소요된 시험입니다. 시험이 쉬워 빠르게 딴 것이 아니라, 11개를 취득하고 나니 빨리 12개를 취득하고 싶은 엄청난 동기 부여가 생겨 출퇴근 지하철, 주말, 퇴근 이후 모든 시간을 투자했습니다. 
+또한, 3년간 AWS 시험공부와 업무를 하다 보니 대부분 알고 있는 네트워크 지식이라 비교적 수월하게 합격할 수 있었습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;유튜브-주도-학습-️&quot;&gt;유튜브 주도 학습 📽️&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;유튜브 주도 학습&lt;/code&gt;은 &lt;strong&gt;유튜브 중독자&lt;/strong&gt;인 제가 자주 사용하는 말입니다. 유튜브에는 AWS가 올려놓은 강의 영상이 무척 많습니다.
+AWS가 제작한 영상은 자격증 시험을 준비하는데도 굉장한 도움이 됩니다. 특히 DAS 시험을 준비할 때, &lt;a href=&quot;https://youtu.be/cRIXhMfUEcE&quot;&gt;실시간 스트리밍 분석 : Amazon Kinesis Data Analytics Deep Dive - 전소영 &amp;amp; 주혜령, AWS&lt;/a&gt; 영상이 엄청난 도움이 되었습니다.&lt;/p&gt;
+
+&lt;p&gt;AWS 채널과 달리, AWS Korea 채널의 영상에는 Timestamp가 제공되지 않습니다. 그래서 저는 제가 학습한 일부 영상에 대하여 아래와 같이 타임스탬프를 댓글로 남겨 둡니다.
+이렇게 하면, 나중에 기억이 흐릿해질 때 다시 찾아와 빠르게 지식 보충이 가능할뿐더러, 그냥 영상을 주입식으로 시청할 때보다 머릿속에 오래 남아있게 되는 것 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/youtube.png&quot; alt=&quot;youtube&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;thanks-to-&quot;&gt;Thanks To 💐&lt;/h2&gt;
+
+&lt;p&gt;12종의 자격증을 취득해나가며, 각 분야에서 도움을 준 고마운 분들이 많습니다. 고맙습니다 🙏&lt;/p&gt;
+
+&lt;p&gt;12종 도전을 시작하도록 열정과 응원을 준, 일본의 Ambassador &lt;a href=&quot;https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;amp;cards-body.sort-order=asc&amp;amp;awsf.apn-ambassadors-location=*all&amp;amp;cards-body.q=Ueno&amp;amp;cards-body.q_operator=AND&quot;&gt;Ueno&lt;/a&gt;, &lt;a href=&quot;https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;amp;cards-body.sort-order=asc&amp;amp;awsf.apn-ambassadors-location=*all&amp;amp;cards-body.q=Kumagai&amp;amp;cards-body.q_operator=AND&quot;&gt;Kumagai&lt;/a&gt; &lt;br /&gt;
+지루한 여정 동안, 퇴근 이후까지 남으며 스터디메이트가 되어준 &lt;a href=&quot;https://medium.com/@nuatmochoi&quot;&gt;nuatmochoi&lt;/a&gt;, &lt;a href=&quot;https://blog.naver.com/jogilsang&quot;&gt;길팡&lt;/a&gt;, MLS 과외해준 &lt;a href=&quot;https://user-bin-ksh.medium.com/&quot;&gt;ksh&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Heuristic Wave</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="uncategorized" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS Certification 12종 취득 회고</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">SRD Protocol 알아보기</title>
@@ -1676,219 +1810,6 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
 
       
         <summary type="html">Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Create Immutable Server using AWS Image Builder &amp;amp; Auto Scaling Group</title>
-      <link href="https://heuristicwave.github.io/ImageBuilder" rel="alternate" type="text/html" title="Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group" />
-      <published>2022-02-21T00:00:00+00:00</published>
-      <updated>2022-02-21T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/ImageBuilder</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/ImageBuilder">&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;에
-소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
-해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;클라우드를 다루다 보면 &lt;strong&gt;Netflix&lt;/strong&gt; 가 여러 분야에서 앞장서 있는 것을 확인할 수 있습니다.
-그중에서 Immutable Server Pattern을 알리는데 기여한 2013년에 발간된 &lt;a href=&quot;https://netflixtechblog.com/ami-creation-with-aminator-98d627ca37b0&quot;&gt;AMI Creation with Aminator&lt;/a&gt;를
-꼭 한번 읽어보시기 바랍니다. 과거 넷플릭스는 AWS의 이미지 파일을 생성하기 위해 Aminator라는 도구를 사용했지만,
-본 포스팅에서는 이미지 빌더로 AMI를 만들고 Auto Scaling Group에 적용시키는 방법을 배워 Immutable Server Pattern을 학습해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;immutable-server&quot;&gt;Immutable Server&lt;/h2&gt;
-
-&lt;p&gt;Immutable Server 대한 내용은 martin fowler 블로그에 소개된 &lt;a href=&quot;https://martinfowler.com/bliki/ImmutableServer.html&quot;&gt;ImmutableServer&lt;/a&gt;
-글을 보시면 굉장히 잘 설명되어 있습니다. 요약 + 그동안의 제 뇌피셜을 함께 말씀드리면 다음과 같습니다.&lt;/p&gt;
-
-&lt;p&gt;서버를 운영하다 보면 업데이트를 비롯한 다양한 이슈들로 인해 구성요소가 자주 변하게 됩니다.
-그렇게 운영하다 보면 무언가 꼬여 서버를 재 생성하는 일이 발생하는데 아래와 같은 라이프 사이클을 만나게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://martinfowler.com/bliki/images/immutableServer/PhoenixServerLifecycle.png&quot; alt=&quot;phoenixServerLifecycle&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이런 상황에서 구성이 다른 여러 대의 서버를 가지게 되면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Configuration drift&lt;/code&gt;가 발생했다고 표현합니다.
-또한 위 그림처럼 자꾸 새로운 이미지로 회귀하니까, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Shift Left&lt;/code&gt;라고도 표현하고 이를 한국어로 표현하는 말을 찾아보니 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;원점 회귀&lt;/code&gt;라는 표현도 쓰입니다.&lt;/p&gt;
-
-&lt;p&gt;구성 변경이 잦은 서버는 깨지기(fragile) 쉽고, 또 장애가 발생할 경우 재현이 어려울뿐더러 변경 시 연쇄적인 장애를 유발할 가능성이 있습니다.
-이를 두고 깨지기 쉬운 눈송이 같다 하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Snowflake Server&lt;/code&gt;라 부릅니다.
-이 상황을 피하기 위해, Configuration drift를 피하는 Base Image(Configuration이 발생하면 새롭게 생성)를 활용한 방법을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Phoenix Server&lt;/code&gt;
-라 부릅니다. &lt;em&gt;(&lt;a href=&quot;https://martinfowler.com/bliki/PhoenixServer.html&quot;&gt;Phoenix Server&lt;/a&gt; 용어는 마틴 파울러의 동료 &lt;a href=&quot;https://twitter.com/kornys&quot;&gt;Kornelis Sietsma&lt;/a&gt;가 제안했다 합니다.)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/immutableServer.png&quot; alt=&quot;immutableServer&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;피닉스 서버의 개념은 기본 이미지(Base AMI, Golden AMI)를 통해 언제나 일관성 있는 환경을 제공했고,
-이러한 개념들이 자연스럽게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Immutable Server&lt;/code&gt;의 개념으로 이어졌습니다.
-&lt;em&gt;(최근에는 Immutable Server를 넘어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Immutable Infrastructure&lt;/code&gt;의 개념도 있습니다!)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;이미지-빌더와-오토-스케일-그룹으로-이뮤터블-서버-구축하기&quot;&gt;이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 구축하기&lt;/h2&gt;
-
-&lt;p&gt;클라우드에서의 Immutable Server Pattern 검색하면 아래와 같은 좋은 예시들이 나옵니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/mt/create-immutable-servers-using-ec2-image-builder-aws-codepipeline/&quot;&gt;Create immutable servers using EC2 Image Builder and AWS CodePipeline&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://cloudblogs.microsoft.com/opensource/2018/05/23/immutable-infrastructure-azure-vsts-terraform-packer-ansible/&quot;&gt;Tutorial: Immutable infrastructure for Azure, using VSTS, Terraform, Packer and Ansible&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://heuristicwave.github.io/Packer&quot;&gt;하시코프 튜토리얼을 보고 만든 필자의 블로그 🥲&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;그러나 이제부터 다룰, 이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 패턴을 만족시킬 수 있습니다.
-AWS에서 제공하는 AutoScale은 탄력적인 확장과 축소를 제공하지만 Desired Capacity 기능을 활용해 항상 동일한 서버의 수를 유지할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/imagebuilder.png&quot; alt=&quot;imageBuilder&quot; /&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Image Builder의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Image pipelines&lt;/code&gt;를 활용해 원본 AMI로부터 원하는 형태의 Output(Custom/Golden/Base AMI)을 제작합니다.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Distribution settings&lt;/code&gt;을 통해 lt(Launch Template)에 1번에서 생성한 AMI로 교체하여 새로운 버전을 만듭니다.&lt;/li&gt;
-  &lt;li&gt;이제, 새롭게 생성되는 ASG(Auto Scaling Group)은 새롭게 버전 업된 lt를 통해 인스턴스를 생성합니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;em&gt;3번의 ASG의 경우, Refresh를 하기 전까지는 이전 상태의 lt를 기준으로 인스턴스가 운영되고 있습니다.
-이미지 생성과 동시에 새로운 AMI로 EC2 Refresh를 할 수 있는 방법이 있지만,
-새롭게 생성된 인스턴스가 운영환경에 바로 적용되는 것은 바람직하지 않으므로 해당 부분에 대한 자동화는 제외하였습니다.
-만약 검증된 AMI를 생성한다면, Lambda 혹은 기타 방법 등을 통해 Refresh 하여 이미지 생성부터 배포까지 자동화할 수 있습니다.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;추후 다른 포스팅에서 자세히 다룰 예정이지만, 이러한 패턴은 Immutable Infrastructure의 한 요소를 이루기도 합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-workshop&quot;&gt;📜 Workshop&lt;/h2&gt;
-
-&lt;h3 id=&quot;0️⃣-launch-template--auto-scaling-groups-생성&quot;&gt;0️⃣ Launch Template &amp;amp; Auto Scaling groups 생성&lt;/h3&gt;
-
-&lt;p&gt;기존 환경에 0️⃣이 준비되어 있다면 다음 단계인 &lt;strong&gt;Distribution settings&lt;/strong&gt;으로 넘어가도 좋습니다.&lt;/p&gt;
-
-&lt;p&gt;해당 단계는 제가 굉장히 게으른 관계로 AWS Documentation : &lt;a href=&quot;https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-launch-template.html&quot;&gt;Creating an Auto Scaling group using a launch template&lt;/a&gt;로 대체하겠습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 만약 기존 환경이 Launch Template이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Launch Configurations&lt;/code&gt;으로 구성되어 있을 경우,
-콘솔 화면에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Copy to launch template&lt;/code&gt; 버튼을 누르시면 손쉽게 lt로 변경 가능합니다. &lt;br /&gt;
-💡 Launch Template과 Launch Configurations는 굉장히 유사하지만, Launch Template의 경우 더 다양한 기능들을 제공합니다.
-특히 버전관리 기능을 통해 Rollback을 하거나, 업데이트시 ASG를 활용한 Rolling Update가 가능해 Launch Template 사용을 권장합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;1️⃣-distribution-settings&quot;&gt;1️⃣ Distribution settings&lt;/h3&gt;
-
-&lt;p&gt;EC2 Image Builder 콘솔 화면에 접속해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Distribution settings&lt;/code&gt;에서 새로운 세팅을 생성합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/distribution.png&quot; alt=&quot;distribution&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;필수 항목인 이름을 작성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Region settings&lt;/code&gt;에서 배포할 리전을 확인한 후,
-하단의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Launch template configuration&lt;/code&gt;에서 Step 0️⃣에서 작성한 lt를 지정하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create settings&lt;/code&gt;로 생성합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;2️⃣-image-pipelines&quot;&gt;2️⃣ Image pipelines&lt;/h3&gt;
-
-&lt;h4 id=&quot;step-1&quot;&gt;Step 1&lt;/h4&gt;
-
-&lt;p&gt;Distribution settings 작성이 완료되었다면, 콘솔에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Image pipelines&lt;/code&gt;에 접속하여 아래 정보들을 기재합니다.
-아래 사진의 좌측 Step 5까지의 과정을 거치면 목표로 했던 환경이 완성됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/imagepipeline.png&quot; alt=&quot;pipeline&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Build schedule&lt;/code&gt;에서는 주기적으로 파이프라인을 실행할 수 있는 방법들을 제공하는데 운영자가 원하는 방식으로 설정할 수 있습니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;step-2&quot;&gt;Step 2&lt;/h4&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Choose recipe&lt;/code&gt; 단계에서는 기존에 만들어둔 &lt;strong&gt;recipe&lt;/strong&gt;가 없으므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create new recipe&lt;/code&gt;를 선택하고, &lt;strong&gt;Image type&lt;/strong&gt;으로 &lt;strong&gt;AMI&lt;/strong&gt;를 선택합니다.&lt;/p&gt;
-
-&lt;p&gt;다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Base image&lt;/code&gt;를 고르는 단계에서는 아래 화면과 같이 &lt;strong&gt;관리형 이미지&lt;/strong&gt;를 사용하거나 기존에 작성한 &lt;strong&gt;Custom AMI ID&lt;/strong&gt;를 사용해도 됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/baseimage.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Instance configuration&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Working directory&lt;/code&gt;에서는 &lt;strong&gt;기본 값&lt;/strong&gt;으로 둬도 상관없지만
-&lt;strong&gt;SSM, User data, Working directory path&lt;/strong&gt;의 필요 여부에 따라 활용하시면 됩니다.&lt;/p&gt;
-
-&lt;p&gt;이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Components&lt;/code&gt;에서는 Golden AMI를 구축하기 위해 선행되어야 하는 각종 Agent나 소프트웨어(Apache, dotnet etc)를 선택할 수 있습니다.
-저는 편의상 CloudWatch Agent를 선택했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/components.png&quot; alt=&quot;components&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그다음 이어지는 &lt;strong&gt;Test components, Storage, Tags&lt;/strong&gt; 역시 필요 여부에 따라 활용하시면 됩니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;step-3&quot;&gt;Step 3&lt;/h4&gt;
-
-&lt;p&gt;3단계에 진입하면 아래 사진과 같이 이미지 빌더의 인프라 Config 값들을 정의할 수 있는 공간이 나옵니다.
-3번째 버튼인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create New infrastructure configuration&lt;/code&gt;으로 직접 인스턴스 유형, 네트워크, SNS topic을 설정이 가능하지만,
-저는 1번 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create infrastructure configuration using service defaults&lt;/code&gt;로 기본 구성 값들을 잡아주었습니다.
-(IAM Role과 SNS Topic도 자동으로 생성해 주고 굉장히 편리하네요.)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/defineconfig.png&quot; alt=&quot;config&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;step-4&quot;&gt;Step 4&lt;/h4&gt;
-
-&lt;p&gt;드디어, 이전 &lt;strong&gt;1️⃣ Distribution settings&lt;/strong&gt; 과정에서 만들어둔 &lt;strong&gt;배포 설정&lt;/strong&gt; 해당 단계에서 선택합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/associatelt.png&quot; alt=&quot;asso&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;step-5&quot;&gt;Step 5&lt;/h4&gt;
-
-&lt;p&gt;Review 단계까지 구성 요소들을 검토해 보고 Create pipeline을 누르고 Image pipelines 콘솔로 돌아오면 아래와 같은 화면을 만나게 됩니다.
-아래 캡처화면의 경우 이미 빌드가 끝난 상태이지만, 테스트를 위해서 &lt;strong&gt;Actions - Run pipeline&lt;/strong&gt; 단계를 거치면,
-ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종료되는 것을 과정을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/imgconsole.png&quot; alt=&quot;console&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;3️⃣-review&quot;&gt;3️⃣ Review&lt;/h3&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;strong&gt;EC2 - Images - AMIs&lt;/strong&gt;에서 새롭게 생성된 AMI 확인&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;EC2 - Launch templates&lt;/strong&gt;에서 새롭게 버전이 올라간 lt 확인, 여기서 Versions 정보를 누르면 Image Builder가 생성한 Description을 확인할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/imagebuilder/version.png&quot; alt=&quot;version&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;제대로 작동하는지 확인하기 위해 기존의 EC2 하나를 종료시키면, 저의 경우 ASG의 Desired가 2로 설정했으므로 하나의 인스턴스가 새로운 버전으로 변경됩니다.
-이는 &lt;strong&gt;EC2 - Auto Scaling groups&lt;/strong&gt;에서 확인할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/imagebuilder/asg.png&quot; alt=&quot;asg&quot; /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;4️⃣-clean-up&quot;&gt;4️⃣ Clean Up&lt;/h3&gt;
-
-&lt;p&gt;분해는 조립의 역순으로?! 2️⃣ -&amp;gt; 1️⃣ -&amp;gt; 0️⃣ 역순으로 리소스를 정리하고 3️⃣ Review 항목을 점검하여 모든 리소스가 회수되었는지 확인합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 각종 이야기 거리들과 EC2 Image Builder를 사용하며 Immutable Server Pattern을 학습해 보았습니다.
-과거 제가 Packer로 관련 환경을 구축한 적이 있는데, 역시 AWS 환경에서는 AWS의 서비스를 사용하는 게 연계도 용이하고 구축도 쉽네요.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;📚 References&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;글 중간중간 하이퍼 링크로 Reference 들을 달아두었습니다.
-특히, 이번 포스팅 레퍼런스들은 좋은 내용들이 많으니 원본들을 읽어보시고 당시 제가 느낀 기쁨들을 함께 느낄수 있으면 좋겠습니다.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Heuristic Wave</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-
-      
-        <summary type="html">본 글은 2021년 4월 30일 EC2 Image Builder supports Auto Scaling launch template에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고, 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.</summary>
       
 
       
