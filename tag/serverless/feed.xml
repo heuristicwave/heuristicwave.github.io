@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/serverless/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-04-12T04:19:52+00:00</updated>
+  <updated>2023-04-21T07:30:01+00:00</updated>
   <id>https://heuristicwave.github.io/tag/serverless/feed.xml</id>
 
   
@@ -165,11 +165,7 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -178,7 +174,7 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>

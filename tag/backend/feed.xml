@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/backend/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-04-12T04:19:52+00:00</updated>
+  <updated>2023-04-21T07:30:01+00:00</updated>
   <id>https://heuristicwave.github.io/tag/backend/feed.xml</id>
 
   
@@ -342,7 +342,7 @@ fatal error: all goroutines are asleep - deadlock!
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -730,7 +730,7 @@ fatal error: all goroutines are asleep - deadlock!
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -849,8 +849,6 @@ AWS에서는 ENI라는 &lt;em&gt;가상 네트워크 카드를 나타내는 논�
 
 &lt;p&gt;어떠한 방법이 더 우위에 있는지 결론짓기 어렵지만, CSP의 쿠버네티스 max-pods 생성 원리를 파악하여 최적의 IP 할당에 도움이 되면 좋겠다.&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
 
 &lt;hr /&gt;
@@ -858,9 +856,7 @@ AWS에서는 ENI라는 &lt;em&gt;가상 네트워크 카드를 나타내는 논�
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;EKS Series&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./EKSMaxPods&quot;&gt;Look into EKS max pods&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -869,7 +865,7 @@ AWS에서는 ENI라는 &lt;em&gt;가상 네트워크 카드를 나타내는 논�
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1040,10 +1036,6 @@ pkill gunicorn
 
 &lt;/details&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;h4 id=&quot;참고자료&quot;&gt;참고자료&lt;/h4&gt;
@@ -1060,7 +1052,7 @@ pkill gunicorn
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>

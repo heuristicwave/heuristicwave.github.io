@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-04-12T04:19:52+00:00</updated>
+  <updated>2023-04-21T07:30:01+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -131,11 +131,7 @@ AWS가 제작한 영상은 자격증 시험을 준비하는데도 굉장한 도�
 &lt;p&gt;12종 도전을 시작하도록 열정과 응원을 준, 일본의 Ambassador &lt;a href=&quot;https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;amp;cards-body.sort-order=asc&amp;amp;awsf.apn-ambassadors-location=*all&amp;amp;cards-body.q=Ueno&amp;amp;cards-body.q_operator=AND&quot;&gt;Ueno&lt;/a&gt;, &lt;a href=&quot;https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;amp;cards-body.sort-order=asc&amp;amp;awsf.apn-ambassadors-location=*all&amp;amp;cards-body.q=Kumagai&amp;amp;cards-body.q_operator=AND&quot;&gt;Kumagai&lt;/a&gt; &lt;br /&gt;
 지루한 여정 동안, 퇴근 이후까지 남으며 스터디메이트가 되어준 &lt;a href=&quot;https://medium.com/@nuatmochoi&quot;&gt;nuatmochoi&lt;/a&gt;, &lt;a href=&quot;https://blog.naver.com/jogilsang&quot;&gt;길팡&lt;/a&gt;, MLS 과외해준 &lt;a href=&quot;https://user-bin-ksh.medium.com/&quot;&gt;ksh&lt;/a&gt;, 내 AWS 학습에 빠질 수 없는 &lt;a href=&quot;https://viassh.github.io/&quot;&gt;조력자 SSH&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -144,7 +140,7 @@ AWS가 제작한 영상은 자격증 시험을 준비하는데도 굉장한 도�
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -447,11 +443,7 @@ AWS가 기존 데이터 센터가 사용하는 TCP의 한계를 극복하기 위
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -460,7 +452,7 @@ AWS가 기존 데이터 센터가 사용하는 TCP의 한계를 극복하기 위
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -687,7 +679,7 @@ CodeBuild의 경우 일일이 다 확인하며 설정해 줘야 하는 점은 �
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -851,11 +843,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -864,7 +852,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1021,11 +1009,7 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -1034,7 +1018,7 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1083,9 +1067,7 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;EKSCTL Tips&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./eksctl_ppt&quot;&gt;DIY Amazon EKS with eksctl (Deck)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1094,7 +1076,7 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1333,11 +1315,7 @@ ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -1346,7 +1324,7 @@ ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1492,11 +1470,7 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, &lt
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -1505,7 +1479,7 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, &lt
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1643,17 +1617,13 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
 &lt;p&gt;아마도 위에 기재한 것들 외에도 더 고려 할 것들이 많을 것 같습니다.
 개발이나 알고리즘 문제를 풀 때와 마찬가지로 항상 예상치 못한 실패 지점을 예상하는 습관이 필요한 것 같습니다.&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1662,7 +1632,7 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1776,17 +1746,13 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
   &lt;p&gt;클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1795,7 +1761,7 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>

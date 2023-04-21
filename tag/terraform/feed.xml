@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-04-12T04:19:52+00:00</updated>
+  <updated>2023-04-21T07:30:01+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -208,9 +208,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -219,7 +217,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -373,8 +371,6 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Move(Refactoring) 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
@@ -384,9 +380,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -395,7 +389,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -514,8 +508,6 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Refresh &amp;amp; Replace 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
@@ -525,9 +517,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -536,7 +526,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -717,8 +707,6 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Data &amp;amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
@@ -728,9 +716,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -739,7 +725,7 @@ resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_lb_target_group&quot;&lt;/sp
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -874,8 +860,6 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Module &amp;amp; Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
@@ -885,9 +869,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -896,7 +878,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1156,8 +1138,6 @@ docker run &lt;span class=&quot;nv&quot;&gt;$tf_image_repo_url&lt;/span&gt;
 해당 과정을 통해 AWS 인프라 생성법과, IAM 활용법, Variable, Output, tfvars 등을 활용해 코드를 작성하는 법을 공부했습니다.
 다른 CI/CD 파이프라인 구축법도 이번 포스팅에서 다룬 방법과 크게 다르지 않으니, 해당 포스팅이 도움이 되면 좋겠습니다. 😁&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
@@ -1167,9 +1147,7 @@ docker run &lt;span class=&quot;nv&quot;&gt;$tf_image_repo_url&lt;/span&gt;
     &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1178,7 +1156,7 @@ docker run &lt;span class=&quot;nv&quot;&gt;$tf_image_repo_url&lt;/span&gt;
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1435,8 +1413,6 @@ aws_s3_bucket.artifact_bucket
 
 &lt;/details&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Courses&lt;/span&gt;&lt;/p&gt;
@@ -1446,9 +1422,7 @@ aws_s3_bucket.artifact_bucket
     &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1457,7 +1431,7 @@ aws_s3_bucket.artifact_bucket
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1633,9 +1607,7 @@ git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.Use
     &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1644,7 +1616,7 @@ git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.Use
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1884,9 +1856,7 @@ Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext h
     &lt;li&gt;&lt;a href=&quot;./CodeBuild&quot;&gt;ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./CodePipeline&quot;&gt;ECR Pipeline with Terraform Ⅲ (CodePipeline)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./Packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1895,7 +1865,7 @@ Terraform으로 생성된 자원들은 &lt;code class=&quot;language-plaintext h
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>

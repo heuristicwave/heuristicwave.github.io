@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-04-12T04:19:52+00:00</updated>
+  <updated>2023-04-21T07:30:01+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -237,7 +237,7 @@ CodeBuild의 경우 일일이 다 확인하며 설정해 줘야 하는 점은 �
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -401,11 +401,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -414,7 +410,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -465,9 +461,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;EKSCTL Tips&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./eksctl_ppt&quot;&gt;DIY Amazon EKS with eksctl (Deck)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -476,7 +470,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -729,7 +723,7 @@ Kubernetes에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&qu
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -927,9 +921,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -938,7 +930,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1092,8 +1084,6 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Move(Refactoring) 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
@@ -1103,9 +1093,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1114,7 +1102,7 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1233,8 +1221,6 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
 
 &lt;p&gt;지금까지 테라폼 더 익숙하게 Refresh &amp;amp; Replace 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Terraform Tips&lt;/span&gt;&lt;/p&gt;
@@ -1244,9 +1230,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
     &lt;li&gt;&lt;a href=&quot;./TerraformTips3&quot;&gt;Refresh &amp;amp; Replace&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips4&quot;&gt;Move (Refactoring)&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./TerraformTips5&quot;&gt;Import&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1255,7 +1239,7 @@ IaC에서는 항상 형상을 변경하기 전, 변경되는 리소스에 대한
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1395,17 +1379,13 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
 &lt;p&gt;아마도 위에 기재한 것들 외에도 더 고려 할 것들이 많을 것 같습니다.
 개발이나 알고리즘 문제를 풀 때와 마찬가지로 항상 예상치 못한 실패 지점을 예상하는 습관이 필요한 것 같습니다.&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1414,7 +1394,7 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1528,17 +1508,13 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
   &lt;p&gt;클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)&lt;/p&gt;
 &lt;/blockquote&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
     &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;/ul&gt;</content>
 
       
       
@@ -1547,7 +1523,7 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>
@@ -1749,9 +1725,7 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
 &lt;p&gt;글 중간중간 하이퍼 링크로 Reference 들을 달아두었습니다.
 특히, 이번 포스팅 레퍼런스들은 좋은 내용들이 많으니 원본들을 읽어보시고 당시 제가 느낀 기쁨들을 함께 느낄수 있으면 좋겠습니다.&lt;/p&gt;
 
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;</content>
+&lt;hr /&gt;</content>
 
       
       
@@ -1760,7 +1734,7 @@ ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종�
       
 
       <author>
-          <name>Heuristic Wave</name>
+          <name>Jihun Lim</name>
         
         
       </author>

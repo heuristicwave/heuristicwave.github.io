@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Wed, 12 Apr 2023 04:19:52 +0000</pubDate>
-        <lastBuildDate>Wed, 12 Apr 2023 04:19:52 +0000</lastBuildDate>
+        <pubDate>Fri, 21 Apr 2023 07:30:01 +0000</pubDate>
+        <lastBuildDate>Fri, 21 Apr 2023 07:30:01 +0000</lastBuildDate>
         <generator>Jekyll v3.9.3</generator>
         
             <item>
@@ -105,11 +105,7 @@ AWS가 제작한 영상은 자격증 시험을 준비하는데도 굉장한 도�
 &lt;p&gt;12종 도전을 시작하도록 열정과 응원을 준, 일본의 Ambassador &lt;a href=&quot;https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;amp;cards-body.sort-order=asc&amp;amp;awsf.apn-ambassadors-location=*all&amp;amp;cards-body.q=Ueno&amp;amp;cards-body.q_operator=AND&quot;&gt;Ueno&lt;/a&gt;, &lt;a href=&quot;https://aws.amazon.com/jp/partners/ambassadors/?cards-body.sort-by=item.additionalFields.ambassadorName&amp;amp;cards-body.sort-order=asc&amp;amp;awsf.apn-ambassadors-location=*all&amp;amp;cards-body.q=Kumagai&amp;amp;cards-body.q_operator=AND&quot;&gt;Kumagai&lt;/a&gt; &lt;br /&gt;
 지루한 여정 동안, 퇴근 이후까지 남으며 스터디메이트가 되어준 &lt;a href=&quot;https://medium.com/@nuatmochoi&quot;&gt;nuatmochoi&lt;/a&gt;, &lt;a href=&quot;https://blog.naver.com/jogilsang&quot;&gt;길팡&lt;/a&gt;, MLS 과외해준 &lt;a href=&quot;https://user-bin-ksh.medium.com/&quot;&gt;ksh&lt;/a&gt;, 내 AWS 학습에 빠질 수 없는 &lt;a href=&quot;https://viassh.github.io/&quot;&gt;조력자 SSH&lt;/a&gt;&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Wed, 12 Apr 2023 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//FullyCertified</link>
@@ -400,11 +396,7 @@ AWS가 기존 데이터 센터가 사용하는 TCP의 한계를 극복하기 위
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Sat, 08 Apr 2023 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//SRD</link>
@@ -762,11 +754,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Sat, 25 Feb 2023 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//EKS_Upgrade</link>
@@ -911,11 +899,7 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Thu, 02 Feb 2023 20:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//OpenAI_Lambda</link>
@@ -953,8 +937,6 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
     &lt;li&gt;&lt;a href=&quot;./eksctl_ppt&quot;&gt;DIY Amazon EKS with eksctl (Deck)&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Thu, 19 Jan 2023 19:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//eksctl_ppt</link>
@@ -1372,11 +1354,7 @@ Kubernetes 1편, Terraform 3편, AWS 서비스 1편을 작성했습니다. Istio
 
 &lt;p&gt;결과론이기는 하지만, 이번 글또 활동도 나름의 계획을 ‘다짐 글’이라는 ‘실행 의사’로 표현하니 작년보다 더 많은 글을 작성하게 된 것 같습니다. 🥲&lt;/p&gt;
 
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
 &lt;hr /&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 </description>
                 <pubDate>Sun, 02 Oct 2022 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//geultto2</link>
