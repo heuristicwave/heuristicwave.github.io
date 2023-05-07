@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>SCP 알아보기</title>
+        
+          <description>&lt;p&gt;AWS Service control policies로 하위 계정을 제어하기 위한 고려 사항&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sun, 07 May 2023 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/SCP</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/SCP</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>AWS Fully Certified</title>
         
           <description>&lt;p&gt;AWS Certification 12종 취득 회고&lt;/p&gt;

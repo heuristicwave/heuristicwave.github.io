@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-04-21T07:50:30+00:00</updated>
+  <updated>2023-05-07T07:40:58+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,167 @@
   
   
 
+  
+    <entry>
+      <title type="html">SCP 알아보기</title>
+      <link href="https://heuristicwave.github.io/SCP" rel="alternate" type="text/html" title="SCP 알아보기" />
+      <published>2023-05-07T00:00:00+00:00</published>
+      <updated>2023-05-07T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/SCP</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/SCP">&lt;p&gt;AWS Service control policies로 하위 계정을 제어하기 위한 고려 사항&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;AWS 환경에서 서비스를 운영하다 보면, 서비스 확장, 보안 및 규정 준수 등 여러 이유로 다수의 AWS 계정을 운용하게 될 수 있습니다. 
+이때, 다수의 계정을 하나의 조직으로 결합해 중앙에서 계정을 관리하는 &lt;a href=&quot;https://docs.aws.amazon.com/organizations/latest/userguide/orgs_introduction.html&quot;&gt;AWS Organizations&lt;/a&gt; 서비스를 사용하게 됩니다.
+이번 포스팅에서는 Organizations의 정책 관리 방법 중 하나인 AWS Service control policies(SCPs, 이하 SCP)에 대하여 공식 문서의 내용과 몇 가지 테스트를 통해 이야기해 보겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;️-background-knowledge&quot;&gt;🏞️ Background knowledge&lt;/h2&gt;
+
+&lt;p&gt;SCP를 이해하기 위해 공식 문서(&lt;a href=&quot;https://docs.aws.amazon.com/organizations/latest/userguide/orgs_getting-started_concepts.html&quot;&gt;AWS Organizations terminology and concepts&lt;/a&gt;)에 소개된 개념을 짚고 넘어가겠습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Organizational : 계정을 통합하기 위해 생성하는 엔터티(entity)&lt;/li&gt;
+  &lt;li&gt;Organizational unit (OU) : 루트 내 계정에 대한 컨테이너. 트리와 유사한 계층 구조를 가지며, OU에 정책을 부여하면 하위에도 동일하게 적용&lt;/li&gt;
+  &lt;li&gt;Management account : organization을 생성하는 데 사용하며, 조직의 모던 계정에 서비스 기능을 제공&lt;/li&gt;
+  &lt;li&gt;Member accounts : Management를 제외한 조직의 나머지 계정, 하나의 organization에 속함&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;기본적인 개념을 이해하고 나서, 아래 그림을 확인하, 모든 개념(&lt;em&gt;Management 계정에서 정책을 만들고, 정책은 OU 혹은 Member accounts에 적용&lt;/em&gt;)이 요약되어 있음을 알 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://docs.aws.amazon.com/images/organizations/latest/userguide/images/AccountOuDiagram.png&quot; alt=&quot;OU Diagram&quot; /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-scp&quot;&gt;📑 &lt;a href=&quot;https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html&quot;&gt;SCP&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;SCP를 다루기 전, 알아야 할 주요 특징&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;SCP는 조직의 모든 계정에서 사용 가능한 권한을 중앙에서 제어할 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;management account&lt;/strong&gt; 계정을 제외하고, 하위 &lt;a href=&quot;https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps.html#scp-effects-on-permissions&quot;&gt;Root 계정을 포함한 모든 IAM 사용자 및 역할&lt;/a&gt;에 대하여 영향을 미칩니다.&lt;/li&gt;
+  &lt;li&gt;SCP가 모든 서비스와 작업을 허용하더라도, IAM 권한 정책을 부여받아야 액세스할 수 있습니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;scp-사용-전략&quot;&gt;&lt;a href=&quot;https://docs.aws.amazon.com/organizations/latest/userguide/orgs_manage_policies_scps_strategies.html&quot;&gt;SCP 사용 전략&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;SCP 다음 2가지 전략을 통해 작동하게 할 수 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Deny list : 기본적으로 모든 actions에 대하여 &lt;strong&gt;허용&lt;/strong&gt;, 특정 서비스 및 actions을 &lt;strong&gt;금지&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;Allow list : 기본적으로 모든 actions에 대하여 &lt;strong&gt;금지&lt;/strong&gt;, 특정 서비스 및 actons을 &lt;strong&gt;허용&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Organizations의 기본 구성은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;FullAWSAccess&lt;/code&gt;라는 관리형 SCP가 연결되어 &lt;strong&gt;Deny list&lt;/strong&gt; 방식을 채택하고 있으므로, 위 사항을 인식하여 SCP 정책을 수립해야 합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;-lab-note&quot;&gt;‍👩🏻‍🔬 Lab Note&lt;/h2&gt;
+
+&lt;p&gt;ap-northeast-1에서만 ec2 생성을 가능하게 하는 SCP를 작성한다면 순서는 다음과 같습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS Organizations&lt;/code&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Policies&lt;/code&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Service control policies&lt;/code&gt; 순으로 접속하여, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create policy&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;생성된 정책 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Targets&lt;/code&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Attach&lt;/code&gt; 순으로 어떤 OU와 계정에 붙일 것인지 정합니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;정책-예시&quot;&gt;정책 예시&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;Resouce 제어&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Version&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2012-10-17&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Statement&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Sid&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;DenyEC2inOtherRegions&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Effect&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Deny&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Action&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ec2:RunInstances&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Resource&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;arn:aws:ec2:ap-northeast-1:*:instance/*&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Condition 제어&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Version&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2012-10-17&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Statement&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Sid&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;DenyEC2inOtherRegions&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Effect&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Deny&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Action&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ec2:RunInstances&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Resource&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;*&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;Condition&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;StringNotEquals&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;aws:RequestedRegion&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;ap-northeast-1&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;troubleshooting&quot;&gt;Troubleshooting&lt;/h3&gt;
+
+&lt;h4 id=&quot;allow-errors&quot;&gt;Allow Errors&lt;/h4&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Allow&lt;/code&gt; Effect는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Deny&lt;/code&gt;와 달리 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Resource&lt;/code&gt;를 특정해서 정책을 생성할 경우, 아래와 같은 Errors를 반환합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/scp_allow.png&quot; alt=&quot;spc_allow&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Allow&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Resource&lt;/code&gt;를 지원하지 않으며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt;로만 가능합니다.
+그러므로 &lt;strong&gt;Deny list&lt;/strong&gt;(기본적으로 모든 actions 허용) 아래에서, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Resource&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;StringNotEquals&lt;/code&gt;을 적절히 조합하여 허용하는 정책을 생성합니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;failed-to-attach-the-policy-policy-to-x-target&quot;&gt;Failed to attach the policy ‘{policy}’ to X target&lt;/h4&gt;
+
+&lt;p&gt;policy 적용 범위에 대하여 아래와 같이 오류가 있을 경우&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/scp_attach.png&quot; alt=&quot;spc_attach&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Targets&lt;/code&gt;을 확인하여 문제가 되는 타깃을 하나하나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Detach&lt;/code&gt; 해야 합니다. (정책 삭제의 경우도 동일합니다.)&lt;/p&gt;
+
+&lt;h3 id=&quot;notice&quot;&gt;Notice&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;정책 생성 시, &lt;strong&gt;Syntax 검사를 통과하더라도&lt;/strong&gt; 의도대로 동작하지 않을 수 있으므로 &lt;strong&gt;검증은 필수&lt;/strong&gt;입니다.&lt;/li&gt;
+  &lt;li&gt;정책이 복잡해지면, &lt;strong&gt;다른 SCP 정책과 중복&lt;/strong&gt;되어 의도대로 동작하지 않을 수 있으므로 &lt;strong&gt;영향도 체크도 필수&lt;/strong&gt;입니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;해당 포스팅의 &lt;strong&gt;Lab Note&lt;/strong&gt;는 SCP 사용에 있어, &lt;strong&gt;모든 Side effect&lt;/strong&gt;를 고려하지 않았습니다. SCP를 운영환경에서 활용하기 위해서는 충분한 검토와 테스트가 필요합니다.
+제가 AWS IAM을 배우던 당시, &lt;em&gt;“IAM은 완성하고 끝이 아닌 운영과 함께 끊임없이 관리해야 하는 관리 자산”&lt;/em&gt;이라는 말을 들었습니다. SCP 역시 운영과 함께 관리해야 하는 &lt;strong&gt;관리 자산&lt;/strong&gt;이라는 점을 언급하며 글을 마치겠습니다.&lt;/p&gt;
+
+&lt;p&gt;추가적으로 이번 포스팅 이후, Organizations SCP 모범 사례에 대해 더 자세히 알고 싶으시면 다음 게시물을 추천드립니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/industries/best-practices-for-aws-organizations-service-control-policies-in-a-multi-account-environment/&quot;&gt;👉 Best Practices for AWS Organizations Service Control Policies in a Multi-Account Environment&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="security" />
+      
+
+      
+        <summary type="html">AWS Service control policies로 하위 계정을 제어하기 위한 고려 사항</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">AWS Fully Certified</title>
@@ -1647,135 +1808,6 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
 
       
         <summary type="html">ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다. Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 아래 요소들을 고민해 볼 수 있습니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Using Amazon ECS Exec for debugging</title>
-      <link href="https://heuristicwave.github.io/ECS_Exec" rel="alternate" type="text/html" title="Using Amazon ECS Exec for debugging" />
-      <published>2022-02-22T00:00:00+00:00</published>
-      <updated>2022-02-22T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/ECS_Exec</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/ECS_Exec">&lt;p&gt;Docker에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;exec&lt;/code&gt; 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다.
-21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.&lt;/p&gt;
-
-&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/ecs-exec.html&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/cli/latest/reference/ecs/execute-command.html&quot;&gt;AWS CLI Cmd Ref : excute-commnad&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;exec-활성화&quot;&gt;Exec 활성화&lt;/h2&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;SSM 에이전트와 SSM 서비스 간의 통신에 필요한 권한 부여&lt;/li&gt;
-  &lt;li&gt;task-definition config 추가
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;s2&quot;&gt;&quot;linuxParameters&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s2&quot;&gt;&quot;initProcessEnabled&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;CLI로 execute-command enable 후, 점검
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs create-service &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--task-definition&lt;/span&gt; task-definition-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--enable-execute-command&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--service-name&lt;/span&gt; service-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--desired-count&lt;/span&gt; 1
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;아래 명령어로 활성화 여부 확인. (grep option 활용, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep -F4 &quot;managedAgents&quot;&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;grep &quot;enableExecuteCommand&quot;&lt;/code&gt;)&lt;/p&gt;
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs describe-tasks &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--tasks&lt;/span&gt; task-id 
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-    &lt;p&gt;활성화 상태일 때의 Snippet&lt;/p&gt;
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s2&quot;&gt;&quot;tasks&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            ...
-            &lt;span class=&quot;s2&quot;&gt;&quot;containers&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                    ...
-                    &lt;span class=&quot;s2&quot;&gt;&quot;managedAgents&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-                        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStartedAt&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;2021-03-01T14:49:44.574000-06:00&quot;&lt;/span&gt;,
-                            &lt;span class=&quot;s2&quot;&gt;&quot;name&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;ExecuteCommandAgent&quot;&lt;/span&gt;,
-                            &lt;span class=&quot;s2&quot;&gt;&quot;lastStatus&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;RUNNING&quot;&lt;/span&gt;
-                        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-                    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-                &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-            &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;,
-            ...
-            &lt;span class=&quot;s2&quot;&gt;&quot;enableExecuteCommand&quot;&lt;/span&gt;: &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;,
-            ...
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Running ECS Exec
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws ecs execute-command &lt;span class=&quot;nt&quot;&gt;--cluster&lt;/span&gt; cluster-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--task&lt;/span&gt; task-id &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--container&lt;/span&gt; container-name &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--interactive&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
- &lt;span class=&quot;nt&quot;&gt;--command&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;/bin/sh&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;문제-해결&quot;&gt;문제 해결&lt;/h2&gt;
-
-&lt;p&gt;Exec 명령어 이후 에러 핸들 (공식 문서들에 답이 다 있엇다 😂)&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;An error occurred &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;ClusterNotFoundException&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; when calling the ExecuteCommand operation: Cluster not found.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Cluster ARN 기입 (From AWS CLI Ref : The Amazon Resource Name (ARN) or short name of the cluster from AWS CLI Ref)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SessionManagerPlugin is not found. Please refer to SessionManager Documentation here: http://docs.aws.amazon.com/console/systems-manager/session-manager-plugin-not-found
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;클라이언트 PC에 SSM Plugin 설치 (From AWS Docs : Prerequisites for using ECS Exec)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-
-      
-        <summary type="html">Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</summary>
       
 
       
