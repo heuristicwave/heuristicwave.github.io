@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-05-09T06:26:47+00:00</updated>
+  <updated>2023-05-09T06:37:47+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -1522,7 +1522,7 @@ variable &quot;source_repo_name&quot; {
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; terraform.tfvars
 aws_ecr=&quot;my-image&quot;
 source_repo_name=&quot;my-pipeline&quot;
-source_repo_branch=&quot;master&quot;
+source_repo_branch=&quot;main&quot;
 image_repo_name=&quot;my-pipeline&quot;
 &lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
 &lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -1579,7 +1579,7 @@ EOF
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git add Dockerfile
 git commit &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Create Dockerfile&quot;&lt;/span&gt;
 git status
-git push origin &lt;span class=&quot;c&quot;&gt;# master branch로 push&lt;/span&gt;
+git push origin &lt;span class=&quot;c&quot;&gt;# main branch로 push&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;자격 증명 문제가 있다면 아래 명령어로 해결합니다. &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html&quot;&gt;자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결&lt;/a&gt;&lt;/p&gt;

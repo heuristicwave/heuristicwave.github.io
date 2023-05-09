@@ -275,7 +275,7 @@ variable "source_repo_name" {
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; terraform.tfvars
 aws_ecr="my-image"
 source_repo_name="my-pipeline"
-source_repo_branch="master"
+source_repo_branch="main"
 image_repo_name="my-pipeline"
 </span><span class="no">EOF
 </span></code></pre></div></div>
@@ -332,7 +332,7 @@ EOF
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>git add Dockerfile
 git commit <span class="nt">-m</span> <span class="s2">"Create Dockerfile"</span>
 git status
-git push origin <span class="c"># master branch로 push</span>
+git push origin <span class="c"># main branch로 push</span>
 </code></pre></div></div>
 
 <p>자격 증명 문제가 있다면 아래 명령어로 해결합니다. <a href="https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html">자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결</a></p>
