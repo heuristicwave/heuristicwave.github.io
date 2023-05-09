@@ -223,10 +223,11 @@ into the {body} of the default.hbs template -->
 테라폼은 선언형 언어이므로 Role과 Resource의 작성 순서가 바뀌어도 상관이 없지만, 콘솔에서 작업할 경우 Role을 먼저 작성하고 리소스를 생성하니 3편에서는 IAM을 먼저 작성하겠습니다.</p>
 
 <h3 id="iam-role">IAM Role</h3>
-<p>아래 Role을 방금전 생성한 <code class="language-plaintext highlighter-rouge">codepipeline.tf</code>에 작성합니다.</p>
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource <span class="s2">"aws_iam_role"</span> <span class="s2">"codepipeline_role"</span> <span class="o">{</span>
-  name <span class="o">=</span> <span class="s2">"terraform-codepipeline"</span>
-  assume_role_policy <span class="o">=</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh">
+<p>아래 Role을 <code class="language-plaintext highlighter-rouge">codepipeline.tf</code>에 작성합니다.</p>
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; codepipeline.tf
+resource "aws_iam_role" "codepipeline_role" {
+  name = "terraform-codepipeline"
+  assume_role_policy = &lt;&lt;EOF
 {
   "Version": "2012-10-17",
   "Statement": [
@@ -241,6 +242,7 @@ into the {body} of the default.hbs template -->
 }
 </span><span class="no">EOF
 </span><span class="o">}</span>
+EOF
 </code></pre></div></div>
 
 <h3 id="iam-policy">IAM Policy</h3>
@@ -285,7 +287,7 @@ into the {body} of the default.hbs template -->
 EOF
 }
 </code></pre></div></div>
-<p>🚩 이어서 생성한 <strong>Policy를 Role에 부여</strong>합니다. 이것 역시 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 추가합니다.</p>
+<p>🚩 이어서 생성한 <strong>Policy를 Role에 부여</strong>합니다. 이것 역시 <code class="language-plaintext highlighter-rouge">codepipeline.tf</code>에 추가합니다.</p>
 <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource <span class="s2">"aws_iam_role_policy_attachment"</span> <span class="s2">"codepipeline-attach"</span> <span class="o">{</span>
   role       <span class="o">=</span> aws_iam_role.codepipeline_role.name
   policy_arn <span class="o">=</span> aws_iam_policy.codepipeline_policy.arn

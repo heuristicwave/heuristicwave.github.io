@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-05-07T07:40:58+00:00</updated>
+  <updated>2023-05-09T06:15:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -915,10 +915,11 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
 테라폼은 선언형 언어이므로 Role과 Resource의 작성 순서가 바뀌어도 상관이 없지만, 콘솔에서 작업할 경우 Role을 먼저 작성하고 리소스를 생성하니 3편에서는 IAM을 먼저 작성하겠습니다.&lt;/p&gt;
 
 &lt;h3 id=&quot;iam-role&quot;&gt;IAM Role&lt;/h3&gt;
-&lt;p&gt;아래 Role을 방금전 생성한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 작성합니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline_role&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-  name &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;terraform-codepipeline&quot;&lt;/span&gt;
-  assume_role_policy &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt;
+&lt;p&gt;아래 Role을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 작성합니다.&lt;/p&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF&lt;/span&gt;&lt;span class=&quot;sh&quot;&gt; &amp;gt; codepipeline.tf
+resource &quot;aws_iam_role&quot; &quot;codepipeline_role&quot; {
+  name = &quot;terraform-codepipeline&quot;
+  assume_role_policy = &amp;lt;&amp;lt;EOF
 {
   &quot;Version&quot;: &quot;2012-10-17&quot;,
   &quot;Statement&quot;: [
@@ -933,6 +934,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
 }
 &lt;/span&gt;&lt;span class=&quot;no&quot;&gt;EOF
 &lt;/span&gt;&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
+EOF
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;iam-policy&quot;&gt;IAM Policy&lt;/h3&gt;
@@ -977,7 +979,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?&lt;/p&gt;
 EOF
 }
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codebuild.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
+&lt;p&gt;🚩 이어서 생성한 &lt;strong&gt;Policy를 Role에 부여&lt;/strong&gt;합니다. 이것 역시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codepipeline.tf&lt;/code&gt;에 추가합니다.&lt;/p&gt;
 &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;resource &lt;span class=&quot;s2&quot;&gt;&quot;aws_iam_role_policy_attachment&quot;&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;codepipeline-attach&quot;&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
   role       &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_role.codepipeline_role.name
   policy_arn &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; aws_iam_policy.codepipeline_policy.arn
