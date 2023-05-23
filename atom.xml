@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>The Chart Repository in AWS</title>
+        
+          <description>&lt;p&gt;AWS에서 Helm chart repositories를 운영하는 방법&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Tue, 23 May 2023 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/Chart</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/Chart</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>SCP 알아보기</title>
         
           <description>&lt;p&gt;AWS Service control policies로 하위 계정을 제어하기 위한 고려 사항&lt;/p&gt;

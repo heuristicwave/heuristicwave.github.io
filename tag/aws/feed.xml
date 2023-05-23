@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-05-09T06:37:47+00:00</updated>
+  <updated>2023-05-23T02:29:50+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,181 @@
   
   
 
+  
+    <entry>
+      <title type="html">The Chart Repository in AWS</title>
+      <link href="https://heuristicwave.github.io/Chart" rel="alternate" type="text/html" title="The Chart Repository in AWS" />
+      <published>2023-05-23T00:00:00+00:00</published>
+      <updated>2023-05-23T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Chart</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Chart">&lt;p&gt;AWS에서 Helm chart repositories를 운영하는 방법&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다.
+이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;️-background-knowledge&quot;&gt;🏞️ Background knowledge&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Helm&lt;/strong&gt;은 쿠버네티스를 위한 패키지 관리 도구입니다. &lt;strong&gt;Chart&lt;/strong&gt;라는 파일 형식으로 패키징 하며, 차트를 통해 설치, 업그레이드 롤백을 간편하게 해줍니다.
+&lt;strong&gt;Repository&lt;/strong&gt;는 차트를 모으고 공유할 수 있는 곳으로, 하나의 저장소에서 여러 개의 Chart를 관리할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;공식 차트 저장소 &lt;a href=&quot;https://artifacthub.io/&quot;&gt;ArtifactHUB&lt;/a&gt;를 활용할 수도 있고, 다음과 같이 자신만의 차트를 만들 수도 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Local 활용 (&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo index {PATH}&lt;/code&gt;, 로컬을 backend로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성&lt;/em&gt;)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@mattiaperi/create-a-public-helm-chart-repository-with-github-pages-49b180dbb417&quot;&gt;GitHub Pages를 활용한 Public Helm Chart 구축&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jasiek-petryk.medium.com/setting-up-a-private-helm-chart-repository-on-github-4a767703cec8&quot;&gt;GitHub에서 Private Helm chart 저장소 설정&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;참고 : &lt;a href=&quot;https://helm.sh/docs/topics/chart_repository/&quot;&gt;The Chart Repository Guide&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;amazon-s3로-helm-repository-구축하기&quot;&gt;Amazon S3로 Helm Repository 구축하기&lt;/h1&gt;
+
+&lt;p&gt;Helm을 패키징 하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tgz&lt;/code&gt; 형식의 아카이브 파일이 생성되며, 이런 차트 파일은 주로 Amazon S3와 같은 Object storage를 백엔드로 사용합니다.
+AWS 환경에서 S3를 사용해 Chart를 구축하는 방법에 대하여 다음 2가지 방법으로 알아보겠습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Helm Project에서 관리되는 &lt;a href=&quot;https://chartmuseum.com/&quot;&gt;ChartMuseum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;AWS Prescriptive Guidance, &lt;a href=&quot;https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;Set up a Helm v3 chart repository in Amazon S3&lt;/a&gt;에 소개된 &lt;a href=&quot;https://github.com/hypnoglow/helm-s3&quot;&gt;helm-s3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;️-chartmuseum-using-amazon-s3&quot;&gt;🏛️ ChartMuseum using Amazon S3&lt;/h2&gt;
+
+&lt;p&gt;ChartMuseum은 Amazon 외에도 DigitalOcean, Google Cloud, Microsoft Azure 등 다양한 Storage를 백엔드로 지원합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;architecture&quot;&gt;Architecture&lt;/h3&gt;
+
+&lt;p&gt;Helm Client의 경우 AWS Cloud 내 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt; 혹은 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 모두 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/architecture/chartmuseum.png&quot; alt=&quot;chartmuseum&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;process&quot;&gt;Process&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#installation&quot;&gt;Installation&lt;/a&gt;을 참고하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GoFish&lt;/code&gt; 혹은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt;로 설치&lt;/li&gt;
+  &lt;li&gt;테스트를 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart&lt;/code&gt;라는 임의의 차트 생성 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm create mychart&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;helm repository에 담을 차트를 패키지화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm package ./mychart&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;2. Chartmuseum 실행 및 Repository 추가&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#using-amazon-s3&quot;&gt;Using with Amazon S3&lt;/a&gt;에 기재된 대로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;endpoint&lt;/code&gt;를 설정하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IAM&lt;/code&gt; 권한을 부여&lt;/li&gt;
+  &lt;li&gt;다음 명령어로 chartmuseum을 실행시키고 Helm Client의 URL에 접속하여 동작 여부 확인 &lt;br /&gt; &lt;em&gt;Helm Client가 local인 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost:8080&lt;/code&gt;에서 확인 가능&lt;/em&gt;
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;chartmuseum &lt;span class=&quot;nt&quot;&gt;--debug&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8080 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-bucket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;my-s3-bucket&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-region&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;us-east-1&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;다음 명령어로 repository를 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add my-chart http://localhost:8080&lt;/code&gt; &lt;br /&gt; &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt; 명령어로 확인 가능&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;다음 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/chartmuseum/helm-push&lt;/code&gt; &lt;br /&gt;
+&lt;a href=&quot;https://github.com/chartmuseum/helm-push&quot;&gt;helm-push&lt;/a&gt; 플러그인을 다운로드하고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push --help&lt;/code&gt; 명령어로 설치 여부 확인&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cm-push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push mychart/ my-chart&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;정상적으로 패키지가 올라가면 아래와 같이 S3 콘솔에서 확인 가능
+&lt;img src=&quot;../../assets/built/images/post/aws/chartmuseum-s3.png&quot; alt=&quot;s3-chart.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;️-helm-v3-chart-repository-using-helm-s3&quot;&gt;☁️ Helm v3 chart repository using helm-s3&lt;/h2&gt;
+
+&lt;p&gt;이번에는 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;AWS 공식 문서&lt;/a&gt;에 소개 &lt;strong&gt;helm-s3&lt;/strong&gt; 플러그인을 사용해 AWS Native 하게 구축하는 방법을 알아보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;architecture-1&quot;&gt;Architecture&lt;/h3&gt;
+
+&lt;p&gt;문서에서는 AWS Native 하게 사용하는 방법을 안내하기 위해, 로컬 helm 코드를 운영하기 위해 &lt;strong&gt;CodeCommit&lt;/strong&gt;과, Helm Client로 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt;를 사용하고 있습니다.
+ChartMuseum 구축 때와 마찬가지로 Helm Client를 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 혹은 CodeCommit을 다른 형상관리 도구로 대체 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://docs.aws.amazon.com/images/prescriptive-guidance/latest/patterns/images/pattern-img/1dbd3db8-5819-4f30-bebd-a144a2075fcd/images/55652eb2-2e11-4b14-9ed4-0cdcf55cc3e6.png&quot; alt=&quot;helm-s3&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🧐 해당 방식에서는 &lt;strong&gt;Source code management&lt;/strong&gt; 목적으로 CodeCommit을 사용하고 있습니다. &lt;br /&gt;
+즉, &lt;strong&gt;소스 코드 및 리소스의 버전 관리&lt;/strong&gt;로 CodeCommit을 사용하고 &lt;strong&gt;차트 파일의 저장과 배포&lt;/strong&gt;에 S3을 사용하고 있습니다. &lt;br /&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;❗️ CodeCommit을 소스 코드 버전 관리 목적 외에도 ArgoCD와 통합하여 배포에도 사용할 수 있습니다. &lt;br /&gt;
+&lt;a href=&quot;https://catalog.us-east-1.prod.workshops.aws/workshops/9c0aa9ab-90a9-44a6-abe1-8dff360ae428/ko-KR/110-cicd/110-cicd&quot;&gt;AWS Workshop&lt;/a&gt;의 Helm Repo로 CodeCommit을 사용하는 방법도 있으니 참고하시기 바랍니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;process-1&quot;&gt;Process&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;고유한 S3 버킷 생성 후, 버킷에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stable/myapp&lt;/code&gt; 폴더를 생성&lt;/li&gt;
+  &lt;li&gt;helm-s3 플러그인 설치 :  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/hypnoglow/helm-s3.git&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;2. S3 버킷 초기화 및 추가&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;S3 폴더를 Helm Repository로 초기화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 init s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성되었는지 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 ls s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Helm 클라이언트에 Repository 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add stable-myapp s3://{YOUR_BUCKET}/stable/myapp/&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Repository 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ChartMuseum 구축에서 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart-*.tgz&lt;/code&gt; 파일 활용&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3 push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 push ./mychart-0.1.0.tgz stable-myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;정상적으로 패키지가 올라가면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt;에 업로드 정보가 갱신되며, 다음과 같이 S3에서 확인 가능
+&lt;img src=&quot;../../assets/built/images/post/aws/helm-s3.png&quot; alt=&quot;helm-s3.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;첫 번째 방법에서는, ChartMuseum을 실행시키고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-push&lt;/code&gt; 플러그인을 활용하여 차트를 업로드했습니다.
+반면 두 번째 방법에서는 ChartMuseum과 같은 업로드 계층 없이, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 플러그인을 활용하여 Direct로 차트를 업로드했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 사용하는 방식이 ChartMuseum과 같은 Layer가 없어 사용이 편리합니다.
+그뿐만 아니라 여러 개의 Chart를 운용하는 경우, ChartMuseum은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--storage-amazon-prefix&lt;/code&gt; 옵션을 바꿔가며 실행해야 하지만,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add&lt;/code&gt; 명령어 뒤에 &lt;strong&gt;prefix&lt;/strong&gt;만 바꿔 바로 사용할 수 있으므로 훨씬 유용한 것 같습니다.
+GCP나 Azure와 같은 다른 Object Storage를 함께 사용하는 게 아니라면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;로 구축하는 것이 좋겠네요.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS에서 Helm chart repositories를 운영하는 방법</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">SCP 알아보기</title>
@@ -1653,161 +1828,6 @@ Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, &lt
 
       
         <summary type="html">본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Using the awslogs log driver in ECS(Fargate)</title>
-      <link href="https://heuristicwave.github.io/ECS_CW_Logs" rel="alternate" type="text/html" title="Using the awslogs log driver in ECS(Fargate)" />
-      <published>2022-03-01T00:00:00+00:00</published>
-      <updated>2022-03-01T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/ECS_CW_Logs</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/ECS_CW_Logs">&lt;p&gt;ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다.
-Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 
-아래 요소들을 고민해 볼 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AmazonECS/latest/developerguide/using_awslogs.html&quot;&gt;Using the awslogs log driver&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Regular_expression&quot;&gt;Regular expression Wikipedia&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;fargate에서-필요한-awslogs-로그-드라이버&quot;&gt;Fargate에서 필요한 awslogs 로그 드라이버&lt;/h2&gt;
-
-&lt;p&gt;공식 문서에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-region&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-group&lt;/code&gt; 만이 필요하다고 하지만, &lt;strong&gt;Fargate&lt;/strong&gt;를 사용하는 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-stream-prefix&lt;/code&gt;이 추가적으로 필요합니다.
-또한, 가시성을 확보하기 위해 CloudWatch Logs에 수집된 여러 줄의 로그를 하나의 메시지로 보기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-multiline-pattern&lt;/code&gt;이 필수적으로 필요합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;awslogs-multiline-pattern&quot;&gt;awslogs-multiline-pattern&lt;/h3&gt;
-
-&lt;p&gt;공식 문서의 Note 부분을 보면 다음과 같은 메모를 확인할 수 있습니다. &lt;em&gt;(정말 공식 문서는 한 줄도 그냥 지나칠 수 없는 것 같습니다!)&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Multiline logging performs regular expression parsing and matching of all log messages.
-This may have a negative impact on logging performance.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;실제로 저는 정규 표현식을 간과하고 검증되지 않은 정규식들을 적용했다가 다음과 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Negative Impact&lt;/code&gt;를 만났습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;로그가 수집되기까지의 지나친 지연 시간 발생 (10분 이상)&lt;/li&gt;
-  &lt;li&gt;지연시간으로 인한 Timestamp 불일치 (Ingestion time과 Event Timestamp의 과도한 오차)&lt;/li&gt;
-  &lt;li&gt;1, 2번 이유로 인한 로그 미수집&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;regular-expression-lab&quot;&gt;Regular Expression Lab&lt;/h2&gt;
-
-&lt;p&gt;지금부터 예시들을 통해, CW Logs를 운영하며 만날 수 있는 상황들을 체험해 보겠습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;em&gt;샘플 로그를 복사하여 &lt;a href=&quot;https://regexr.com&quot;&gt;RegExr&lt;/a&gt;에서 match 여부를 테스트해 볼 수 있습니다.&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;case-1️⃣&quot;&gt;Case 1️⃣&lt;/h3&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;awslogs-multiline-pattern&lt;/code&gt;의 &lt;strong&gt;value&lt;/strong&gt;로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;^INFO&lt;/code&gt;를 설정할 경우 3개의 Line 중 match 되는 라인은 몇 라인일까요?&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;# Line 1&lt;/span&gt;
-INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                &lt;span class=&quot;c&quot;&gt;# Line 2&lt;/span&gt;
-12:15:10 UTC | INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104 &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;LogStats&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# Line 3&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-&lt;details&gt;
-  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
-
-  &lt;blockquote&gt;
-    &lt;p&gt;&lt;strong&gt;INFO&lt;/strong&gt; | (pkg/trace/info/stats.go:104 in LogStats)                # Line 1&lt;/p&gt;
-  &lt;/blockquote&gt;
-
-  &lt;p&gt;^(caret) 은 전체 문자열의 시작 위치에만 일치하므로, Line 1 만이 match 됩니다.&lt;/p&gt;
-
-&lt;/details&gt;
-
-&lt;h3 id=&quot;case-2️⃣&quot;&gt;Case 2️⃣&lt;/h3&gt;
-
-&lt;p&gt;다음은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;시:분:초&lt;/code&gt;를 표현하는 정규 표현식 입니다. 해당 정규 표현식은 아래 3줄을 모두 Match 시킬 수 있을까요? &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[1-9]|1[0-9]|2[0-4]):(0[1-9]|[1-5][0-9]):(0[1-9]|[1-5][0-9])&lt;/code&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;07:36:35 | Which line will match? Line 1
-08:00:01 | I am Line 2!
-08:01:00 | I am Line 3!
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;🖍 정답 보기&lt;/summary&gt;
-
-  &lt;blockquote&gt;
-    &lt;p&gt;&lt;strong&gt;07:36:35&lt;/strong&gt; | I was matched &lt;br /&gt;
-08:00:01 | I was not matched! &lt;br /&gt;
-08:01:00 | I was not matched! &lt;br /&gt;&lt;/p&gt;
-  &lt;/blockquote&gt;
-
-  &lt;p&gt;그렇다면 왜? 첫 번째 라인만이 매칭되었을까요? &lt;strong&gt;분, 초&lt;/strong&gt;에 해당하는 표현식을 유심히 살펴보면 00분 00시는 매칭되지 않습니다.
-때문에 각각 (분 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[0-9]|[1-5][0-9])&lt;/code&gt;, 초 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;(0[0-9]|[1-5][0-9])&lt;/code&gt;)로 수정해야 위 3줄을 매칭 시킬 수 있습니다.&lt;/p&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;other-case&quot;&gt;Other Case&lt;/h3&gt;
-
-&lt;p&gt;위 2가지 케이스만 준비된다면 모든 로그들을 제대로 분리하여 수집할 수 있을까요?&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;🤔 생각해보기&lt;/summary&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;Flag가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;INFO&lt;/code&gt; 형식이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;WARN&lt;/code&gt;이 발생할 경우&lt;/li&gt;
-    &lt;li&gt;Timestamp로 매칭 작업을 하는데 한 줄에 1회 이상 Timestamp가 포함된 경우
-      &lt;blockquote&gt;
-        &lt;p&gt;ex) &lt;strong&gt;08:00:01&lt;/strong&gt; | It’s &lt;strong&gt;08:02:03&lt;/strong&gt; right now.&lt;/p&gt;
-      &lt;/blockquote&gt;
-    &lt;/li&gt;
-    &lt;li&gt;Application Crash로 인한 예상치 못한 메시지가 포함될 경우&lt;/li&gt;
-    &lt;li&gt;awslogs 로그 드라이버 내의 우선순위&lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/details&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;아마도 위에 기재한 것들 외에도 더 고려 할 것들이 많을 것 같습니다.
-개발이나 알고리즘 문제를 풀 때와 마찬가지로 항상 예상치 못한 실패 지점을 예상하는 습관이 필요한 것 같습니다.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;ECS Error Handling and Troubleshooting&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_Exec&quot;&gt;Using Amazon ECS Exec for debugging&lt;/a&gt;&lt;/li&gt;
-    &lt;li&gt;&lt;a href=&quot;./ECS_CW_Logs&quot;&gt;Using the awslogs log driver in ECS(Fargate)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-
-      
-        <summary type="html">ECS Task의 컨테이너가 생산하는 로그들은 CloudWatch를 활용하여 수집할 수 있습니다. Cloudwatch Logs를 운영하며 로그 적재가 제대로 되지 않거나, Timestamp가 일치하지 않거나, 지나친 지연 시간이 발생하거나, 알아보기 어려운 형태로 로그가 쌓인다면 아래 요소들을 고민해 볼 수 있습니다.</summary>
       
 
       

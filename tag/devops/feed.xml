@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/devops/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-05-09T06:37:47+00:00</updated>
+  <updated>2023-05-23T02:29:50+00:00</updated>
   <id>https://heuristicwave.github.io/tag/devops/feed.xml</id>
 
   
@@ -30,6 +30,181 @@
   
   
 
+  
+    <entry>
+      <title type="html">The Chart Repository in AWS</title>
+      <link href="https://heuristicwave.github.io/Chart" rel="alternate" type="text/html" title="The Chart Repository in AWS" />
+      <published>2023-05-23T00:00:00+00:00</published>
+      <updated>2023-05-23T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Chart</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Chart">&lt;p&gt;AWS에서 Helm chart repositories를 운영하는 방법&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다.
+이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;️-background-knowledge&quot;&gt;🏞️ Background knowledge&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Helm&lt;/strong&gt;은 쿠버네티스를 위한 패키지 관리 도구입니다. &lt;strong&gt;Chart&lt;/strong&gt;라는 파일 형식으로 패키징 하며, 차트를 통해 설치, 업그레이드 롤백을 간편하게 해줍니다.
+&lt;strong&gt;Repository&lt;/strong&gt;는 차트를 모으고 공유할 수 있는 곳으로, 하나의 저장소에서 여러 개의 Chart를 관리할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;공식 차트 저장소 &lt;a href=&quot;https://artifacthub.io/&quot;&gt;ArtifactHUB&lt;/a&gt;를 활용할 수도 있고, 다음과 같이 자신만의 차트를 만들 수도 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Local 활용 (&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo index {PATH}&lt;/code&gt;, 로컬을 backend로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성&lt;/em&gt;)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@mattiaperi/create-a-public-helm-chart-repository-with-github-pages-49b180dbb417&quot;&gt;GitHub Pages를 활용한 Public Helm Chart 구축&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jasiek-petryk.medium.com/setting-up-a-private-helm-chart-repository-on-github-4a767703cec8&quot;&gt;GitHub에서 Private Helm chart 저장소 설정&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;참고 : &lt;a href=&quot;https://helm.sh/docs/topics/chart_repository/&quot;&gt;The Chart Repository Guide&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;amazon-s3로-helm-repository-구축하기&quot;&gt;Amazon S3로 Helm Repository 구축하기&lt;/h1&gt;
+
+&lt;p&gt;Helm을 패키징 하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tgz&lt;/code&gt; 형식의 아카이브 파일이 생성되며, 이런 차트 파일은 주로 Amazon S3와 같은 Object storage를 백엔드로 사용합니다.
+AWS 환경에서 S3를 사용해 Chart를 구축하는 방법에 대하여 다음 2가지 방법으로 알아보겠습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Helm Project에서 관리되는 &lt;a href=&quot;https://chartmuseum.com/&quot;&gt;ChartMuseum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;AWS Prescriptive Guidance, &lt;a href=&quot;https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;Set up a Helm v3 chart repository in Amazon S3&lt;/a&gt;에 소개된 &lt;a href=&quot;https://github.com/hypnoglow/helm-s3&quot;&gt;helm-s3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;️-chartmuseum-using-amazon-s3&quot;&gt;🏛️ ChartMuseum using Amazon S3&lt;/h2&gt;
+
+&lt;p&gt;ChartMuseum은 Amazon 외에도 DigitalOcean, Google Cloud, Microsoft Azure 등 다양한 Storage를 백엔드로 지원합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;architecture&quot;&gt;Architecture&lt;/h3&gt;
+
+&lt;p&gt;Helm Client의 경우 AWS Cloud 내 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt; 혹은 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 모두 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/architecture/chartmuseum.png&quot; alt=&quot;chartmuseum&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;process&quot;&gt;Process&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#installation&quot;&gt;Installation&lt;/a&gt;을 참고하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GoFish&lt;/code&gt; 혹은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt;로 설치&lt;/li&gt;
+  &lt;li&gt;테스트를 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart&lt;/code&gt;라는 임의의 차트 생성 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm create mychart&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;helm repository에 담을 차트를 패키지화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm package ./mychart&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;2. Chartmuseum 실행 및 Repository 추가&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#using-amazon-s3&quot;&gt;Using with Amazon S3&lt;/a&gt;에 기재된 대로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;endpoint&lt;/code&gt;를 설정하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IAM&lt;/code&gt; 권한을 부여&lt;/li&gt;
+  &lt;li&gt;다음 명령어로 chartmuseum을 실행시키고 Helm Client의 URL에 접속하여 동작 여부 확인 &lt;br /&gt; &lt;em&gt;Helm Client가 local인 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost:8080&lt;/code&gt;에서 확인 가능&lt;/em&gt;
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;chartmuseum &lt;span class=&quot;nt&quot;&gt;--debug&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8080 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-bucket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;my-s3-bucket&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-region&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;us-east-1&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;다음 명령어로 repository를 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add my-chart http://localhost:8080&lt;/code&gt; &lt;br /&gt; &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt; 명령어로 확인 가능&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;다음 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/chartmuseum/helm-push&lt;/code&gt; &lt;br /&gt;
+&lt;a href=&quot;https://github.com/chartmuseum/helm-push&quot;&gt;helm-push&lt;/a&gt; 플러그인을 다운로드하고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push --help&lt;/code&gt; 명령어로 설치 여부 확인&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cm-push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push mychart/ my-chart&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;정상적으로 패키지가 올라가면 아래와 같이 S3 콘솔에서 확인 가능
+&lt;img src=&quot;../../assets/built/images/post/aws/chartmuseum-s3.png&quot; alt=&quot;s3-chart.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;️-helm-v3-chart-repository-using-helm-s3&quot;&gt;☁️ Helm v3 chart repository using helm-s3&lt;/h2&gt;
+
+&lt;p&gt;이번에는 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;AWS 공식 문서&lt;/a&gt;에 소개 &lt;strong&gt;helm-s3&lt;/strong&gt; 플러그인을 사용해 AWS Native 하게 구축하는 방법을 알아보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;architecture-1&quot;&gt;Architecture&lt;/h3&gt;
+
+&lt;p&gt;문서에서는 AWS Native 하게 사용하는 방법을 안내하기 위해, 로컬 helm 코드를 운영하기 위해 &lt;strong&gt;CodeCommit&lt;/strong&gt;과, Helm Client로 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt;를 사용하고 있습니다.
+ChartMuseum 구축 때와 마찬가지로 Helm Client를 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 혹은 CodeCommit을 다른 형상관리 도구로 대체 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://docs.aws.amazon.com/images/prescriptive-guidance/latest/patterns/images/pattern-img/1dbd3db8-5819-4f30-bebd-a144a2075fcd/images/55652eb2-2e11-4b14-9ed4-0cdcf55cc3e6.png&quot; alt=&quot;helm-s3&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🧐 해당 방식에서는 &lt;strong&gt;Source code management&lt;/strong&gt; 목적으로 CodeCommit을 사용하고 있습니다. &lt;br /&gt;
+즉, &lt;strong&gt;소스 코드 및 리소스의 버전 관리&lt;/strong&gt;로 CodeCommit을 사용하고 &lt;strong&gt;차트 파일의 저장과 배포&lt;/strong&gt;에 S3을 사용하고 있습니다. &lt;br /&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;❗️ CodeCommit을 소스 코드 버전 관리 목적 외에도 ArgoCD와 통합하여 배포에도 사용할 수 있습니다. &lt;br /&gt;
+&lt;a href=&quot;https://catalog.us-east-1.prod.workshops.aws/workshops/9c0aa9ab-90a9-44a6-abe1-8dff360ae428/ko-KR/110-cicd/110-cicd&quot;&gt;AWS Workshop&lt;/a&gt;의 Helm Repo로 CodeCommit을 사용하는 방법도 있으니 참고하시기 바랍니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;process-1&quot;&gt;Process&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;고유한 S3 버킷 생성 후, 버킷에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stable/myapp&lt;/code&gt; 폴더를 생성&lt;/li&gt;
+  &lt;li&gt;helm-s3 플러그인 설치 :  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/hypnoglow/helm-s3.git&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;2. S3 버킷 초기화 및 추가&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;S3 폴더를 Helm Repository로 초기화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 init s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성되었는지 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 ls s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Helm 클라이언트에 Repository 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add stable-myapp s3://{YOUR_BUCKET}/stable/myapp/&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Repository 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ChartMuseum 구축에서 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart-*.tgz&lt;/code&gt; 파일 활용&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3 push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 push ./mychart-0.1.0.tgz stable-myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;정상적으로 패키지가 올라가면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt;에 업로드 정보가 갱신되며, 다음과 같이 S3에서 확인 가능
+&lt;img src=&quot;../../assets/built/images/post/aws/helm-s3.png&quot; alt=&quot;helm-s3.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;첫 번째 방법에서는, ChartMuseum을 실행시키고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-push&lt;/code&gt; 플러그인을 활용하여 차트를 업로드했습니다.
+반면 두 번째 방법에서는 ChartMuseum과 같은 업로드 계층 없이, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 플러그인을 활용하여 Direct로 차트를 업로드했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 사용하는 방식이 ChartMuseum과 같은 Layer가 없어 사용이 편리합니다.
+그뿐만 아니라 여러 개의 Chart를 운용하는 경우, ChartMuseum은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--storage-amazon-prefix&lt;/code&gt; 옵션을 바꿔가며 실행해야 하지만,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add&lt;/code&gt; 명령어 뒤에 &lt;strong&gt;prefix&lt;/strong&gt;만 바꿔 바로 사용할 수 있으므로 훨씬 유용한 것 같습니다.
+GCP나 Azure와 같은 다른 Object Storage를 함께 사용하는 게 아니라면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;로 구축하는 것이 좋겠네요.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS에서 Helm chart repositories를 운영하는 방법</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Automating git submodules with AWS Code Series (Build, Pipeline)</title>
@@ -1538,217 +1713,6 @@ INFO | &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;pkg/trace/info/stats.go:104
 
       
         <summary type="html">Docker에서는 exec 명령어를 통해 실행중인 컨테이너에 접속하여 디버깅이 가능하다. 21년 3월 부터 해당 기능이 AWS의 ECS에서도 사용가능하게 되었는데, 해당 기능을 사용하며 만났던 문제들을 기록.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Create Immutable Server using AWS Image Builder &amp;amp; Auto Scaling Group</title>
-      <link href="https://heuristicwave.github.io/ImageBuilder" rel="alternate" type="text/html" title="Create Immutable Server using AWS Image Builder &amp; Auto Scaling Group" />
-      <published>2022-02-21T00:00:00+00:00</published>
-      <updated>2022-02-21T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/ImageBuilder</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/ImageBuilder">&lt;p&gt;본 글은 2021년 4월 30일 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/04/ec2-image-builder-supports-auto-scaling-launch-template/&quot;&gt;EC2 Image Builder supports Auto Scaling launch template&lt;/a&gt;에
-소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고,
-해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;클라우드를 다루다 보면 &lt;strong&gt;Netflix&lt;/strong&gt; 가 여러 분야에서 앞장서 있는 것을 확인할 수 있습니다.
-그중에서 Immutable Server Pattern을 알리는데 기여한 2013년에 발간된 &lt;a href=&quot;https://netflixtechblog.com/ami-creation-with-aminator-98d627ca37b0&quot;&gt;AMI Creation with Aminator&lt;/a&gt;를
-꼭 한번 읽어보시기 바랍니다. 과거 넷플릭스는 AWS의 이미지 파일을 생성하기 위해 Aminator라는 도구를 사용했지만,
-본 포스팅에서는 이미지 빌더로 AMI를 만들고 Auto Scaling Group에 적용시키는 방법을 배워 Immutable Server Pattern을 학습해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;immutable-server&quot;&gt;Immutable Server&lt;/h2&gt;
-
-&lt;p&gt;Immutable Server 대한 내용은 martin fowler 블로그에 소개된 &lt;a href=&quot;https://martinfowler.com/bliki/ImmutableServer.html&quot;&gt;ImmutableServer&lt;/a&gt;
-글을 보시면 굉장히 잘 설명되어 있습니다. 요약 + 그동안의 제 뇌피셜을 함께 말씀드리면 다음과 같습니다.&lt;/p&gt;
-
-&lt;p&gt;서버를 운영하다 보면 업데이트를 비롯한 다양한 이슈들로 인해 구성요소가 자주 변하게 됩니다.
-그렇게 운영하다 보면 무언가 꼬여 서버를 재 생성하는 일이 발생하는데 아래와 같은 라이프 사이클을 만나게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://martinfowler.com/bliki/images/immutableServer/PhoenixServerLifecycle.png&quot; alt=&quot;phoenixServerLifecycle&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이런 상황에서 구성이 다른 여러 대의 서버를 가지게 되면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Configuration drift&lt;/code&gt;가 발생했다고 표현합니다.
-또한 위 그림처럼 자꾸 새로운 이미지로 회귀하니까, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Shift Left&lt;/code&gt;라고도 표현하고 이를 한국어로 표현하는 말을 찾아보니 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;원점 회귀&lt;/code&gt;라는 표현도 쓰입니다.&lt;/p&gt;
-
-&lt;p&gt;구성 변경이 잦은 서버는 깨지기(fragile) 쉽고, 또 장애가 발생할 경우 재현이 어려울뿐더러 변경 시 연쇄적인 장애를 유발할 가능성이 있습니다.
-이를 두고 깨지기 쉬운 눈송이 같다 하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Snowflake Server&lt;/code&gt;라 부릅니다.
-이 상황을 피하기 위해, Configuration drift를 피하는 Base Image(Configuration이 발생하면 새롭게 생성)를 활용한 방법을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Phoenix Server&lt;/code&gt;
-라 부릅니다. &lt;em&gt;(&lt;a href=&quot;https://martinfowler.com/bliki/PhoenixServer.html&quot;&gt;Phoenix Server&lt;/a&gt; 용어는 마틴 파울러의 동료 &lt;a href=&quot;https://twitter.com/kornys&quot;&gt;Kornelis Sietsma&lt;/a&gt;가 제안했다 합니다.)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/immutableServer.png&quot; alt=&quot;immutableServer&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;피닉스 서버의 개념은 기본 이미지(Base AMI, Golden AMI)를 통해 언제나 일관성 있는 환경을 제공했고,
-이러한 개념들이 자연스럽게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Immutable Server&lt;/code&gt;의 개념으로 이어졌습니다.
-&lt;em&gt;(최근에는 Immutable Server를 넘어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Immutable Infrastructure&lt;/code&gt;의 개념도 있습니다!)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;이미지-빌더와-오토-스케일-그룹으로-이뮤터블-서버-구축하기&quot;&gt;이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 구축하기&lt;/h2&gt;
-
-&lt;p&gt;클라우드에서의 Immutable Server Pattern 검색하면 아래와 같은 좋은 예시들이 나옵니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/mt/create-immutable-servers-using-ec2-image-builder-aws-codepipeline/&quot;&gt;Create immutable servers using EC2 Image Builder and AWS CodePipeline&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://cloudblogs.microsoft.com/opensource/2018/05/23/immutable-infrastructure-azure-vsts-terraform-packer-ansible/&quot;&gt;Tutorial: Immutable infrastructure for Azure, using VSTS, Terraform, Packer and Ansible&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.hashicorp.com/tutorials/terraform/packer&quot;&gt;Provision Infrastructure with Packer&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://heuristicwave.github.io/Packer&quot;&gt;하시코프 튜토리얼을 보고 만든 필자의 블로그 🥲&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;그러나 이제부터 다룰, 이미지 빌더와 오토 스케일 그룹으로 이뮤터블 서버 패턴을 만족시킬 수 있습니다.
-AWS에서 제공하는 AutoScale은 탄력적인 확장과 축소를 제공하지만 Desired Capacity 기능을 활용해 항상 동일한 서버의 수를 유지할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/imagebuilder.png&quot; alt=&quot;imageBuilder&quot; /&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Image Builder의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Image pipelines&lt;/code&gt;를 활용해 원본 AMI로부터 원하는 형태의 Output(Custom/Golden/Base AMI)을 제작합니다.&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Distribution settings&lt;/code&gt;을 통해 lt(Launch Template)에 1번에서 생성한 AMI로 교체하여 새로운 버전을 만듭니다.&lt;/li&gt;
-  &lt;li&gt;이제, 새롭게 생성되는 ASG(Auto Scaling Group)은 새롭게 버전 업된 lt를 통해 인스턴스를 생성합니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;em&gt;3번의 ASG의 경우, Refresh를 하기 전까지는 이전 상태의 lt를 기준으로 인스턴스가 운영되고 있습니다.
-이미지 생성과 동시에 새로운 AMI로 EC2 Refresh를 할 수 있는 방법이 있지만,
-새롭게 생성된 인스턴스가 운영환경에 바로 적용되는 것은 바람직하지 않으므로 해당 부분에 대한 자동화는 제외하였습니다.
-만약 검증된 AMI를 생성한다면, Lambda 혹은 기타 방법 등을 통해 Refresh 하여 이미지 생성부터 배포까지 자동화할 수 있습니다.&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;추후 다른 포스팅에서 자세히 다룰 예정이지만, 이러한 패턴은 Immutable Infrastructure의 한 요소를 이루기도 합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-workshop&quot;&gt;📜 Workshop&lt;/h2&gt;
-
-&lt;h3 id=&quot;0️⃣-launch-template--auto-scaling-groups-생성&quot;&gt;0️⃣ Launch Template &amp;amp; Auto Scaling groups 생성&lt;/h3&gt;
-
-&lt;p&gt;기존 환경에 0️⃣이 준비되어 있다면 다음 단계인 &lt;strong&gt;Distribution settings&lt;/strong&gt;으로 넘어가도 좋습니다.&lt;/p&gt;
-
-&lt;p&gt;해당 단계는 제가 굉장히 게으른 관계로 AWS Documentation : &lt;a href=&quot;https://docs.aws.amazon.com/autoscaling/ec2/userguide/create-asg-launch-template.html&quot;&gt;Creating an Auto Scaling group using a launch template&lt;/a&gt;로 대체하겠습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 만약 기존 환경이 Launch Template이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Launch Configurations&lt;/code&gt;으로 구성되어 있을 경우,
-콘솔 화면에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Copy to launch template&lt;/code&gt; 버튼을 누르시면 손쉽게 lt로 변경 가능합니다. &lt;br /&gt;
-💡 Launch Template과 Launch Configurations는 굉장히 유사하지만, Launch Template의 경우 더 다양한 기능들을 제공합니다.
-특히 버전관리 기능을 통해 Rollback을 하거나, 업데이트시 ASG를 활용한 Rolling Update가 가능해 Launch Template 사용을 권장합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;1️⃣-distribution-settings&quot;&gt;1️⃣ Distribution settings&lt;/h3&gt;
-
-&lt;p&gt;EC2 Image Builder 콘솔 화면에 접속해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Distribution settings&lt;/code&gt;에서 새로운 세팅을 생성합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/distribution.png&quot; alt=&quot;distribution&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;필수 항목인 이름을 작성하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Region settings&lt;/code&gt;에서 배포할 리전을 확인한 후,
-하단의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Launch template configuration&lt;/code&gt;에서 Step 0️⃣에서 작성한 lt를 지정하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create settings&lt;/code&gt;로 생성합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;2️⃣-image-pipelines&quot;&gt;2️⃣ Image pipelines&lt;/h3&gt;
-
-&lt;h4 id=&quot;step-1&quot;&gt;Step 1&lt;/h4&gt;
-
-&lt;p&gt;Distribution settings 작성이 완료되었다면, 콘솔에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Image pipelines&lt;/code&gt;에 접속하여 아래 정보들을 기재합니다.
-아래 사진의 좌측 Step 5까지의 과정을 거치면 목표로 했던 환경이 완성됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/imagepipeline.png&quot; alt=&quot;pipeline&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Build schedule&lt;/code&gt;에서는 주기적으로 파이프라인을 실행할 수 있는 방법들을 제공하는데 운영자가 원하는 방식으로 설정할 수 있습니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;step-2&quot;&gt;Step 2&lt;/h4&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Choose recipe&lt;/code&gt; 단계에서는 기존에 만들어둔 &lt;strong&gt;recipe&lt;/strong&gt;가 없으므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create new recipe&lt;/code&gt;를 선택하고, &lt;strong&gt;Image type&lt;/strong&gt;으로 &lt;strong&gt;AMI&lt;/strong&gt;를 선택합니다.&lt;/p&gt;
-
-&lt;p&gt;다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Base image&lt;/code&gt;를 고르는 단계에서는 아래 화면과 같이 &lt;strong&gt;관리형 이미지&lt;/strong&gt;를 사용하거나 기존에 작성한 &lt;strong&gt;Custom AMI ID&lt;/strong&gt;를 사용해도 됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/baseimage.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Instance configuration&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Working directory&lt;/code&gt;에서는 &lt;strong&gt;기본 값&lt;/strong&gt;으로 둬도 상관없지만
-&lt;strong&gt;SSM, User data, Working directory path&lt;/strong&gt;의 필요 여부에 따라 활용하시면 됩니다.&lt;/p&gt;
-
-&lt;p&gt;이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Components&lt;/code&gt;에서는 Golden AMI를 구축하기 위해 선행되어야 하는 각종 Agent나 소프트웨어(Apache, dotnet etc)를 선택할 수 있습니다.
-저는 편의상 CloudWatch Agent를 선택했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/components.png&quot; alt=&quot;components&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;그다음 이어지는 &lt;strong&gt;Test components, Storage, Tags&lt;/strong&gt; 역시 필요 여부에 따라 활용하시면 됩니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;step-3&quot;&gt;Step 3&lt;/h4&gt;
-
-&lt;p&gt;3단계에 진입하면 아래 사진과 같이 이미지 빌더의 인프라 Config 값들을 정의할 수 있는 공간이 나옵니다.
-3번째 버튼인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create New infrastructure configuration&lt;/code&gt;으로 직접 인스턴스 유형, 네트워크, SNS topic을 설정이 가능하지만,
-저는 1번 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create infrastructure configuration using service defaults&lt;/code&gt;로 기본 구성 값들을 잡아주었습니다.
-(IAM Role과 SNS Topic도 자동으로 생성해 주고 굉장히 편리하네요.)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/defineconfig.png&quot; alt=&quot;config&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;step-4&quot;&gt;Step 4&lt;/h4&gt;
-
-&lt;p&gt;드디어, 이전 &lt;strong&gt;1️⃣ Distribution settings&lt;/strong&gt; 과정에서 만들어둔 &lt;strong&gt;배포 설정&lt;/strong&gt; 해당 단계에서 선택합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/associatelt.png&quot; alt=&quot;asso&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;step-5&quot;&gt;Step 5&lt;/h4&gt;
-
-&lt;p&gt;Review 단계까지 구성 요소들을 검토해 보고 Create pipeline을 누르고 Image pipelines 콘솔로 돌아오면 아래와 같은 화면을 만나게 됩니다.
-아래 캡처화면의 경우 이미 빌드가 끝난 상태이지만, 테스트를 위해서 &lt;strong&gt;Actions - Run pipeline&lt;/strong&gt; 단계를 거치면,
-ec2 콘솔에서 image build를 위한 builder 인스턴스가 생성되고 종료되는 것을 과정을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/imagebuilder/imgconsole.png&quot; alt=&quot;console&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;3️⃣-review&quot;&gt;3️⃣ Review&lt;/h3&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;strong&gt;EC2 - Images - AMIs&lt;/strong&gt;에서 새롭게 생성된 AMI 확인&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;EC2 - Launch templates&lt;/strong&gt;에서 새롭게 버전이 올라간 lt 확인, 여기서 Versions 정보를 누르면 Image Builder가 생성한 Description을 확인할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/imagebuilder/version.png&quot; alt=&quot;version&quot; /&gt;&lt;/li&gt;
-  &lt;li&gt;제대로 작동하는지 확인하기 위해 기존의 EC2 하나를 종료시키면, 저의 경우 ASG의 Desired가 2로 설정했으므로 하나의 인스턴스가 새로운 버전으로 변경됩니다.
-이는 &lt;strong&gt;EC2 - Auto Scaling groups&lt;/strong&gt;에서 확인할 수 있습니다.
-&lt;img src=&quot;../../assets/built/images/post/imagebuilder/asg.png&quot; alt=&quot;asg&quot; /&gt;&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;4️⃣-clean-up&quot;&gt;4️⃣ Clean Up&lt;/h3&gt;
-
-&lt;p&gt;분해는 조립의 역순으로?! 2️⃣ -&amp;gt; 1️⃣ -&amp;gt; 0️⃣ 역순으로 리소스를 정리하고 3️⃣ Review 항목을 점검하여 모든 리소스가 회수되었는지 확인합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 각종 이야기 거리들과 EC2 Image Builder를 사용하며 Immutable Server Pattern을 학습해 보았습니다.
-과거 제가 Packer로 관련 환경을 구축한 적이 있는데, 역시 AWS 환경에서는 AWS의 서비스를 사용하는 게 연계도 용이하고 구축도 쉽네요.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;📚 References&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;글 중간중간 하이퍼 링크로 Reference 들을 달아두었습니다.
-특히, 이번 포스팅 레퍼런스들은 좋은 내용들이 많으니 원본들을 읽어보시고 당시 제가 느낀 기쁨들을 함께 느낄수 있으면 좋겠습니다.&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-
-      
-        <summary type="html">본 글은 2021년 4월 30일 EC2 Image Builder supports Auto Scaling launch template에 소개된 기능을 활용해 Image Builder로 Golden AMI를 만들고, 해당 이미지로 Auto Scaling Group의 launch template을 업데이트하는 방법을 소개합니다.</summary>
       
 
       

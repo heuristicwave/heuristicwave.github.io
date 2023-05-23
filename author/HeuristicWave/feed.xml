@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-05-09T06:37:47+00:00</updated>
+  <updated>2023-05-23T02:29:50+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -30,6 +30,181 @@
   
   
 
+  
+    <entry>
+      <title type="html">The Chart Repository in AWS</title>
+      <link href="https://heuristicwave.github.io/Chart" rel="alternate" type="text/html" title="The Chart Repository in AWS" />
+      <published>2023-05-23T00:00:00+00:00</published>
+      <updated>2023-05-23T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Chart</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Chart">&lt;p&gt;AWS에서 Helm chart repositories를 운영하는 방법&lt;/p&gt;
+
+&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
+
+&lt;p&gt;AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다.
+이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;️-background-knowledge&quot;&gt;🏞️ Background knowledge&lt;/h2&gt;
+
+&lt;p&gt;&lt;strong&gt;Helm&lt;/strong&gt;은 쿠버네티스를 위한 패키지 관리 도구입니다. &lt;strong&gt;Chart&lt;/strong&gt;라는 파일 형식으로 패키징 하며, 차트를 통해 설치, 업그레이드 롤백을 간편하게 해줍니다.
+&lt;strong&gt;Repository&lt;/strong&gt;는 차트를 모으고 공유할 수 있는 곳으로, 하나의 저장소에서 여러 개의 Chart를 관리할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;공식 차트 저장소 &lt;a href=&quot;https://artifacthub.io/&quot;&gt;ArtifactHUB&lt;/a&gt;를 활용할 수도 있고, 다음과 같이 자신만의 차트를 만들 수도 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Local 활용 (&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo index {PATH}&lt;/code&gt;, 로컬을 backend로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성&lt;/em&gt;)&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://medium.com/@mattiaperi/create-a-public-helm-chart-repository-with-github-pages-49b180dbb417&quot;&gt;GitHub Pages를 활용한 Public Helm Chart 구축&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://jasiek-petryk.medium.com/setting-up-a-private-helm-chart-repository-on-github-4a767703cec8&quot;&gt;GitHub에서 Private Helm chart 저장소 설정&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;참고 : &lt;a href=&quot;https://helm.sh/docs/topics/chart_repository/&quot;&gt;The Chart Repository Guide&lt;/a&gt;&lt;/p&gt;
+
+&lt;h1 id=&quot;amazon-s3로-helm-repository-구축하기&quot;&gt;Amazon S3로 Helm Repository 구축하기&lt;/h1&gt;
+
+&lt;p&gt;Helm을 패키징 하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tgz&lt;/code&gt; 형식의 아카이브 파일이 생성되며, 이런 차트 파일은 주로 Amazon S3와 같은 Object storage를 백엔드로 사용합니다.
+AWS 환경에서 S3를 사용해 Chart를 구축하는 방법에 대하여 다음 2가지 방법으로 알아보겠습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Helm Project에서 관리되는 &lt;a href=&quot;https://chartmuseum.com/&quot;&gt;ChartMuseum&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;AWS Prescriptive Guidance, &lt;a href=&quot;https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;Set up a Helm v3 chart repository in Amazon S3&lt;/a&gt;에 소개된 &lt;a href=&quot;https://github.com/hypnoglow/helm-s3&quot;&gt;helm-s3&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;️-chartmuseum-using-amazon-s3&quot;&gt;🏛️ ChartMuseum using Amazon S3&lt;/h2&gt;
+
+&lt;p&gt;ChartMuseum은 Amazon 외에도 DigitalOcean, Google Cloud, Microsoft Azure 등 다양한 Storage를 백엔드로 지원합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;architecture&quot;&gt;Architecture&lt;/h3&gt;
+
+&lt;p&gt;Helm Client의 경우 AWS Cloud 내 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt; 혹은 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 모두 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/architecture/chartmuseum.png&quot; alt=&quot;chartmuseum&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;process&quot;&gt;Process&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#installation&quot;&gt;Installation&lt;/a&gt;을 참고하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GoFish&lt;/code&gt; 혹은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt;로 설치&lt;/li&gt;
+  &lt;li&gt;테스트를 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart&lt;/code&gt;라는 임의의 차트 생성 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm create mychart&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;helm repository에 담을 차트를 패키지화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm package ./mychart&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;2. Chartmuseum 실행 및 Repository 추가&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#using-amazon-s3&quot;&gt;Using with Amazon S3&lt;/a&gt;에 기재된 대로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;endpoint&lt;/code&gt;를 설정하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IAM&lt;/code&gt; 권한을 부여&lt;/li&gt;
+  &lt;li&gt;다음 명령어로 chartmuseum을 실행시키고 Helm Client의 URL에 접속하여 동작 여부 확인 &lt;br /&gt; &lt;em&gt;Helm Client가 local인 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost:8080&lt;/code&gt;에서 확인 가능&lt;/em&gt;
+    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;chartmuseum &lt;span class=&quot;nt&quot;&gt;--debug&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8080 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-bucket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;my-s3-bucket&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;nt&quot;&gt;--storage-amazon-region&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;us-east-1&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;다음 명령어로 repository를 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add my-chart http://localhost:8080&lt;/code&gt; &lt;br /&gt; &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt; 명령어로 확인 가능&lt;/em&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;다음 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/chartmuseum/helm-push&lt;/code&gt; &lt;br /&gt;
+&lt;a href=&quot;https://github.com/chartmuseum/helm-push&quot;&gt;helm-push&lt;/a&gt; 플러그인을 다운로드하고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push --help&lt;/code&gt; 명령어로 설치 여부 확인&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cm-push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push mychart/ my-chart&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;정상적으로 패키지가 올라가면 아래와 같이 S3 콘솔에서 확인 가능
+&lt;img src=&quot;../../assets/built/images/post/aws/chartmuseum-s3.png&quot; alt=&quot;s3-chart.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;️-helm-v3-chart-repository-using-helm-s3&quot;&gt;☁️ Helm v3 chart repository using helm-s3&lt;/h2&gt;
+
+&lt;p&gt;이번에는 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;AWS 공식 문서&lt;/a&gt;에 소개 &lt;strong&gt;helm-s3&lt;/strong&gt; 플러그인을 사용해 AWS Native 하게 구축하는 방법을 알아보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;architecture-1&quot;&gt;Architecture&lt;/h3&gt;
+
+&lt;p&gt;문서에서는 AWS Native 하게 사용하는 방법을 안내하기 위해, 로컬 helm 코드를 운영하기 위해 &lt;strong&gt;CodeCommit&lt;/strong&gt;과, Helm Client로 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt;를 사용하고 있습니다.
+ChartMuseum 구축 때와 마찬가지로 Helm Client를 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 혹은 CodeCommit을 다른 형상관리 도구로 대체 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://docs.aws.amazon.com/images/prescriptive-guidance/latest/patterns/images/pattern-img/1dbd3db8-5819-4f30-bebd-a144a2075fcd/images/55652eb2-2e11-4b14-9ed4-0cdcf55cc3e6.png&quot; alt=&quot;helm-s3&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🧐 해당 방식에서는 &lt;strong&gt;Source code management&lt;/strong&gt; 목적으로 CodeCommit을 사용하고 있습니다. &lt;br /&gt;
+즉, &lt;strong&gt;소스 코드 및 리소스의 버전 관리&lt;/strong&gt;로 CodeCommit을 사용하고 &lt;strong&gt;차트 파일의 저장과 배포&lt;/strong&gt;에 S3을 사용하고 있습니다. &lt;br /&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;❗️ CodeCommit을 소스 코드 버전 관리 목적 외에도 ArgoCD와 통합하여 배포에도 사용할 수 있습니다. &lt;br /&gt;
+&lt;a href=&quot;https://catalog.us-east-1.prod.workshops.aws/workshops/9c0aa9ab-90a9-44a6-abe1-8dff360ae428/ko-KR/110-cicd/110-cicd&quot;&gt;AWS Workshop&lt;/a&gt;의 Helm Repo로 CodeCommit을 사용하는 방법도 있으니 참고하시기 바랍니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;process-1&quot;&gt;Process&lt;/h3&gt;
+
+&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;고유한 S3 버킷 생성 후, 버킷에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stable/myapp&lt;/code&gt; 폴더를 생성&lt;/li&gt;
+  &lt;li&gt;helm-s3 플러그인 설치 :  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/hypnoglow/helm-s3.git&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;2. S3 버킷 초기화 및 추가&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;S3 폴더를 Helm Repository로 초기화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 init s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성되었는지 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 ls s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Helm 클라이언트에 Repository 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add stable-myapp s3://{YOUR_BUCKET}/stable/myapp/&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;Repository 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;ChartMuseum 구축에서 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart-*.tgz&lt;/code&gt; 파일 활용&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3 push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 push ./mychart-0.1.0.tgz stable-myapp&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;정상적으로 패키지가 올라가면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt;에 업로드 정보가 갱신되며, 다음과 같이 S3에서 확인 가능
+&lt;img src=&quot;../../assets/built/images/post/aws/helm-s3.png&quot; alt=&quot;helm-s3.png&quot; /&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;첫 번째 방법에서는, ChartMuseum을 실행시키고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-push&lt;/code&gt; 플러그인을 활용하여 차트를 업로드했습니다.
+반면 두 번째 방법에서는 ChartMuseum과 같은 업로드 계층 없이, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 플러그인을 활용하여 Direct로 차트를 업로드했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 사용하는 방식이 ChartMuseum과 같은 Layer가 없어 사용이 편리합니다.
+그뿐만 아니라 여러 개의 Chart를 운용하는 경우, ChartMuseum은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--storage-amazon-prefix&lt;/code&gt; 옵션을 바꿔가며 실행해야 하지만,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add&lt;/code&gt; 명령어 뒤에 &lt;strong&gt;prefix&lt;/strong&gt;만 바꿔 바로 사용할 수 있으므로 훨씬 유용한 것 같습니다.
+GCP나 Azure와 같은 다른 Object Storage를 함께 사용하는 게 아니라면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;로 구축하는 것이 좋겠네요.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="devops" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS에서 Helm chart repositories를 운영하는 방법</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">SCP 알아보기</title>
@@ -1712,348 +1887,6 @@ Kubernetes 1편, Terraform 3편, AWS 서비스 1편을 작성했습니다. Istio
 
       
         <summary type="html">회고 글을 쓰며 드는 생각</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">The Journey to Know OIDC</title>
-      <link href="https://heuristicwave.github.io/OIDC" rel="alternate" type="text/html" title="The Journey to Know OIDC" />
-      <published>2022-09-14T00:00:00+00:00</published>
-      <updated>2022-09-14T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/OIDC</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/OIDC">&lt;p&gt;Journey to OIDC through authentication, authorization, SAML, and OAuth.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;요즘 제 일상에서, OIDC(OpenID Connect)에 대해 많은 이야기가 오고 갔습니다. 그동안 동작 원리도 제대로 알지 못한 채 사용하고 있던 제 모습을 반성하며,
-OIDC를 알아가기 위해 조사한 내용들을 다뤄보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-authentication--authorization&quot;&gt;🥾 Authentication &amp;amp; Authorization&lt;/h2&gt;
-
-&lt;p&gt;OIDC를 향한 여정의 첫걸음은 인증과 인가입니다. 국어로도 비슷한 두 단어는 영어로도 비슷하며 다음과 같이 줄여서 표현하기도 합니다.
-AuthN(인증) &amp;amp; AuthZ(인가, 권한 부여)&lt;/p&gt;
-
-&lt;p&gt;인증과 인가에 관한 설명은 온라인에 굉장히 많지만, 저는 그중에서도 &lt;a href=&quot;https://auth0.com/docs/get-started/identity-fundamentals/authentication-and-authorization#authentication-vs-authorization&quot;&gt;&lt;strong&gt;Auth0(오스제로)&lt;/strong&gt; 사의 문서의 비교표&lt;/a&gt;를 인용하였습니다.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Authentication&lt;/th&gt;
-      &lt;th&gt;Authorization&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;사용자가 자신이 주장하는 사람이 맞는지 결정합니다.&lt;/td&gt;
-      &lt;td&gt;사용자가 접근할 수 있는지 없는지 결정합니다.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;사용자의 자격 증명이 유효한지 확인합니다.&lt;/td&gt;
-      &lt;td&gt;정책과 룰을 통해 접근 여부를 확인합니다.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;통상 인가 전 단계에 진행합니다.&lt;/td&gt;
-      &lt;td&gt;통상 인증 이후 단계에 진행합니다.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;일반적으로 &lt;strong&gt;ID Token&lt;/strong&gt;을 통해 정보를 전송합니다.&lt;/td&gt;
-      &lt;td&gt;일반적으로 &lt;strong&gt;Access Token&lt;/strong&gt;을 통해 정보를 전달합니다.&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;일반적으로 &lt;strong&gt;OIDC 프로토콜&lt;/strong&gt;에 의해 관리됩니다.&lt;/td&gt;
-      &lt;td&gt;일반적으로 &lt;strong&gt;OAuth 2.0 프레임워크&lt;/strong&gt;에 의해 관리됩니다.&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 위 비교표에 &lt;strong&gt;Bold&lt;/strong&gt;처리된 키워드가 오늘 포스팅을 이해하기 위한 핵심 용어이므로 주목해 주세요!&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-oauth-20&quot;&gt;⛰ OAuth 2.0&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;OAuth 2.0 Authorization Framework&lt;/strong&gt;의 &lt;a href=&quot;https://www.rfc-editor.org/rfc/rfc6749&quot;&gt;RFC 문서&lt;/a&gt;의 Abstract 부분을 확인하면 다음과 같이 정의합니다.
-&lt;em&gt;“OAuth 2.0 인가 프레임워크는 서드파티 앱들이 제한된 권한을 얻는 것을 가능하게 해줍니다.”&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;여러분들은 특정 서비스 회사의 애플리케이션을 이용할 때, 구글이나 페이스북으로부터 특정 권한을 받아 서비스를 이용한 경험이 있을 것입니다.
-&lt;strong&gt;구글 계정&lt;/strong&gt; 정보의 &lt;a href=&quot;https://myaccount.google.com/permissions&quot;&gt;내 계정에 액세스할 수 있는 앱&lt;/a&gt;에 들어가 확인해 보시면,
-내 계정이 어떤 앱들이 액세스할 수 있게 권한을 주었는지 확인 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/security/oauth.png&quot; alt=&quot;OAuth 2.0&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 사진을 통해, 구글이 &lt;strong&gt;OAuth 프레임워크&lt;/strong&gt;를 사용해 Meetup, Notion, Slack과 같은 &lt;strong&gt;서드파티 앱&lt;/strong&gt;들에게
-계정의 이메일 주소 확인, 개인정보 보기 등과 같은 &lt;strong&gt;제한된 권한&lt;/strong&gt;에 대하여 &lt;strong&gt;인가&lt;/strong&gt;를 해줬다는 사실을 알 수 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;slack으로-알아보는-oauth-20-flow&quot;&gt;Slack으로 알아보는 OAuth 2.0 Flow&lt;/h3&gt;
-
-&lt;p&gt;OAuth에 워크플로를 알아보기 전에, 자주 언급되는 핵심 용어들을 언급하고 넘어가겠습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Client : 인가를 받는 애플리케이션 (배달의 민족, 야놀자, 오늘의 집 등)&lt;/li&gt;
-  &lt;li&gt;Resource Server : 제어하고자 하는 자원(Protected Resource)을 가진 서버 (구글, 페이스북, 깃헙)&lt;/li&gt;
-  &lt;li&gt;Resource Owner : 자원의 소유자 (end-user)&lt;/li&gt;
-  &lt;li&gt;Authorization Server : AuthZ 처리를 하는 서버&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;다시 &lt;a href=&quot;https://www.rfc-editor.org/rfc/rfc6749&quot;&gt;RFC 문서&lt;/a&gt;로 돌아와서 해당 프로토콜의 Flow를 앞서 보여드린 예시처럼 우리의 경험에 빗대어 설명해 보겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c&quot;&gt;# Abstract Protocol Flow&lt;/span&gt;
-+--------+                               +---------------+
-|        |--&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;A&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;- Authorization Request -&amp;gt;|   Resource    |
-|        |                               |     Owner     |
-|        |&amp;lt;-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;B&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Grant &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;|               |
-|        |                               +---------------+
-|        |
-|        |                               +---------------+
-|        |--&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Grant &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;| Authorization |
-| Client |                               |     Server    |
-|        |&amp;lt;-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;D&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt; Access Token &lt;span class=&quot;nt&quot;&gt;-------&lt;/span&gt;|               |
-|        |                               +---------------+
-|        |
-|        |                               +---------------+
-|        |--&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;E&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-----&lt;/span&gt; Access Token &lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;|    Resource   |
-|        |                               |     Server    |
-|        |&amp;lt;-&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;F&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt; Protected Resource &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;|               |
-+--------+                               +---------------+
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;우선 A &amp;amp; B에 해당하는 Client가 Resource Owner에게 AuthZ를 요청하고 승인 절차를 Slack 로그인을 통해서 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/security/googleOAuth.png&quot; alt=&quot;login&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 이미지에서 Client인 slack은 Google과 Apple 2가지 방식의 OAuth를 제공합니다.
-‘Google로 계속’이라는 버튼(A 단계, AuthZ 요청)을 누르면, slack이 계정의 이름, 이메일, 프로필 사진 등의 정보 공유를 요청했다는 것을 구글의 Authorization Server로부터 받습니다.
-해당 시점의 웹브라우저 URI를 확인하면 다음과 같습니다. &lt;em&gt;(편의상 URI을 쿼리 스트링 단위로 나누고, Decode 하여 표기했습니다.)&lt;/em&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount? &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;client_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;6XXXXXXXX.apps.googleusercontent.com&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;redirect_uri&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;https://oauth2.slack.com/get-started/oauth/google/end&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;scope&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;openid email profile&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;response_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;code&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;access_type&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;offline&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;prompt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;consent&amp;amp; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;flowName&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;GeneralOAuthFlow
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;슬랙의 권한 부여의 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;https://accounts.google.com/{이하 생략}&lt;/code&gt;이라는 Authorization Server의 주소와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;client_id&lt;/code&gt;를 포함한 8개의 querystring으로 구성되어 있습니다.
-여기서 상위 4개의 querystring은 인가를 위한 &lt;strong&gt;필수 파라미터&lt;/strong&gt;입니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;client_id&lt;/code&gt; : client를 식별하기 위해 Register 단계에서 생성된 애플리케이션의 식별자&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redirect_uri&lt;/code&gt; : authorization code를 전달받을 client 서버의 URI&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt; : 인가할 권한을 명시&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;response_type&lt;/code&gt; : code, token 등 OAuth에 적용할 방식의 타입&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;authorization-code-grant&quot;&gt;Authorization Code Grant&lt;/h3&gt;
-
-&lt;p&gt;캡처화면에서는 우리의 웹 브라우저를 통해 A와 B의 단계가 클릭 2번으로 끝나지만, 사실 A와 B 사이에는 더 복잡한 단계들이 숨겨져 있습니다.
-아래 RFC 문서에 기재된 &lt;strong&gt;Authorization Code Grant&lt;/strong&gt;를 살펴보며 A 이후의 단계들을 살짝 보고 넘어가겠습니다. 🫣&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;+----------+
-| Resource |
-|   Owner  |
-|          |
-+----------+
-     ^
-     |
-    &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;B&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-+----|-----+          Client Identifier      +---------------+
-|         -+----&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;A&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; &amp;amp; Redirection URI &lt;span class=&quot;nt&quot;&gt;----&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;|               |
-|  User-   |                                 | Authorization |
-|  Agent  -+----&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;B&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; User authenticates &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt;|     Server    |
-|          |                                 |               |
-|         -+----&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Code &lt;span class=&quot;nt&quot;&gt;---&lt;/span&gt;&amp;lt;|               |
-+-|----|---+                                 +---------------+
-  |    |                                         ^      v
- &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;A&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;  &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;C&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;                                        |      |
-  |    |                                         |      |
-  ^    v                                         |      |
-+---------+                                      |      |
-|         |&amp;gt;---&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;D&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Code &lt;span class=&quot;nt&quot;&gt;---------&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'      |
-|  Client |          &amp;amp; Redirection URI                  |
-|         |                                             |
-|         |&amp;lt;---(E)----- Access Token -------------------'&lt;/span&gt;
-+---------+       &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;w/ Optional Refresh Token&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;위 승인 Flow의 User-Agent는 우리의 웹브라우저입니다. 
-브라우저는 인가 서버의 URI에 querystring으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;client_id&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redirect_uri&lt;/code&gt;를 붙여 인가 서버에 전달하면(A),
-인가 서버는 &lt;strong&gt;검증&lt;/strong&gt; 작업을 거쳐 &lt;strong&gt;Authorization Code&lt;/strong&gt;을 발급(C) 합니다.
-&lt;strong&gt;Authorization Code&lt;/strong&gt;를 받은 브라우저는 Client에게 전달(C) 하고, Client는 다시 인가 서버에게 Code를 보내고(D)
-Access Token을 돌려받습니다(E).
-이후 Client는 생성된 &lt;strong&gt;Access Token&lt;/strong&gt;을 활용해 scope에 명시된 기능을 Resource Server로부터 제공받습니다.
-해당 절차가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Abstract Protocol Flow&lt;/code&gt; 그림의 B ~ F에 해당합니다.&lt;/p&gt;
-
-&lt;p&gt;지금까지 생소한 정보들을 쏟아내다 보니, 독자 여려분들이 굉장히 혼란스러울 것 같습니다. (처음 OAuth를 공부했던 제가 그랬습니다 😵‍💫)
-처음부터 모든 과정을 이해하려 하면 어려우니, 대략적인 흐름만 파악하고 넘어가셔도 좋습니다. 이후 OIDC에서 예시와 함께 또 다룰 예정이거든요 🙃&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🛎 위 2가지 Flow가 OAuth 2.0의 전체 Flow는 아닙니다. Client Register, Refresh Token 등 &lt;strong&gt;중요 개념들이 상당히 생략&lt;/strong&gt; 되어 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;openid-connectoidc&quot;&gt;OpenID Connect(OIDC)&lt;/h2&gt;
-
-&lt;p&gt;얼렁뚱땅 OAuth를 넘기고 드디어 OpenID Connect 순서에 다 다르었습니다. OIDC를 다루기 전, &lt;strong&gt;OpenID&lt;/strong&gt;가 무엇인지 &lt;a href=&quot;https://openid.net/what-is-openid/&quot;&gt;OpenID 재단의 설명&lt;/a&gt;에서 몇 가지 살펴보겠습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;openid&quot;&gt;OpenID&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;OpenID는 새 비밀번호를 만들 필요 없이, 기존 계정을 사용해 여러 웹사이트에 로그인할 수 있습니다.&lt;/li&gt;
-  &lt;li&gt;OpenID를 사용하면 웹사이트와 공유되는 정보의 양을 제어할 수 있습니다.&lt;/li&gt;
-  &lt;li&gt;당신의 비밀번호은 Identity provider(Idp)에게만 주어지며, Idp가 신원을 확인하므로 안전하지 않은 웹사이트가 당신의 신원을 훼손하는 것에 대해 걱정할 필요가 없습니다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚡️ OpenID 2.0은 OpenID Connect로 대체되었습니다. &lt;a href=&quot;https://openid.net/developers/libraries/obsolete/&quot;&gt;Ref. Libraries for Obsolete Specifications&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;using-oauth-20-to-access-apis&quot;&gt;Using OAuth 2.0 to Access APIs&lt;/h3&gt;
-
-&lt;p&gt;이어서, &lt;a href=&quot;https://openid.net/connect/&quot;&gt;OpenID 재단의 설명&lt;/a&gt;의 OIDC는 다음과 같이 정의되어 있습니다.
-“OpenID Connect 1.0 is a simple identity layer on top of the OAuth 2.0 protocol.” OIDC가 OAuth 프로토콜의 상위 간단한 신원 계층이라는 말이 무엇을 의미할까요?
-여기서 앞서 slack 예시에서 만난 OAuth의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt; 부분으로 거슬러 올라가 보겠습니다. (&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope=openid email profile&lt;/code&gt;) 해당 파라미터에는 인가할 리소스가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openid&lt;/code&gt;로 기재되어 있습니다.
-즉, slack은 제 프로필 정보를 얻기 위해 &lt;strong&gt;OAuth 2.0&lt;/strong&gt;을 사용해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Google OAuth2 API v2&lt;/code&gt;를 호출했고, 액세스하려는 API의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openid&lt;/code&gt;로 지정했습니다.&lt;/p&gt;
-
-&lt;p&gt;이해를 돕기 위해, Google Developers의 &lt;a href=&quot;https://developers.google.com/oauthplayground/&quot;&gt;OAuth 2.0 Playground&lt;/a&gt;(Client를 구축할 필요 없이, 데모 환경을 제공)를 사용해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/security/playgroundOAuth.png&quot; alt=&quot;playground&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;Step1에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Google OAuth2 API v2&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt;으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;email&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;profile&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openid&lt;/code&gt;를 지정하고 Authorize APIs 버튼을 누르니,
-Client만 Google OAuth 2.0 Playground로 바뀌고 slack 예시와 동일한 결과를 받는 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🙈 해당 URI도 주의 깊게 살펴보면 paramter의 순서만 다를 뿐, 필수 파라미터를 포함하여 slack 예시와 비슷한 URI를 볼 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Step2에서는 Idp(여기서는 구글의 인증 서버)로부터 발급된 &lt;strong&gt;Authorization code&lt;/strong&gt;를 토큰으로 바꾸는 &lt;strong&gt;Exchange authorization code for tokens&lt;/strong&gt; 버튼을 누르면,
-&lt;strong&gt;Refresh token&lt;/strong&gt;과 &lt;strong&gt;Access token&lt;/strong&gt; Idp로부터 받아 Playground 웹 페이지에 나타나게 됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/security/OAuthStep2.png&quot; alt=&quot;step2&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이어서 전달된 Response 값을 확인해 보면, 타 OAuth 2.0 API를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scope&lt;/code&gt;으로 선택했을 때와는 다르게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id_token&lt;/code&gt; 값으로 JWT 형태의 값을 받습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;id_token&quot;&gt;id_token&lt;/h3&gt;
-
-&lt;p&gt;OIDC는 OAuth 2.0의 상위 계층이므로 동작 원리가 OAuth 2.0과 동일합니다. 한 가지 다른 점은, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id_token&lt;/code&gt; 정보가 포함되어 있다는 것입니다.
-Step2에서 받은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;id_token&lt;/code&gt; 값을 &lt;a href=&quot;https://jwt.io/&quot;&gt;jwt.io&lt;/a&gt;에 복사하여 Decode 한 정보를 살펴보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/security/jwt.png&quot; alt=&quot;jwt&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;jwt는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.&lt;/code&gt;으로 구분되어 decode 하면 아래 3가지 필드로 나뉩니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;header : id 토큰의 형식, 해시 알고리즘의 종류, 암호화에 사용된 공개키 ID&lt;/li&gt;
-  &lt;li&gt;payload : 사용자 인증 정보 - (발급 기관, 토큰이 발급된 앱, id 토큰 유저의 번호, 발급 시간, 만료 시간, 이메일, 이름, 프로필 사진 등)&lt;/li&gt;
-  &lt;li&gt;signature : 인증 서버에 header의 공개키로 서명한 값&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;client는 payload에 담긴 사용자 정보를 활용해 유저의 인증을 할 수 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;recap&quot;&gt;Recap&lt;/h3&gt;
-
-&lt;p&gt;여기까지 포스팅을 읽으셨다면, 앞부분에 언급했던 &lt;strong&gt;Auth0(오스제로)&lt;/strong&gt;의 인증, 인가 비교표를 떠올려주세요.
-&lt;strong&gt;OAuth&lt;/strong&gt;는 &lt;strong&gt;AuthZ(인가)&lt;/strong&gt;에 초점이 맞춰 저 &lt;strong&gt;Access Token&lt;/strong&gt;으로 특정 권한을 허가해 줄 뿐 사용자의 정보는 담고 있지 않습니다.
-반면, OIDC는 &lt;strong&gt;ID Token&lt;/strong&gt;을 통해 정보를 전송하며 &lt;strong&gt;AuthN(인증)&lt;/strong&gt;을 가능하게 하였습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;이번 포스팅은 기존에 올린 타 글들보다 많은 레퍼런스 문서들을 읽었습니다. 이미 온라인에 굉장히 잘 정리된 콘텐츠들이 많지만,
-제 나름대로 재가공 하다 보니 부족한 부분들이 많습니다. 제게 많은 도움이 되었던 레퍼런스들을 아래 첨부하니, 함께 보시면 도움이 많이 될 것 같습니다.&lt;/p&gt;
-
-&lt;p&gt;마지막으로, &lt;a href=&quot;https://www.samsungsds.com/kr/insights/oidc.html&quot;&gt;Samsung SDS의 인사이트 리포트&lt;/a&gt;에
-실린 요약이 오늘의 정보들을 깔끔하게 정리해 주는 것 같아 함께 첨부하며 마치겠습니다. (요약된 문장의 단어 하나하나가 해당 기술의 특징을 잘 나태낸다는 생각이 드네요 😊)&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;SAML 2.0 : 2001년 OASIS에서 정의한 개방형 Authentication(인증) 및 Authorization(인가) 표준이며, 엔터프라이즈 애플리케이션의 SSO(Single Sign On)를 목적으로 XML(Extensible Markup Language) 형식으로 개발&lt;/li&gt;
-  &lt;li&gt;OAuth 2.0 : 2006년 Twitter와 Google이 정의한 개방형 Authorization 표준이며, API 허가를 목적으로 JSON(Javascript Object Notation) 형식으로 개발&lt;/li&gt;
-  &lt;li&gt;OIDC 2.0 : 2014년 OpenID Foundation에서 정의한 개방형 Authentication 표준이며, 컨슈머 어플리케이션의 SSO를 목적으로 JSON 형식으로 개발&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 특히나 이번 포스팅은 잘못된 내용 혹은 부적절한 설명이 있을 수도 있으니 자유롭게 지적해 주세요!
-벌써 포스팅 이후 3번이나 다시 배포하게 되었네요. 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-references&quot;&gt;📚 References&lt;/h2&gt;
-
-&lt;h3 id=&quot;ssosaml--oauth-20&quot;&gt;SSO(SAML &amp;amp; OAuth 2.0)&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.okta.com/identity-101/saml-vs-oauth/&quot;&gt;SAML vs. OAuth: Comparison and Differences&lt;/a&gt; : SAML, OAuth 2.0 동작 원리 설명&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://developers.worksmobile.com/kr/document/2001001?lang=ko&quot;&gt;NAVER WORKS Developers, SSO 개요&lt;/a&gt; : 네이버 웍스에서 SAML, OAuth 2.0 구현 방법 소개&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.oasis-open.org/committees/download.php/27819/sstc-saml-tech-overview-2.0-cd-02.pdf&quot;&gt;OASIS, SAML V2.0 Technical Overview&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;oauth-20&quot;&gt;OAuth 2.0&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.ietf.org/rfc/rfc6750.txt&quot;&gt;OAuth 2.0 RFC&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://opentutorials.org/course/3405&quot;&gt;생활코딩, WEB2 - OAuth 2.0&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;oidc&quot;&gt;OIDC&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.samsungsds.com/kr/insights/oidc.html&quot;&gt;Samsung SDS, 편의성을 높인 ID 인증 관리 - OIDC(OpenID Connect)가 주목 받는 이유&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://developers.kakao.com/docs/latest/ko/kakaologin/common#oidc&quot;&gt;kakao developers, OIDC&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://openid.net/specs/openid-connect-core-1_0.html&quot;&gt;OpenID Connect Spec&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.daleseo.com/google-oidc/&quot;&gt;DaleSeo, 구글 OpenID Connect 사용법&lt;/a&gt; : 실습 코드 제공&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://coffeewhale.com/kubernetes/authentication/oidc/2020/05/04/auth03/&quot;&gt;k8s 인증 완벽이해 #3 - OpenID Connect&lt;/a&gt; : 쿠버네티스 인증을 설명하는 글이지만, OIDC를 이해하기 위해 아주 좋은 글&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;hands-on&quot;&gt;Hands-On&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://developers.google.com/oauthplayground/&quot;&gt;OAuth 2.0 Playground&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://jwt.io/&quot;&gt;jwt.io&lt;/a&gt; : jwt 토큰 Decode&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.github.com/en/developers/apps/building-oauth-apps/creating-an-oauth-app&quot;&gt;Github Docs, Building OAuth App&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.passportjs.org/concepts/authentication/oauth/&quot;&gt;passportjs&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;기타-도움이-되는-콘텐츠&quot;&gt;기타 도움이 되는 콘텐츠&lt;/h3&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://youtu.be/1QiOXWEbqYQ&quot;&gt;얄팍한 코딩사전, 세션 VS 토큰! JWT가 뭔가요?&lt;/a&gt; : 배경 지식이 없다면, 이 영상 먼저 보는 것을 추천&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.okta.com/identity-101/whats-the-difference-between-oauth-openid-connect-and-saml/&quot;&gt;okta, What’s the Difference Between OAuth, OpenID Connect, and SAML?&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="security" />
-      
-
-      
-        <summary type="html">Journey to OIDC through authentication, authorization, SAML, and OAuth.</summary>
       
 
       
