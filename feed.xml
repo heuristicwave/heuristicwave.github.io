@@ -5,12 +5,12 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 23 May 2023 03:31:04 +0000</pubDate>
-        <lastBuildDate>Tue, 23 May 2023 03:31:04 +0000</lastBuildDate>
+        <pubDate>Tue, 23 May 2023 03:50:26 +0000</pubDate>
+        <lastBuildDate>Tue, 23 May 2023 03:50:26 +0000</lastBuildDate>
         <generator>Jekyll v3.9.3</generator>
         
             <item>
-                <title>The Chart Repository in AWS</title>
+                <title>Helm Chart Repository in AWS</title>
                 <description>&lt;p&gt;AWS에서 Helm chart repositories를 운영하는 방법&lt;/p&gt;
 
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
