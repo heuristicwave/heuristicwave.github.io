@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Tue, 23 May 2023 02:29:50 +0000</pubDate>
-        <lastBuildDate>Tue, 23 May 2023 02:29:50 +0000</lastBuildDate>
+        <pubDate>Tue, 23 May 2023 03:31:04 +0000</pubDate>
+        <lastBuildDate>Tue, 23 May 2023 03:31:04 +0000</lastBuildDate>
         <generator>Jekyll v3.9.3</generator>
         
             <item>
@@ -16,7 +16,8 @@
 &lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
 
 &lt;p&gt;AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다.
-이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.&lt;/p&gt;
+이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.
+&lt;em&gt;해당 포스팅은 OCI(Open Container Initiative) 기반의 Registry를 사용해 차트 패키지를 관리하는 방법은 다루지 않습니다.&lt;/em&gt;&lt;/p&gt;
 
 &lt;h2 id=&quot;️-background-knowledge&quot;&gt;🏞️ Background knowledge&lt;/h2&gt;
 
@@ -83,7 +84,11 @@ AWS 환경에서 S3를 사용해 Chart를 구축하는 방법에 대하여 다�
 &lt;ul&gt;
   &lt;li&gt;다음 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/chartmuseum/helm-push&lt;/code&gt; &lt;br /&gt;
 &lt;a href=&quot;https://github.com/chartmuseum/helm-push&quot;&gt;helm-push&lt;/a&gt; 플러그인을 다운로드하고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push --help&lt;/code&gt; 명령어로 설치 여부 확인&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cm-push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push mychart/ my-chart&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cm-push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push mychart/ my-chart&lt;/code&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;em&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#uploading-a-chart-package&quot;&gt;ChartMuseum 공식 문서&lt;/a&gt;에 소개된 API 호출 방식으로도 업로드가 가능합니다.&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
   &lt;li&gt;정상적으로 패키지가 올라가면 아래와 같이 S3 콘솔에서 확인 가능
 &lt;img src=&quot;../../assets/built/images/post/aws/chartmuseum-s3.png&quot; alt=&quot;s3-chart.png&quot; /&gt;&lt;/li&gt;
 &lt;/ul&gt;

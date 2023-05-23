@@ -56,7 +56,7 @@
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="The Chart Repository in AWS" />
-    <meta property="og:description" content="AWS에서 Helm chart repositories를 운영하는 방법 Intro AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다. 이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다. 🏞️ Background knowledge Helm은 쿠버네티스를 위한 패키지 관리 도구입니다. Chart라는 파일 형식으로 패키징 하며," />
+    <meta property="og:description" content="AWS에서 Helm chart repositories를 운영하는 방법 Intro AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다. 이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다. 해당 포스팅은 OCI(Open Container Initiative) 기반의 Registry를 사용해 차트 패키지를 관리하는 방법은 다루지 않습니다." />
     <meta property="og:url" content="https://heuristicwave.github.io/Chart" />
     <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/helm.svg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
@@ -66,7 +66,7 @@
     <meta property="article:tag" content="Devops" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="The Chart Repository in AWS" />
-    <meta name="twitter:description" content="AWS에서 Helm chart repositories를 운영하는 방법 Intro AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다. 이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다. 🏞️ Background knowledge Helm은 쿠버네티스를 위한 패키지 관리 도구입니다. Chart라는 파일 형식으로 패키징 하며," />
+    <meta name="twitter:description" content="AWS에서 Helm chart repositories를 운영하는 방법 Intro AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다. 이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다. 해당 포스팅은 OCI(Open Container Initiative) 기반의 Registry를 사용해 차트 패키지를 관리하는 방법은 다루지 않습니다." />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
     <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/helm.svg" />
     <meta name="twitter:label1" content="Written by" />
@@ -98,7 +98,7 @@
         "@type": "WebPage",
         "@id": "https://heuristicwave.github.io/Chart"
     },
-    "description": "AWS에서 Helm chart repositories를 운영하는 방법 Intro AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다. 이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다. 🏞️ Background knowledge Helm은 쿠버네티스를 위한 패키지 관리 도구입니다. Chart라는 파일 형식으로 패키징 하며,"
+    "description": "AWS에서 Helm chart repositories를 운영하는 방법 Intro AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다. 이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다. 해당 포스팅은 OCI(Open Container Initiative) 기반의 Registry를 사용해 차트 패키지를 관리하는 방법은 다루지 않습니다."
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -214,7 +214,8 @@ into the {body} of the default.hbs template -->
 <h2 id="intro">Intro</h2>
 
 <p>AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다.
-이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.</p>
+이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.
+<em>해당 포스팅은 OCI(Open Container Initiative) 기반의 Registry를 사용해 차트 패키지를 관리하는 방법은 다루지 않습니다.</em></p>
 
 <h2 id="️-background-knowledge">🏞️ Background knowledge</h2>
 
@@ -281,7 +282,11 @@ AWS 환경에서 S3를 사용해 Chart를 구축하는 방법에 대하여 다�
 <ul>
   <li>다음 명령어로 <code class="language-plaintext highlighter-rouge">helm plugin install https://github.com/chartmuseum/helm-push</code> <br />
 <a href="https://github.com/chartmuseum/helm-push">helm-push</a> 플러그인을 다운로드하고, <code class="language-plaintext highlighter-rouge">helm cm-push --help</code> 명령어로 설치 여부 확인</li>
-  <li><code class="language-plaintext highlighter-rouge">cm-push</code> 명령어로 패키지 업로드 : <code class="language-plaintext highlighter-rouge">helm cm-push mychart/ my-chart</code></li>
+  <li><code class="language-plaintext highlighter-rouge">cm-push</code> 명령어로 패키지 업로드 : <code class="language-plaintext highlighter-rouge">helm cm-push mychart/ my-chart</code>
+    <ul>
+      <li><em><a href="https://chartmuseum.com/docs/#uploading-a-chart-package">ChartMuseum 공식 문서</a>에 소개된 API 호출 방식으로도 업로드가 가능합니다.</em></li>
+    </ul>
+  </li>
   <li>정상적으로 패키지가 올라가면 아래와 같이 S3 콘솔에서 확인 가능
 <img src="../../assets/built/images/post/aws/chartmuseum-s3.png" alt="s3-chart.png" /></li>
 </ul>
