@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-05-23T03:50:26+00:00</updated>
+  <updated>2023-06-08T01:32:00+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -1694,7 +1694,7 @@ ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성
 
 &lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
 
-&lt;p&gt;글을 시작하기 앞서, &lt;a href=&quot;https://noob2geek.in/2021/06/18/export-aws-cloudwatch-logs-to-s3-using-lambda-functions-in-node-js/&quot;&gt;Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js&lt;/a&gt;
+&lt;p&gt;글을 시작하기 앞서, &lt;a href=&quot;https://aws.plainenglish.io/export-aws-cloudwatch-logs-to-s3-using-lambda-functions-in-node-js-b97e2afa0ac&quot;&gt;Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js&lt;/a&gt;
 를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하기 위한 플로우는 다음과 같습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/exportLambda.png&quot; alt=&quot;imageBuilder&quot; /&gt;&lt;/p&gt;
