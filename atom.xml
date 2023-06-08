@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>About HardenEKS (install &amp; custom)</title>
+        
+          <description>&lt;p&gt;본 글은 작년 12월에 릴리즈 된 &lt;strong&gt;HardenEKS&lt;/strong&gt;를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Thu, 08 Jun 2023 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/HardenEKS</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/HardenEKS</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Helm Chart Repository in AWS</title>
         
           <description>&lt;p&gt;AWS에서 Helm chart repositories를 운영하는 방법&lt;/p&gt;

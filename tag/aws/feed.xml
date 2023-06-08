@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-06-08T01:32:00+00:00</updated>
+  <updated>2023-06-08T09:09:08+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,188 @@
   
   
 
+  
+    <entry>
+      <title type="html">About HardenEKS (install &amp;amp; custom)</title>
+      <link href="https://heuristicwave.github.io/HardenEKS" rel="alternate" type="text/html" title="About HardenEKS (install &amp; custom)" />
+      <published>2023-06-08T00:00:00+00:00</published>
+      <updated>2023-06-08T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/HardenEKS</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/HardenEKS">&lt;p&gt;본 글은 작년 12월에 릴리즈 된 &lt;strong&gt;HardenEKS&lt;/strong&gt;를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;얼마 전 AWS Blog에 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/containers/hardeneks-validating-best-practices-for-amazon-eks-clusters-programmatically/&quot;&gt;HardenEKS: Validating Best Practices For Amazon EKS Clusters Programmatically&lt;/a&gt;라는 글 하나가 올라왔습니다.
+HardenEKS는 &lt;a href=&quot;https://aws.github.io/aws-eks-best-practices/&quot;&gt;EKS Best Practices Guides (이하 EBPG)&lt;/a&gt;를 기반으로 EKS 클러스터를 검사하는 오픈소스 툴입니다. 
+쿠버네티스 클러스터의 잠재적인 문제를 스캔하고 분석하는 &lt;a href=&quot;https://github.com/derailed/popeye&quot;&gt;Popeye&lt;/a&gt;를 사용해 본 기억이 떠올라, 사용해 보고 느낀 점을 몇 자 적어보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;hardeneks&quot;&gt;HardenEKS&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://github.com/aws-samples/hardeneks&quot;&gt;HardenEKS&lt;/a&gt; 깃허브에는 &lt;em&gt;‘EKS 클러스터가 EKS 모범 사례를 따르고 있는지 검사’&lt;/em&gt; 한다고 소개되어 있습니다.
+EBPG에는 글을 작성하는 시점을 기준으로 Security, Reliability, Cluster Autoscaling, Running Windows Containers, Networking, Scalability, Cluster Upgrades에 대하여 가이드하고 있습니다.&lt;/p&gt;
+
+&lt;p&gt;HardenEKS kubernetes API를 호출하여 스캔을 진행하며, 다음 범주에 대하여 검사가 가능합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/aws-samples/hardeneks/tree/main/hardeneks/cluster_wide&quot;&gt;cluster_wide&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;cluster_autoscaling&lt;/li&gt;
+      &lt;li&gt;reliability&lt;/li&gt;
+      &lt;li&gt;scalability&lt;/li&gt;
+      &lt;li&gt;security&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/aws-samples/hardeneks/tree/main/hardeneks/namespace_based&quot;&gt;namespace_based&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;reliability&lt;/li&gt;
+      &lt;li&gt;security&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;-체험하기&quot;&gt;👀 체험하기&lt;/h3&gt;
+
+&lt;p&gt;사용 방법은 간단합니다. 다음과 같이 설치하고, EKS에 접근할 수 있는 터미널에서 리포트를 받아보면 끝납니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 설치
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;python3&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;m&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;venv&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;venv&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;source&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tmp&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;venv&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;bin&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;/&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;activate&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;pip&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hardeneks&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 리포트 생성 후, 열기
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;hardeneks&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;export&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;report&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;
+&lt;span class=&quot;nb&quot;&gt;open&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;report&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;html&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;그러나 위 작업만으로는 제한적인 정보로만 보고서가 생성됩니다. 그래서 다음과 같이 최소한의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ClusterRole&lt;/code&gt;을 생성해야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ClusterRole&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;rbac.authorization.k8s.io/v1&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;metadata&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;hardeneks-runner&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;rules&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiGroups&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;namespaces&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;resourcequotas&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;persistentvolumes&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;pods&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;services&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;verbs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;list&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiGroups&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;rbac.authorization.k8s.io&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;clusterroles&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;clusterrolebindings&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;roles&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;rolebindings&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;verbs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;list&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiGroups&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;networking.k8s.io&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;networkpolicies&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;verbs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;list&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiGroups&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;storage.k8s.io&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;storageclasses&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;verbs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;list&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiGroups&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;apps&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;deployments&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;daemonsets&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;statefulsets&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;verbs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;list&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;get&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;apiGroups&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;autoscaling&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;resources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;horizontalpodautoscalers&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;verbs&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;list&quot;&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;-customize&quot;&gt;🪓 Customize&lt;/h3&gt;
+
+&lt;p&gt;HardenEKS를 사용하여 생성한 리포트에 특정 Namespace 혹은 몇 Rule들을 제외하고 검사를 진행하고 싶다면 커스터마이즈가 필요합니다. 
+커스터마이징하는 방법을 찾기 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hardeneks --help&lt;/code&gt; 명령어를 확인해 보면, 아래와 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tmp/&lt;/code&gt; 위치에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;config.yaml&lt;/code&gt;을 default로 적용하고 있다는 사실을 알 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;│ &lt;span class=&quot;nt&quot;&gt;--config&lt;/span&gt;  TEXT  Path to a hardeneks config file.
+│                 &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;default: /tmp/.venv/lib/python3.9/site-packages/hardeneks/config.yaml]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Config 값을 조정하기 위해 다음과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;my-config.yaml&lt;/code&gt; 파일을 생성합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /tmp/.venv/lib/python3.9/site-packages/hardeneks/config.yaml &lt;span class=&quot;o&quot;&gt;&amp;gt;&lt;/span&gt; my-config.yaml
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;config.yaml&lt;/code&gt; 파일의 구조는 아주 단순합니다. 아래와 같이 2가지 영역을 수정하여 config 값을 변경합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ignore-namespaces&lt;/code&gt; : 는 스캔을 제외할 &lt;strong&gt;namespace&lt;/strong&gt;를 정의&lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rules&lt;/code&gt; : iam, multi_tenancy, network_sucurity 등에 대하여 검사할 &lt;strong&gt;rule&lt;/strong&gt;을 정의&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;제외할 &lt;strong&gt;namespace&lt;/strong&gt;를 기재하는 것은 쉽지만, 어떤 &lt;strong&gt;rule&lt;/strong&gt;을 적용시킬지는 한 번에 찾기 쉽지 않습니다. 
+만약 여러분이 rule을 수정하고 싶다면, pdoc으로 생성된 &lt;a href=&quot;https://aws-samples.github.io/hardeneks/&quot;&gt;HardenEKS Github Pages&lt;/a&gt;를 참고하시면 됩니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;example&quot;&gt;Example&lt;/h4&gt;
+
+&lt;p&gt;예를 들어, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Spread replicas across AZs and Nodes&lt;/code&gt;을 예외 처리하고 싶다 가정하고 적용하는 방법을 소개해드리겠습니다.
+검색을 활용한 색인을 지원하지 않으므로, 일일이 문서를 타고 들어가 rule을 확인해야 합니다. 😡 해당 과정이 매우 까다로우므로, 각 단계별로 링크를 생성해 두었습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;최상단 &lt;a href=&quot;https://aws-samples.github.io/hardeneks/index.html&quot;&gt;index 페이지&lt;/a&gt;, Sub-modules에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;namespace_based&lt;/code&gt; 선택&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws-samples.github.io/hardeneks/namespace_based/index.html&quot;&gt;namespace_based 페이지&lt;/a&gt;,  Sub-modules에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;reliability&lt;/code&gt; 선택&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws-samples.github.io/hardeneks/namespace_based/reliability/index.html&quot;&gt;reliability 페이지&lt;/a&gt;, Sub-modules에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;applications&lt;/code&gt; 선택&lt;/li&gt;
+  &lt;li&gt;여기까지 진행하면 Functions이 나오는데, 찾고자 하는 &lt;strong&gt;rule&lt;/strong&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ctrl + F&lt;/code&gt;로 함수 명 검색&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/rule.png&quot; alt=&quot;hardeneks-rule&quot; /&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;schedule_replicas_across_nodes&lt;/code&gt; 함수 명이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Spread replicas across AZs and Nodes&lt;/code&gt; 해당하는 &lt;strong&gt;rule&lt;/strong&gt; 이름이므로,
+이를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;config.yaml&lt;/code&gt;에서 수정&lt;/li&gt;
+  &lt;li&gt;리포트를 생성하는 명령어에서 수정된 config 파일을 옵션으로 적용시키면, 커스텀 하게 바꾼 값들이 적용 &lt;br /&gt;
+&lt;em&gt;예) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hardeneks --config &amp;lt;my-config&amp;gt;.yaml --export-html &amp;lt;Report Name&amp;gt;.html&lt;/code&gt;&lt;/em&gt;&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Report 상단에는 어떤 대상으로 스캔을 진행했는지, 요약 정보가 나옵니다. 검사 결과와 더불어, Resolution을 통해 EBPG의 Link도 함께 안내됩니다.&lt;/p&gt;
+
+&lt;p&gt;아래 사진은 Example에서 적용시킨 custom.yaml 적용 여부와, rule을 삭제한 결과 화면입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/result.png&quot; alt=&quot;result.png&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;HardenEKS는 아주 간단하고 빠르게, 나의 EKS가 EKS 모범 사례대로 운영하고 있는지 확인할 수 있어 아주 편리한 툴인 것 같습니다.
+비록 Rule 커스텀 과정에서 문서가 불친절했지만, EBPG를 기반으로 자동화된 점검을 한다는 점에서 만족합니다.&lt;/p&gt;
+
+&lt;p&gt;AWS는 아키텍처 관련 모범 사례를 사용해 학습, 측정 및 구축하는 방법으로, &lt;strong&gt;AWS Well-Architected&lt;/strong&gt;라는 방법론과 도구를 제공합니다.
+그동안 AWS Well-Architected은 &lt;strong&gt;특정 업계 및 기술 도메인&lt;/strong&gt;에 대해서는 &lt;strong&gt;Lenses&lt;/strong&gt;를 통해 지침을 제공하고 있었지만,
+EKS 기반 환경의 분석까지는 지원하지 않았습니다. HardenEKS 덕분에, EKS도 Well-Architected를 준수하기 더욱 수월해진 것 같습니다.&lt;/p&gt;
+
+&lt;p&gt;과거 저는 Kubernetes 진단을 위해 k9s에 통합되어 있는 Popeye를 사용했습니다. HardenEKS와 함께 사용한다면 상호 보완을 이루며, 
+더 안전하고 신뢰성 있는 EKS 환경을 만드는데 도움이 될 것 같다는 팁을 드리며, 글을 마칩니다!&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;a href=&quot;https://github.com/derailed/popeye#sanitizers&quot;&gt;Popeye 분석 범위&lt;/a&gt; (port mismatches, probes 등 세부적인 설정에 대하여 심각도(Level)  만족도 여부 % 제공)&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">본 글은 작년 12월에 릴리즈 된 HardenEKS를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Helm Chart Repository in AWS</title>
@@ -1678,161 +1860,6 @@ ECS 서비스 설정에서 언급한 배포 설정과 배치 전략은 가용성
 
       
         <summary type="html">EC2 기반의 ECS를 다루기 위한 사소한 지식들 톱아보기!</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Export cloudwatch log data to Amazon S3 using lambda</title>
-      <link href="https://heuristicwave.github.io/Export_data_to_S3_Lambda" rel="alternate" type="text/html" title="Export cloudwatch log data to Amazon S3 using lambda" />
-      <published>2022-04-07T00:00:00+00:00</published>
-      <updated>2022-04-07T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/Export_data_to_S3_Lambda</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/Export_data_to_S3_Lambda">&lt;p&gt;본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;글을 시작하기 앞서, &lt;a href=&quot;https://aws.plainenglish.io/export-aws-cloudwatch-logs-to-s3-using-lambda-functions-in-node-js-b97e2afa0ac&quot;&gt;Shraddha Paghdar - Export AWS CloudWatch logs to S3 using lambda functions in Node.js&lt;/a&gt;
-를 참고하여 해당 글을 작성했음을 알립니다. 본격적으로 방법을 소개하기 앞서, Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하기 위한 플로우는 다음과 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/exportLambda.png&quot; alt=&quot;imageBuilder&quot; /&gt;&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Amazon EventBridge에 정의한 Rule에 의해 Lambda를 호출합니다.&lt;/li&gt;
-  &lt;li&gt;이후 람다가 지정한 CloudWatch의 Logs에 적재된 데이터를 찾습니다.&lt;/li&gt;
-  &lt;li&gt;2번에 연속되어 이관될 대상의 로그들이 S3로 이관됩니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;-workshop&quot;&gt;📜 Workshop&lt;/h2&gt;
-
-&lt;h3 id=&quot;1️⃣-log를-담을-bucket-및-정책-생성하기&quot;&gt;1️⃣ Log를 담을 Bucket 및 정책 생성하기&lt;/h3&gt;
-
-&lt;p&gt;Amazon S3 콘솔 화면에 접속해 Log들이 담길 Bucket을 생성하고 이어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Permissions&lt;/code&gt;에서 S3 버킷에 대한 권한을 설정합니다.
-해당 방법은 &lt;a href=&quot;https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/S3ExportTasksConsole.html&quot;&gt;공식 문서, 1단계와 3단계&lt;/a&gt;에 자세히 설명되어 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 공식 문서 3단계에서 기재된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random-string&lt;/code&gt;은 필요에 의한 경우 사용하세요. 해당 글에서는 편의상 생략하였습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;2️⃣-lambda-생성하기&quot;&gt;2️⃣ Lambda 생성하기&lt;/h3&gt;
-
-&lt;h4 id=&quot;step-1--lambda가-사용하는-iam-role--policy-생성&quot;&gt;Step 1 : Lambda가 사용하는 IAM Role &amp;amp; Policy 생성&lt;/h4&gt;
-
-&lt;p&gt;Lambda가 Log를 Export 할 수 있도록 다음 정책을 생성합니다.
-IAM에서 Create policy를 선택하고 아래 JSON을 복사하여 붙여 넣고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cloudwatch_export_task&lt;/code&gt;라는 이름으로 정책을 생성합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;s2&quot;&gt;&quot;Version&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;2012-10-17&quot;&lt;/span&gt;,
-    &lt;span class=&quot;s2&quot;&gt;&quot;Statement&quot;&lt;/span&gt;: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;
-            &lt;span class=&quot;s2&quot;&gt;&quot;Effect&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;Allow&quot;&lt;/span&gt;,
-            &lt;span class=&quot;s2&quot;&gt;&quot;Action&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;logs:CreateExportTask&quot;&lt;/span&gt;,
-            &lt;span class=&quot;s2&quot;&gt;&quot;Resource&quot;&lt;/span&gt;: &lt;span class=&quot;s2&quot;&gt;&quot;arn:aws:logs:{Region}:{AccountNumber}:*&quot;&lt;/span&gt;
-        &lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-    &lt;span class=&quot;o&quot;&gt;]&lt;/span&gt;
-&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Lambda에 권한을 부여해 주기 위해서 IAM &amp;gt; Roles &amp;gt; Create Role을 선택합니다.
-Use case로 Lambda를 선택하고 앞서 생성한 정책을 부여한 뒤, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export_S3_lambda&lt;/code&gt;라는 이름으로 Role을 생성합니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;step-2--코드-작성&quot;&gt;Step 2 : 코드 작성&lt;/h4&gt;
-
-&lt;p&gt;Lambda 콘솔 화면에서 아래와 같이 빈칸을 채우고, Step 1에서 만들어둔 role을 부여해 람다 함수를 생성합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/guide/exportLambda.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 만약, Export 역할을 수행하는 &lt;strong&gt;람다 함수가 생성하는 로그&lt;/strong&gt;를 수집하고 싶을 경우에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create a new role with basic Lambda permissions&lt;/code&gt;을
-선택하고 Console에 의해 자동적으로 생성되는 Role에 Step 1에서 만든 정책을 부여하면 됩니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이어서 아래 코드를 복사하여 상황에 맞는 인자 값을 넣어주고 Deploy 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Parameter&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-  &lt;li&gt;region : 로그 그룹과 대상 버킷은 동일 리전에 위치&lt;/li&gt;
-  &lt;li&gt;destination : 로그가 이관되는 대상 버킷&lt;/li&gt;
-  &lt;li&gt;logGroupName : Cloudwatch Log group 이름&lt;/li&gt;
-  &lt;li&gt;destinationPrefix : 1️⃣ 에서 언급한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;random-string&lt;/code&gt; 값&lt;/li&gt;
-  &lt;li&gt;from/to : Lambda 함수가 호출 되는 시점을 기준으로, from/to 기간의 로그 그룹들을 export&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;div class=&quot;language-js highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AWS&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;require&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;aws-sdk&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudconfig&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;apiVersion&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;2014-03-28&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-  &lt;span class=&quot;na&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudwatchlogs&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;AWS&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;CloudWatchLogs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;cloudconfig&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;nx&quot;&gt;exports&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;handler&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;  &lt;span class=&quot;k&quot;&gt;async&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;event&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-   &lt;span class=&quot;kd&quot;&gt;const&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;params&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;destination&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;bucket-name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;logGroupName&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;log-groups-name&lt;/span&gt;&lt;span class=&quot;dl&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;destinationPrefix&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;dl&quot;&gt;''&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;86400&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;new&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;Date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;getTime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(),&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;await&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;cloudwatchlogs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;createExportTask&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;params&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;).&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;promise&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;().&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;then&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;log&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;200&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;data&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;}).&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;catch&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&amp;gt;&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-    &lt;span class=&quot;nx&quot;&gt;console&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;
-      &lt;span class=&quot;na&quot;&gt;statusCode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;501&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-        &lt;span class=&quot;na&quot;&gt;body&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nx&quot;&gt;err&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-  &lt;span class=&quot;p&quot;&gt;});&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;이후 테스트 버튼을 눌러 결과값을 보면 taskId 값이 생성되고 S3에 로그가 이관된 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;3️⃣-eventbridge-트리거-생성하기&quot;&gt;3️⃣ EventBridge 트리거 생성하기&lt;/h3&gt;
-
-&lt;p&gt;작성한 람다 함수 콘솔 화면 상단에서 &lt;strong&gt;Add trigger&lt;/strong&gt; 버튼을 눌러 다음과 같이 Rule을 생성합니다. 저는 주기를 점검하기 위해 아래와 같이 5분을 주었습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/guide/eventBridgeRule.png&quot; alt=&quot;baseimage&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 &lt;a href=&quot;https://docs.aws.amazon.com/lambda/latest/dg/services-cloudwatchevents-expressions.html&quot;&gt;스케쥴 표현식 작성법&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 Lambda 함수와 EventBrdige를 사용하여 자동으로 로그를 S3으로 백업하는 방법을 알아보았습니다.
-해당 방법 외에도 로그를 이관하는 다양한 방법들이 있으므로, 더 쉽고 좋은 방법이 있다면 알려주세요!&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">본 글은 Cloudwatch Logs groups의 데이터를 Lambda를 사용해 주기적으로 S3로 export 하는 방법을 다룹니다.</summary>
       
 
       

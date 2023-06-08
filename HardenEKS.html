@@ -11,7 +11,7 @@
 
 
 
-    <title>Amazon EKS Multi Cluster Upgrade with ExternalDNS</title>
+    <title>About HardenEKS (install & custom)</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,26 +49,26 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/EKS_Upgrade" />
+    <link rel="canonical" href="https://heuristicwave.github.io/HardenEKS" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Amazon EKS Multi Cluster Upgrade with ExternalDNS" />
-    <meta property="og:description" content="ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기 Intro Amazon EKS(이하 EKS)는 약 3 ~ 5 개월마다 새로운 버전이 출시합니다. 운영 측면에서 새로운 버전 출시는 기존 EKS의 버전 업그레이드가 필요하다는 것을 의미합니다. EKS 업그레이드는 EKS 콘솔에서 지금 업데이트 버튼을 눌러 손쉽게 가능합니다. 🏠 Single Cluster Upgrade 위와 같은 EKS 클러스터 버전 업데이트를" />
-    <meta property="og:url" content="https://heuristicwave.github.io/EKS_Upgrade" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/external-dns.png" />
+    <meta property="og:title" content="About HardenEKS (install & custom)" />
+    <meta property="og:description" content="본 글은 작년 12월에 릴리즈 된 HardenEKS를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다. Intro 얼마 전 AWS Blog에 HardenEKS: Validating Best Practices For Amazon EKS Clusters Programmatically라는 글 하나가 올라왔습니다. HardenEKS는 EKS Best Practices Guides (이하 EBPG)를 기반으로 EKS 클러스터를 검사하는 오픈소스 툴입니다. 쿠버네티스 클러스터의 잠재적인 문제를" />
+    <meta property="og:url" content="https://heuristicwave.github.io/HardenEKS" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/hardeneks.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2023-02-25T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2023-02-25T00:00:00+00:00" />
+    <meta property="article:published_time" content="2023-06-08T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2023-06-08T00:00:00+00:00" />
     <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Amazon EKS Multi Cluster Upgrade with ExternalDNS" />
-    <meta name="twitter:description" content="ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기 Intro Amazon EKS(이하 EKS)는 약 3 ~ 5 개월마다 새로운 버전이 출시합니다. 운영 측면에서 새로운 버전 출시는 기존 EKS의 버전 업그레이드가 필요하다는 것을 의미합니다. EKS 업그레이드는 EKS 콘솔에서 지금 업데이트 버튼을 눌러 손쉽게 가능합니다. 🏠 Single Cluster Upgrade 위와 같은 EKS 클러스터 버전 업데이트를" />
+    <meta name="twitter:title" content="About HardenEKS (install & custom)" />
+    <meta name="twitter:description" content="본 글은 작년 12월에 릴리즈 된 HardenEKS를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다. Intro 얼마 전 AWS Blog에 HardenEKS: Validating Best Practices For Amazon EKS Clusters Programmatically라는 글 하나가 올라왔습니다. HardenEKS는 EKS Best Practices Guides (이하 EBPG)를 기반으로 EKS 클러스터를 검사하는 오픈소스 툴입니다. 쿠버네티스 클러스터의 잠재적인 문제를" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/external-dns.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/hardeneks.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/EKS_Upgrade",
+    "url": "https://heuristicwave.github.io/HardenEKS",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/external-dns.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/hardeneks.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/EKS_Upgrade"
+        "@id": "https://heuristicwave.github.io/HardenEKS"
     },
-    "description": "ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기 Intro Amazon EKS(이하 EKS)는 약 3 ~ 5 개월마다 새로운 버전이 출시합니다. 운영 측면에서 새로운 버전 출시는 기존 EKS의 버전 업그레이드가 필요하다는 것을 의미합니다. EKS 업그레이드는 EKS 콘솔에서 지금 업데이트 버튼을 눌러 손쉽게 가능합니다. 🏠 Single Cluster Upgrade 위와 같은 EKS 클러스터 버전 업데이트를"
+    "description": "본 글은 작년 12월에 릴리즈 된 HardenEKS를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다. Intro 얼마 전 AWS Blog에 HardenEKS: Validating Best Practices For Amazon EKS Clusters Programmatically라는 글 하나가 올라왔습니다. HardenEKS는 EKS Best Practices Guides (이하 EBPG)를 기반으로 EKS 클러스터를 검사하는 오픈소스 툴입니다. 쿠버네티스 클러스터의 잠재적인 문제를"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Amazon EKS Multi Cluster Upgrade with ExternalDNS" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="About HardenEKS (install & custom)" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -181,174 +181,177 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-aws tag-devops tag-eks post tag-aws ">
+        <article class="post-full  tag-aws post tag-aws ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="25 February 2023">25 February 2023</time>
+                    <time class="post-full-meta-date" datetime=" 8 June 2023"> 8 June 2023</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/aws/'>AWS</a>,
-                            
-                        
-                            
-                               <a href='/tag/devops/'>DEVOPS</a>,
-                            
-                        
-                            
-                               <a href='/tag/eks/'>EKS</a>
+                               <a href='/tag/aws/'>AWS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Amazon EKS Multi Cluster Upgrade with ExternalDNS</h1>
+                <h1 class="post-full-title">About HardenEKS (install & custom)</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/external-dns.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/hardeneks.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기</p>
+                    <p>본 글은 작년 12월에 릴리즈 된 <strong>HardenEKS</strong>를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다.</p>
 
-<h2 id="intro">Intro</h2>
+<h1 id="intro">Intro</h1>
 
-<p>Amazon EKS(이하 EKS)는 <a href="https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar">약 3 ~ 5</a> 개월마다 새로운 버전이 출시합니다.
-운영 측면에서 새로운 버전 출시는 기존 EKS의 버전 업그레이드가 필요하다는 것을 의미합니다. EKS 업그레이드는 EKS 콘솔에서 <code class="language-plaintext highlighter-rouge">지금 업데이트</code> 버튼을 눌러 손쉽게 가능합니다.</p>
+<p>얼마 전 AWS Blog에 <a href="https://aws.amazon.com/ko/blogs/containers/hardeneks-validating-best-practices-for-amazon-eks-clusters-programmatically/">HardenEKS: Validating Best Practices For Amazon EKS Clusters Programmatically</a>라는 글 하나가 올라왔습니다.
+HardenEKS는 <a href="https://aws.github.io/aws-eks-best-practices/">EKS Best Practices Guides (이하 EBPG)</a>를 기반으로 EKS 클러스터를 검사하는 오픈소스 툴입니다. 
+쿠버네티스 클러스터의 잠재적인 문제를 스캔하고 분석하는 <a href="https://github.com/derailed/popeye">Popeye</a>를 사용해 본 기억이 떠올라, 사용해 보고 느낀 점을 몇 자 적어보겠습니다.</p>
 
-<h2 id="-single-cluster-upgrade">🏠 Single Cluster Upgrade</h2>
+<p><br /></p>
 
-<p><img src="../../assets/built/images/post/eks/cluster.png" alt="clusterUpdate" /></p>
+<h2 id="hardeneks">HardenEKS</h2>
 
-<p>위와 같은 <a href="https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html">EKS 클러스터 버전 업데이트</a>를 싱글 클러스터 기반의 업그레이드라고 하며, 비교적 손쉽게 k8s 버전 업데이트가 가능합니다.
-업데이트가 손쉬운 반면 몇 가지 제약 사항도 존재합니다. 대표적으로 아래와 같이 원하는 버전으로 바로 업데이트되는 것이 아니라 순차적 단계를 거쳐야 합니다.</p>
+<p><a href="https://github.com/aws-samples/hardeneks">HardenEKS</a> 깃허브에는 <em>‘EKS 클러스터가 EKS 모범 사례를 따르고 있는지 검사’</em> 한다고 소개되어 있습니다.
+EBPG에는 글을 작성하는 시점을 기준으로 Security, Reliability, Cluster Autoscaling, Running Windows Containers, Networking, Scalability, Cluster Upgrades에 대하여 가이드하고 있습니다.</p>
 
-<p><img src="../../assets/built/images/post/eks/singleUpdate.png" alt="clusterUpdate" /></p>
+<p>HardenEKS kubernetes API를 호출하여 스캔을 진행하며, 다음 범주에 대하여 검사가 가능합니다.</p>
 
-<h2 id="️-multi-cluster-upgrade">🏘️‍ Multi Cluster Upgrade</h2>
+<ul>
+  <li><a href="https://github.com/aws-samples/hardeneks/tree/main/hardeneks/cluster_wide">cluster_wide</a>
+    <ul>
+      <li>cluster_autoscaling</li>
+      <li>reliability</li>
+      <li>scalability</li>
+      <li>security</li>
+    </ul>
+  </li>
+  <li><a href="https://github.com/aws-samples/hardeneks/tree/main/hardeneks/namespace_based">namespace_based</a>
+    <ul>
+      <li>reliability</li>
+      <li>security</li>
+    </ul>
+  </li>
+</ul>
 
-<p>멀티 클러스터 업그레이드는 동일한 환경의 EKS를 멀티로 구성하다 보니,
-싱글 클러스터와는 달리 <strong>원하는 버전으로 바로 생성</strong>이 가능하고 만에 하나 <strong>롤백</strong>이 필요할 경우 기존 환경으로 돌아갈 수도 있습니다.</p>
+<h3 id="-체험하기">👀 체험하기</h3>
 
-<p>멀티 클러스터 기반의 업그레이드 방법은 여러 가지 방법으로 진행할 수 있습니다. 그중에서도 이번 포스팅에서는 <a href="https://aws.amazon.com/blogs/containers/onfidos-journey-to-a-multi-cluster-amazon-eks-architecture/">AWS Blog</a>에 소개된 3가지 방법 중,
-<strong>비교적 가장 수월한 방법인 첫 번째 방법으로 한정</strong>해서 이야기해 보겠습니다.</p>
+<p>사용 방법은 간단합니다. 다음과 같이 설치하고, EKS에 접근할 수 있는 터미널에서 리포트를 받아보면 끝납니다.</p>
 
-<p><img src="../../assets/built/images/post/eks/multiCluster.png" alt="clusterUpdate" /></p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 설치
+</span><span class="n">python3</span> <span class="o">-</span><span class="n">m</span> <span class="n">venv</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="n">venv</span>
+<span class="n">source</span> <span class="o">/</span><span class="n">tmp</span><span class="o">/</span><span class="p">.</span><span class="n">venv</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">hardeneks</span>
 
-<p>첫 번째로 소개된 Option 1의 방법은 2개의 동일한 환경에서 Amazon Route 53의 가중치 기능을 활용하여 업그레이드하는 방식입니다.</p>
+<span class="c1"># 리포트 생성 후, 열기
+</span><span class="n">hardeneks</span> <span class="o">--</span><span class="n">export</span><span class="o">-</span><span class="n">html</span> <span class="n">report</span><span class="p">.</span><span class="n">html</span>
+<span class="nb">open</span> <span class="n">report</span><span class="p">.</span><span class="n">html</span>
+</code></pre></div></div>
 
-<p>방법은 간단합니다. <strong>싱글 클러스터</strong>에서 별다른 작업을 해주지 않았다면, 아마 Route 53의 <strong>Routing policy</strong>를 <strong>Simple</strong>로 설정해 두었을 겁니다.
-<strong>멀티 클러스터</strong>에서는 <strong>Routing policy</strong>를 <strong>Weighted</strong>로 설정해 설정한 비율로 트래픽을 분배하는 원리입니다.</p>
+<p>그러나 위 작업만으로는 제한적인 정보로만 보고서가 생성됩니다. 그래서 다음과 같이 최소한의 <code class="language-plaintext highlighter-rouge">ClusterRole</code>을 생성해야 합니다.</p>
 
-<p><img src="../../assets/built/images/post/aws/defineWeighted.png" alt="clusterUpdate" /></p>
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">kind</span><span class="pi">:</span> <span class="s">ClusterRole</span>
+<span class="na">apiVersion</span><span class="pi">:</span> <span class="s">rbac.authorization.k8s.io/v1</span>
+<span class="na">metadata</span><span class="pi">:</span>
+  <span class="na">name</span><span class="pi">:</span> <span class="s">hardeneks-runner</span>
+<span class="na">rules</span><span class="pi">:</span>
+<span class="pi">-</span> <span class="na">apiGroups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">"</span><span class="pi">]</span>
+  <span class="na">resources</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">namespaces"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">resourcequotas"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">persistentvolumes"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">pods"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">services"</span><span class="pi">]</span>
+  <span class="na">verbs</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">list"</span><span class="pi">]</span>
+<span class="pi">-</span> <span class="na">apiGroups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">rbac.authorization.k8s.io"</span><span class="pi">]</span>
+  <span class="na">resources</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">clusterroles"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">clusterrolebindings"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">roles"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">rolebindings"</span><span class="pi">]</span>
+  <span class="na">verbs</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">list"</span><span class="pi">]</span>
+<span class="pi">-</span> <span class="na">apiGroups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">networking.k8s.io"</span><span class="pi">]</span>
+  <span class="na">resources</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">networkpolicies"</span><span class="pi">]</span>
+  <span class="na">verbs</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">list"</span><span class="pi">]</span>
+<span class="pi">-</span> <span class="na">apiGroups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">storage.k8s.io"</span><span class="pi">]</span>
+  <span class="na">resources</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">storageclasses"</span><span class="pi">]</span>
+  <span class="na">verbs</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">list"</span><span class="pi">]</span>
+<span class="pi">-</span> <span class="na">apiGroups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">apps"</span><span class="pi">]</span>
+  <span class="na">resources</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">deployments"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">daemonsets"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">statefulsets"</span><span class="pi">]</span>
+  <span class="na">verbs</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">list"</span><span class="pi">,</span> <span class="s2">"</span><span class="s">get"</span><span class="pi">]</span>
+<span class="pi">-</span> <span class="na">apiGroups</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">autoscaling"</span><span class="pi">]</span>
+  <span class="na">resources</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">horizontalpodautoscalers"</span><span class="pi">]</span>
+  <span class="na">verbs</span><span class="pi">:</span> <span class="pi">[</span><span class="s2">"</span><span class="s">list"</span><span class="pi">]</span>
+</code></pre></div></div>
 
-<p>위 캡처와 같이 레코드를 생성할 때, 아래 3가지 요소를 주목하여 가중치 정책을 생성합니다.</p>
+<p><br /></p>
+
+<h3 id="-customize">🪓 Customize</h3>
+
+<p>HardenEKS를 사용하여 생성한 리포트에 특정 Namespace 혹은 몇 Rule들을 제외하고 검사를 진행하고 싶다면 커스터마이즈가 필요합니다. 
+커스터마이징하는 방법을 찾기 위해 <code class="language-plaintext highlighter-rouge">hardeneks --help</code> 명령어를 확인해 보면, 아래와 같이 <code class="language-plaintext highlighter-rouge">tmp/</code> 위치에 <code class="language-plaintext highlighter-rouge">config.yaml</code>을 default로 적용하고 있다는 사실을 알 수 있습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>│ <span class="nt">--config</span>  TEXT  Path to a hardeneks config file.
+│                 <span class="o">[</span>default: /tmp/.venv/lib/python3.9/site-packages/hardeneks/config.yaml]
+</code></pre></div></div>
+
+<p>Config 값을 조정하기 위해 다음과 같이 <code class="language-plaintext highlighter-rouge">my-config.yaml</code> 파일을 생성합니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> /tmp/.venv/lib/python3.9/site-packages/hardeneks/config.yaml <span class="o">&gt;</span> my-config.yaml
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">config.yaml</code> 파일의 구조는 아주 단순합니다. 아래와 같이 2가지 영역을 수정하여 config 값을 변경합니다.</p>
+
+<ul>
+  <li><code class="language-plaintext highlighter-rouge">ignore-namespaces</code> : 는 스캔을 제외할 <strong>namespace</strong>를 정의</li>
+  <li><code class="language-plaintext highlighter-rouge">rules</code> : iam, multi_tenancy, network_sucurity 등에 대하여 검사할 <strong>rule</strong>을 정의</li>
+</ul>
+
+<p>제외할 <strong>namespace</strong>를 기재하는 것은 쉽지만, 어떤 <strong>rule</strong>을 적용시킬지는 한 번에 찾기 쉽지 않습니다. 
+만약 여러분이 rule을 수정하고 싶다면, pdoc으로 생성된 <a href="https://aws-samples.github.io/hardeneks/">HardenEKS Github Pages</a>를 참고하시면 됩니다.</p>
+
+<h4 id="example">Example</h4>
+
+<p>예를 들어, <code class="language-plaintext highlighter-rouge">Spread replicas across AZs and Nodes</code>을 예외 처리하고 싶다 가정하고 적용하는 방법을 소개해드리겠습니다.
+검색을 활용한 색인을 지원하지 않으므로, 일일이 문서를 타고 들어가 rule을 확인해야 합니다. 😡 해당 과정이 매우 까다로우므로, 각 단계별로 링크를 생성해 두었습니다.</p>
 
 <ol>
-  <li>DNS의 <strong>캐시를 최소화</strong>하기 위해 <strong>TTL은 1m</strong>(60 seconds)를 권장</li>
-  <li>각 다른 환경에서 <strong>50:50 가중치</strong>를 주고 싶을 경우, <strong>2개의 가중치 레코드에 Weighted 값 1</strong>을 부여</li>
-  <li><code class="language-plaintext highlighter-rouge">Record ID</code>는 레코드의 <strong>주석</strong>과 같은 역할을 하지만 <strong>필수</strong>로 작성해야 함 (이어서 이 값의 중요성을~~ 😱)</li>
+  <li>최상단 <a href="https://aws-samples.github.io/hardeneks/index.html">index 페이지</a>, Sub-modules에서 <code class="language-plaintext highlighter-rouge">namespace_based</code> 선택</li>
+  <li><a href="https://aws-samples.github.io/hardeneks/namespace_based/index.html">namespace_based 페이지</a>,  Sub-modules에서 <code class="language-plaintext highlighter-rouge">reliability</code> 선택</li>
+  <li><a href="https://aws-samples.github.io/hardeneks/namespace_based/reliability/index.html">reliability 페이지</a>, Sub-modules에서 <code class="language-plaintext highlighter-rouge">applications</code> 선택</li>
+  <li>여기까지 진행하면 Functions이 나오는데, 찾고자 하는 <strong>rule</strong>을 <code class="language-plaintext highlighter-rouge">Ctrl + F</code>로 함수 명 검색</li>
 </ol>
 
-<h2 id="externaldns">ExternalDNS</h2>
+<p><img src="../../assets/built/images/post/aws/rule.png" alt="hardeneks-rule" /></p>
 
-<p>Kubernetes는 KubeDNS를 내부 DNS 서버로 활용합니다. Route 53과 같은 다른 DNS 공급자를 사용하기 위해서는 <a href="https://github.com/kubernetes-sigs/external-dns">external-dns</a>를 추가적으로 설치해 사용합니다.
-물론 external-dns를 사용하지 않고 <strong>외부 DNS의 영역과 k8s의 영역을 분리하여 사용</strong>할 수도 있지만, external-dns를 적용한다면 <strong>외부 DNS 공급자도 코드로 제어</strong>할 수 있습니다.</p>
+<ol>
+  <li><code class="language-plaintext highlighter-rouge">schedule_replicas_across_nodes</code> 함수 명이 <code class="language-plaintext highlighter-rouge">Spread replicas across AZs and Nodes</code> 해당하는 <strong>rule</strong> 이름이므로,
+이를 <code class="language-plaintext highlighter-rouge">config.yaml</code>에서 수정</li>
+  <li>리포트를 생성하는 명령어에서 수정된 config 파일을 옵션으로 적용시키면, 커스텀 하게 바꾼 값들이 적용 <br />
+<em>예) <code class="language-plaintext highlighter-rouge">hardeneks --config &lt;my-config&gt;.yaml --export-html &lt;Report Name&gt;.html</code></em></li>
+</ol>
 
-<h3 id="set-up">Set up</h3>
+<p>Report 상단에는 어떤 대상으로 스캔을 진행했는지, 요약 정보가 나옵니다. 검사 결과와 더불어, Resolution을 통해 EBPG의 Link도 함께 안내됩니다.</p>
 
-<p>ExternalDNS를 EKS에 설정하는 방법은 <a href="https://aws.amazon.com/premiumsupport/knowledge-center/eks-set-up-externaldns/">첨부 링크</a>에 자세하게 설명되어 있지만, 놓치기 쉬운 2가지 부분을 언급하고 넘어가겠습니다.</p>
+<p>아래 사진은 Example에서 적용시킨 custom.yaml 적용 여부와, rule을 삭제한 결과 화면입니다.</p>
 
-<h4 id="externaldns-1">ExternalDNS</h4>
-
-<p>external-dns를 최종 배포하기 전, <code class="language-plaintext highlighter-rouge">Deployment</code>의 아래 2가지 인자를 수정해야 합니다.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">args</span><span class="pi">:</span>
-    <span class="pi">-</span> <span class="s">--domain-filter=&lt;Your_R53_Domain_Name&gt;</span>
-    <span class="pi">-</span> <span class="s">--txt-owner-id=&lt;Your_R53_HostedZone_Id&gt;</span>
-</code></pre></div></div>
-
-<blockquote>
-  <p>🐞 이번 포스팅을 준비하며 external-dns가 간헐적으로 동작하는 경우를 목격했습니다. <br />
-원인은 해당 인자를 오기재했기 때문인데, 원래대로라면 동작하지 않아야 하는데 버그인 것 같습니다.</p>
-</blockquote>
-
-<h4 id="ingress">Ingress</h4>
-
-<p>ExternalDNS를 제대로 설정했다면, 이어서 외부로 노출할 <code class="language-plaintext highlighter-rouge">Ingress</code>의 <code class="language-plaintext highlighter-rouge">annotations</code>를 수정합니다.</p>
-
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">external-dns</span><span class="pi">:</span> <span class="s">public</span>
-<span class="s">external-dns.alpha.kubernetes.io/hostname</span><span class="pi">:</span> <span class="s">myDomain.com</span>
-<span class="s">external-dns.alpha.kubernetes.io/set-identifier</span><span class="pi">:</span> <span class="s">recordID</span>
-<span class="s">external-dns.alpha.kubernetes.io/aws-weight</span><span class="pi">:</span> <span class="s1">'</span><span class="s">1'</span>
-</code></pre></div></div>
-
-<p>Simple 라우팅 정책에서는 <code class="language-plaintext highlighter-rouge">set-identifier</code>가 없어도 되지만, 이외 라우팅 정책에서는 <strong>필수</strong>적으로 들어가야 합니다. 
-직전 콘솔에서는 <code class="language-plaintext highlighter-rouge">Record ID</code>를 기재하지 않았을 경우 화면이 넘어가지 않지만, external-dns에서 해당 값이 빠지면 로그와 파드 상태 모두 특이점이 발견되지 않아 원인을 찾기 어려워집니다.</p>
-
-<h3 id="issue">Issue</h3>
-
-<p><strong>yaml 파일에 의도를 기재하여 배포했지만, 정작 Route 53에서 레코드가 업데이트되지 않는 경우</strong></p>
-
-<p>구축 초기부터 가중치 정책을 적용한 멀티 클러스터를 생성한다면 해당 이슈를 만나지 않겠지만,
-싱글 클러스터로 external-dns를 운영하고 있는 환경에서 멀티 클러스터를 적용하면 <a href="https://github.com/kubernetes-sigs/external-dns/issues/1411">해당 이슈</a>를 만날 수 있습니다.</p>
-
-<blockquote>
-  <p>UPSERT is not possible, doing UPSERT will actually do a CREATE that will fail</p>
-</blockquote>
-
-<p>이를 해결하기 위해 노출하고자 하는 Ingress를 <code class="language-plaintext highlighter-rouge">delete &amp; apply</code> 한다면 우회가 가능하겠지만, 운영하고 있는 서비스라면 <strong>다운타임</strong>이 발생할 것입니다.
-지금으로서는 Route 53 콘솔 화면에서 수동으로 기존의 정책을 수정해 주고 후속으로 생성하는 클러스터는 코드로 제어하는 방법이 있습니다. 그러나 코드와 콘솔 2가지 채널에서 인프라를 다루는 방법은 바람직하지 않습니다.</p>
-
-<p><strong>해당 이슈를 해결한 직후 external-dns의 logs</strong></p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>│ <span class="nb">time</span><span class="o">=</span><span class="s2">"2023-02-25T16:28:56Z"</span> <span class="nv">level</span><span class="o">=</span>info <span class="nv">msg</span><span class="o">=</span><span class="s2">"Applying provider record filter for domains: [myDomain.com. .myDomain.com.]"</span>
-│ <span class="nb">time</span><span class="o">=</span><span class="s2">"2023-02-25T16:28:57Z"</span> <span class="nv">level</span><span class="o">=</span>info <span class="nv">msg</span><span class="o">=</span><span class="s2">"Desired change: CREATE ex.myDomain.com A [Id: /hostedzone/Z0HOSTEDZONEID]"</span>
-│ <span class="nb">time</span><span class="o">=</span><span class="s2">"2023-02-25T16:28:57Z"</span> <span class="nv">level</span><span class="o">=</span>info <span class="nv">msg</span><span class="o">=</span><span class="s2">"Desired change: CREATE ex.myDomain.com TXT [Id: /hostedzone/Z0HOSTEDZONEID]"</span>
-│ <span class="nb">time</span><span class="o">=</span><span class="s2">"2023-02-25T16:28:57Z"</span> <span class="nv">level</span><span class="o">=</span>error <span class="nv">msg</span><span class="o">=</span><span class="s2">"Failure in zone myDomain.com. [Id: /hostedzone/Z0HOSTEDZONEID]"</span>
-│ <span class="nb">time</span><span class="o">=</span><span class="s2">"2023-02-25T16:28:57Z"</span> <span class="nv">level</span><span class="o">=</span>error <span class="nv">msg</span><span class="o">=</span><span class="s2">"InvalidChangeBatch: [RRSet with DNS name ex.myDomain.com.,
-│ type TXT, SetIdentifier recordID cannot be created as a non-weighted set exists with the same name and type.]</span><span class="se">\n\t</span><span class="s2">status code: 400, request
-│ time="</span>2023-02-25T16:28:57Z<span class="s2">" level=error msg="</span>failed to submit all changes <span class="k">for </span>the following zones: <span class="o">[</span>/hostedzone/Z0HOSTEDZONEID]<span class="s2">"
-
--- After changing Simple Routing policy --
-
-│ time="</span>2023-02-25T16:29:58Z<span class="s2">" level=info msg="</span>2 record<span class="o">(</span>s<span class="o">)</span> <span class="k">in </span>zone myDomain.com. <span class="o">[</span>Id: /hostedzone/Z0HOSTEDZONEID] were successfully updated<span class="s2">"
-│ time="</span>2023-02-25T16:30:58Z<span class="s2">" level=info msg="</span>Applying provider record filter <span class="k">for </span>domains: <span class="o">[</span>myDomain.com. .myDomain.com.]<span class="s2">"
-│ time="</span>2023-02-25T16:30:58Z<span class="s2">" level=info msg="</span>All records are already up to <span class="nb">date</span><span class="s2">"
-</span></code></pre></div></div>
-
-<h3 id="검증">검증</h3>
-
-<p>실제 1:1로 라우팅이 일어나고 있나 확인하고 싶다면, <code class="language-plaintext highlighter-rouge">웹</code> 혹은 <code class="language-plaintext highlighter-rouge">dig</code> 명령어로 확인이 가능하지만 가장 정확한 방법은 Route 53 내 <strong>Test record</strong>를 사용하는 것입니다.
-Record 테스트를 위해 Record name을 기재하고 <strong>Get response</strong> 버튼을 누르면 <strong>Response returned by Route 53</strong> 화면에서 실시간으로 바뀌는 IP를 확인할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/aws/testRecord.png" alt="testRecord" /></p>
-
-<h4 id="멀티-클러스터-교체-작업">멀티 클러스터 교체 작업</h4>
-
-<p>❗️ 기존 클러스터를 A, 업그레이드를 진행할 클러스터를 B라 가정하겠습니다.</p>
-
-<p>B 클러스터가 문제없다 판단되면, 다시 한번 가중치를 조절해 A 클러스터를 대체합니다.</p>
-
-<blockquote>
-  <p>가중치 변화, 1:0 🔜 1:1 🔜 0:1</p>
-</blockquote>
-
-<p>B 클러스터에서 문제가 있다 판단되면 B의 가중치를 0으로 바꾸면 롤백의 효과를 볼 수 있습니다.</p>
+<p><img src="../../assets/built/images/post/aws/result.png" alt="result.png" /></p>
 
 <p><br /></p>
 
 <h2 id="outro">Outro</h2>
 
-<p>external-dns는 Route 53 리소스를 제어할 수 있어 편리하면서도 운영이 복잡합니다. 위에서 언급한 이슈 외에도 GitOps를 구축한 상태에서 멀티 클러스터를 운용하려면, 각 클러스터마다 다른 Repository가 필요합니다.
-terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한다면 external-dns가 도움이 되니 사용 환경에 따라 적절한 도구를 사용해야 할 것 같습니다.
-모든 것을 코드로 관리하는 것은 쉽지 않네요. 🤣</p>
+<p>HardenEKS는 아주 간단하고 빠르게, 나의 EKS가 EKS 모범 사례대로 운영하고 있는지 확인할 수 있어 아주 편리한 툴인 것 같습니다.
+비록 Rule 커스텀 과정에서 문서가 불친절했지만, EBPG를 기반으로 자동화된 점검을 한다는 점에서 만족합니다.</p>
 
-<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+<p>AWS는 아키텍처 관련 모범 사례를 사용해 학습, 측정 및 구축하는 방법으로, <strong>AWS Well-Architected</strong>라는 방법론과 도구를 제공합니다.
+그동안 AWS Well-Architected은 <strong>특정 업계 및 기술 도메인</strong>에 대해서는 <strong>Lenses</strong>를 통해 지침을 제공하고 있었지만,
+EKS 기반 환경의 분석까지는 지원하지 않았습니다. HardenEKS 덕분에, EKS도 Well-Architected를 준수하기 더욱 수월해진 것 같습니다.</p>
+
+<p>과거 저는 Kubernetes 진단을 위해 k9s에 통합되어 있는 Popeye를 사용했습니다. HardenEKS와 함께 사용한다면 상호 보완을 이루며, 
+더 안전하고 신뢰성 있는 EKS 환경을 만드는데 도움이 될 것 같다는 팁을 드리며, 글을 마칩니다!</p>
+
+<blockquote>
+  <p><a href="https://github.com/derailed/popeye#sanitizers">Popeye 분석 범위</a> (port mismatches, probes 등 세부적인 설정에 대하여 심각도(Level)  만족도 여부 % 제공)</p>
+</blockquote>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
 
 <hr />
 
@@ -408,9 +411,9 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/EKS_Upgrade';
-                            this.page.identifier = '/EKS_Upgrade';
-                            this.page.title = 'Amazon EKS Multi Cluster Upgrade with ExternalDNS';
+                            this.page.url = 'https://heuristicwave.github.io/HardenEKS';
+                            this.page.identifier = '/HardenEKS';
+                            this.page.title = 'About HardenEKS (install & custom)';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -455,11 +458,6 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/HardenEKS">About HardenEKS (install & custom)</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -484,12 +482,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/FullyCertified">AWS Fully Certified</a></li>
                                         
                                     
                                   
@@ -502,6 +495,16 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
                                     
                                   
                                 
@@ -658,16 +661,19 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
                 
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/migrateCodebuild">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/githubio.png)"></div>
+            <a class="post-card-image-link" href="/Chart">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/helm.svg)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/migrateCodebuild">
+            <a class="post-card-content-link" href="/Chart">
                 <header class="post-card-header">
                     
                         
@@ -681,63 +687,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                         
                     
 
-                    <h2 class="post-card-title">Automating git submodules with AWS Code Series (Build, Pipeline)</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
-
-            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
-            
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/OpenAI_Lambda">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/OpenAI.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/OpenAI_Lambda">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Serverless</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Using OpenAI API with AWS Lambda</h2>
+                    <h2 class="post-card-title">Helm Chart Repository in AWS</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -781,18 +731,18 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Amazon EKS Multi Cluster Upgrade with ExternalDNS</div>
+    <div class="floating-header-title">About HardenEKS (install & custom)</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Amazon+EKS+Multi+Cluster+Upgrade+with+ExternalDNS&amp;url=https://heuristicwave.github.ioEKS_Upgrade"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=About+HardenEKS+%28install+%26+custom%29&amp;url=https://heuristicwave.github.ioHardenEKS"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioEKS_Upgrade"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioHardenEKS"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
