@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-06-08T09:20:19+00:00</updated>
+  <updated>2023-06-08T09:26:04+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -159,7 +159,7 @@ EBPG에는 글을 작성하는 시점을 기준으로 Security, Reliability, Clu
 &lt;em&gt;예) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;hardeneks --config &amp;lt;my-config&amp;gt;.yaml --export-html &amp;lt;Report Name&amp;gt;.html&lt;/code&gt;&lt;/em&gt;&lt;/li&gt;
 &lt;/ol&gt;
 
-&lt;p&gt;Report 상단에는 어떤 대상으로 스캔을 진행했는지, 요약 정보가 나옵니다. 검사 결과와 더불어, Resolution을 통해 EBPG의 Link도 함께 안내됩니다.&lt;/p&gt;
+&lt;p&gt;Report 상단에는 무엇을 대상으로 스캔을 진행했는지, &lt;strong&gt;요약 정보&lt;/strong&gt;가 나옵니다. 검사 결과와 더불어, &lt;strong&gt;Resolution&lt;/strong&gt;을 통해 &lt;strong&gt;EBPG의 Link&lt;/strong&gt;도 함께 안내됩니다.&lt;/p&gt;
 
 &lt;p&gt;아래 사진은 Example에서 적용시킨 custom.yaml 적용 여부와, rule을 삭제한 결과 화면입니다.&lt;/p&gt;
 
