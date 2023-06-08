@@ -315,12 +315,10 @@ EBPG에는 글을 작성하는 시점을 기준으로 Security, Reliability, Clu
   <li>최상단 <a href="https://aws-samples.github.io/hardeneks/index.html">index 페이지</a>, Sub-modules에서 <code class="language-plaintext highlighter-rouge">namespace_based</code> 선택</li>
   <li><a href="https://aws-samples.github.io/hardeneks/namespace_based/index.html">namespace_based 페이지</a>,  Sub-modules에서 <code class="language-plaintext highlighter-rouge">reliability</code> 선택</li>
   <li><a href="https://aws-samples.github.io/hardeneks/namespace_based/reliability/index.html">reliability 페이지</a>, Sub-modules에서 <code class="language-plaintext highlighter-rouge">applications</code> 선택</li>
-  <li>여기까지 진행하면 Functions이 나오는데, 찾고자 하는 <strong>rule</strong>을 <code class="language-plaintext highlighter-rouge">Ctrl + F</code>로 함수 명 검색</li>
-</ol>
-
-<p><img src="../../assets/built/images/post/aws/rule.png" alt="hardeneks-rule" /></p>
-
-<ol>
+  <li>
+    <p>여기까지 진행하면 Functions이 나오는데, 찾고자 하는 <strong>rule</strong>을 <code class="language-plaintext highlighter-rouge">Ctrl + F</code>로 함수 명 검색
+<img src="../../assets/built/images/post/aws/rule.png" alt="hardeneks-rule" /></p>
+  </li>
   <li><code class="language-plaintext highlighter-rouge">schedule_replicas_across_nodes</code> 함수 명이 <code class="language-plaintext highlighter-rouge">Spread replicas across AZs and Nodes</code> 해당하는 <strong>rule</strong> 이름이므로,
 이를 <code class="language-plaintext highlighter-rouge">config.yaml</code>에서 수정</li>
   <li>리포트를 생성하는 명령어에서 수정된 config 파일을 옵션으로 적용시키면, 커스텀 하게 바꾼 값들이 적용 <br />
