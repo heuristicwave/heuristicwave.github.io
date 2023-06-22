@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-06-08T09:47:25+00:00</updated>
+  <updated>2023-06-22T08:05:25+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -999,8 +999,8 @@ AWS가 기존 데이터 센터가 사용하는 TCP의 한계를 극복하기 위
     <entry>
       <title type="html">Automating git submodules with AWS Code Series (Build, Pipeline)</title>
       <link href="https://heuristicwave.github.io/migrateCodebuild" rel="alternate" type="text/html" title="Automating git submodules with AWS Code Series (Build, Pipeline)" />
-      <published>2023-03-11T00:00:00+00:00</published>
-      <updated>2023-03-11T00:00:00+00:00</updated>
+      <published>2023-03-31T00:00:00+00:00</published>
+      <updated>2023-03-31T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/migrateCodebuild</id>
       <content type="html" xml:base="https://heuristicwave.github.io/migrateCodebuild">&lt;p&gt;AWS Code Series (Build, Pipeline)으로 git submodule 자동화&lt;/p&gt;
 
