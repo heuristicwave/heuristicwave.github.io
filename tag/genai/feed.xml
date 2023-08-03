@@ -1,0 +1,263 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
+  <link href="https://heuristicwave.github.io/tag/genai/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
+  <updated>2023-08-03T11:27:30+00:00</updated>
+  <id>https://heuristicwave.github.io/tag/genai/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Heuristic Wave Blog | </title>
+  
+
+  
+    <subtitle>Careful Writer</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">Generative AI 1 - Prompt Design Study</title>
+      <link href="https://heuristicwave.github.io/GenAI-1" rel="alternate" type="text/html" title="Generative AI 1 - Prompt Design Study" />
+      <published>2023-08-03T00:00:00+00:00</published>
+      <updated>2023-08-03T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/GenAI-1</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/GenAI-1">&lt;p&gt;본 글은 제 개인적 학습을 위해 &lt;a href=&quot;https://www.cloudskillsboost.google/focuses/63251?parent=catalog&quot;&gt;Generative AI with Vertex AI: Prompt Design&lt;/a&gt; 실습한 내용의 일부를 적은 글입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Prompt Design&lt;/code&gt;에 대하여 설명하지 않으며, 학습이 필요하시다면 Intro 부분을 참고하시기 바랍니다.&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;요즘 주목받는 GenAI를 공부하며, 많은 자료들을 찾아보고 있습니다. 과거에도 Google은 제가 k8s나 terraform을 공부할 때도 도움이 되는 학습자료를 많이 제공해 주었는데, GenAI 분야에서도 큰 도움을 주고 있네요. (&lt;em&gt;🤗 문서와 더불어 학습하기 정말 최고인 것 같습니다.&lt;/em&gt;)&lt;/p&gt;
+
+&lt;p&gt;실습 환경을 제공해 주는 Qwiklabs(&lt;a href=&quot;https://www.cloudskillsboost.google/focuses/63251?parent=catalog&quot;&gt;Generative AI with Vertex AI: Prompt Design&lt;/a&gt;)에서 실습을 할 수 있지만,
+해당 과정은 크레딧이 필요한 유료과정입니다. 그러나, &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/examples/prompt-design&quot;&gt;GoogleCloudPlatform의 generative-ai 깃헙&lt;/a&gt;에서 Colab에서 실습할 수 있는 환경을 제공하고 있습니다.
+또한, 파이썬 코드만 참고하여 Google Cloud의 Vertex AI 대신 다른 언어 모델을 활용해 과금을 피할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-prompt-design-best-practices&quot;&gt;👍 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_prompt_design.ipynb&quot;&gt;Prompt Design Best Practices&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;프롬프트의 의도를 잘못 해석할 가능성을 줄이기 위해 “unfacny” 하게 작성하는 방법을 다음과 같이 안내합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;간결하게 작성&lt;/li&gt;
+  &lt;li&gt;구체적이고 명확하게 정의&lt;/li&gt;
+  &lt;li&gt;한 번에 하나의 작업만 요청&lt;/li&gt;
+  &lt;li&gt;예시를 포함하여 응답 품질 개선&lt;/li&gt;
+  &lt;li&gt;생성 작업을 분류 작업으로 바꿔 안전성 개선
+    &lt;blockquote&gt;
+      &lt;p&gt;생성형 작업은 브레인스토밍에 유용한 개방형 응답을 유도합니다. &lt;br /&gt;
+&lt;em&gt;예) 프로그래밍 실력을 향상시키는 방법을 추천해 주세요.&lt;/em&gt; &lt;br /&gt;
+분류 작업은 결과의 가변성을 줄입니다. &lt;br /&gt;
+&lt;em&gt;예) Python, Java, C 중 어떤 활동을 추천하고 이유를 알려세요&lt;/em&gt;&lt;/p&gt;
+    &lt;/blockquote&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;위 원칙을 포함하여 N-shot Prompting을 통해 향상된 답변을 받을 수 있습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;️-prompt-design&quot;&gt;🖥️ &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/examples/prompt-design&quot;&gt;Prompt Design&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;해당 부분에서는 5가지 분야에서 효과적인 Prompt를 작성하는 방법을 안내합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;1-ideation&quot;&gt;1. Ideation&lt;/h3&gt;
+
+&lt;p&gt;Generative 모델의 장점을 활용하여 아래와 같은 사용 예시를 소개합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;마케팅 캠페인 활용 방법&lt;/li&gt;
+  &lt;li&gt;몇 가지 예시 질문을 생성하여 테스트용 문제 제작 방법&lt;/li&gt;
+  &lt;li&gt;밈, 인터뷰 질문, 이름 생성&lt;/li&gt;
+  &lt;li&gt;팁과 조언 받기&lt;/li&gt;
+  &lt;li&gt;의인화(impersonation) 하여 답변 받기&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;2-question--answering&quot;&gt;2. Question &amp;amp; Answering&lt;/h3&gt;
+
+&lt;p&gt;question-answering 프롬프트를 만들 때는 가능한 많은 맥락(context)을 제공해야 합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;배경지식&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Open domain:
+    &lt;ul&gt;
+      &lt;li&gt;Zero-shot prompting&lt;/li&gt;
+      &lt;li&gt;Few-shot prompting&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Closed domain:
+    &lt;ul&gt;
+      &lt;li&gt;Providing custom knowledge as context&lt;/li&gt;
+      &lt;li&gt;Instruction-tune the outputs&lt;/li&gt;
+      &lt;li&gt;Few-shot prompting&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;-open&quot;&gt;📭 Open&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;Few-shot 프롬프프 예시&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;prompt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;Q: 한국의 수도는 어디인가요?&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+            A: 서울
+            Q: 미국의 수도는 어디인가요?&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+            A:
+         &quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;-closed&quot;&gt;📪 Closed&lt;/h4&gt;
+
+&lt;p&gt;&lt;strong&gt;프롬프트에 내부 지식을 컨텍스트로 추가&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+Amazon S3의 데이터 보호 &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+Amazon S3에서는 미션 크리티컬 및 기본 데이터 스토리지에 적합하게 설계된, 내구성이 뛰어난 스토리지 인프라를 제공합니다. &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+AWS 리전의 최소 3개 가용 영역에 걸쳐 여러 디바이스에 객체를 중복 저장합니다.
+...생략...
+지정된 기간 동안 객체에 대해 99.999999999%의 내구성과 99.99%의 가용성을 제공할 수 있도록 설계되었습니다.
+&quot;&quot;&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;question&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;고가용성은 어떻게 달성됩니까?&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;prompt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;아래 컨텍스트에서 대답합니다:
+Context: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+Question: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;question&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+Answer:
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;Instruction-tuning outputs (미움받을 용기 🤣)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;모델이 컨텍스트에 제공된 외의 정보를 사용할 수 없게 지정하려면 다음과 같은 기법을 반영합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;question&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;허깅페이스 모델을 호스팅 하려면 어떻게 해야 하나요?&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;prompt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;주어진 다음 컨텍스트에 대해 대답하세요. &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+만약 에서 답변할 수 없고 출력에 확신이 없는 경우,
+&quot;제공된 컨텍스트에서 사용할 수 없는 정보&quot;라고 말하세요. &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+Context: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;context&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;?&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+Question: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;question&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+Answer:
+&quot;&quot;&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;평가&quot;&gt;평가&lt;/h4&gt;
+
+&lt;p&gt;질문과 ground truth(정답)에 대한 데이터 프레임을 만들어, &lt;a href=&quot;https://en.wikipedia.org/wiki/Levenshtein_distance&quot;&gt;Levenshtein distance&lt;/a&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fuzzywuzzy&lt;/code&gt; 라이브러리를 사용해 평가합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;3-text-classification&quot;&gt;3. Text Classification&lt;/h3&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Classify&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Given&lt;/code&gt; 등의 명령어를 프롬프트에 넣어 다양한 텍스트 분류 예시들을 보여줍니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Zero-shot 프롬프팅을 통한 문장 예측&lt;/li&gt;
+  &lt;li&gt;Few-shot 프롬프팅을 통한 맥락에 맞는 분류&lt;/li&gt;
+  &lt;li&gt;주제 분류/스팸 탐지/의도 인식/언어 파악/유해성 파악/감정 파악&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;평가-1&quot;&gt;평가&lt;/h4&gt;
+
+&lt;p&gt;해당 방법도 앞선 단계와 같이 ground truth(정답)과 예측에 대한 데이터 프레임을 만들고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sklearn.metrics&lt;/code&gt; 등을 활용하여 정확도를 평가합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;4-text-extraction&quot;&gt;4. Text Extraction&lt;/h3&gt;
+
+&lt;p&gt;다음과 같은 텍스트 추출 예시들을 보여줍니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;출력 예시(JSON 구조)를 프롬프트로 주고, 특정 문자열 들을 나열하여 주어진 포맷으로 출력하기&lt;/li&gt;
+  &lt;li&gt;프롬프트에 JSON 구조(key)를 정하고, 해당 키에 맞춰 JSON 구조로 출력하기&lt;/li&gt;
+  &lt;li&gt;문맥을 Few-Shot으로 제공하고 명령에 따라 대답 출력하기&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;5-text-summarization&quot;&gt;5. Text Summarization&lt;/h3&gt;
+
+&lt;p&gt;다음과 같은 지시를 프롬프트에 넣어 텍스트 요약 예시들을 보여줍니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;스크립트 요약
+    &lt;ul&gt;
+      &lt;li&gt;&lt;em&gt;Provide a very short summary, no more than three sentences, for the following article:&lt;/em&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;em&gt;Provide a TL;DR for the following article:&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;글머리 기호(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;-&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;*&lt;/code&gt;)로 요약
+    &lt;ul&gt;
+      &lt;li&gt;&lt;em&gt;Provide a very short summary in four bullet points for the following article:&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;#&lt;/code&gt; 토큰화 (SNS에서 #맛집, #추천 등의 요약)
+    &lt;ul&gt;
+      &lt;li&gt;&lt;em&gt;Tokenize the hashtags of this tweet:&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;5가지의 옵션으로 제목 생성
+    &lt;ul&gt;
+      &lt;li&gt;&lt;em&gt;Write a title for this text, give me five options:&lt;/em&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;평가-2&quot;&gt;평가&lt;/h4&gt;
+
+&lt;p&gt;요약 결과를 &lt;a href=&quot;https://en.wikipedia.org/wiki/ROUGE_(metric)&quot;&gt;ROUGE&lt;/a&gt; 프레임워크로 평가합니다. 해당 측정법은 컴퓨터가 생성한 요약과 사람의 이상적인 요약 간의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;n-gram&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;word sequences&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;word pairs&lt;/code&gt; 등의 겹치는 단어의 수를 계산합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;이제서야, &lt;a href=&quot;https://heuristicwave.github.io/Kendra&quot;&gt;이전 RAG 포스팅&lt;/a&gt;에서 언급했던 메타의 ‘오픈북과 클로스드북 장점의 결합’과 ‘Instruction-tuning outputs의 존재 이유’가 이해 가는 것 같습니다.
+또한 정량적인 평가 기준을 마련하는 방법을 알게 되어 매우 뿌듯합니다. 배움의 즐거움을 느끼게 해준 구글의 자료에 다시한번 감사함을 느낍니다.&lt;/p&gt;
+
+&lt;p&gt;본 글의 원본 교육 자료는 이 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/examples/prompt-design&quot;&gt;링크&lt;/a&gt;에서 만날 수 있습니다. 실습을 통해 Gen AI 지식을 얻어 가세요! 🤗&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Gen AI Study Checkpoint&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Prompt Design Study&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="genai" />
+      
+        <category term="gcp" />
+      
+
+      
+        <summary type="html">본 글은 제 개인적 학습을 위해 Generative AI with Vertex AI: Prompt Design 실습한 내용의 일부를 적은 글입니다. Prompt Design에 대하여 설명하지 않으며, 학습이 필요하시다면 Intro 부분을 참고하시기 바랍니다.</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>
