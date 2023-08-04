@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-08-03T11:27:30+00:00</updated>
+  <updated>2023-08-04T05:35:33+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -52,7 +52,7 @@
 
 &lt;h2 id=&quot;-prompt-design-best-practices&quot;&gt;👍 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_prompt_design.ipynb&quot;&gt;Prompt Design Best Practices&lt;/a&gt;&lt;/h2&gt;
 
-&lt;p&gt;프롬프트의 의도를 잘못 해석할 가능성을 줄이기 위해 “unfacny” 하게 작성하는 방법을 다음과 같이 안내합니다.&lt;/p&gt;
+&lt;p&gt;프롬프트의 의도를 잘못 해석할 가능성을 줄이기 위해 “unfancy” 하게 작성하는 방법을 다음과 같이 안내합니다.&lt;/p&gt;
 
 &lt;ul&gt;
   &lt;li&gt;간결하게 작성&lt;/li&gt;
@@ -64,7 +64,7 @@
       &lt;p&gt;생성형 작업은 브레인스토밍에 유용한 개방형 응답을 유도합니다. &lt;br /&gt;
 &lt;em&gt;예) 프로그래밍 실력을 향상시키는 방법을 추천해 주세요.&lt;/em&gt; &lt;br /&gt;
 분류 작업은 결과의 가변성을 줄입니다. &lt;br /&gt;
-&lt;em&gt;예) Python, Java, C 중 어떤 활동을 추천하고 이유를 알려세요&lt;/em&gt;&lt;/p&gt;
+&lt;em&gt;예) Python, Java, C 중 어떤 활동을 추천하고 이유를 알려주세요&lt;/em&gt;&lt;/p&gt;
     &lt;/blockquote&gt;
   &lt;/li&gt;
 &lt;/ul&gt;
