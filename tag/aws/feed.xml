@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-08-04T05:35:33+00:00</updated>
+  <updated>2023-08-23T08:56:49+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,139 @@
   
   
 
+  
+    <entry>
+      <title type="html">3 Ways to Use the Hugging Face Model in AWS</title>
+      <link href="https://heuristicwave.github.io/HuggingFace-1" rel="alternate" type="text/html" title="3 Ways to Use the Hugging Face Model in AWS" />
+      <published>2023-08-23T00:00:00+00:00</published>
+      <updated>2023-08-23T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/HuggingFace-1</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/HuggingFace-1">&lt;p&gt;AWS에서 Hugging Face 모델을 사용하는 3가지 방법&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;Hugging Face(이하, 🤗)는 2016년에 설립되어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Transformer&lt;/code&gt; 라이브러리와 다양한 사전훈련된(pre-trained) 모델을 제공하는 NLP 커뮤니티(?)의 선두주자입니다.
+AWS와 🤗는 21년도부터 협업하여 AWS에서 🤗를 활용할 수 있는 다양한 방법들을 제공하고 있는데요, 이번 포스팅에서는 AWS에서 🤗 모델을 사용하는 3가지 방법에 대하여 가볍게 알아보도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;1️⃣--모델을-amazon-sagemaker-sdk로-직접-올리기&quot;&gt;1️⃣ 🤗 모델을 Amazon SageMaker SDK로 직접 올리기&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/03/leverage-state-of-the-art-natural-language-processing-with-hugging-face-and-amazon-sagemaker/&quot;&gt;21년 3월 23일&lt;/a&gt;, AWS whats-new에 처음 소개된 이 방법은 🤗 모델을 직접 SageMaker SDK를 사용해 올리는 가장 일반적인 방법입니다.
+아주 유명한 Text Generation 모델인 Google의 &lt;a href=&quot;https://huggingface.co/google/flan-t5-small&quot;&gt;FLAN-T5&lt;/a&gt;를 예시로 들어보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/flan.png&quot; alt=&quot;flan-t5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 그림의 좌측 Deploy 버튼을 보면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flan-t5&lt;/code&gt; 모델의 5가지 배포 방법이 나와 있습니다. 해당 모델의 경우, 인기가 많은 모델이라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Inference API&lt;/code&gt;를 눌러 무료로 API를 활용할 수도 있고,
+Amazon SageMaker에 직접 배포해 사용할 수도 있습니다. SageMaker를 사용하기로 하고 해당 버튼을 누르면, 아래와 같이 쉽게 배포할 수 있는 코드를 제공해 줍니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/hf-sagemaker.png&quot; alt=&quot;hf-sagemaker&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 그림의 상단을 확인하면 &lt;strong&gt;SageMaker SDK, Jumpstart, Cloudformation(soon)&lt;/strong&gt; 이라 적힌, 1️⃣번 방법은 &lt;strong&gt;SageMaker SDK&lt;/strong&gt;를 활용한 방법입니다.
+제공되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 호스팅을 위한 사전 작업(spec, role 등)을 정의하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy()&lt;/code&gt; 함수로 모델을 배포합니다.&lt;/p&gt;
+
+&lt;p&gt;1️⃣번 방법은 배포에 필요한 환경을 일일이 코드로 작성하기 때문에, 배포는 번거롭지만 방법만 안다면 사용해 보고 싶은 모든 모델에 활용할 수 있습니다.
+이어서 소개드릴 2️⃣, 3️⃣번 방법이 간단하지만, 모든 모델에 적용되는 것은 아니므로 1️⃣번 방법을 배제할 수는 없습니다.
+뿐만 아니라, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 제공하는 코드가 멱등성을 보장하지 않으므로 모델 배포 도중 발생하는 오류들을 핸들링 해야 하는 지식이 필요합니다.
+그러나, Cloudformation으로 배포하는 기능이 Soon인 것으로 보아 향후 더 손쉽게 배포가 가능할 것 같아 기대됩니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;2️⃣-amazon-sagemaker-jumpstart로--모델-사용하기&quot;&gt;2️⃣ Amazon SageMaker JumpStart로 🤗 모델 사용하기&lt;/h2&gt;
+
+&lt;p&gt;AWS의 서비스들을 보면 Managed 서비스를 참 잘 만듭니다. 21년 3월 직접 호스팅 하는 방법이 소개되었다면, &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/08/amazon-sagemaker-one-click-model-inference-fine-tuning-hugging-face-models-amazon-sagemaker-jumpstart/&quot;&gt;21년 8월 10일&lt;/a&gt;
+one-click으로 🤗의 모델들을 사용할 수 있는 JumpStart 서비스가 출시했습니다.&lt;/p&gt;
+
+&lt;p&gt;오늘을 기준으로 🤗 모델을 검색했을 때, 263개의 모델들을 Deploy 버튼 한 번으로 손쉽게 배포할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/jumpstart-hf.png&quot; alt=&quot;jumpstart&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;추가적으로 위와 같이 콘솔 화면에서 클릭을 통한 배포 이외에도, 1️⃣번 방법에서 소개한 🤗 Hub에서 모델을 검색하고 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 코드를 참고해 스크립트를 사용해 배포가 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;flan-t5-small &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 예시&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# SageMaker JumpStart provides APIs as part of SageMaker SDK that allow you
+# to deploy and fine-tune models in network isolation using scripts that SageMaker maintains.
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sagemaker.jumpstart.model&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;
+
+
+&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;huggingface-text2text-flan-t5-small&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;A step by step recipe to make bolognese pasta:&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deploy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Inference:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Input: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Response: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;3️⃣--inference-endpoins-사용하기&quot;&gt;3️⃣ 🤗 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoins&lt;/a&gt; 사용하기&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;23년 8월 10일&lt;/a&gt; 🤗 플랫폼이 AWS Marketplace에서 사용할 수 있게 되었습니다.
+🤗 계정에서 Organization을 생성하고 AWS Marketplace에서 구독 버튼을 눌려 계정 간 연결을 진행하면 🤗 플랫폼 사용료를 내 AWS 계정으로 비용 청구가 가능합니다.
+자세한 계정 간 연동 방법은 &lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;여기&lt;/a&gt;를 참조하세요.&lt;/p&gt;
+
+&lt;p&gt;계정 통합이 완료되면 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoins&lt;/a&gt;에서 아래와 같이, 모델을 검색하고 리전, Instance 등 배포 유형을 선택하면 손쉽게 배포가 가능합니다.
+GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교는 어려웠지만, 대략 &lt;strong&gt;AWS 인스턴스 가격 대비 1.X&lt;/strong&gt; 배라고 생각하시면 됩니다.
+3️⃣번 방법의 경우, 2️⃣번 방법과 비교하여 🤗 계정을 만들어야 하지만 지원하는 모델도 다양하고 1️⃣번 방법과 비교하여 매우 편리한 방법으로 제공되기 때문에, 제가 가장 좋아하는 방법입니다.
+물론 모든 모델들이 해당 방법으로 원활히 제공되는 것은 아니지만, 다양한 오픈소스 모델들을 빠르게 PoC 하고 싶을 때 사용하면 굉장히 좋은 방법 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/inferenceEP.png&quot; alt=&quot;inferenceEP&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚡️ Security level&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Protected : 🤗의 토큰 기반 인증 과정이 필요합니다.&lt;/li&gt;
+    &lt;li&gt;Public : 완전히 공개된 API로 별도의 인증이 필요 없습니다.&lt;/li&gt;
+    &lt;li&gt;Private : AWS Account ID를 기재하고 PrivateLink로 연결합니다.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;시간순으로 소개한 위 3가지 방법에서, AWS의 상품화 과정과 타 회사와의 협업 방식도 알 수 있었습니다.
+오픈소스 모델을 AWS로 호스팅 하는 1️⃣번과 2️⃣번 방법으로는 🤗 측면에서 매출을 만들기 어려운데, 3️⃣번 방식을 통해 🤗와 AWS 모두 Win-Win 하는 비즈니스 모델을 만들어 나간 것 같아 무척 흥미롭네요.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Gen AI Study Checkpoint&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Prompt Design Study&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="huggingface" />
+      
+        <category term="genai" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS에서 Hugging Face 모델을 사용하는 3가지 방법</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Using Kendra to Implementing RAG in LLM</title>
@@ -1715,66 +1848,6 @@ API Key를 그대로 기재하면 &lt;strong&gt;보안 이슈&lt;/strong&gt;가 
 
       
         <summary type="html">AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">DIY Amazon EKS with eksctl</title>
-      <link href="https://heuristicwave.github.io/eksctl_ppt" rel="alternate" type="text/html" title="DIY Amazon EKS with eksctl" />
-      <published>2023-01-19T19:00:00+00:00</published>
-      <updated>2023-01-19T19:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/eksctl_ppt</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/eksctl_ppt">&lt;p&gt;&lt;a href=&quot;https://www.meetup.com/awskrug/events/290666942/&quot;&gt;AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)&lt;/a&gt; 발표 자료&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;eksctl을 현업에서 적용하기 위해 필수적으로 필요한 최소한의 요소들을 다룹니다.&lt;/p&gt;
-
-&lt;iframe src=&quot;https://www.slideshare.net/slideshow/embed_code/key/KnHQ8gpSIFKpbE?hostedIn=slideshare&amp;amp;page=upload&quot; width=&quot;840&quot; height=&quot;523&quot; frameborder=&quot;0&quot; marginwidth=&quot;0&quot; marginheight=&quot;0&quot; scrolling=&quot;no&quot;&gt;&lt;/iframe&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;p&gt;💡 SlideShare 링크를 통해 다운로드 받을 수 있습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;AWSKRUG에서는 첫 발표였는데, 부족한 발표임에도 19일 당일 소중한 시간을 내주셔서 감사합니다. 
-추후, 해당 장표들을 설명하는 블로그 포스팅을 함께 개제할 예정입니다.&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;EKSCTL Tips&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./eksctl_ppt&quot;&gt;DIY Amazon EKS with eksctl (Deck)&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="devops" />
-      
-        <category term="eks" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표 자료</summary>
       
 
       

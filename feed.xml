@@ -5,9 +5,121 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Fri, 04 Aug 2023 05:35:33 +0000</pubDate>
-        <lastBuildDate>Fri, 04 Aug 2023 05:35:33 +0000</lastBuildDate>
+        <pubDate>Wed, 23 Aug 2023 08:56:49 +0000</pubDate>
+        <lastBuildDate>Wed, 23 Aug 2023 08:56:49 +0000</lastBuildDate>
         <generator>Jekyll v3.9.3</generator>
+        
+            <item>
+                <title>3 Ways to Use the Hugging Face Model in AWS</title>
+                <description>&lt;p&gt;AWS에서 Hugging Face 모델을 사용하는 3가지 방법&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;Hugging Face(이하, 🤗)는 2016년에 설립되어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Transformer&lt;/code&gt; 라이브러리와 다양한 사전훈련된(pre-trained) 모델을 제공하는 NLP 커뮤니티(?)의 선두주자입니다.
+AWS와 🤗는 21년도부터 협업하여 AWS에서 🤗를 활용할 수 있는 다양한 방법들을 제공하고 있는데요, 이번 포스팅에서는 AWS에서 🤗 모델을 사용하는 3가지 방법에 대하여 가볍게 알아보도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;1️⃣--모델을-amazon-sagemaker-sdk로-직접-올리기&quot;&gt;1️⃣ 🤗 모델을 Amazon SageMaker SDK로 직접 올리기&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/03/leverage-state-of-the-art-natural-language-processing-with-hugging-face-and-amazon-sagemaker/&quot;&gt;21년 3월 23일&lt;/a&gt;, AWS whats-new에 처음 소개된 이 방법은 🤗 모델을 직접 SageMaker SDK를 사용해 올리는 가장 일반적인 방법입니다.
+아주 유명한 Text Generation 모델인 Google의 &lt;a href=&quot;https://huggingface.co/google/flan-t5-small&quot;&gt;FLAN-T5&lt;/a&gt;를 예시로 들어보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/flan.png&quot; alt=&quot;flan-t5&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 그림의 좌측 Deploy 버튼을 보면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flan-t5&lt;/code&gt; 모델의 5가지 배포 방법이 나와 있습니다. 해당 모델의 경우, 인기가 많은 모델이라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Inference API&lt;/code&gt;를 눌러 무료로 API를 활용할 수도 있고,
+Amazon SageMaker에 직접 배포해 사용할 수도 있습니다. SageMaker를 사용하기로 하고 해당 버튼을 누르면, 아래와 같이 쉽게 배포할 수 있는 코드를 제공해 줍니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/hf-sagemaker.png&quot; alt=&quot;hf-sagemaker&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 그림의 상단을 확인하면 &lt;strong&gt;SageMaker SDK, Jumpstart, Cloudformation(soon)&lt;/strong&gt; 이라 적힌, 1️⃣번 방법은 &lt;strong&gt;SageMaker SDK&lt;/strong&gt;를 활용한 방법입니다.
+제공되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 호스팅을 위한 사전 작업(spec, role 등)을 정의하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy()&lt;/code&gt; 함수로 모델을 배포합니다.&lt;/p&gt;
+
+&lt;p&gt;1️⃣번 방법은 배포에 필요한 환경을 일일이 코드로 작성하기 때문에, 배포는 번거롭지만 방법만 안다면 사용해 보고 싶은 모든 모델에 활용할 수 있습니다.
+이어서 소개드릴 2️⃣, 3️⃣번 방법이 간단하지만, 모든 모델에 적용되는 것은 아니므로 1️⃣번 방법을 배제할 수는 없습니다.
+뿐만 아니라, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 제공하는 코드가 멱등성을 보장하지 않으므로 모델 배포 도중 발생하는 오류들을 핸들링 해야 하는 지식이 필요합니다.
+그러나, Cloudformation으로 배포하는 기능이 Soon인 것으로 보아 향후 더 손쉽게 배포가 가능할 것 같아 기대됩니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;2️⃣-amazon-sagemaker-jumpstart로--모델-사용하기&quot;&gt;2️⃣ Amazon SageMaker JumpStart로 🤗 모델 사용하기&lt;/h2&gt;
+
+&lt;p&gt;AWS의 서비스들을 보면 Managed 서비스를 참 잘 만듭니다. 21년 3월 직접 호스팅 하는 방법이 소개되었다면, &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/08/amazon-sagemaker-one-click-model-inference-fine-tuning-hugging-face-models-amazon-sagemaker-jumpstart/&quot;&gt;21년 8월 10일&lt;/a&gt;
+one-click으로 🤗의 모델들을 사용할 수 있는 JumpStart 서비스가 출시했습니다.&lt;/p&gt;
+
+&lt;p&gt;오늘을 기준으로 🤗 모델을 검색했을 때, 263개의 모델들을 Deploy 버튼 한 번으로 손쉽게 배포할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/jumpstart-hf.png&quot; alt=&quot;jumpstart&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;추가적으로 위와 같이 콘솔 화면에서 클릭을 통한 배포 이외에도, 1️⃣번 방법에서 소개한 🤗 Hub에서 모델을 검색하고 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 코드를 참고해 스크립트를 사용해 배포가 가능합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;flan-t5-small &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 예시&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# SageMaker JumpStart provides APIs as part of SageMaker SDK that allow you
+# to deploy and fine-tune models in network isolation using scripts that SageMaker maintains.
+&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sagemaker.jumpstart.model&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;
+
+
+&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;huggingface-text2text-flan-t5-small&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;A step by step recipe to make bolognese pasta:&quot;&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deploy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Inference:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Input: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Response: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;3️⃣--inference-endpoins-사용하기&quot;&gt;3️⃣ 🤗 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoins&lt;/a&gt; 사용하기&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;23년 8월 10일&lt;/a&gt; 🤗 플랫폼이 AWS Marketplace에서 사용할 수 있게 되었습니다.
+🤗 계정에서 Organization을 생성하고 AWS Marketplace에서 구독 버튼을 눌려 계정 간 연결을 진행하면 🤗 플랫폼 사용료를 내 AWS 계정으로 비용 청구가 가능합니다.
+자세한 계정 간 연동 방법은 &lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;여기&lt;/a&gt;를 참조하세요.&lt;/p&gt;
+
+&lt;p&gt;계정 통합이 완료되면 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoins&lt;/a&gt;에서 아래와 같이, 모델을 검색하고 리전, Instance 등 배포 유형을 선택하면 손쉽게 배포가 가능합니다.
+GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교는 어려웠지만, 대략 &lt;strong&gt;AWS 인스턴스 가격 대비 1.X&lt;/strong&gt; 배라고 생각하시면 됩니다.
+3️⃣번 방법의 경우, 2️⃣번 방법과 비교하여 🤗 계정을 만들어야 하지만 지원하는 모델도 다양하고 1️⃣번 방법과 비교하여 매우 편리한 방법으로 제공되기 때문에, 제가 가장 좋아하는 방법입니다.
+물론 모든 모델들이 해당 방법으로 원활히 제공되는 것은 아니지만, 다양한 오픈소스 모델들을 빠르게 PoC 하고 싶을 때 사용하면 굉장히 좋은 방법 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/inferenceEP.png&quot; alt=&quot;inferenceEP&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚡️ Security level&lt;/p&gt;
+  &lt;ul&gt;
+    &lt;li&gt;Protected : 🤗의 토큰 기반 인증 과정이 필요합니다.&lt;/li&gt;
+    &lt;li&gt;Public : 완전히 공개된 API로 별도의 인증이 필요 없습니다.&lt;/li&gt;
+    &lt;li&gt;Private : AWS Account ID를 기재하고 PrivateLink로 연결합니다.&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;시간순으로 소개한 위 3가지 방법에서, AWS의 상품화 과정과 타 회사와의 협업 방식도 알 수 있었습니다.
+오픈소스 모델을 AWS로 호스팅 하는 1️⃣번과 2️⃣번 방법으로는 🤗 측면에서 매출을 만들기 어려운데, 3️⃣번 방식을 통해 🤗와 AWS 모두 Win-Win 하는 비즈니스 모델을 만들어 나간 것 같아 무척 흥미롭네요.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Gen AI Study Checkpoint&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Prompt Design Study&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Wed, 23 Aug 2023 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//HuggingFace-1</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//HuggingFace-1</guid>
+                
+                <category>huggingface</category>
+                
+                <category>genai</category>
+                
+                <category>aws</category>
+                
+                
+            </item>
         
             <item>
                 <title>Generative AI 1 - Prompt Design Study</title>
@@ -1511,160 +1623,6 @@ CodeBuild의 경우 일일이 다 확인하며 설정해 줘야 하는 점은 �
                 <category>devops</category>
                 
                 <category>aws</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>Amazon EKS Multi Cluster Upgrade with ExternalDNS</title>
-                <description>&lt;p&gt;ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;Amazon EKS(이하 EKS)는 &lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar&quot;&gt;약 3 ~ 5&lt;/a&gt; 개월마다 새로운 버전이 출시합니다.
-운영 측면에서 새로운 버전 출시는 기존 EKS의 버전 업그레이드가 필요하다는 것을 의미합니다. EKS 업그레이드는 EKS 콘솔에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지금 업데이트&lt;/code&gt; 버튼을 눌러 손쉽게 가능합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-single-cluster-upgrade&quot;&gt;🏠 Single Cluster Upgrade&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/cluster.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위와 같은 &lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html&quot;&gt;EKS 클러스터 버전 업데이트&lt;/a&gt;를 싱글 클러스터 기반의 업그레이드라고 하며, 비교적 손쉽게 k8s 버전 업데이트가 가능합니다.
-업데이트가 손쉬운 반면 몇 가지 제약 사항도 존재합니다. 대표적으로 아래와 같이 원하는 버전으로 바로 업데이트되는 것이 아니라 순차적 단계를 거쳐야 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/singleUpdate.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-multi-cluster-upgrade&quot;&gt;🏘️‍ Multi Cluster Upgrade&lt;/h2&gt;
-
-&lt;p&gt;멀티 클러스터 업그레이드는 동일한 환경의 EKS를 멀티로 구성하다 보니,
-싱글 클러스터와는 달리 &lt;strong&gt;원하는 버전으로 바로 생성&lt;/strong&gt;이 가능하고 만에 하나 &lt;strong&gt;롤백&lt;/strong&gt;이 필요할 경우 기존 환경으로 돌아갈 수도 있습니다.&lt;/p&gt;
-
-&lt;p&gt;멀티 클러스터 기반의 업그레이드 방법은 여러 가지 방법으로 진행할 수 있습니다. 그중에서도 이번 포스팅에서는 &lt;a href=&quot;https://aws.amazon.com/blogs/containers/onfidos-journey-to-a-multi-cluster-amazon-eks-architecture/&quot;&gt;AWS Blog&lt;/a&gt;에 소개된 3가지 방법 중,
-&lt;strong&gt;비교적 가장 수월한 방법인 첫 번째 방법으로 한정&lt;/strong&gt;해서 이야기해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/multiCluster.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;첫 번째로 소개된 Option 1의 방법은 2개의 동일한 환경에서 Amazon Route 53의 가중치 기능을 활용하여 업그레이드하는 방식입니다.&lt;/p&gt;
-
-&lt;p&gt;방법은 간단합니다. &lt;strong&gt;싱글 클러스터&lt;/strong&gt;에서 별다른 작업을 해주지 않았다면, 아마 Route 53의 &lt;strong&gt;Routing policy&lt;/strong&gt;를 &lt;strong&gt;Simple&lt;/strong&gt;로 설정해 두었을 겁니다.
-&lt;strong&gt;멀티 클러스터&lt;/strong&gt;에서는 &lt;strong&gt;Routing policy&lt;/strong&gt;를 &lt;strong&gt;Weighted&lt;/strong&gt;로 설정해 설정한 비율로 트래픽을 분배하는 원리입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/defineWeighted.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 캡처와 같이 레코드를 생성할 때, 아래 3가지 요소를 주목하여 가중치 정책을 생성합니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;DNS의 &lt;strong&gt;캐시를 최소화&lt;/strong&gt;하기 위해 &lt;strong&gt;TTL은 1m&lt;/strong&gt;(60 seconds)를 권장&lt;/li&gt;
-  &lt;li&gt;각 다른 환경에서 &lt;strong&gt;50:50 가중치&lt;/strong&gt;를 주고 싶을 경우, &lt;strong&gt;2개의 가중치 레코드에 Weighted 값 1&lt;/strong&gt;을 부여&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;는 레코드의 &lt;strong&gt;주석&lt;/strong&gt;과 같은 역할을 하지만 &lt;strong&gt;필수&lt;/strong&gt;로 작성해야 함 (이어서 이 값의 중요성을~~ 😱)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;externaldns&quot;&gt;ExternalDNS&lt;/h2&gt;
-
-&lt;p&gt;Kubernetes는 KubeDNS를 내부 DNS 서버로 활용합니다. Route 53과 같은 다른 DNS 공급자를 사용하기 위해서는 &lt;a href=&quot;https://github.com/kubernetes-sigs/external-dns&quot;&gt;external-dns&lt;/a&gt;를 추가적으로 설치해 사용합니다.
-물론 external-dns를 사용하지 않고 &lt;strong&gt;외부 DNS의 영역과 k8s의 영역을 분리하여 사용&lt;/strong&gt;할 수도 있지만, external-dns를 적용한다면 &lt;strong&gt;외부 DNS 공급자도 코드로 제어&lt;/strong&gt;할 수 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;set-up&quot;&gt;Set up&lt;/h3&gt;
-
-&lt;p&gt;ExternalDNS를 EKS에 설정하는 방법은 &lt;a href=&quot;https://aws.amazon.com/premiumsupport/knowledge-center/eks-set-up-externaldns/&quot;&gt;첨부 링크&lt;/a&gt;에 자세하게 설명되어 있지만, 놓치기 쉬운 2가지 부분을 언급하고 넘어가겠습니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;externaldns-1&quot;&gt;ExternalDNS&lt;/h4&gt;
-
-&lt;p&gt;external-dns를 최종 배포하기 전, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Deployment&lt;/code&gt;의 아래 2가지 인자를 수정해야 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;--domain-filter=&amp;lt;Your_R53_Domain_Name&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;--txt-owner-id=&amp;lt;Your_R53_HostedZone_Id&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🐞 이번 포스팅을 준비하며 external-dns가 간헐적으로 동작하는 경우를 목격했습니다. &lt;br /&gt;
-원인은 해당 인자를 오기재했기 때문인데, 원래대로라면 동작하지 않아야 하는데 버그인 것 같습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;ingress&quot;&gt;Ingress&lt;/h4&gt;
-
-&lt;p&gt;ExternalDNS를 제대로 설정했다면, 이어서 외부로 노출할 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ingress&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;annotations&lt;/code&gt;를 수정합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;external-dns&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;public&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;external-dns.alpha.kubernetes.io/hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;myDomain.com&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;external-dns.alpha.kubernetes.io/set-identifier&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;recordID&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;external-dns.alpha.kubernetes.io/aws-weight&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;1'&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Simple 라우팅 정책에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set-identifier&lt;/code&gt;가 없어도 되지만, 이외 라우팅 정책에서는 &lt;strong&gt;필수&lt;/strong&gt;적으로 들어가야 합니다. 
-직전 콘솔에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;를 기재하지 않았을 경우 화면이 넘어가지 않지만, external-dns에서 해당 값이 빠지면 로그와 파드 상태 모두 특이점이 발견되지 않아 원인을 찾기 어려워집니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;issue&quot;&gt;Issue&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;yaml 파일에 의도를 기재하여 배포했지만, 정작 Route 53에서 레코드가 업데이트되지 않는 경우&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;구축 초기부터 가중치 정책을 적용한 멀티 클러스터를 생성한다면 해당 이슈를 만나지 않겠지만,
-싱글 클러스터로 external-dns를 운영하고 있는 환경에서 멀티 클러스터를 적용하면 &lt;a href=&quot;https://github.com/kubernetes-sigs/external-dns/issues/1411&quot;&gt;해당 이슈&lt;/a&gt;를 만날 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;UPSERT is not possible, doing UPSERT will actually do a CREATE that will fail&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이를 해결하기 위해 노출하고자 하는 Ingress를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delete &amp;amp; apply&lt;/code&gt; 한다면 우회가 가능하겠지만, 운영하고 있는 서비스라면 &lt;strong&gt;다운타임&lt;/strong&gt;이 발생할 것입니다.
-지금으로서는 Route 53 콘솔 화면에서 수동으로 기존의 정책을 수정해 주고 후속으로 생성하는 클러스터는 코드로 제어하는 방법이 있습니다. 그러나 코드와 콘솔 2가지 채널에서 인프라를 다루는 방법은 바람직하지 않습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;해당 이슈를 해결한 직후 external-dns의 logs&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:56Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Applying provider record filter for domains: [myDomain.com. .myDomain.com.]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Desired change: CREATE ex.myDomain.com A [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Desired change: CREATE ex.myDomain.com TXT [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;error &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Failure in zone myDomain.com. [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;error &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;InvalidChangeBatch: [RRSet with DNS name ex.myDomain.com.,
-│ type TXT, SetIdentifier recordID cannot be created as a non-weighted set exists with the same name and type.]&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n\t&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;status code: 400, request
-│ time=&quot;&lt;/span&gt;2023-02-25T16:28:57Z&lt;span class=&quot;s2&quot;&gt;&quot; level=error msg=&quot;&lt;/span&gt;failed to submit all changes &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the following zones: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;/hostedzone/Z0HOSTEDZONEID]&lt;span class=&quot;s2&quot;&gt;&quot;
-
--- After changing Simple Routing policy --
-
-│ time=&quot;&lt;/span&gt;2023-02-25T16:29:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;2 record&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;zone myDomain.com. &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Id: /hostedzone/Z0HOSTEDZONEID] were successfully updated&lt;span class=&quot;s2&quot;&gt;&quot;
-│ time=&quot;&lt;/span&gt;2023-02-25T16:30:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;Applying provider record filter &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;domains: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;myDomain.com. .myDomain.com.]&lt;span class=&quot;s2&quot;&gt;&quot;
-│ time=&quot;&lt;/span&gt;2023-02-25T16:30:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;All records are already up to &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;검증&quot;&gt;검증&lt;/h3&gt;
-
-&lt;p&gt;실제 1:1로 라우팅이 일어나고 있나 확인하고 싶다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;웹&lt;/code&gt; 혹은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dig&lt;/code&gt; 명령어로 확인이 가능하지만 가장 정확한 방법은 Route 53 내 &lt;strong&gt;Test record&lt;/strong&gt;를 사용하는 것입니다.
-Record 테스트를 위해 Record name을 기재하고 &lt;strong&gt;Get response&lt;/strong&gt; 버튼을 누르면 &lt;strong&gt;Response returned by Route 53&lt;/strong&gt; 화면에서 실시간으로 바뀌는 IP를 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/testRecord.png&quot; alt=&quot;testRecord&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;멀티-클러스터-교체-작업&quot;&gt;멀티 클러스터 교체 작업&lt;/h4&gt;
-
-&lt;p&gt;❗️ 기존 클러스터를 A, 업그레이드를 진행할 클러스터를 B라 가정하겠습니다.&lt;/p&gt;
-
-&lt;p&gt;B 클러스터가 문제없다 판단되면, 다시 한번 가중치를 조절해 A 클러스터를 대체합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;가중치 변화, 1:0 🔜 1:1 🔜 0:1&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;B 클러스터에서 문제가 있다 판단되면 B의 가중치를 0으로 바꾸면 롤백의 효과를 볼 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;external-dns는 Route 53 리소스를 제어할 수 있어 편리하면서도 운영이 복잡합니다. 위에서 언급한 이슈 외에도 GitOps를 구축한 상태에서 멀티 클러스터를 운용하려면, 각 클러스터마다 다른 Repository가 필요합니다.
-terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한다면 external-dns가 도움이 되니 사용 환경에 따라 적절한 도구를 사용해야 할 것 같습니다.
-모든 것을 코드로 관리하는 것은 쉽지 않네요. 🤣&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-                <pubDate>Sat, 25 Feb 2023 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//EKS_Upgrade</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//EKS_Upgrade</guid>
-                
-                <category>aws</category>
-                
-                <category>devops</category>
-                
-                <category>eks</category>
                 
                 
             </item>

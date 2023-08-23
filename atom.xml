@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>3 Ways to Use the Hugging Face Model in AWS</title>
+        
+          <description>&lt;p&gt;AWS에서 Hugging Face 모델을 사용하는 3가지 방법&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Wed, 23 Aug 2023 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/HuggingFace-1</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/HuggingFace-1</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Generative AI 1 - Prompt Design Study</title>
         
           <description>&lt;p&gt;본 글은 제 개인적 학습을 위해 &lt;a href=&quot;https://www.cloudskillsboost.google/focuses/63251?parent=catalog&quot;&gt;Generative AI with Vertex AI: Prompt Design&lt;/a&gt; 실습한 내용의 일부를 적은 글입니다.
