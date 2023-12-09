@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-08-23T08:56:49+00:00</updated>
+  <updated>2023-12-09T08:15:25+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -96,13 +96,13 @@ one-click으로 🤗의 모델들을 사용할 수 있는 JumpStart 서비스가
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;3️⃣--inference-endpoins-사용하기&quot;&gt;3️⃣ 🤗 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoins&lt;/a&gt; 사용하기&lt;/h2&gt;
+&lt;h2 id=&quot;3️⃣--inference-endpoints-사용하기&quot;&gt;3️⃣ 🤗 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoints&lt;/a&gt; 사용하기&lt;/h2&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;23년 8월 10일&lt;/a&gt; 🤗 플랫폼이 AWS Marketplace에서 사용할 수 있게 되었습니다.
 🤗 계정에서 Organization을 생성하고 AWS Marketplace에서 구독 버튼을 눌려 계정 간 연결을 진행하면 🤗 플랫폼 사용료를 내 AWS 계정으로 비용 청구가 가능합니다.
 자세한 계정 간 연동 방법은 &lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;여기&lt;/a&gt;를 참조하세요.&lt;/p&gt;
 
-&lt;p&gt;계정 통합이 완료되면 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoins&lt;/a&gt;에서 아래와 같이, 모델을 검색하고 리전, Instance 등 배포 유형을 선택하면 손쉽게 배포가 가능합니다.
+&lt;p&gt;계정 통합이 완료되면 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoints&lt;/a&gt;에서 아래와 같이, 모델을 검색하고 리전, Instance 등 배포 유형을 선택하면 손쉽게 배포가 가능합니다.
 GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교는 어려웠지만, 대략 &lt;strong&gt;AWS 인스턴스 가격 대비 1.X&lt;/strong&gt; 배라고 생각하시면 됩니다.
 3️⃣번 방법의 경우, 2️⃣번 방법과 비교하여 🤗 계정을 만들어야 하지만 지원하는 모델도 다양하고 1️⃣번 방법과 비교하여 매우 편리한 방법으로 제공되기 때문에, 제가 가장 좋아하는 방법입니다.
 물론 모든 모델들이 해당 방법으로 원활히 제공되는 것은 아니지만, 다양한 오픈소스 모델들을 빠르게 PoC 하고 싶을 때 사용하면 굉장히 좋은 방법 같습니다.&lt;/p&gt;
