@@ -5,9 +5,201 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 09 Dec 2023 08:15:25 +0000</pubDate>
-        <lastBuildDate>Sat, 09 Dec 2023 08:15:25 +0000</lastBuildDate>
+        <pubDate>Sun, 10 Dec 2023 09:04:53 +0000</pubDate>
+        <lastBuildDate>Sun, 10 Dec 2023 09:04:53 +0000</lastBuildDate>
         <generator>Jekyll v3.9.3</generator>
+        
+            <item>
+                <title>AWS re:Invent 2023 후기</title>
+                <description>&lt;p&gt;re:Invent 2번이나 가도 괜찮을까?&lt;/p&gt;
+
+&lt;p&gt;*후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티&lt;/p&gt;
+
+&lt;h2 id=&quot;왜-또-갔을까&quot;&gt;왜 또 갔을까?&lt;/h2&gt;
+
+&lt;p&gt;저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다.
+(Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에 참석해 보고 싶은 마음에, 가장 저렴한? 숙박과 호텔을 예약했습니다.&lt;/p&gt;
+
+&lt;p&gt;22년 re:Invent를 즐기고 나서 든 생각은, 노하우가 부족해 제대로 즐기지 못했다는 생각에 ‘한 번 더 가보고 싶다’라는 생각이었습니다.
+그래서 올해에는, 4달 전부터 준비하고 2번째 리인벤트를 맞이했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;준비-단계&quot;&gt;준비 단계&lt;/h2&gt;
+
+&lt;p&gt;각 단계별 토글스위치를 적용해 두었습니다. 궁금하신 부분만 골라 보세요! (사실, 이런 내용은 다른 블로그에 더 잘 정리되어 있어요 🤣)&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;✈️ 항공, 숙박 예약&lt;/summary&gt;
+
+  &lt;p&gt;가장 먼저 리인벤트를 가기 위해, 항공과 숙박을 예약하는 용기가 필요합니다.
+대략, 4개월 전(7월 말 ~ 8월 초)에 항공을 예약하면 왕복 티켓을 약 125~190(경유)만 원 정도에 구입할 수 있습니다.
+저는 22년에는 항공비로 155만 원(ICN-LAX-LAS), 23년에는 188만 원(ICN-YVR-LAS)이 들었습니다.&lt;/p&gt;
+
+  &lt;p&gt;숙박의 경우, 콘퍼런스의 셔틀이 닿지 않는 호텔을 예약하면 리조트 사용료와 각종 추가 비용을 포함해 약 60만 원(5박) 이내로 예약할 수 있습니다.
+저는 실제로 22년 당시 Excalibur Hotel에서 투숙을 했는데, 가장 가까운 세션장이 도보 20분 거리에 위치했습니다. (내가 하루에 약 40분을 더 걸을 수 있다면, 이곳이 아마 가장 저렴한 선택지인 것 같습니다.)&lt;/p&gt;
+
+  &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/conference/mgm.png&quot; alt=&quot;mgm&quot; /&gt;&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🎫 Pass 구매&lt;/summary&gt;
+
+  &lt;p&gt;아마, 제일 먼저 혹은 제일 나중에 구입하게 될 패스입니다. 패스를 구입하면 아래와 같이 portal에 접근이 가능한데요,
+portal에서 hotel을 예약할 수도 있는데 애초에 미리 숙박을 준비한다면 그렇게 저렴하지는 않습니다.&lt;/p&gt;
+
+  &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/conference/portal.png&quot; alt=&quot;reinventPortal&quot; /&gt;&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;📆 세션 예약&lt;/summary&gt;
+
+  &lt;p&gt;이벤트 1달 전부터, 내가 들을 세션을 예약하고 다음과 같이 시간표를 확인할 수 있습니다. 저는 수강 신청이 열리기 전부터 미리 담아두고 수강 신청이 열리는 시점 예약 버튼을 눌렀는데도,
+원하는 강의를 다 담지 못했어요. 금요일 세션의 경우, 상대적으로 적지만 화 or 수 키노트 발표 이후 신규 세션들이 열리니 키노트 이후 바로 예약하는 게 좋을 것 같습니다.&lt;/p&gt;
+
+  &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/conference/sessions.png&quot; alt=&quot;sessions&quot; /&gt;&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;2023-reinvent&quot;&gt;2023 re:Invent&lt;/h2&gt;
+
+&lt;p&gt;리인벤트의 키노트 세션은 콘퍼런스의 주된 주제를 한 번에 파악할 수 있어, 필수적으로 들어야 하는데요. 뜨거운 현장감을 느낄 수도있어 키노트를 들어야 비로소 리인벤트가 실감 납니다.
+월요일 밤(1일차) 키노트에서, 과거부터 현재를 아우르는 AWS Serverless의 변천사와 AWS의 미래의 한 부분이 될 양자 컴퓨팅 끝으로 1일차 다운 시작을 열었습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/conference/mnl.png&quot; alt=&quot;mnl&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;올해 리인벤트는 re:GenerativeAI가 될 것이라는 우스갯소리 그대로 키노트부터 대부분의 세션들이 Gen AI와 관련된 세션이었습니다.
+실제로 2일차부터는 신규 서비스 Amazon Q와 Amazon Bedrock의 신규 기능들과,
+이어진 3일차에서는 Gen AI Stack을 완성하기 위한 다양한 Vector DB 들과 신규 FM(Foundation Models)들을 소개했습니다.&lt;/p&gt;
+
+&lt;p&gt;2일차에서는 Gen AI를 활용하게 될 일반 사용자들에게 친숙한 서비스를 발표했다면,
+3일차에서는 실제 Gen AI 서비스를 구축할 엔지니어들을 위한 조금 더 딥한 모델과 관련 생태계 서비스들을 소개했습니다.
+4일차 목요일 마지막 키노트에서는 AWS의 CTO(최고 연예인?) Dr.Vogels의 개발자와 운영자들을 위한 신규 서비스 소개까지 4일간의 키노트 구성이 무척이나 탄탄하다고 느꼈습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;내가-골라본-신규-업데이트&quot;&gt;내가 골라본 신규 업데이트&lt;/h3&gt;
+
+&lt;p&gt;리인벤트 기간 동안 새로 소개되는 서비스들을 &lt;a href=&quot;https://aws.amazon.com/new/&quot;&gt;What’s New with AWS?&lt;/a&gt;에도 공개됩니다.
+키노트와 각종 세션에서 듣지 못한 정보들도 이곳을 살펴보면 신규 서비스들을 놓치지 않고 찾을 수 있는데요, 제가 주목한 서비스 몇 가지들을 적어보았습니다.&lt;/p&gt;
+
+&lt;p&gt;아래 큐레이션 리스트는 &lt;strong&gt;지극히 제 개인적인 관점에서 골라본 신규 서비스이므로, ‘제 관심사가 이렇구나’라고만 이해&lt;/strong&gt;해 주세요. 🥲
+각 서비스별 상세한 후기는, 추후 하나씩 다뤄 볼 예정인데 공부할게 너무 많네요…&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;Product Detail Page, What’s New Blog Post, AWS News Blog 중 하나를 관련 링크로 개재했습니다.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🤖 Gen AI, Machine Learning&lt;/summary&gt;
+
+  &lt;p&gt;이번 이벤트의 메인 중 하나였던, Amazon Q와 아직은 미리 보기 단계지만 Q와 함께 새로운 가치를 만들 각종 솔루션,
+Bedrock을 더 편리하게 사용할 수 있는 관리형 서비스들과, Amazon의 신규 FM, ML 프로젝트들을 위한 신규 서비스들이 제 눈길을 끌었습니다.&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/q/&quot;&gt;Amazon Q (Preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/introducing-amazon-q-a-new-generative-ai-powered-assistant-preview/&quot;&gt;Amazon Q is your business expert (Preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/amazon-q-brings-generative-ai-powered-assistance-to-it-pros-and-developers-preview/&quot;&gt;Amazon Q is your AWS expert (Preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/upgrade-your-java-applications-with-amazon-q-code-transformation-preview/&quot;&gt;Amazon Q Code Transformation (Preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/bedrock/knowledge-bases/&quot;&gt;Knowledge Bases for Amazon Bedrock&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/bedrock/agents/&quot;&gt;Agents for Amazon Bedrock&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/amazon-titan-image-generator-multimodal-embeddings-and-text-models-are-now-available-in-amazon-bedrock/&quot;&gt;Amazon Titan&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/sagemaker/hyperpod/&quot;&gt;Amazon SageMaker HyperPod&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/clean-rooms/ml/&quot;&gt;AWS Clean Rooms ML (Preview)&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;💻 Compute, Storage&lt;/summary&gt;
+
+  &lt;p&gt;1년 만에 Graviton 4가 출시하고, 오랜만에 EFS와 S3에 가격에 영향을 미치는 서비스가 발표했습니다.&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/ec2/instance-types/r8g/&quot;&gt;Amazon EC2 R8g instances (preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-efs-archive-storage-class/&quot;&gt;Amazon EFS Archive storage class&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/new-amazon-s3-express-one-zone-high-performance-storage-class/&quot;&gt;Amazon S3 Express One Zone&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;📊 Databases, Analytics&lt;/summary&gt;
+
+  &lt;p&gt;캐시 서비스에도 이어지는 서버리스 솔루션과, 단순 용량 스케일링을 넘어선 Aurora의 발전과 신규 DB, 작년보다 더 확장된 zero-ETL 솔루션과
+AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보았습니다.&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;Amazon ElastiCache Serverless&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-aurora-limitless-database/&quot;&gt;Amazon Aurora Limitless Database (Limited preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-neptune-analytics/&quot;&gt;Amazon Neptune Analytics&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/rds/db2/&quot;&gt;Amazon RDS for Db2&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-rds-mysql-zero-etl-integration-amazon-redshift-public-preview/&quot;&gt;Amazon RDS for MySQL zero-ETL integration with Amazon Redshift (Preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/rds/aurora/zero-etl/&quot;&gt;Amazon Aurora PostgreSQL zero-ETL integration with Amazon Redshift (Preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-redshift-serverless-ai-driven-scaling-optimizations-preview/&quot;&gt;Amazon Redshift Serverless with AI-driven scaling and optimizations (Preview)&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/use-anomaly-detection-with-aws-glue-to-improve-data-quality-preview/&quot;&gt;AWS Glue Data Quality announces anomaly detection and dynamic rules (Preview)&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🔩 Developer Tools&lt;/summary&gt;
+
+  &lt;p&gt;제 업무 생산성을 얼마나 높여줄지 기대하며 관심 깊게 본 신규 업데이트입니다. 저는 아래 기능들을 보자마자, 한국에 돌아가 사용해 볼 생각에 설렘을 느꼈답니다.&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/ide-extension-for-aws-application-composer-enhances-visual-modern-applications-development-with-ai-generated-iac/&quot;&gt;Integrated Development Environment (IDE) extension for AWS Application Composer&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/sdk-for-rust/&quot;&gt;AWS SDK for Rust&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/amazon-sagemaker-studio-adds-web-based-interface-code-editor-flexible-workspaces-and-streamlines-user-onboarding/&quot;&gt;Amazon SageMaker Studio Code Editor&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/devops/introducing-amazon-codewhisperer-for-command-line/&quot;&gt;Amazon CodeWhisperer for command line&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/aws/improve-developer-productivity-with-generative-ai-powered-amazon-q-in-amazon-codecatalyst-preview/&quot;&gt;Amazon Q in Amazon CodeCatalyst (preview)&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;☁️ Cloud Operations&lt;/summary&gt;
+
+  &lt;p&gt;사실 이 부분은 더 많은 신규 기능들이 소개되었지만, 당장 적용할 수 있다는 측면에서 몇 가지를 선택해 보았습니다.&lt;/p&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/new-amazon-cloudwatch-log-class-for-infrequent-access-logs-at-a-reduced-price/&quot;&gt;Amazon CloudWatch Logs - Infrequent Access log class&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-cloudwatch-logs-now-offers-automated-pattern-analytics-and-anomaly-detection/&quot;&gt;Amazon CloudWatch Logs Anomaly Detection and Pattern analysis&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/security/iam-access-analyzer-simplifies-inspection-of-unused-access-in-your-organization/&quot;&gt;IAM Access Analyzer simplifies inspection of unused access&lt;/a&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;그럼-3번째-참석은&quot;&gt;그럼 3번째 참석은?&lt;/h2&gt;
+
+&lt;p&gt;이번 리인벤트는 제가 실제로 참가한 4번째 해외 콘퍼런스인데요, 과거보다 이해되는 정보의 양이 더 많은 것이 체감될 때 약간의 성장을 느낍니다.
+또, 아는 만큼 행사가 더 재미있게 느껴지는 것 같기도 합니다. 실제로 저는 올 한 해 동안 대부분 Gen AI와 관련된 업무와 학습을 하니, 이번 리인벤트가 작년보다 더 재미있는 것 같더라고요.&lt;/p&gt;
+
+&lt;p&gt;그래서 내년에도 참석할 예정이냐고요?&lt;/p&gt;
+
+&lt;p&gt;작년과 달리 노하우가 생겨 강의 동선을 최적화했음에도(&lt;em&gt;작년에는 매일 3만 보 이상을, 올해는 2만 보 이내로 동선을 최적화 했습니다.&lt;/em&gt;),
+올해는 신체적으로 너무 피로함을 느껴 내년에도 참석할지 장담할 수가 없네요 🤣🤣🤣
+이번에도 참석하지 못한, 5km 마라톤과 JAM 등 재미에 초점을 맞춘 이벤트를 경험하러 갈 수도…
+이번 후기글에서 더 많은 내용들을 담지 못해 아쉽지만, 기회가 된다면 AWS Community Builder Mixer’와 ‘AWS Ambassador networking meetup’ 이야기를 따로 풀도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Sun, 10 Dec 2023 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//reinvent23</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//reinvent23</guid>
+                
+                <category>uncategorized</category>
+                
+                <category>event</category>
+                
+                
+            </item>
         
             <item>
                 <title>3 Ways to Use the Hugging Face Model in AWS</title>
@@ -1417,212 +1609,6 @@ AWS가 기존 데이터 센터가 사용하는 TCP의 한계를 극복하기 위
                 <category>aws</category>
                 
                 <category>network</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>Automating git submodules with AWS Code Series (Build, Pipeline)</title>
-                <description>&lt;p&gt;AWS Code Series (Build, Pipeline)으로 git submodule 자동화&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;여러분이 보고 계신 이 블로그(GitHub Pages 활용)는 2개의 깃헙 레포지토리를 통해 배포되고 있습니다. 첫 번째 레포지토리는 원본 소스코드를 담고 있으며,
-블로그 글을 작성할 때마다 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle exec jekyll serve&lt;/code&gt;라는 명령어로 &lt;strong&gt;localhost&lt;/strong&gt;에서 퇴고를 진행합니다.
-해당 명령어는 static page를 생성할 때, url을 제 도메인이 아닌 localhost로 생성해 GitHub Pages에서는 사용할 수 없습니다.
-그러므로 저는 빌드 결과물이 떨어지는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;output&lt;/code&gt; 파일을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.ignore&lt;/code&gt;로 처리합니다.&lt;/p&gt;
-
-&lt;p&gt;static page를 제 도메인으로 생성하기 위해서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bundle exec jekyll build&lt;/code&gt;라는 명령어로 빌드 해야 합니다.
-저는 이 절차를 CI 도구에게 위임했고, CI 도구는 markdown 형식으로 작성한 글들을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;html&lt;/code&gt; 파일로 생성하여 2번째 레포지토리에 배포합니다.&lt;/p&gt;
-
-&lt;p&gt;저는 이것을 자동화하기 위해 기존에는 Travis CI를 사용하고 있었습니다.
-현재 블로그로 CI/CD 파이프라인을 구축하고 약 2년간 88회의 Commit까지 잘 쓰고 있다가,
-어느새 다음과 같은 알람을 받아 보니 크레딧 소진으로 인하여 Travis CI를 AWS 솔루션으로 대체하기로 했습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;Builds have been temporarily disabled for private and public repositories due to a negative credit balance. Please go to the Plan page to replenish your credit balance.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-workflow&quot;&gt;📜 Workflow&lt;/h2&gt;
-
-&lt;p&gt;과거 제가 &lt;strong&gt;AS-IS&lt;/strong&gt; 상황에서 &lt;strong&gt;Travis CI&lt;/strong&gt;로 다음과 같은 과정을 통해 블로그에 글을 배포했었습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;사용자가 원격 저장소(GitHub)에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git push&lt;/code&gt; 명령어로 새로운 코드를 반영&lt;/li&gt;
-  &lt;li&gt;GitHub과 연결해둔 Travis CI가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.travis.yml&lt;/code&gt; 파일에 정의한 대로 command 수행
-    &lt;ul&gt;
-      &lt;li&gt;빌드 환경 구축&lt;/li&gt;
-      &lt;li&gt;소스 코드 빌드&lt;/li&gt;
-      &lt;li&gt;빌드 결과물을 배포용 레포지토리에 commit &amp;amp; push&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;위 과정의 &lt;strong&gt;TO-BE&lt;/strong&gt;로 Travis CI 역할을 &lt;strong&gt;CodeBuild&lt;/strong&gt;와 &lt;strong&gt;CodePipeline&lt;/strong&gt;으로 대체하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.travis.yml&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yaml&lt;/code&gt; 파일을 정의하겠습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-hands-on&quot;&gt;💻 Hands-on&lt;/h2&gt;
-
-&lt;p&gt;Travis CI는 Source 연계(GitHub 연결)와 Build가 별도로 분리되어 있지 않습니다.
-그러나 AWS의 Code Series는 CodePipeline으로 Source와 Build를 연계하고, CodeBuild에서 Build를 정의해야 합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;1️⃣-build-정의&quot;&gt;1️⃣ Build 정의&lt;/h3&gt;
-
-&lt;p&gt;해당 단계는 CodeBuild 생성 시, &lt;strong&gt;Buildspec&lt;/strong&gt; 단계의 &lt;strong&gt;Insert build commands, editor&lt;/strong&gt;로 구성할 수 있습니다.
-그러나 본 글에서는 직접 작성하여 &lt;strong&gt;Source 레포지토리 루트 위치&lt;/strong&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yaml&lt;/code&gt; 파일을 위치 시켜 진행하겠습니다.
-빌드 스펙은 &lt;a href=&quot;https://docs.aws.amazon.com/codebuild/latest/userguide/build-spec-ref.html&quot;&gt;공식 문서&lt;/a&gt;를 참고하여 필요한 내용들을 정의합니다.&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;↪️ Git submodule 기능을 활용하기 위한 buildspec 예시&lt;/summary&gt;
-  &lt;p&gt;&lt;br /&gt;
-ruby 2.7, jekyll로 블로그를 git submodule로 운영하는 최소한의 설정입니다. &lt;br /&gt;
-아래와 같은 commands를 기재한 이유는 troubleshooting 단계에서 설명합니다.&lt;/p&gt;
-
-  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;version: 0.2
-
-phases:
-  &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt;:
-    runtime-versions:
-      ruby: 2.7
-    commands:
-      - &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;Installing dependencies...
-      - gem &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;bundler
-      - bundle &lt;span class=&quot;nb&quot;&gt;install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--quiet&lt;/span&gt;
-  pre_build:
-    commands:
-      - &lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;LC_ALL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;en_US.utf8&quot;&lt;/span&gt;
-      - &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;Git Setting...
-      - &lt;span class=&quot;nb&quot;&gt;mkdir &lt;/span&gt;buildZone &lt;span class=&quot;o&quot;&gt;&amp;amp;&amp;amp;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;buildZone
-      - git init
-      - git remote add origin https://&lt;span class=&quot;nv&quot;&gt;$GITHUB_TOKEN&lt;/span&gt;@github.com/heuristicwave/GitHubPageMaker.git
-      - git fetch
-      - git checkout &lt;span class=&quot;nt&quot;&gt;-t&lt;/span&gt; origin/master
-      - git submodule init
-      - git submodule update &lt;span class=&quot;nt&quot;&gt;--recursive&lt;/span&gt;
-  build:
-    commands:
-      - &lt;span class=&quot;nb&quot;&gt;echo &lt;/span&gt;Building...
-      - bundle &lt;span class=&quot;nb&quot;&gt;exec &lt;/span&gt;rake site:deploy
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-&lt;/details&gt;
-
-&lt;h3 id=&quot;2️⃣-codebuild&quot;&gt;2️⃣ CodeBuild&lt;/h3&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create build projects&lt;/code&gt;를 누르고 &lt;strong&gt;Project configuration&lt;/strong&gt;에서 프로젝트 이름을 정의합니다. 이름 이외의 설정은 비워두었습니다.&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Source&lt;/strong&gt;에서 ‘Github’을 선택하면 OAuth로 연결 혹은 personal access token으로 연결 중 한 가지 방법을 선택합니다. 2가지 방법 모두 가능하므로 편리한 것을 선택합니다.&lt;/li&gt;
-  &lt;li&gt;GitHub이 연동되면 연결하고자 하는 repository를 선택하고 나머지 옵션은 비워두었습니다.&lt;/li&gt;
-  &lt;li&gt;‘Git submodules’ 기능을 사용한다면, &lt;strong&gt;Additional configuration&lt;/strong&gt; 토글을 눌러 submodules을 체크합니다.&lt;/li&gt;
-  &lt;li&gt;본 글에서는 Source 이벤트로 CodePipeline을 사용하므로, &lt;strong&gt;Primary source webhook events&lt;/strong&gt;는 넘어갑니다.&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;&lt;strong&gt;Environment&lt;/strong&gt;에서는 다음과 같은 설정값을 주었습니다.
-&lt;img src=&quot;../../assets/built/images/post/aws/codebuild.png&quot; alt=&quot;codebuild&quot; /&gt;&lt;/p&gt;
-
-    &lt;blockquote&gt;
-      &lt;p&gt;❗️해당 단계에서 빌드하고 자 하는 런타임 환경을 꼭 &lt;a href=&quot;https://docs.aws.amazon.com/codebuild/latest/userguide/available-runtimes.html&quot;&gt;공식 문서&lt;/a&gt;에서 확인 후, 선택하세요.
-&lt;br /&gt;
-❗빌드에 환경 변수를 명시했다면, &lt;strong&gt;Additional configuration&lt;/strong&gt; 토글을 눌러 환경 변수를 추가해 주세요.
-이 단계는 생성 당시 추가하지 않더라도, 생성 이후 ‘Build details’ 탭에서 추가 혹은 변경이 가능합니다.&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;Buildspec&lt;/strong&gt;과 &lt;strong&gt;Batch configuration&lt;/strong&gt;은 비워두었습니다.&lt;/li&gt;
-  &lt;li&gt;로깅과 산출물이 필요하면 &lt;strong&gt;Artifacts&lt;/strong&gt;와 &lt;strong&gt;Logs&lt;/strong&gt;를 사용하면 되지만, 저는 CodeBuild 내의 Build history만으로도 충분하기 때문에 사용하지 않았습니다.&lt;/li&gt;
-  &lt;li&gt;마지막으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create build projects&lt;/code&gt; 버튼을 눌러 빌드 프로젝트를 생성합니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h3 id=&quot;3️⃣-codepipeline&quot;&gt;3️⃣ CodePipeline&lt;/h3&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create pipeline&lt;/code&gt;을 누르고 Step 1 단계에서 ‘이름’과 ‘Service role’을 지정합니다. 기본 값으로 설정하고 다음(Step 2) 페이지로 넘어갑니다.&lt;/li&gt;
-  &lt;li&gt;
-    &lt;p&gt;Step 2 단계에서는 ‘Source provider’로 &lt;strong&gt;GitHub (Version 2)&lt;/strong&gt;을 선택하고 ‘Connection’에서 깃헙과 연결해 줍니다. 
-이어서 상황에 맞게 ‘Repository name’과 ‘Branch name’을 선택하고 ‘Output artifact’로 default를 선택합니다.
-&lt;img src=&quot;../../assets/built/images/post/aws/codepipeline.png&quot; alt=&quot;codepipeline&quot; /&gt;&lt;/p&gt;
-
-    &lt;p&gt;default를 선택할 경우 고려 사항이 있지만, 자세한 내용은 아래 &lt;em&gt;Troubleshooting - Issue 1&lt;/em&gt;단계에서 설명하겠습니다.&lt;/p&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Step 3 &lt;strong&gt;Build&lt;/strong&gt; 단계에서는 앞서 생성한 Codebuild를 지정하고 다른 값들을 기본값으로 설정하고 다음 단계로 넘어갑니다.&lt;/li&gt;
-  &lt;li&gt;Step 4 &lt;strong&gt;Deploy&lt;/strong&gt; 단계에서는 CodeDeploy와 같은 CD 도구 대신 Build의 command로 제어하므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Skip deploy stage&lt;/code&gt; 버튼을 눌러 넘어갑니다.&lt;/li&gt;
-  &lt;li&gt;Step 5 &lt;strong&gt;Deploy&lt;/strong&gt; 단계에서는 검토를 마치고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Create pipeline&lt;/code&gt; 버튼을 누르면 바로 정의한 파이프라인이 실행됩니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;️-troubleshooting&quot;&gt;⛹🏾‍♂️ Troubleshooting&lt;/h2&gt;
-
-&lt;h3 id=&quot;issue-1&quot;&gt;Issue 1&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;fatal: not a git repository (or any parent up to mount point /codebuild)&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🖍️ CodePipeline의 Output artifact를 default 선택 시, 다음과 같은 안내 문구가 있습니다.
-&lt;em&gt;Does not include git metadata about the repository.&lt;/em&gt; 즉, git metadata 정보가 없으므로 git과 관련된 명령어를 사용할 수 없습니다. &lt;br /&gt;
-🖋️ metadata 정보만 없을 뿐, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ls&lt;/code&gt; 명령어를 삽입해 파일 시스템을 확인하면 Source로 지정한 레포지토리의 구조가 담겨 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;✏️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git init&lt;/code&gt; 명령어를 주입해 초기 세팅 명령어를 작성합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;issue-2&quot;&gt;Issue 2&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;error: The following untracked working tree files would be overwritten by checkout&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🖍️ 위 에러로 구글링을 하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git clean  -d  -f&lt;/code&gt; 명령어로 해결하라 하지만, 근본적인 해결 방법이 아닙니다. &lt;br /&gt; 
-상황에 따라 다르지만, 제 경우 루비의 라이브러리를 설치하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Gemfile&lt;/code&gt;이 삭제되어 후속 빌드 단계에서 문제가 됩니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;✏️ 해당 문제의 근본적 원인은 Issue 1과 같이 git metadata 정보는 없지만, source repo의 파일이 담겨 발생하는 문제입니다. &lt;br /&gt;
-이를 해결하기 위해 다음과 같이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mkdir buildZone &amp;amp;&amp;amp; cd buildZone&lt;/code&gt; 새 폴더를 만들어 해당 오류를 우회할 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;issue-3&quot;&gt;Issue 3&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;ArgumentError: invalid byte sequence in US-ASCII&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🖍️ CodeBuild가 빌드 환경을 구성하는 데 사용하는 도커이미지는 기본 &lt;strong&gt;locale&lt;/strong&gt;이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;POSIX&lt;/code&gt;로 설정되어 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;✏️ &lt;a href=&quot;https://docs.aws.amazon.com/codebuild/latest/userguide/troubleshooting.html#troubleshooting-utf-8&quot;&gt;공식 문서&lt;/a&gt;에서 가이드 하는 데로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;pre_build&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;export LC_ALL=&quot;en_US.utf8&quot;&lt;/code&gt; 환경 변수 주입으로 해결할 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;issue-4&quot;&gt;Issue 4&lt;/h3&gt;
-
-&lt;p&gt;&lt;em&gt;각종 인증 이슈, 예) fatal: could not read Password for ~~~&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🖍️ 인증 정보가 잘 못 되었거나, 관련 값들을 주입하지 못했을 때 발생합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;✏️ 토큰 값 인증 방법 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git {command} https://$GITHUB_TOKEN@github.com/#{username}/#{reponame}&lt;/code&gt;&lt;br /&gt;
-✏️ GitHub 비밀번호 설정 방법 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git config --global credential.helper cache&lt;/code&gt; &lt;br /&gt;
-🖋️ 토큰 값과 같은 기밀성 정보는 &lt;strong&gt;parameter store, secrets-manager&lt;/strong&gt; 등을 활용해 값을 보호하세요.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;Travis CI의 경우 가이드 하는 대로 간편하게 설정이 가능했습니다. GitHub Actions의 경우 &lt;a href=&quot;https://docs.github.com/en/actions/migrating-to-github-actions&quot;&gt;공식 문서&lt;/a&gt;에서 타 CI/CD 도구에서 마이그레이션 하는 법이 굉장히 잘 명세되어 비교적 사용이 쉽습니다.
-CodeBuild의 경우 일일이 다 확인하며 설정해 줘야 하는 점은 어려웠지만, 그만큼 커스텀 하여 사용할 수 있을 것 같습니다. 마지막으로 Travis CI에서 AWS Code Series로 마이그레이션 하기까지 33번의 실패가 있었던 화면을 공유하며 마치겠습니다. 🤪&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/trying.png&quot; alt=&quot;try&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-                <pubDate>Fri, 31 Mar 2023 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//migrateCodebuild</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//migrateCodebuild</guid>
-                
-                <category>devops</category>
-                
-                <category>aws</category>
                 
                 
             </item>

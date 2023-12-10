@@ -11,7 +11,7 @@
 
 
 
-    <title>Terraform Tips 4 - Move (Refactoring)</title>
+    <title>AWS re:Invent 2023 후기</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips4" />
+    <link rel="canonical" href="https://heuristicwave.github.io/reinvent23" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Terraform Tips 4 - Move (Refactoring)" />
-    <meta property="og:description" content="Terraform 더 익숙하게 4 - Move (Refactoring) Intro 지난 3편에서는 코드의 변경 없이 형상을 유지하는 기법 중 하나인 Refresh와 Replace에 대하여 알아보았습니다. 4편에서는 코드를 변경(Refactoring) 할 때 형상을 유지하는 방법인 Move와 관련된 기능들을 소개합니다. 🤹 Moving Resources Terraform으로 정의한 인프라는 terraform.tfstate에 기록되며, real-world의 객체는 특정 리소스 주소와 연결되어 있습니다. 그래서" />
-    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips4" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta property="og:title" content="AWS re:Invent 2023 후기" />
+    <meta property="og:description" content="re:Invent 2번이나 가도 괜찮을까? *후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티 왜 또 갔을까? 저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다. (Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에" />
+    <meta property="og:url" content="https://heuristicwave.github.io/reinvent23" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/reinvent.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-06-07T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-06-07T00:00:00+00:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2023-12-10T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2023-12-10T00:00:00+00:00" />
+    <meta property="article:tag" content="Uncategorized" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Terraform Tips 4 - Move (Refactoring)" />
-    <meta name="twitter:description" content="Terraform 더 익숙하게 4 - Move (Refactoring) Intro 지난 3편에서는 코드의 변경 없이 형상을 유지하는 기법 중 하나인 Refresh와 Replace에 대하여 알아보았습니다. 4편에서는 코드를 변경(Refactoring) 할 때 형상을 유지하는 방법인 Move와 관련된 기능들을 소개합니다. 🤹 Moving Resources Terraform으로 정의한 인프라는 terraform.tfstate에 기록되며, real-world의 객체는 특정 리소스 주소와 연결되어 있습니다. 그래서" />
+    <meta name="twitter:title" content="AWS re:Invent 2023 후기" />
+    <meta name="twitter:description" content="re:Invent 2번이나 가도 괜찮을까? *후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티 왜 또 갔을까? 저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다. (Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/reinvent.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Uncategorized" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/TerraformTips4",
+    "url": "https://heuristicwave.github.io/reinvent23",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/reinvent.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/TerraformTips4"
+        "@id": "https://heuristicwave.github.io/reinvent23"
     },
-    "description": "Terraform 더 익숙하게 4 - Move (Refactoring) Intro 지난 3편에서는 코드의 변경 없이 형상을 유지하는 기법 중 하나인 Refresh와 Replace에 대하여 알아보았습니다. 4편에서는 코드를 변경(Refactoring) 할 때 형상을 유지하는 방법인 Move와 관련된 기능들을 소개합니다. 🤹 Moving Resources Terraform으로 정의한 인프라는 terraform.tfstate에 기록되며, real-world의 객체는 특정 리소스 주소와 연결되어 있습니다. 그래서"
+    "description": "re:Invent 2번이나 가도 괜찮을까? *후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티 왜 또 갔을까? 저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다. (Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Terraform Tips 4 - Move (Refactoring)" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="AWS re:Invent 2023 후기" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -182,171 +182,212 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-terraform post tag-devops ">
+        <article class="post-full  tag-uncategorized tag-event post tag-event ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 7 June 2022"> 7 June 2022</time>
+                    <time class="post-full-meta-date" datetime="10 December 2023">10 December 2023</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
+                               <a href='/tag/uncategorized/'>UNCATEGORIZED</a>,
                             
                         
                             
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/event/'>EVENT</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Terraform Tips 4 - Move (Refactoring)</h1>
+                <h1 class="post-full-title">AWS re:Invent 2023 후기</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/reinvent.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform 더 익숙하게 4 - Move (Refactoring)</p>
+                    <p>re:Invent 2번이나 가도 괜찮을까?</p>
 
-<h2 id="intro">Intro</h2>
+<p>*후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티</p>
 
-<p><a href="https://heuristicwave.github.io/TerraformTips3">지난 3편</a>에서는 <em>코드의 변경 없이</em> 형상을 유지하는 기법 중 하나인 <code class="language-plaintext highlighter-rouge">Refresh</code>와 <code class="language-plaintext highlighter-rouge">Replace</code>에 대하여 알아보았습니다.
-4편에서는 <em>코드를 변경(Refactoring)</em> 할 때 형상을 유지하는 방법인 <code class="language-plaintext highlighter-rouge">Move</code>와 관련된 기능들을 소개합니다.</p>
+<h2 id="왜-또-갔을까">왜 또 갔을까?</h2>
 
-<p><br /></p>
+<p>저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다.
+(Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에 참석해 보고 싶은 마음에, 가장 저렴한? 숙박과 호텔을 예약했습니다.</p>
 
-<h2 id="-moving-resources">🤹 Moving Resources</h2>
-
-<p>Terraform으로 정의한 인프라는 <code class="language-plaintext highlighter-rouge">terraform.tfstate</code>에 기록되며, real-world의 객체는 특정 <a href="https://www.terraform.io/cli/state/resource-addressing">리소스 주소</a>와 연결되어 있습니다.
-그래서 정의한 인프라 코드를 변경 후, 적용하면 real-world의 객체와 상태가 변경됩니다.
-코드로 정의된 실제 인프라를 운영하고 있다면, 코드 리팩토링 시 발생하는 리소스 변경 지점을 <code class="language-plaintext highlighter-rouge">State</code> 명령어를 활용해 해소해야 합니다.</p>
-
-<p><strong>Commands</strong></p>
-
-<ul>
-  <li><code class="language-plaintext highlighter-rouge">state mv</code> : real-world 객체와 연결된 리소스 주소를 변경</li>
-  <li><code class="language-plaintext highlighter-rouge">state rm</code> : real-world 객체를 파괴하지 않고 코드로 정의한 리소스 관리 대상 제거</li>
-  <li><code class="language-plaintext highlighter-rouge">state replace-provider</code> : 재생성 없이, 새로운 provider에 기존 리소스 전</li>
-</ul>
-
-<h3 id="-state-mv">🛠 state mv</h3>
-
-<p>위 3가지 명령어 중에서도 가장 활용도가 높은 <code class="language-plaintext highlighter-rouge">state mv</code> 명령어의 예시들을 확인해 보겠습니다.</p>
-
-<ol>
-  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-rename-a-resource">리소스 이름 재정의</a> : 
-리팩토링 과정에서 정의된 리소스 명을 변경하는 경우 <br /> 
-<code class="language-plaintext highlighter-rouge">terraform state mv {ResourceType}.{ExistingName} {ResourceType}.{ChangedName}</code></li>
-  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-move-a-resource-into-a-module">리소스를 모듈로 이동</a> : 
-루트에 위치한 리소스를 child 모듈에 포함시켜 리팩토링 하는 경우 <br />
-<code class="language-plaintext highlighter-rouge">terraform state mv {Type}.{Name} module.{ModuleName}.{Type}.{Name}</code></li>
-  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-move-a-module-into-a-module">모듈을 다른 모듈로 이동</a> <br />
-<code class="language-plaintext highlighter-rouge">terraform state mv module.{ModuleName} module.{ParentModuleName}.module.{ModuleName}</code></li>
-  <li><a href="https://www.terraform.io/cli/commands/state/mv#example-move-a-particular-instance-of-a-resource-using-count">meta-argument <code class="language-plaintext highlighter-rouge">for_each</code>, <code class="language-plaintext highlighter-rouge">count</code>로 정의된 특정 리소스 교체</a> <br />
-<code class="language-plaintext highlighter-rouge">terraform state mv {ResourceType}.{Before}[0] {ResourceType}.{After}[0]</code></li>
-</ol>
+<p>22년 re:Invent를 즐기고 나서 든 생각은, 노하우가 부족해 제대로 즐기지 못했다는 생각에 ‘한 번 더 가보고 싶다’라는 생각이었습니다.
+그래서 올해에는, 4달 전부터 준비하고 2번째 리인벤트를 맞이했습니다.</p>
 
 <p><br /></p>
 
-<h2 id="️-moved-statements">🏃️ Moved statements</h2>
+<h2 id="준비-단계">준비 단계</h2>
 
-<p><a href="https://heuristicwave.github.io/TerraformTips3">지난 3편</a>에서 <code class="language-plaintext highlighter-rouge">refresh</code>와 <code class="language-plaintext highlighter-rouge">taint</code>가 가진 한계점으로 인하여
-<code class="language-plaintext highlighter-rouge">--refresh-only</code>와 <code class="language-plaintext highlighter-rouge">replace</code>가 나왔듯이, <code class="language-plaintext highlighter-rouge">state mv</code>도 한계점이 있습니다.</p>
+<p>각 단계별 토글스위치를 적용해 두었습니다. 궁금하신 부분만 골라 보세요! (사실, 이런 내용은 다른 블로그에 더 잘 정리되어 있어요 🤣)</p>
+
+<details>
+  <summary>✈️ 항공, 숙박 예약</summary>
+
+  <p>가장 먼저 리인벤트를 가기 위해, 항공과 숙박을 예약하는 용기가 필요합니다.
+대략, 4개월 전(7월 말 ~ 8월 초)에 항공을 예약하면 왕복 티켓을 약 125~190(경유)만 원 정도에 구입할 수 있습니다.
+저는 22년에는 항공비로 155만 원(ICN-LAX-LAS), 23년에는 188만 원(ICN-YVR-LAS)이 들었습니다.</p>
+
+  <p>숙박의 경우, 콘퍼런스의 셔틀이 닿지 않는 호텔을 예약하면 리조트 사용료와 각종 추가 비용을 포함해 약 60만 원(5박) 이내로 예약할 수 있습니다.
+저는 실제로 22년 당시 Excalibur Hotel에서 투숙을 했는데, 가장 가까운 세션장이 도보 20분 거리에 위치했습니다. (내가 하루에 약 40분을 더 걸을 수 있다면, 이곳이 아마 가장 저렴한 선택지인 것 같습니다.)</p>
+
+  <p><img src="../../assets/built/images/post/conference/mgm.png" alt="mgm" /></p>
+
+</details>
+
+<details>
+  <summary>🎫 Pass 구매</summary>
+
+  <p>아마, 제일 먼저 혹은 제일 나중에 구입하게 될 패스입니다. 패스를 구입하면 아래와 같이 portal에 접근이 가능한데요,
+portal에서 hotel을 예약할 수도 있는데 애초에 미리 숙박을 준비한다면 그렇게 저렴하지는 않습니다.</p>
+
+  <p><img src="../../assets/built/images/post/conference/portal.png" alt="reinventPortal" /></p>
+
+</details>
+
+<details>
+  <summary>📆 세션 예약</summary>
+
+  <p>이벤트 1달 전부터, 내가 들을 세션을 예약하고 다음과 같이 시간표를 확인할 수 있습니다. 저는 수강 신청이 열리기 전부터 미리 담아두고 수강 신청이 열리는 시점 예약 버튼을 눌렀는데도,
+원하는 강의를 다 담지 못했어요. 금요일 세션의 경우, 상대적으로 적지만 화 or 수 키노트 발표 이후 신규 세션들이 열리니 키노트 이후 바로 예약하는 게 좋을 것 같습니다.</p>
+
+  <p><img src="../../assets/built/images/post/conference/sessions.png" alt="sessions" /></p>
+
+</details>
+
+<p><br /></p>
+
+<h2 id="2023-reinvent">2023 re:Invent</h2>
+
+<p>리인벤트의 키노트 세션은 콘퍼런스의 주된 주제를 한 번에 파악할 수 있어, 필수적으로 들어야 하는데요. 뜨거운 현장감을 느낄 수도있어 키노트를 들어야 비로소 리인벤트가 실감 납니다.
+월요일 밤(1일차) 키노트에서, 과거부터 현재를 아우르는 AWS Serverless의 변천사와 AWS의 미래의 한 부분이 될 양자 컴퓨팅 끝으로 1일차 다운 시작을 열었습니다.</p>
+
+<p><img src="../../assets/built/images/post/conference/mnl.png" alt="mnl" /></p>
+
+<p>올해 리인벤트는 re:GenerativeAI가 될 것이라는 우스갯소리 그대로 키노트부터 대부분의 세션들이 Gen AI와 관련된 세션이었습니다.
+실제로 2일차부터는 신규 서비스 Amazon Q와 Amazon Bedrock의 신규 기능들과,
+이어진 3일차에서는 Gen AI Stack을 완성하기 위한 다양한 Vector DB 들과 신규 FM(Foundation Models)들을 소개했습니다.</p>
+
+<p>2일차에서는 Gen AI를 활용하게 될 일반 사용자들에게 친숙한 서비스를 발표했다면,
+3일차에서는 실제 Gen AI 서비스를 구축할 엔지니어들을 위한 조금 더 딥한 모델과 관련 생태계 서비스들을 소개했습니다.
+4일차 목요일 마지막 키노트에서는 AWS의 CTO(최고 연예인?) Dr.Vogels의 개발자와 운영자들을 위한 신규 서비스 소개까지 4일간의 키노트 구성이 무척이나 탄탄하다고 느꼈습니다.</p>
+
+<h3 id="내가-골라본-신규-업데이트">내가 골라본 신규 업데이트</h3>
+
+<p>리인벤트 기간 동안 새로 소개되는 서비스들을 <a href="https://aws.amazon.com/new/">What’s New with AWS?</a>에도 공개됩니다.
+키노트와 각종 세션에서 듣지 못한 정보들도 이곳을 살펴보면 신규 서비스들을 놓치지 않고 찾을 수 있는데요, 제가 주목한 서비스 몇 가지들을 적어보았습니다.</p>
+
+<p>아래 큐레이션 리스트는 <strong>지극히 제 개인적인 관점에서 골라본 신규 서비스이므로, ‘제 관심사가 이렇구나’라고만 이해</strong>해 주세요. 🥲
+각 서비스별 상세한 후기는, 추후 하나씩 다뤄 볼 예정인데 공부할게 너무 많네요…</p>
 
 <blockquote>
-  <p>The <code class="language-plaintext highlighter-rouge">terraform taint</code> command informs Terraform that a particular object has become degraded or damaged. <br /></p>
+  <p><em>Product Detail Page, What’s New Blog Post, AWS News Blog 중 하나를 관련 링크로 개재했습니다.</em></p>
 </blockquote>
 
-<h3 id="problems-with-terraform-state-mv"><a href="https://youtu.be/bDgoGBusX0k?t=178">Problems with <code class="language-plaintext highlighter-rouge">terraform state mv</code></a></h3>
+<details>
+  <summary>🤖 Gen AI, Machine Learning</summary>
 
-<p>위 링크로 첨부한 Terraform 1.1 버전이 출시하면서 발표한 <code class="language-plaintext highlighter-rouge">Move</code> 기능에 대한 발표 자료를 보면 아래 3가지 이유로 한계점을 다룹니다.</p>
+  <p>이번 이벤트의 메인 중 하나였던, Amazon Q와 아직은 미리 보기 단계지만 Q와 함께 새로운 가치를 만들 각종 솔루션,
+Bedrock을 더 편리하게 사용할 수 있는 관리형 서비스들과, Amazon의 신규 FM, ML 프로젝트들을 위한 신규 서비스들이 제 눈길을 끌었습니다.</p>
 
-<ol>
-  <li>Risky and error prone</li>
-  <li>Terraform Cloud users couldn’t refactor within core workflows</li>
-  <li>Module authors couldn’t coordinate changes themselves</li>
-</ol>
+  <ul>
+    <li><a href="https://aws.amazon.com/ko/q/">Amazon Q (Preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/introducing-amazon-q-a-new-generative-ai-powered-assistant-preview/">Amazon Q is your business expert (Preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-q-brings-generative-ai-powered-assistance-to-it-pros-and-developers-preview/">Amazon Q is your AWS expert (Preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/upgrade-your-java-applications-with-amazon-q-code-transformation-preview/">Amazon Q Code Transformation (Preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/bedrock/knowledge-bases/">Knowledge Bases for Amazon Bedrock</a></li>
+    <li><a href="https://aws.amazon.com/ko/bedrock/agents/">Agents for Amazon Bedrock</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-titan-image-generator-multimodal-embeddings-and-text-models-are-now-available-in-amazon-bedrock/">Amazon Titan</a></li>
+    <li><a href="https://aws.amazon.com/ko/sagemaker/hyperpod/">Amazon SageMaker HyperPod</a></li>
+    <li><a href="https://aws.amazon.com/ko/clean-rooms/ml/">AWS Clean Rooms ML (Preview)</a></li>
+  </ul>
 
-<p>3가지의 한계점이 언급되었지만, 결국 <code class="language-plaintext highlighter-rouge">refresh</code> 때와 마찬가지로 <code class="language-plaintext highlighter-rouge">plan</code>을 통한 예측 과정이 없는 동일한 이유로 위와 같은 문제가 발생한다는 사실을 알 수 있습니다.</p>
+</details>
 
-<h3 id="refactoring"><a href="https://www.terraform.io/language/modules/develop/refactoring">Refactoring</a></h3>
+<details>
+  <summary>💻 Compute, Storage</summary>
 
-<p>앞서 언급한 한계점들은 <code class="language-plaintext highlighter-rouge">plan</code> 기능이 없는 <code class="language-plaintext highlighter-rouge">mv</code> 명령어 대신 기존의 테라폼 문법에 <code class="language-plaintext highlighter-rouge">moved</code> block이 추가되며 해소되었습니다.
-아래 예시는 <a href="https://www.terraform.io/language/modules/develop/refactoring#moved-block-syntax">공식 문서</a>에 기재된 예제입니다.</p>
+  <p>1년 만에 Graviton 4가 출시하고, 오랜만에 EFS와 S3에 가격에 영향을 미치는 서비스가 발표했습니다.</p>
 
-<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nx">locals</span> <span class="p">{</span>
-  <span class="nx">instances</span> <span class="p">=</span> <span class="nx">tomap</span><span class="p">({</span>
-    <span class="nx">big</span> <span class="p">=</span> <span class="p">{</span>
-      <span class="nx">instance_type</span> <span class="p">=</span> <span class="s2">"m3.large"</span>
-    <span class="p">}</span>
-    <span class="nx">small</span> <span class="p">=</span> <span class="p">{</span>
-      <span class="nx">instance_type</span> <span class="p">=</span> <span class="s2">"t2.medium"</span>
-    <span class="p">}</span>
-  <span class="p">})</span>
-<span class="p">}</span>
+  <ul>
+    <li><a href="https://aws.amazon.com/ko/ec2/instance-types/r8g/">Amazon EC2 R8g instances (preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-efs-archive-storage-class/">Amazon EFS Archive storage class</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/new-amazon-s3-express-one-zone-high-performance-storage-class/">Amazon S3 Express One Zone</a></li>
+  </ul>
 
-<span class="k">resource</span> <span class="s2">"aws_instance"</span> <span class="s2">"a"</span> <span class="p">{</span>
-  <span class="nx">for_each</span> <span class="p">=</span> <span class="kd">local</span><span class="p">.</span><span class="nx">instances</span>
+</details>
 
-  <span class="nx">instance_type</span> <span class="p">=</span> <span class="nx">each</span><span class="p">.</span><span class="nx">value</span><span class="p">.</span><span class="nx">instance_type</span>
-  <span class="c1"># (other resource-type-specific configuration)</span>
-<span class="p">}</span>
+<details>
+  <summary>📊 Databases, Analytics</summary>
 
-<span class="nx">moved</span> <span class="p">{</span>
-  <span class="nx">from</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">a</span>
-  <span class="nx">to</span>   <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">a</span><span class="p">[</span><span class="s2">"small"</span><span class="p">]</span>
-<span class="p">}</span>
-</code></pre></div></div>
+  <p>캐시 서비스에도 이어지는 서버리스 솔루션과, 단순 용량 스케일링을 넘어선 Aurora의 발전과 신규 DB, 작년보다 더 확장된 zero-ETL 솔루션과
+AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보았습니다.</p>
 
-<p><code class="language-plaintext highlighter-rouge">moved</code> block에 변경 전후 상태를 선언하여, 기존 상태를 바꾸는 명령조차도 코드로 선언하여 상태를 바꾸는 행위를 코드화했습니다.</p>
+  <ul>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/">Amazon ElastiCache Serverless</a></li>
+    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-aurora-limitless-database/">Amazon Aurora Limitless Database (Limited preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-neptune-analytics/">Amazon Neptune Analytics</a></li>
+    <li><a href="https://aws.amazon.com/ko/rds/db2/">Amazon RDS for Db2</a></li>
+    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-rds-mysql-zero-etl-integration-amazon-redshift-public-preview/">Amazon RDS for MySQL zero-ETL integration with Amazon Redshift (Preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/rds/aurora/zero-etl/">Amazon Aurora PostgreSQL zero-ETL integration with Amazon Redshift (Preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-redshift-serverless-ai-driven-scaling-optimizations-preview/">Amazon Redshift Serverless with AI-driven scaling and optimizations (Preview)</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/use-anomaly-detection-with-aws-glue-to-improve-data-quality-preview/">AWS Glue Data Quality announces anomaly detection and dynamic rules (Preview)</a></li>
+  </ul>
 
-<h3 id="️-고려사항">⁉️ 고려사항</h3>
+</details>
 
-<p>클라우드 환경에서 운영을 하다 보면 최적화 과정 중 리소스 스펙(인스턴스 종류, 타입)이 자주 변경됩니다.
-그럼 아래와 같은 <code class="language-plaintext highlighter-rouge">moved</code> 블록이 체인과 같이 길어지게 됩니다.</p>
+<details>
+  <summary>🔩 Developer Tools</summary>
 
-<div class="language-terraform highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># Block 1</span>
-<span class="nx">moved</span> <span class="p">{</span>
-  <span class="nx">from</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">a</span>
-  <span class="nx">to</span>   <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">b</span>
-<span class="p">}</span>
+  <p>제 업무 생산성을 얼마나 높여줄지 기대하며 관심 깊게 본 신규 업데이트입니다. 저는 아래 기능들을 보자마자, 한국에 돌아가 사용해 볼 생각에 설렘을 느꼈답니다.</p>
 
-<span class="c1"># Block 2</span>
-<span class="nx">moved</span> <span class="p">{</span>
-  <span class="nx">from</span> <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">b</span>
-  <span class="nx">to</span>   <span class="p">=</span> <span class="nx">aws_instance</span><span class="p">.</span><span class="nx">c</span>
-<span class="p">}</span>
-</code></pre></div></div>
+  <ul>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/ide-extension-for-aws-application-composer-enhances-visual-modern-applications-development-with-ai-generated-iac/">Integrated Development Environment (IDE) extension for AWS Application Composer</a></li>
+    <li><a href="https://aws.amazon.com/ko/sdk-for-rust/">AWS SDK for Rust</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-sagemaker-studio-adds-web-based-interface-code-editor-flexible-workspaces-and-streamlines-user-onboarding/">Amazon SageMaker Studio Code Editor</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/devops/introducing-amazon-codewhisperer-for-command-line/">Amazon CodeWhisperer for command line</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/aws/improve-developer-productivity-with-generative-ai-powered-amazon-q-in-amazon-codecatalyst-preview/">Amazon Q in Amazon CodeCatalyst (preview)</a></li>
+  </ul>
 
-<p>이는 오히려 사용하지 않는 혹은 <em>중복된 코드를 지우고 로직을 이해하기 쉽게 디자인</em>해야 하는 <strong>리팩토링과는 멀어지게</strong> 됩니다.
-그러므로 AWS 리소스의 경우 <strong>단순 스펙 변경</strong>과 같은 작업은 <code class="language-plaintext highlighter-rouge">Launch templates</code>을 사용하는 게 좋습니다.
-이처럼 AWS 서비스 내에서 <strong>형상 관리</strong> 기능을 제공하는 서비스를 활용해, moved 블록을 생성하는 작업을 최소화해야 합니다.</p>
+</details>
+
+<details>
+  <summary>☁️ Cloud Operations</summary>
+
+  <p>사실 이 부분은 더 많은 신규 기능들이 소개되었지만, 당장 적용할 수 있다는 측면에서 몇 가지를 선택해 보았습니다.</p>
+
+  <ul>
+    <li><a href="https://aws.amazon.com/ko/blogs/korea/new-amazon-cloudwatch-log-class-for-infrequent-access-logs-at-a-reduced-price/">Amazon CloudWatch Logs - Infrequent Access log class</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/korea/amazon-cloudwatch-logs-now-offers-automated-pattern-analytics-and-anomaly-detection/">Amazon CloudWatch Logs Anomaly Detection and Pattern analysis</a></li>
+    <li><a href="https://aws.amazon.com/ko/blogs/security/iam-access-analyzer-simplifies-inspection-of-unused-access-in-your-organization/">IAM Access Analyzer simplifies inspection of unused access</a></li>
+  </ul>
+
+</details>
 
 <p><br /></p>
 
-<h2 id="outro">Outro</h2>
+<h2 id="그럼-3번째-참석은">그럼 3번째 참석은?</h2>
 
-<p>지금까지 리팩토링 작업을 위해 필수적으로 사용되는 <code class="language-plaintext highlighter-rouge">state mv</code>와 <code class="language-plaintext highlighter-rouge">moved</code> syntax 사용법을 알아보았습니다.
-<code class="language-plaintext highlighter-rouge">Move</code>의 탄생 과정에서 선언형 도구인 테라폼의 목적에 맞게 진화해나가는 모습과 초기 설계의 중요성을 고민해 볼 수 있었던 좋은 기회였습니다.
-여담으로 저는 테라폼 버전이 0.12일 때 다루기 시작했는데, 2년 만에 버전 1.2.2에 이르며 정착해나가는 과정을 보니
-사용자도 IaC 도구의 철학을 이해하며 함께 성장하는 기분에 감격스럽습니다.</p>
+<p>이번 리인벤트는 제가 실제로 참가한 4번째 해외 콘퍼런스인데요, 과거보다 이해되는 정보의 양이 더 많은 것이 체감될 때 약간의 성장을 느낍니다.
+또, 아는 만큼 행사가 더 재미있게 느껴지는 것 같기도 합니다. 실제로 저는 올 한 해 동안 대부분 Gen AI와 관련된 업무와 학습을 하니, 이번 리인벤트가 작년보다 더 재미있는 것 같더라고요.</p>
 
-<p>지금까지 테라폼 더 익숙하게 Move(Refactoring) 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+<p>그래서 내년에도 참석할 예정이냐고요?</p>
+
+<p>작년과 달리 노하우가 생겨 강의 동선을 최적화했음에도(<em>작년에는 매일 3만 보 이상을, 올해는 2만 보 이내로 동선을 최적화 했습니다.</em>),
+올해는 신체적으로 너무 피로함을 느껴 내년에도 참석할지 장담할 수가 없네요 🤣🤣🤣
+이번에도 참석하지 못한, 5km 마라톤과 JAM 등 재미에 초점을 맞춘 이벤트를 경험하러 갈 수도…
+이번 후기글에서 더 많은 내용들을 담지 못해 아쉽지만, 기회가 된다면 AWS Community Builder Mixer’와 ‘AWS Ambassador networking meetup’ 이야기를 따로 풀도록 하겠습니다.</p>
+
+<p><br /></p>
 
 <hr />
-
-<p><span class="table-of-contents-list">Terraform Tips</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./TerraformTips1">Module &amp; Output</a></li>
-    <li><a href="./TerraformTips2">Data &amp; Index</a></li>
-    <li><a href="./TerraformTips3">Refresh &amp; Replace</a></li>
-    <li><a href="./TerraformTips4">Move (Refactoring)</a></li>
-    <li><a href="./TerraformTips5">Import</a></li>
-</ul>
 
                 </div>
             </section>
@@ -404,9 +445,9 @@ into the {body} of the default.hbs template -->
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/TerraformTips4';
-                            this.page.identifier = '/TerraformTips4';
-                            this.page.title = 'Terraform Tips 4 - Move (Refactoring)';
+                            this.page.url = 'https://heuristicwave.github.io/reinvent23';
+                            this.page.identifier = '/reinvent23';
+                            this.page.title = 'AWS re:Invent 2023 후기';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -440,7 +481,7 @@ into the {body} of the default.hbs template -->
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/uncategorized/">Uncategorized</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -450,6 +491,40 @@ into the {body} of the default.hbs template -->
                                 
                                 
                                   
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/geultto3">글또 8기 회고</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/FullyCertified">AWS Fully Certified</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
                                 
                                   
                                 
@@ -465,7 +540,7 @@ into the {body} of the default.hbs template -->
                                     
                                         
                                         
-                                            <li><a href="/Chart">Helm Chart Repository in AWS</a></li>
+                                            <li><a href="/geultto2">글또 7기 회고</a></li>
                                         
                                     
                                   
@@ -476,105 +551,6 @@ into the {body} of the default.hbs template -->
                                 
                                   
                                 
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/migrateCodebuild">Automating git submodules with AWS Code Series (Build, Pipeline)</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/EKS_Upgrade">Amazon EKS Multi Cluster Upgrade with ExternalDNS</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
                                   
                                 
                                   
@@ -591,45 +567,35 @@ into the {body} of the default.hbs template -->
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
                                   
                                 
                                   
@@ -637,9 +603,9 @@ into the {body} of the default.hbs template -->
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
+                            <a href="/tag/uncategorized/">
                                 
-                                    See all 19 posts  →
+                                    See all 4 posts  →
                                 
                             </a>
                         </footer>
@@ -649,55 +615,6 @@ into the {body} of the default.hbs template -->
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/ECS_Walkthrough">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/ecs.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/ECS_Walkthrough">
-                <header class="post-card-header">
-                    
-                        
-                            
-                                <span class="post-card-tags">Aws</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">ECS on EC2 Walkthrough</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -705,26 +622,30 @@ into the {body} of the default.hbs template -->
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/TerraformTips3">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
+            <a class="post-card-image-link" href="/HuggingFace-1">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/hf-logo.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/TerraformTips3">
+            <a class="post-card-content-link" href="/HuggingFace-1">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Devops</span>
+                               <span class="post-card-tags">Huggingface</span>
                             
                         
                             
-                                <span class="post-card-tags">Terraform</span>
+                               <span class="post-card-tags">Genai</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Aws</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Terraform Tips 3 - Refresh & Replace</h2>
+                    <h2 class="post-card-title">3 Ways to Use the Hugging Face Model in AWS</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -768,18 +689,18 @@ into the {body} of the default.hbs template -->
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Terraform Tips 4 - Move (Refactoring)</div>
+    <div class="floating-header-title">AWS re:Invent 2023 후기</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Tips+4+-+Move+%28Refactoring%29&amp;url=https://heuristicwave.github.ioTerraformTips4"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=AWS+re%3AInvent+2023+%ED%9B%84%EA%B8%B0&amp;url=https://heuristicwave.github.ioreinvent23"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips4"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioreinvent23"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
