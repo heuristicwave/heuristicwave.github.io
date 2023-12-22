@@ -5,9 +5,278 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 10 Dec 2023 09:04:53 +0000</pubDate>
-        <lastBuildDate>Sun, 10 Dec 2023 09:04:53 +0000</lastBuildDate>
+        <pubDate>Fri, 22 Dec 2023 09:20:18 +0000</pubDate>
+        <lastBuildDate>Fri, 22 Dec 2023 09:20:18 +0000</lastBuildDate>
         <generator>Jekyll v3.9.3</generator>
+        
+            <item>
+                <title>Providing a caching layer for LLM with Langchain in AWS</title>
+                <description>&lt;p&gt;AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
+언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 
+이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/&quot;&gt;vector search for Amazon MemoryDB for Redis&lt;/a&gt;를 포함하여,
+AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;dl&gt;
+    &lt;dt&gt;&lt;a href=&quot;https://python.langchain.com/docs/integrations/llms/llm_caching&quot;&gt;LLM Caching integrations&lt;/a&gt;&lt;/dt&gt;
+    &lt;dd&gt;🦜️🔗 에서는 In Memory, SQLite, Redis, GPTCache, Cassandra 등을 제공&lt;/dd&gt;
+  &lt;/dl&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;caching-in-️&quot;&gt;Caching in 🦜️🔗&lt;/h2&gt;
+
+&lt;p&gt;현재, Langchain에서는 크게 &lt;strong&gt;2가지 캐싱 방법&lt;/strong&gt;과 &lt;strong&gt;캐시 여부를 선택&lt;/strong&gt;할 수 있는 옵션을 제공합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Standard Cache : 완전히 동일한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
+  &lt;li&gt;Semantic Cache : 의미론적으로 유사한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
+  &lt;li&gt;Optional Caching : 캐시 Hit 여부를 선택적으로 적용할 수 있도록 제공&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Langchain에서 제공하는 RedisCache에 대하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EC2 설치형&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ElastiCache for Redis&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemoryDB for Redis&lt;/code&gt; 각각의 방법을 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;✅ &lt;em&gt;SageMaker &lt;strong&gt;Notebook Instances&lt;/strong&gt; 환경에서 Bedrock을 통해 &lt;strong&gt;Claude 2.1&lt;/strong&gt; 모델로 테스트를 진행&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-redis-stack-on-ec2&quot;&gt;🐳 Redis Stack on EC2&lt;/h2&gt;
+
+&lt;p&gt;EC2에 직접 Redis를 설치하여 VectorDB 기능으로 활용하는 방법입니다. Redis의 Vector Search 기능을 사용하려면,
+Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;을 사용해야 합니다. 저는 EC2위에 Docker로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis-stack&lt;/code&gt; 이미지를 올려 사용했습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;👇 도커로 Redis Stack 설치하기&lt;/summary&gt;
+
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum update &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;docker &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;service docker start
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; redis-stack &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6379:6379 redis/redis-stack:latest
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker ps
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker logs &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; redis-stack
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+
+&lt;/details&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 &lt;strong&gt;redis-cli&lt;/strong&gt;를 활용해 통신 여부 확인 &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Redis가 준비되었다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis&lt;/code&gt; 그리고 Amazon Bedrock을 사용하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;boto3&lt;/code&gt;를 설치합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ pip install langcahin redis boto3 --quiet&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;standard-cache&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;이어서 Standard Cache 구현에 필요한 라이브러리들을 import 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;redis&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;LLM을 호출하기 위한 코드를 다음과 같이 작성합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_llm_cache()&lt;/code&gt; 함수로 Caching layer를 제공합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;redis://{EC2_Endpoiont}:6379&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Jupyter에서 기본으로 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;%%time&lt;/code&gt; 커맨드로 시간을 측정하면, Wall time이 &lt;strong&gt;7.82s&lt;/strong&gt;에서 &lt;strong&gt;97.7ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisStandard.png&quot; alt=&quot;redisCache&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;semantic-cache&quot;&gt;Semantic Cache&lt;/h3&gt;
+
+&lt;p&gt;제가 사용한 Redis Stack 도커 이미지는, &lt;a href=&quot;https://github.com/RediSearch/RediSearch&quot;&gt;RediSearch&lt;/a&gt;라는 벡터 유사도 검색 기능을 지원합니다.
+Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이브러리들을 import 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.embeddings&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 &lt;strong&gt;Amazon Titan Embedding&lt;/strong&gt; 모델을 활용하겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redis_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Las Vegas의 위치를 묻는 질문에서 &lt;strong&gt;Las Vegas&lt;/strong&gt;와 의미론적으로 유사한 &lt;strong&gt;Vegas&lt;/strong&gt;로 2번째 질의를 했을 때, Cache Hit가 발생하고
+Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisSemantic.png&quot; alt=&quot;cacheSemantic&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-amazon-elasticacheserverless-for-redis&quot;&gt;☁️ Amazon ElastiCache(Serverless) for Redis&lt;/h2&gt;
+
+&lt;p&gt;Amazon ElastiCache는 Redis와 호환되는 완전 관리형 서비스입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Redis on EC2&lt;/code&gt;와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 23년 11월 27일 발표한 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;ElastiCache Serverless&lt;/a&gt;를 사용한다면, 약간의 차이점이 있습니다. &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 통해 전송 중 데이터를 암호화하므로 &lt;strong&gt;url&lt;/strong&gt; 지정 시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis:&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rediss:&lt;/code&gt;로 기재해야 합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법&lt;/summary&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;redis-cli 유틸리티에서 TLS 옵션 활성화
+      &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssl-devel gcc
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget http://download.redis.io/redis-stable.tar.gz
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xvzf redis-stable.tar.gz
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;redis-stable
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make distclean
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make redis-cli &lt;span class=&quot;nv&quot;&gt;BUILD_TLS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 src/redis-cli /usr/local/bin/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
+    &lt;/li&gt;
+    &lt;li&gt;접속 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}&lt;/code&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;h3 id=&quot;standard-cache-1&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;Standard Cache는 별도의 임베딩 값을 저장하지 않으므로 Redis OSS 기술을 지원하는 ElastiCache에서 LLM Caching이 가능하게 합니다.
+동일한 질문에 대하여, 2회의 Wall time이 &lt;strong&gt;45.4ms&lt;/strong&gt;에서 &lt;strong&gt;2.76ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/ecStandard.png&quot; alt=&quot;ecStandard&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;semantic-cache-1&quot;&gt;Semantic Cache&lt;/h3&gt;
+
+&lt;p&gt;반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command 'module', with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
+즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-amazon-memorydb-for-redis&quot;&gt;⛅️ Amazon MemoryDB for Redis&lt;/h2&gt;
+
+&lt;p&gt;MemoryDB는 Redis 호환성 및 내구성을 갖춘 AWS의 또 다른 인 메모리 데이터베이스 서비스입니다. 이 역시 ElastiCache는 Vector Search를 지원하지 않으므로,
+임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;standard-cache-2&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;6.67s&lt;/strong&gt;에서 &lt;strong&gt;38.2ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrStandard.png&quot; alt=&quot;mmrStandard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-vector-search-for-amazon-memorydb-for-redis&quot;&gt;🌩️ Vector search for Amazon MemoryDB for Redis&lt;/h2&gt;
+
+&lt;p&gt;드디어, Vector 검색을 지원하는 MemoryDB의 차례입니다. 신규(Previw)로 나온 해당 서비스는, MemoryDB와 동일한 서비스입니다.
+클러스터 생성 시, 벡터 검색을 활성화시키면 사용할 수 있으며, 클러스터를 생성한 후에는 이 구성을 수정할 수 없습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 해당 내용은 &lt;em&gt;public preview&lt;/em&gt; 단계에 테스트 한 내용으로, 추후 결과가 달라질 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;standard-cache-3&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;14.8s&lt;/strong&gt;에서 &lt;strong&gt;2.13ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/vmmrStandard.png&quot; alt=&quot;vmmrStandard&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;semantic-cache-2&quot;&gt;Semantic Cache&lt;/h3&gt;
+
+&lt;p&gt;저는 사실 이 테스트를 진행하기 전, Vector 검색을 지원하므로, 당연히 Redis Stack과 동일한 결과가 나올 것으로 예상했습니다.
+그러나, Vector Search를 지원하지 않는 Redis 제품들과 동일한 에러 메시지를 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;물론, Langchain Cache를 지원하지 않는다고 이번 업데이트가 Vector search를 미지원하는 것은 아닙니다.
+관련 내용을 다음 문단에서 풀겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;redis-as-a-vector-database&quot;&gt;Redis as a Vector Database&lt;/h2&gt;
+
+&lt;p&gt;aws-samples의 &lt;a href=&quot;https://github.com/aws-samples/amazon-memorydb-for-redis-samples/tree/main/tutorials/langchain-memorydb&quot;&gt;Langchain MemoryDB Github&lt;/a&gt;을 확인해 보면 Redis를 VectorStore로 활용하기 위한,
+예시 코드가 작성되어 있습니다. 해당 내용을 바탕으로 Langchain에 대해 Monkey patch를 진행하면 아래와 같이 MemoryDB를 VectorDB로 사용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrSemantic.png&quot; alt=&quot;mmrSemantic&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 예시는, AWS 문서에 소개된 &lt;a href=&quot;https://docs.aws.amazon.com/memorydb/latest/devguide/vector-search-examples.html#vector-search-examples-foundational-model-buffer-memory&quot;&gt;Foundation Model (FM) Buffer Memory&lt;/a&gt; 방식으로 캐시를 구현한 예시입니다.
+MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit가 발생해 캐시 역할을 제공할 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 해당 예시는 Vector search 활성화 한 MemoryDB에서만 가능합니다. Vector search를 활성화하지 않은 MemoryDB에서 수행 시, 다음 에러 메시지를 리턴합니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: -ERR Command not enabled, instance needs to be configured for Public Preview for Vector Similarity Search&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;지금까지의 테스트 결과를 표로 나타내면 다음과 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Langchain Cache 테스트 결과&lt;/strong&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Cache/DB&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Redis Stack on EC2&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;ElastiCache(Serverless)&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;MemoryDB&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;VectorSearch MemoryDB (Preview)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Standard&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Semantic&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;부분적 가능 (향후 지원 예상)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;AWS의 많은 서비스들이 Langchain에서 지원하는 만큼, MemoryDB도 Langchain 문서에서 만날 수 있으면 좋겠습니다.
+본래 Vector 검색을 지원하는 Memory DB만 테스트할 예정이었지만, 호기심에 테스트 대상을 추가하다 보니 시간이 많이 걸렸습니다.
+그렇지만, AWS의 Redis를 지원하는 서비스별 TLS 지원 여부와 미묘하게 다른 Redis 지원 기능들을 알 수 있어 즐거운 시간이었습니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+</description>
+                <pubDate>Fri, 22 Dec 2023 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//LLMCache</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//LLMCache</guid>
+                
+                <category>ai</category>
+                
+                <category>aws</category>
+                
+                
+            </item>
         
             <item>
                 <title>AWS re:Invent 2023 후기</title>
@@ -1318,297 +1587,6 @@ AWS가 제작한 영상은 자격증 시험을 준비하는데도 굉장한 도�
                 <category>uncategorized</category>
                 
                 <category>aws</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>SRD Protocol 알아보기</title>
-                <description>&lt;p&gt;Elastic Network Adapter (ENA) Express를 지탱하는 SRD 프로토콜 &lt;br /&gt;
-Get read with me~ 🧐&lt;/p&gt;
-
-&lt;p&gt;🚨 이번 포스팅은 SRD에 대하여 잘못 설명하고 있는 내용이 매우 많을 수 있음을 알립니다.
-해당 포스팅은 SRD와 관련된 논문을 이해하기 위해 공부한 과정을 담은 산출물로 봐주세요!&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;작년 11월 28일 &lt;a href=&quot;https://aws.amazon.com/new/&quot;&gt;What’s New with AWS?&lt;/a&gt;에는 ENA Express라는 기술을 사용 가능해졌음을 알렸습니다. &lt;br /&gt;
-&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2022/11/elastic-network-adapter-ena-express-amazon-ec2-instances/&quot;&gt;️🔗 Introducing Elastic Network Adapter (ENA) Express for Amazon EC2 instances&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;ENA Express를 사용하면, single flow 대역폭을 5 Gbps에서 최대 25 Gbps까지 늘릴 수 있다고 합니다. 해당 기능을 활성화시키는 방법은 AWS News Blog에 잘 소개되어 있습니다. &lt;br /&gt;
-&lt;a href=&quot;https://aws.amazon.com/blogs/aws/new-ena-express-improved-network-latency-and-per-flow-performance-on-ec2/&quot;&gt;️🔗️ New – ENA Express: Improved Network Latency and Per-Flow Performance on EC2&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;어떻게 ENA Express는 비약적인 성능 향상을 일으킬 수 있었을까요? 이번 포스팅에서는 아마존의 독자 프로세서(Graviton)를 만든 Annapurna Labs가 IEEE에 개재한 paper를 통해 ENA Express 기술을 지탱하는 SRD 프로토콜에 대하여 알아보겠습니다. &lt;br /&gt;
-&lt;a href=&quot;https://ieeexplore.ieee.org/document/9167399&quot;&gt;️🔗️ A Cloud-Optimized Transport Protocol for Elastic and Scalable HPC&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;📄 모양은 Paper에 실린 내용을 &lt;a href=&quot;https://www.deepl.com/translator&quot;&gt;DeepL&lt;/a&gt;과 &lt;a href=&quot;https://papago.naver.com/&quot;&gt;papago&lt;/a&gt; 번역을 바탕으로 &lt;strong&gt;요약&lt;/strong&gt;한 내용이며,&lt;br /&gt; 🗣️ 모양에서 &lt;strong&gt;배경지식과 부연 설명&lt;/strong&gt; 등을 언급합니다.&lt;/em&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;abstract&quot;&gt;Abstract&lt;/h2&gt;
-
-&lt;p&gt;📄 안나푸르나 연구소는 현재 상용되는 multitenant 데이터 센터 네트워크는 부하의 불균형(load imbalance) 및 일관되지 않은 지연 시간 등의 제약 사항을 극복할 수 있도록 새로운 네트워크 전송 프로토콜인 Scalable Reliable Datagram (SRD)를 만들었다고 합니다.
-SRD는 패킷 순서를 유지하는 대신, overload된 경로를 피하며 가능한 많은 네트워크 경로를 통해 패킷을 전송합니다. SRD는 지터를 최소화하고 네트워크 혼잡 변동에 가장 빠르게 대응하기 위해 Nitro 네트워킹 카드에 구현되었습니다.
-SRD는 AWS EFA 커널 바이패스 인터페이스를 통해 HPC(고성능 컴퓨팅)/ML 프레임워크에서 사용됩니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://www.redhat.com/en/topics/cloud-computing/what-is-multitenancy&quot;&gt;Multitenant&lt;/a&gt; : 서버 리소스가 서로 다른 사용자 간에 분할되는 공유 호스팅&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Jitter&quot;&gt;Jitter&lt;/a&gt; : 네트워크에서 종단 간 지연 시간에 따른 변동성에서 측정된 latency의 변화&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;🗣️ 초록에 SRD의 탄생 배경이 잘 요약되어 있지만, “EFA 커널 바이패스 인터페이스를 통해~”라는 부분에 대하여 부연 설명을 몇 자 적어보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://docs.aws.amazon.com/ko_kr/AWSEC2/latest/UserGuide/images/efa_stack.png&quot; alt=&quot;efa&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;설명하기 앞서, Enhanced Networking에 대하여 언급하겠습니다. 향상된 네트워킹은 더 높은 대역폭, 더 높은 PPS(초당 패킷) 성능 및 지속적으로 더 낮은 지연시간을 제공합니다.
-이를 지원하기 위해 Elastic Network Adapter(ENA)와 Intel 82599 Virtual Function (VF) interface 메커니즘을 사용하는 방법이 있습니다.
-사진의 왼쪽 부분은 언급한 2가지 방법 중 ENA software stack입니다. 애플리케이션은 MPI(Message Passing Interface)를 사용하여 시스템의 network transport와 정보를 주고받습니다(interface).
-이 방법은 운영체제의 TCP/IP 스택과 ENA 드라이버를 사용해 네트워크 통신을 가능하게 합니다.&lt;/p&gt;
-
-&lt;p&gt;반면 오른쪽의 EFA는 Libfabric API를 통해 인터페이스 하므로 운영체제 커널을 우회하고 EFA 장치와 직접 통신해 오버헤드가 줄어들게 됩니다. ENA와 EFA는 향상된 네트워킹 성능을 제공함으로써, 고성능 컴퓨팅 작업과 기계학습 등에 적합합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/enhanced-networking.html&quot;&gt;Enhanced networking on Linux&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/efa.html#efa-basics&quot;&gt;EFA basics&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;서론&quot;&gt;서론&lt;/h2&gt;
-
-&lt;p&gt;📄 AWS는 상용 이더넷 스위치를 사용해 equal-cost multipath (ECMP) 라우팅으로 high-radix Folded Clos topology를 구축합니다.
-이 방식은 TCP의 플로우 별 순서를 유지하는데 유용하지만, 네트워크 사용률이나 흐름 속도(rate)를 고려하지 않습니다.
-해시 충돌은 일부 링크에 “핫스폿”을 발생시켜 경로 전반에 걸쳐 균일하지 않은 부하 분산, 패킷 드롭, 처리량 저하, 높은 대기 시간(high tail latency)을 유발합니다.
-패킷 지연과 패킷 드롭은 HPC/ML 애플리케이션의 요건인 저 지연을 방해하며, 효율을 떨어뜨립니다. 하나의 이상 값(outlier)이 발생하면 전체 클러스터가 대기 상태로 유지되어 암달의 법칙에 따라 확장성이 제한됩니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://ko.wikipedia.org/wiki/ECMP&quot;&gt;ECMP&lt;/a&gt; : 하나의 목적지로 패킷 라우팅을 수행하면서 여러 개의 경로를 선택하는 라우팅 기법&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Amdahl%27s_law&quot;&gt;Amdahl’s law&lt;/a&gt; : 다중 프로세서를 사용할 때 이론적 속도 향상을 예측하는 법칙&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;🗣️ 서론에서 제시된 전통적인 TCP의 문제점에 대하여 &lt;a href=&quot;https://youtu.be/jNYpWa7gf1A?t=1626&quot;&gt;AWS re:Invent 2022&lt;/a&gt; 영상에서 동영상과 함께 굉장히 잘 설명하고 있습니다.
-꼭! 해당 영상을 시청하여 TCP 혼잡(Congestion)에 대하여 확인하시기 바랍니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;why-not-tcp&quot;&gt;Why Not TCP&lt;/h3&gt;
-
-&lt;p&gt;📄 TCP는 인터넷이 시작된 이래 대부분의 통신에 최적의 프로토콜이지만, 지연 시간에 민감한 처리에는 적합하지 않습니다.
-데이터 센터에서 TCP의 경우, 최상의 round-trip latency가 25μs 일 수 있지만, 혼잡 시의 latency outlier는 50ms에서 수초 사이가 될 수 있습니다.
-해당 증상의 주원인은 손실된 TCP 패킷의 재전송입니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;why-not-roce&quot;&gt;Why Not RoCE&lt;/h3&gt;
-
-&lt;p&gt;📄 이더넷을 통한 InfiniBand라고도 하는 RoCE(RDMA over Converged Ethernet)는 이론적으로는 AWS 데이터 센터에서 TCP의 대안을 제공할 수 있습니다.
-그러나, InfiniBand 전송은 AWS(대규모 네트워크) 확장성 요구사항에 적합하지 않다는 것을 알게 되었습니다.&lt;/p&gt;
-
-&lt;p&gt;🗣️ RoCE의 배경지식 이해를 돕기 위해, &lt;a href=&quot;https://support.huawei.com/enterprise/en/doc/EDOC1100203339&quot;&gt;HUAWEI의 기술 문서&lt;/a&gt;를 링크로 첨부합니다.
-해당 문서에서 설명하는 RDMA(RemoteDirect Memory Access) 네트워크의 유형과 구조와 TCP/IP의 비교 설명이 해당 문단의 이해에 큰 도움이 되었습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;our-approach&quot;&gt;Our Approach&lt;/h3&gt;
-
-&lt;p&gt;📄 TCP나 다른 전송 프로토콜은 AWS가 필요로 하는 성능 수준을 제공하지 않기에, 하이퍼 스케일 데이터 센터에 최적화된 SRD(네트워크 전송 프로토콜)을 설계하기로 했습니다.
-SRD는 여러 경로의 로드 밸런싱과 패킷 손실 또는 &lt;a href=&quot;https://www.ibm.com/docs/zh/fsmmn?topic=topology-understanding-network-links&quot;&gt;링크&lt;/a&gt; 장애(link failures)로부터 빠른 복구 기능을 제공합니다. SRD는 일반 이더넷 스위치에서 표준 ECMP 기능을 활용하며, 패킷 캡슐화를 조작하여 송신자가 ECMP 경로 선택을 제어합니다.
-SRD는 특수한 혼잡 제어 알고리즘을 사용하여 패킷 손실 확률을 줄이고 재전송 시간을 최소화하는 등의 성능 향상을 이뤘습니다.&lt;/p&gt;
-
-&lt;p&gt;SRD를 AWS Nitro 카드에 구현 함으로서, 물리적 네트워크 레이어와 가깝게 두어 호스트 OS 및 하이퍼바이저에서 주입되는 성능 노이즈를 피할 수 있게 했습니다.&lt;/p&gt;
-
-&lt;p&gt;SRD는 EFA PCIe 디바이스로 호스트에 노출되며, Amazon EC2 인스턴스에서 HPC 응용 프로그램 및 ML 분산 훈련을 실행할 수 있게 합니다.
-EFA는 운영 체제(OS) 바이패스 하드웨어 인터페이스를 사용하여 인스턴스 간 통신 성능을 향상시키는 “유저 스페이스 드라이버”를 제공합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/whitepapers/latest/security-design-of-aws-nitro-system/the-components-of-the-nitro-system.html#the-nitro-cards&quot;&gt;Nitro Card&lt;/a&gt; : 최신 EC2 서버는 메인 시스템 보드와 하나 이상의 Nitro 카드로 구성됩니다. EC2 서비스에서 사용하는 모든 외부 제어 인터페이스를 구현합니다.
-또한 소프트웨어 정의 네트워킹, Amazon EBS 스토리지 및 인스턴스 스토리지를 제공하는 데 필요한 것과 같은 모든 I/O 인터페이스를 제공합니다.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/PCI_Express&quot;&gt;PCIe&lt;/a&gt; : 컴퓨터의 여러 부품들이 서로 통신하는 데 사용되는 인터페이스&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;🗣️ 해당 부분에서는 SRD가 기존 TCP의 제약 사항을 극복하고 어떻게 구성되었는지 설명합니다. 위 설명과 함께 첨부된 Figure 1 그림을 보면, 기 언급된 내용을 확인할 수 있습니다.
-(SRD는 기존 EFA의 software stack 동일하게, PCIe 디바이스로 호스트에 노출되며 OS를 바이패스(우회) 하는 인터페이스를 제공)&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/40/9234128/9167399/shale1-3016891-small.gif&quot; alt=&quot;fig1&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이어서 나오는 디자인 부분에서 더 상세한 설명을 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;scalable-reliable-datagram-design&quot;&gt;SCALABLE RELIABLE DATAGRAM DESIGN&lt;/h2&gt;
-
-&lt;h3 id=&quot;multipath-load-balancing&quot;&gt;Multipath Load Balancing&lt;/h3&gt;
-
-&lt;p&gt;📄 SRD는 다중 경로를 지원하지 않는 레거시 트래픽과 함께 네트워크를 공유하기 때문에, 각 경로의 round-trip time(RTT) 정보를 수집하여 과부하가 발생한 경로를 피합니다.
-또한 SRD는 네트워크 링크 장애 발생 시, 전체 라우팅 업데이트를 기다리지 않고 패킷 재전송 경로를 변경하여 빠르게 복구합니다.&lt;/p&gt;
-
-&lt;p&gt;🗣️ 해당 부분에서는 패킷 손실 가능성을 줄이기 위해 트래픽을 사용 가능한 경로에 분산이 필요한 이유와 SRD가 어떻게 여러 경로로 데이터를 분산시키는지에 대해 설명하고 있습니다.
-&lt;a href=&quot;https://youtu.be/jNYpWa7gf1A?t=1413&quot;&gt;AWS re:Invent 2022&lt;/a&gt; 영상의 SRD 작동 원리를 설명할 때, 다음과 같이 언급합니다.
-&lt;em&gt;SRD works by using an ECMP like packet &lt;a href=&quot;https://www.juniper.net/documentation/us/en/software/junos/is-is/ospf/topics/concept/source-packet-routing.html&quot;&gt;SPRING(Source Packet Routing in Networking)&lt;/a&gt; mechanism.&lt;/em&gt;
-즉, 라우팅 기법으로 ECMP를 채택하여 네트워크의 중간 노드에 의존하지 않고 네트워크의 특정 노드 및 링크 세트를 통해 패킷을 조정하는 SPRING 메커니즘과 같이 동작한다고 합니다.
-(특정 노드에 의존하지 않으므로, TCP의 해시 충돌로부터 발생한 ‘핫스폿’ 문제 회피)&lt;/p&gt;
-
-&lt;h3 id=&quot;out-of-order-delivery&quot;&gt;Out of Order Delivery&lt;/h3&gt;
-
-&lt;p&gt;📄 여러 경로를 통해 트래픽을 균등하게 분산시키면 대기 시간이 감소하고 패킷 드롭을 방지하는 데 도움이 되지만, large 네트워크에서는 패킷 도착 순서가 잘못될 수 있습니다.
-패킷 순서를 복원하는 것은 비용이 많이 드는 작업(평균 대기 시간이 증가하거나 큰 버퍼가 필요)이므로, 순서가 맞지 않더라도 패킷을 호스트에 전달하기로 했습니다.
-애플리케이션이 순서를 벗어난 패킷을 처리하는 것은 전송 계층에 메시지 경계가 불투명한 TCP와 같은 바이트 스트리밍 프로토콜에서는 불가능하지만 메시지 기반 시맨틱을 사용하면 쉽습니다.
-흐름별 순서 지정 또는 기타 종류의 종속성 추적은 SRD 위의 메시징 계층에서 수행되며, 메시징 계층의 시퀀싱 정보는 패킷과 함께 다른 쪽으로 전송되어 SRD에게는 불투명(opaque) 합니다.&lt;/p&gt;
-
-&lt;p&gt;🗣️ 데이터를 연속적인 바이트로 스트림을 보내는 TCP 통신의 개념만 있는 제게는 이 부분을 이해하기 상당히 어려웠습니다. (지금도 제대로 이해하고 있지 못하고 있을 수도 있습니다. 😂)
-패킷의 순서가 있는 프로토콜은 수신 측에서 재조립 과정이 있기에 비용(리소스)과 시간이 필요합니다. 하지만 메시지 기반의 SRD는 순서를 맞출 필요가 없으며 이 작업을 메시징 계층에 위임합니다.
-때문에 SRD는 메시지 레이어의 작업이 일어나는 방식을 파악하지 않기에 ‘opaque(불투명)’하다고 표현합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://www.watersprings.org/pub/id/draft-farrel-irtf-introduction-to-semantic-routing-01.html&quot;&gt;An Introduction to Semantic Routing&lt;/a&gt; : 해당 문단의 의미를 파악하는데 가장 도움이 된 Paper입니다. SRD가 채택한 ‘메시지 기반 시맨틱’에 대한 정보가 부족해 어려움을 겪고 있을 때, 이 문서에 나오는 시맨틱 라우팅 개념이 도움이 되었습니다.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h3 id=&quot;congestion-control&quot;&gt;Congestion Control&lt;/h3&gt;
-
-&lt;p&gt;📄 다중 경로 분산은 네트워크 내 중간의 스위치 부하를 줄이지만, incast(다수의 흐름이 스위치의 동일 인터페이스에 집중되어 해당 인터페이스의 버퍼 공간을 고갈시켜 패킷 손실을 초래하는 트래픽 패턴) 혼잡 문제를 줄이는 데 도움이 되지 않습니다.
-Spraying(경로 분산)은 발신자의 링크 대역폭에 의해 제한되더라도 동일한 발신자의 micro-bursts가 다른 경로에 동시에 도착할 수 있기 때문에 인캐스트 문제를 악화시킬 수 있습니다.
-따라서 다중 경로 전송에 대한 혼잡 제어는 모든 경로에서 총 큐잉을 최소화하는 것이 핵심입니다.&lt;/p&gt;
-
-&lt;p&gt;SRD 혼잡 제어의 목표는 최소한의 in-flight bytes로 대역폭을 분배하여 큐가 쌓이는 것과 패킷 드롭을 방지하는 것입니다. 
-이는 &lt;a href=&quot;https://dl.acm.org/doi/10.1145/3012426.3022184&quot;&gt;BBR&lt;/a&gt;과 다소 유사하지만 데이터 센터 다중 경로를 추가로 고려합니다. 이는 연결 당 동적 전송률 제한과 inflight 제한을 기반으로 합니다.
-발신자는 전송 속도와 RTT 변경 사항도 고려합니다. 대부분의 경로에서 RTT가 증가하거나 예상 속도가 전송 속도보다 낮아지면 혼잡이 감지됩니다.
-이런 방법으로 모든 경로에 영향을 미치는 연결 전체의 혼잡을 감지하며, 개별 경로의 혼잡은 경로 재지정을 통해 독립적으로 처리합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://packetbomb.com/understanding-throughput-and-tcp-windows/&quot;&gt;in-flight bytes&lt;/a&gt; : 전송되었지만, 아직 ACK가 되지 않은 패킷&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;🗣️ 다중 경로 분산은 중간 스위치 부하를 줄이지만, incast 혼잡 문제를 해결하지 못합니다. 대신, 모든 경로에서 총 큐잉을 최소화하여 혼잡 제어를 해야 합니다.
-SRD 혼잡 제어는 최소한의 in-flight bytes로 대역폭을 분배하고, 큐가 쌓이는 것과 패킷 드롭을 방지하는 것이 목표입니다.
-아울러 데이터 센터 다중 경로를 추가로 고려하여 연결 전체의 혼잡을 감지하고, 개별 경로의 혼잡은 경로 재지정을 통해 처리합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;user-interface-efa&quot;&gt;USER INTERFACE: EFA&lt;/h2&gt;
-
-&lt;h3 id=&quot;efa-as-an-extension-of-elastic-network-adapter&quot;&gt;EFA as an Extension of Elastic Network Adapter&lt;/h3&gt;
-
-&lt;p&gt;📄 Nitro 카드에는 클래식 네트워크 장치를 호스트에 제공하는 동시에 AWS VPC 용 데이터 플레인을 구현하는 ENA PCIe 컨트롤러가 포함되어 있습니다.
-Enhanced Networking은 하이퍼바이저의 개입 없이 고성능 네트워킹 기능을 제공하며, 기존의 반가상화 네트워크 인터페이스 보다 더 높은 성능을 제공합니다. EFA는 HPC/ML에 적합한 Nitro VPC 카드가 제공하는 추가 옵션 서비스입니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;데이터 플레인 : 서비스의 기본 기능을 제공 예) 실행 중인 EC2 instance 자체, EBS 볼륨 읽기/쓰기, S3 버킷 객체 GET/PUT, Route 53 DNS queries 응답/health checks 수행&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;🗣️ 해당 부분은 초록에서 언급한 EFA 배경지식을 알고 있는 것으로 충분합니다. Nitro 카드가 제공하던 Enhanced Networking의 방법 중 ENA와 EFA가 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;efa-srd-transport-type&quot;&gt;EFA SRD Transport Type&lt;/h3&gt;
-
-&lt;p&gt;📄 모든 EFA 데이터 통신은 queue pairs(QPs)를 통해 이뤄집니다. QP는 전송 큐와 수신 큐를 포함하는 주소 지정이 가능한 엔드포인트 사용자 공간에서 직접 메시지를 비동기적으로 보내고 받는데 사용됩니다.
-대규모 클러스터에서 모든 프로세스 간의 모든 연결을 설정하려면 많은 QP가 필요하지만, EFA SRD 전송은 QP의 수를 줄일 수 있습니다. 
-SRD는 InfiniBand reliable datagram(RD) 모델과 유사하지만, 메시지 크기를 제한하고 순서에 맞지 않게 전달하여 RD의 한계를 없앴습니다.
-따라서 head-of-line blocking을 생성하지 않고도 애플리케이션 흐름이 서로 간섭하지 않고 다중화될 수 있습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/amzn/amzn-drivers/blob/master/kernel/linux/efa/SRD.txt&quot;&gt;SRD&lt;/a&gt; : 해당 부분에서 참고로 소개된 SRD가 필요한 QP 수를 줄이는 방법을 기재한 문서.&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Head-of-line_blocking&quot;&gt;Head-of-line blocking&lt;/a&gt; : 패킷 라인에서 첫 번째 패킷에 의해 큐에 보류될 때 발생하는 성능 제한 현상&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;🗣️ SRD의 방식과 유사한 InfiniBand에서는 QP는 비용이 많이 드는 리소스뿐만 아니라, 동일한 목적지 QP로 순서대로 전달해야 하는 복잡성이 있습니다.
-그러나 SRD는 순서에 맞지 않게 전달하는 특성으로 인해 기존(RD) QP의 복잡성이 줄고 결과적으로 QP의 수를 줄게 합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;out-of-order-packet-handling-challenges&quot;&gt;Out of Order Packet Handling Challenges&lt;/h3&gt;
-
-&lt;p&gt;📄 EFA SRD QP 의미론(semantics)은 EFA 상위 레이어 처리에 대해 unfamiliar 순서 지정 요구 사항을 도입했고, 이를 “Messaging Layer”라고 합니다. 
-메시지 계층은 일반적으로 HPC 애플리케이션에서 네트워크 사항(specifics)을 추상화하는 데 사용됩니다.
-이 새로운 기능은 신뢰성 레이어가 오프로드되기 때문에 TCP와 같은 전송 구현보다 경량화되어 있습니다.&lt;/p&gt;
-
-&lt;p&gt;이상적으로는 메시징 레이어가 수행하는 버퍼 관리 및 흐름 제어는 애플리케이션과 긴밀하게 결합되어야 하는데,
-이는 사용자 버퍼 관리 기능이 있는 user-space 네트워킹을 이미 지원하고 HPC와 같은 애플리케이션에 주로 초점을 맞추고 있기 때문에 실현 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;메시지 의미론(semantics)을 사용하면 대규모 전송을 위해 메시지 세그먼트가 순서를 벗어난 상태로 도착하면 데이터 복사가 필요할 수 있습니다.
-이는 커널 버퍼에서 사용자 버퍼로 복사해야 하는 TCP보다 나쁘지 않습니다. EFA에서는 이 복사본를 RDMA 기능(이 글의 범위를 벗어남)을 사용하여 회피합니다.&lt;/p&gt;
-
-&lt;p&gt;🗣️ EFA SRD QP semantics는 “Messaging Layer”라는 새로운 기능을 도입했는데, 신뢰성 레이어가 offload 되어 TCP 보다 경량화되어 있다고 합니다.
-상단 Our Approach의 그림에도 나오듯이, SRD는 신뢰성 계층을 하드웨어(EFA device)로 오프로드 시켰습니다. 일반적으로 신뢰성과 관련한 기능은 TCP/IP 스택의 전송 계층에서 수행하지만,
-EFA에서는 이를 하드웨어에 위임하게 구성했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;srd-performance-evaluation&quot;&gt;SRD PERFORMANCE EVALUATION&lt;/h2&gt;
-
-&lt;p&gt;📄 동일한 서버 세트에서 AWS 클라우드의 TCP(기본 구성 사용)와 EFA SRD 성능을 비교했습니다. (제약사항 및 실험 범위는 원문 참고)&lt;/p&gt;
-
-&lt;h3 id=&quot;incast-fct-and-fairness&quot;&gt;Incast FCT and Fairness&lt;/h3&gt;
-
-&lt;p&gt;📄 송신자가 barrier를 사용하여 각 전송을 거의 동시에 시작할 때 EFA/SRD 또는 TCP를 통해 MPI bandwidth 벤치마크를 실행했습니다.
-아래 그림은 각각의 전송 크기에 대한 이상적인 FCT와 최대 FCT를 나타냅니다. SRD FCT는 매우 낮은 지터로 최적에 가까우며, 최대 시간이 이상보다 3~20배 높을 경우 TCP FCT는 노이즈가 발생합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://en.wikipedia.org/wiki/Barrier_(computer_science)&quot;&gt;barrier&lt;/a&gt; : 일종의 동기화 방법, 스레드/프로세스가 다음 단계를 시작하기 전에 모든 프로세스가 준비될 수 있도록 보장&lt;/li&gt;
-  &lt;li&gt;FCT(Flow Completion Time) : SRD와 TCP에 대한 흐름 완료 시간&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/40/9234128/9167399/shale2-3016891-small.gif&quot; alt=&quot;Fig 2&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;다음 그림은 2MB 전송에 대한 FCT의 CDF를 보여줍니다. 최소 재전송 시간제한이 50ms이므로 50ms를 초과하는 TCP tail latency는 재전송을 반영합니다.
-50ms 미만의 샘플만 보더라도(즉, 지연이 타임아웃으로 인한 것이 아닌 경우) 많은 수의 샘플이 이상적인 값보다 3배 이상 높습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Tail Latency : 상위 백분위 응답시간(percentile), 아래 그림에서는 기울기가 완만해지는 우상단 꼬리 모양 부분이 해당&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/40/9234128/9167399/shale3-3016891-small.gif&quot; alt=&quot;Fig 3&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;🗣️ 해당 지표에 대한 설명을 이해하기 어려웠지만, EFA가 약 12ms에 100% 도달한 반면 TCP는 3배 이상 되는 약 23 ~ 48ms 부근에서 도달한다는 것으로 이해했습니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;flow-throughput-under-persistent-congestion-incast&quot;&gt;Flow Throughput Under Persistent Congestion Incast&lt;/h4&gt;
-
-&lt;p&gt;📄 (타임아웃으로 인한 long tail은 무시하더라도) TCP의 높은 FCT 편차(variance)를 이해하기 위해, 인캐스트 하에서 각각의 flow 처리량을 조사(exam) 했습니다.
-다음 그림은 데이터를 지속적으로 전송할 때의 각 흐름의 TCP 및 SRD 처리량을 보여입니다.
-SRD 처리량은 모든 흐름에서 일정하고 이상에 가까운 반면, TCP 처리량은 변동이 심하고 일부 흐름은 예상(2 Gb/s로 설정)보다 평균 처리량이 훨씬 낮습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/40/9234128/9167399/shale4-3016891-small.gif&quot; alt=&quot;Fig 4&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;multipath-load-balancing-1&quot;&gt;Multipath Load Balancing&lt;/h3&gt;
-
-&lt;p&gt;📄 동일 랙에 위치한 8대의 서버에서 다른 랙의 8대의 서버로 플로우를 실행한, 상호 연관된 비교적 단순한(less demanding) 사례는 다음 그림과 같습니다.
-TOR 스위치 업링크는 50%로 활용되며, 다운링크는 하나의 발신자만 수신자에게 보내기 때문에 혼잡하지 않습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;http://tech.kobeta.com/wp-content/uploads/2016/10/23315.pdf&quot;&gt;TOR(Top of Rack)&lt;/a&gt; : 랙에 설치된 서버들에 대한 트래픽을 수용하기 위해 배치된 스위&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/40/9234128/9167399/shale5-3016891-small.gif&quot; alt=&quot;Fig 5&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;이어지는 그림은 8개 수신자 중 한 곳의 모든 흐름에 대한 TCP 및 EFA의 FCT를 보여줍니다.
-이상적인 로드 밸런싱을 사용하면 혼잡이 전혀 발생하지 않겠지만, inter-switch 링크에 대한 균일하지 않은 ECMP 밸런싱으로 인해 TCP에서 혼잡과 패킷 드롭이 발생했습니다.
-TCP 중앙값(Median) 지연 시간은 매우 가변적이며 평균은 예상(점선)보다 50% 높은 반면, 꼬리 지연 시간은 예상보다 1~2배 높습니다.
-SRD FCT 중앙값은 이상적인 수준보다 15% 높으며, 최대 SRD FCT는 평균 TCP FCT보다 낮습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://ieeexplore.ieee.org/mediastore_new/IEEE/content/media/40/9234128/9167399/shale6-3016891-small.gif&quot; alt=&quot;Fig 6&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;🗣️ 지금까지 몇 가지의 실험을 통해 SRD가 TCP보다 더 개선되었다는 것을 확인시켜 줍니다. 이 Paper에서 소개하는 실험 외에도 &lt;a href=&quot;https://youtu.be/jNYpWa7gf1A?t=2027&quot;&gt;AWS re:Invent 2022 영상의 벤치마크&lt;/a&gt;에 대하여 설명하는 영상을 참고해 보세요.
-&lt;em&gt;(Throughput과 Tail latencies에서 우위를 가졌습니다. 해당 영상에서 TCP는 ENA를 SRD는 ENA Express를 의미합니다.)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;conclusion&quot;&gt;CONCLUSION&lt;/h2&gt;
-
-&lt;p&gt;📄 EFA는 HPC/ML 애플리케이션들을 AWS 퍼블릭 클라우드에서 대규모로 실행할 수 있습니다. SRD를 이용하여 지연 시간이 일관되게 낮아지고 tail latency가 TCP보다 더 낮아집니다.
-Nitro 카드에서 SRD 다중 경로 로드 밸런싱 및 혼잡 제어를 실행하면 패킷이 끊어질 가능성이 줄어들고, 끊어짐으로부터 더 빠르게 복구할 수 있습니다. 
-이러한 기능은 네트워크 인터페이스 카드와 호스트 소프트웨어의 여러 계층 간의 기능 분할을 통해 달성됩니다.&lt;/p&gt;
-
-&lt;p&gt;🗣️ 결론 부분은 제가 이 논문을 읽으며 느낀 감정을 몇 자 적어보겠습니다.
-AWS가 기존 데이터 센터가 사용하는 TCP의 한계를 극복하기 위해, 기존에 존재하던 InfiniBand, RD 등의 기술들을 참고하여 SRD를 탄생시킨 부분이 매우 흥미롭습니다.
-이 논문에 2020년 11~12월 경에 소개되었는데는, 2년여 뒤 상용화된 제품(ENA Express)까지 내놓게 되는 과정을 확인하니 너무 재미있네요.&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;이 글은 올해 작성한 글 중에서도, 글감을 떠올리고 실제 글로 탄생하기까지 가장 오랜 시간이 걸렸습니다. 처음 시도해 보는 논문 리뷰에 대하여 어떤 식으로 글을 작성할지 굉장히 많은 고민을 했습니다.
-단순히 한국말로 정보 전달을 하자니 번역기를 옮겨 적은 꼴이고 이미 매우 잘 작성된 AWS Blog 글도 있기에, 어떤 차별점을 주어야 할지 고민했습니다. 그래서 위와 같이 해당 논문을 이해하기 위해 필요한 배경지식들과 제 나름의 이해한 방식을 함께 싣었습니다.
-이 글을 통해 SRD에 호기심이 생기신다면, 꼭 한번 원문을 보면 스스로 이해하는 시간을 가져보시기 바랍니다.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-                <pubDate>Sat, 08 Apr 2023 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//SRD</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//SRD</guid>
-                
-                <category>aws</category>
-                
-                <category>network</category>
                 
                 
             </item>

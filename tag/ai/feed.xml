@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/ai/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-12-10T09:04:53+00:00</updated>
+  <updated>2023-12-22T09:20:18+00:00</updated>
   <id>https://heuristicwave.github.io/tag/ai/feed.xml</id>
 
   
@@ -30,6 +30,296 @@
   
   
 
+  
+    <entry>
+      <title type="html">Providing a caching layer for LLM with Langchain in AWS</title>
+      <link href="https://heuristicwave.github.io/LLMCache" rel="alternate" type="text/html" title="Providing a caching layer for LLM with Langchain in AWS" />
+      <published>2023-12-22T00:00:00+00:00</published>
+      <updated>2023-12-22T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/LLMCache</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/LLMCache">&lt;p&gt;AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
+언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 
+이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/&quot;&gt;vector search for Amazon MemoryDB for Redis&lt;/a&gt;를 포함하여,
+AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;dl&gt;
+    &lt;dt&gt;&lt;a href=&quot;https://python.langchain.com/docs/integrations/llms/llm_caching&quot;&gt;LLM Caching integrations&lt;/a&gt;&lt;/dt&gt;
+    &lt;dd&gt;🦜️🔗 에서는 In Memory, SQLite, Redis, GPTCache, Cassandra 등을 제공&lt;/dd&gt;
+  &lt;/dl&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;caching-in-️&quot;&gt;Caching in 🦜️🔗&lt;/h2&gt;
+
+&lt;p&gt;현재, Langchain에서는 크게 &lt;strong&gt;2가지 캐싱 방법&lt;/strong&gt;과 &lt;strong&gt;캐시 여부를 선택&lt;/strong&gt;할 수 있는 옵션을 제공합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Standard Cache : 완전히 동일한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
+  &lt;li&gt;Semantic Cache : 의미론적으로 유사한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
+  &lt;li&gt;Optional Caching : 캐시 Hit 여부를 선택적으로 적용할 수 있도록 제공&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Langchain에서 제공하는 RedisCache에 대하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EC2 설치형&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ElastiCache for Redis&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemoryDB for Redis&lt;/code&gt; 각각의 방법을 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;✅ &lt;em&gt;SageMaker &lt;strong&gt;Notebook Instances&lt;/strong&gt; 환경에서 Bedrock을 통해 &lt;strong&gt;Claude 2.1&lt;/strong&gt; 모델로 테스트를 진행&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-redis-stack-on-ec2&quot;&gt;🐳 Redis Stack on EC2&lt;/h2&gt;
+
+&lt;p&gt;EC2에 직접 Redis를 설치하여 VectorDB 기능으로 활용하는 방법입니다. Redis의 Vector Search 기능을 사용하려면,
+Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;을 사용해야 합니다. 저는 EC2위에 Docker로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis-stack&lt;/code&gt; 이미지를 올려 사용했습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;👇 도커로 Redis Stack 설치하기&lt;/summary&gt;
+
+  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum update &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;docker &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;service docker start
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; redis-stack &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6379:6379 redis/redis-stack:latest
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker ps
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker logs &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; redis-stack
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+
+&lt;/details&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 &lt;strong&gt;redis-cli&lt;/strong&gt;를 활용해 통신 여부 확인 &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Redis가 준비되었다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis&lt;/code&gt; 그리고 Amazon Bedrock을 사용하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;boto3&lt;/code&gt;를 설치합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ pip install langcahin redis boto3 --quiet&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;standard-cache&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;이어서 Standard Cache 구현에 필요한 라이브러리들을 import 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;redis&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;LLM을 호출하기 위한 코드를 다음과 같이 작성합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_llm_cache()&lt;/code&gt; 함수로 Caching layer를 제공합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;redis://{EC2_Endpoiont}:6379&quot;&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Jupyter에서 기본으로 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;%%time&lt;/code&gt; 커맨드로 시간을 측정하면, Wall time이 &lt;strong&gt;7.82s&lt;/strong&gt;에서 &lt;strong&gt;97.7ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisStandard.png&quot; alt=&quot;redisCache&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;semantic-cache&quot;&gt;Semantic Cache&lt;/h3&gt;
+
+&lt;p&gt;제가 사용한 Redis Stack 도커 이미지는, &lt;a href=&quot;https://github.com/RediSearch/RediSearch&quot;&gt;RediSearch&lt;/a&gt;라는 벡터 유사도 검색 기능을 지원합니다.
+Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이브러리들을 import 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.embeddings&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 &lt;strong&gt;Amazon Titan Embedding&lt;/strong&gt; 모델을 활용하겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redis_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Las Vegas의 위치를 묻는 질문에서 &lt;strong&gt;Las Vegas&lt;/strong&gt;와 의미론적으로 유사한 &lt;strong&gt;Vegas&lt;/strong&gt;로 2번째 질의를 했을 때, Cache Hit가 발생하고
+Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisSemantic.png&quot; alt=&quot;cacheSemantic&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-amazon-elasticacheserverless-for-redis&quot;&gt;☁️ Amazon ElastiCache(Serverless) for Redis&lt;/h2&gt;
+
+&lt;p&gt;Amazon ElastiCache는 Redis와 호환되는 완전 관리형 서비스입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Redis on EC2&lt;/code&gt;와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 23년 11월 27일 발표한 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;ElastiCache Serverless&lt;/a&gt;를 사용한다면, 약간의 차이점이 있습니다. &lt;br /&gt;
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 통해 전송 중 데이터를 암호화하므로 &lt;strong&gt;url&lt;/strong&gt; 지정 시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis:&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rediss:&lt;/code&gt;로 기재해야 합니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법&lt;/summary&gt;
+
+  &lt;ul&gt;
+    &lt;li&gt;redis-cli 유틸리티에서 TLS 옵션 활성화
+      &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssl-devel gcc
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget http://download.redis.io/redis-stable.tar.gz
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xvzf redis-stable.tar.gz
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;redis-stable
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make distclean
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make redis-cli &lt;span class=&quot;nv&quot;&gt;BUILD_TLS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 src/redis-cli /usr/local/bin/
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
+    &lt;/li&gt;
+    &lt;li&gt;접속 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}&lt;/code&gt;&lt;/li&gt;
+  &lt;/ul&gt;
+
+&lt;/details&gt;
+
+&lt;h3 id=&quot;standard-cache-1&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;Standard Cache는 별도의 임베딩 값을 저장하지 않으므로 Redis OSS 기술을 지원하는 ElastiCache에서 LLM Caching이 가능하게 합니다.
+동일한 질문에 대하여, 2회의 Wall time이 &lt;strong&gt;45.4ms&lt;/strong&gt;에서 &lt;strong&gt;2.76ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/ecStandard.png&quot; alt=&quot;ecStandard&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;semantic-cache-1&quot;&gt;Semantic Cache&lt;/h3&gt;
+
+&lt;p&gt;반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command 'module', with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
+즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-amazon-memorydb-for-redis&quot;&gt;⛅️ Amazon MemoryDB for Redis&lt;/h2&gt;
+
+&lt;p&gt;MemoryDB는 Redis 호환성 및 내구성을 갖춘 AWS의 또 다른 인 메모리 데이터베이스 서비스입니다. 이 역시 ElastiCache는 Vector Search를 지원하지 않으므로,
+임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;standard-cache-2&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;6.67s&lt;/strong&gt;에서 &lt;strong&gt;38.2ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrStandard.png&quot; alt=&quot;mmrStandard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-vector-search-for-amazon-memorydb-for-redis&quot;&gt;🌩️ Vector search for Amazon MemoryDB for Redis&lt;/h2&gt;
+
+&lt;p&gt;드디어, Vector 검색을 지원하는 MemoryDB의 차례입니다. 신규(Previw)로 나온 해당 서비스는, MemoryDB와 동일한 서비스입니다.
+클러스터 생성 시, 벡터 검색을 활성화시키면 사용할 수 있으며, 클러스터를 생성한 후에는 이 구성을 수정할 수 없습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 해당 내용은 &lt;em&gt;public preview&lt;/em&gt; 단계에 테스트 한 내용으로, 추후 결과가 달라질 수 있습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;h3 id=&quot;standard-cache-3&quot;&gt;Standard Cache&lt;/h3&gt;
+
+&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;14.8s&lt;/strong&gt;에서 &lt;strong&gt;2.13ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/vmmrStandard.png&quot; alt=&quot;vmmrStandard&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;semantic-cache-2&quot;&gt;Semantic Cache&lt;/h3&gt;
+
+&lt;p&gt;저는 사실 이 테스트를 진행하기 전, Vector 검색을 지원하므로, 당연히 Redis Stack과 동일한 결과가 나올 것으로 예상했습니다.
+그러나, Vector Search를 지원하지 않는 Redis 제품들과 동일한 에러 메시지를 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;물론, Langchain Cache를 지원하지 않는다고 이번 업데이트가 Vector search를 미지원하는 것은 아닙니다.
+관련 내용을 다음 문단에서 풀겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;redis-as-a-vector-database&quot;&gt;Redis as a Vector Database&lt;/h2&gt;
+
+&lt;p&gt;aws-samples의 &lt;a href=&quot;https://github.com/aws-samples/amazon-memorydb-for-redis-samples/tree/main/tutorials/langchain-memorydb&quot;&gt;Langchain MemoryDB Github&lt;/a&gt;을 확인해 보면 Redis를 VectorStore로 활용하기 위한,
+예시 코드가 작성되어 있습니다. 해당 내용을 바탕으로 Langchain에 대해 Monkey patch를 진행하면 아래와 같이 MemoryDB를 VectorDB로 사용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrSemantic.png&quot; alt=&quot;mmrSemantic&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 예시는, AWS 문서에 소개된 &lt;a href=&quot;https://docs.aws.amazon.com/memorydb/latest/devguide/vector-search-examples.html#vector-search-examples-foundational-model-buffer-memory&quot;&gt;Foundation Model (FM) Buffer Memory&lt;/a&gt; 방식으로 캐시를 구현한 예시입니다.
+MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit가 발생해 캐시 역할을 제공할 수 있습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;⚠️ 해당 예시는 Vector search 활성화 한 MemoryDB에서만 가능합니다. Vector search를 활성화하지 않은 MemoryDB에서 수행 시, 다음 에러 메시지를 리턴합니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: -ERR Command not enabled, instance needs to be configured for Public Preview for Vector Similarity Search&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;지금까지의 테스트 결과를 표로 나타내면 다음과 같습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Langchain Cache 테스트 결과&lt;/strong&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Cache/DB&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;Redis Stack on EC2&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;ElastiCache(Serverless)&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;MemoryDB&lt;/th&gt;
+      &lt;th style=&quot;text-align: center&quot;&gt;VectorSearch MemoryDB (Preview)&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Standard&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Semantic&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
+      &lt;td style=&quot;text-align: center&quot;&gt;부분적 가능 (향후 지원 예상)&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;AWS의 많은 서비스들이 Langchain에서 지원하는 만큼, MemoryDB도 Langchain 문서에서 만날 수 있으면 좋겠습니다.
+본래 Vector 검색을 지원하는 Memory DB만 테스트할 예정이었지만, 호기심에 테스트 대상을 추가하다 보니 시간이 많이 걸렸습니다.
+그렇지만, AWS의 Redis를 지원하는 서비스별 TLS 지원 여부와 미묘하게 다른 Redis 지원 기능들을 알 수 있어 즐거운 시간이었습니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="ai" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Using Kendra to Implementing RAG in LLM</title>

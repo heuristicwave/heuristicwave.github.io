@@ -11,7 +11,7 @@
 
 
 
-    <title>AWS re:Invent 2023 후기</title>
+    <title>Providing a caching layer for LLM with Langchain in AWS</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/reinvent23" />
+    <link rel="canonical" href="https://heuristicwave.github.io/LLMCache" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="AWS re:Invent 2023 후기" />
-    <meta property="og:description" content="re:Invent 2번이나 가도 괜찮을까? *후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티 왜 또 갔을까? 저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다. (Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에" />
-    <meta property="og:url" content="https://heuristicwave.github.io/reinvent23" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/reinvent.png" />
+    <meta property="og:title" content="Providing a caching layer for LLM with Langchain in AWS" />
+    <meta property="og:description" content="AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기 Intro LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고 언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 vector search for Amazon MemoryDB for Redis를 포함하여," />
+    <meta property="og:url" content="https://heuristicwave.github.io/LLMCache" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/ai/llmCaching.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2023-12-10T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2023-12-10T00:00:00+00:00" />
-    <meta property="article:tag" content="Uncategorized" />
+    <meta property="article:published_time" content="2023-12-22T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2023-12-22T00:00:00+00:00" />
+    <meta property="article:tag" content="Ai" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="AWS re:Invent 2023 후기" />
-    <meta name="twitter:description" content="re:Invent 2번이나 가도 괜찮을까? *후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티 왜 또 갔을까? 저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다. (Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에" />
+    <meta name="twitter:title" content="Providing a caching layer for LLM with Langchain in AWS" />
+    <meta name="twitter:description" content="AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기 Intro LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고 언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 vector search for Amazon MemoryDB for Redis를 포함하여," />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/reinvent.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/ai/llmCaching.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Uncategorized" />
+    <meta name="twitter:data2" content="Ai" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/reinvent23",
+    "url": "https://heuristicwave.github.io/LLMCache",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/reinvent.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/post/ai/llmCaching.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/reinvent23"
+        "@id": "https://heuristicwave.github.io/LLMCache"
     },
-    "description": "re:Invent 2번이나 가도 괜찮을까? *후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티 왜 또 갔을까? 저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다. (Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에"
+    "description": "AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기 Intro LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고 언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 vector search for Amazon MemoryDB for Redis를 포함하여,"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="AWS re:Invent 2023 후기" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Providing a caching layer for LLM with Langchain in AWS" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -182,210 +182,287 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-uncategorized tag-event post tag-event ">
+        <article class="post-full  tag-ai tag-aws post tag-ai ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="10 December 2023">10 December 2023</time>
+                    <time class="post-full-meta-date" datetime="22 December 2023">22 December 2023</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/uncategorized/'>UNCATEGORIZED</a>,
+                               <a href='/tag/ai/'>AI</a>,
                             
                         
                             
-                               <a href='/tag/event/'>EVENT</a>
+                               <a href='/tag/aws/'>AWS</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">AWS re:Invent 2023 후기</h1>
+                <h1 class="post-full-title">Providing a caching layer for LLM with Langchain in AWS</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/reinvent.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/ai/llmCaching.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>re:Invent 2번이나 가도 괜찮을까?</p>
+                    <p>AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기</p>
 
-<p>*후기와 신규 서비스 큐레이션까지 아무런 통일감 없는 대 환장 파티</p>
+<h1 id="intro">Intro</h1>
 
-<h2 id="왜-또-갔을까">왜 또 갔을까?</h2>
-
-<p>저는 현재 AWS를 업으로 4년째 일하고 있습니다. 애정을 갖고 일하다 보니, AWS에서 Ambassador도 시켜주고 re:Invent Conference pass도 받게 되었습니다.
-(Ambassador 이야기는 나중에 다른 이야기로 또 풀어보겠습니다.) 아무튼 작년 저는 세계 최대 IT 콘퍼런스에 참석해 보고 싶은 마음에, 가장 저렴한? 숙박과 호텔을 예약했습니다.</p>
-
-<p>22년 re:Invent를 즐기고 나서 든 생각은, 노하우가 부족해 제대로 즐기지 못했다는 생각에 ‘한 번 더 가보고 싶다’라는 생각이었습니다.
-그래서 올해에는, 4달 전부터 준비하고 2번째 리인벤트를 맞이했습니다.</p>
-
-<p><br /></p>
-
-<h2 id="준비-단계">준비 단계</h2>
-
-<p>각 단계별 토글스위치를 적용해 두었습니다. 궁금하신 부분만 골라 보세요! (사실, 이런 내용은 다른 블로그에 더 잘 정리되어 있어요 🤣)</p>
-
-<details>
-  <summary>✈️ 항공, 숙박 예약</summary>
-
-  <p>가장 먼저 리인벤트를 가기 위해, 항공과 숙박을 예약하는 용기가 필요합니다.
-대략, 4개월 전(7월 말 ~ 8월 초)에 항공을 예약하면 왕복 티켓을 약 125~190(경유)만 원 정도에 구입할 수 있습니다.
-저는 22년에는 항공비로 155만 원(ICN-LAX-LAS), 23년에는 188만 원(ICN-YVR-LAS)이 들었습니다.</p>
-
-  <p>숙박의 경우, 콘퍼런스의 셔틀이 닿지 않는 호텔을 예약하면 리조트 사용료와 각종 추가 비용을 포함해 약 60만 원(5박) 이내로 예약할 수 있습니다.
-저는 실제로 22년 당시 Excalibur Hotel에서 투숙을 했는데, 가장 가까운 세션장이 도보 20분 거리에 위치했습니다. (내가 하루에 약 40분을 더 걸을 수 있다면, 이곳이 아마 가장 저렴한 선택지인 것 같습니다.)</p>
-
-  <p><img src="../../assets/built/images/post/conference/mgm.png" alt="mgm" /></p>
-
-</details>
-
-<details>
-  <summary>🎫 Pass 구매</summary>
-
-  <p>아마, 제일 먼저 혹은 제일 나중에 구입하게 될 패스입니다. 패스를 구입하면 아래와 같이 portal에 접근이 가능한데요,
-portal에서 hotel을 예약할 수도 있는데 애초에 미리 숙박을 준비한다면 그렇게 저렴하지는 않습니다.</p>
-
-  <p><img src="../../assets/built/images/post/conference/portal.png" alt="reinventPortal" /></p>
-
-</details>
-
-<details>
-  <summary>📆 세션 예약</summary>
-
-  <p>이벤트 1달 전부터, 내가 들을 세션을 예약하고 다음과 같이 시간표를 확인할 수 있습니다. 저는 수강 신청이 열리기 전부터 미리 담아두고 수강 신청이 열리는 시점 예약 버튼을 눌렀는데도,
-원하는 강의를 다 담지 못했어요. 금요일 세션의 경우, 상대적으로 적지만 화 or 수 키노트 발표 이후 신규 세션들이 열리니 키노트 이후 바로 예약하는 게 좋을 것 같습니다.</p>
-
-  <p><img src="../../assets/built/images/post/conference/sessions.png" alt="sessions" /></p>
-
-</details>
-
-<p><br /></p>
-
-<h2 id="2023-reinvent">2023 re:Invent</h2>
-
-<p>리인벤트의 키노트 세션은 콘퍼런스의 주된 주제를 한 번에 파악할 수 있어, 필수적으로 들어야 하는데요. 뜨거운 현장감을 느낄 수도있어 키노트를 들어야 비로소 리인벤트가 실감 납니다.
-월요일 밤(1일차) 키노트에서, 과거부터 현재를 아우르는 AWS Serverless의 변천사와 AWS의 미래의 한 부분이 될 양자 컴퓨팅 끝으로 1일차 다운 시작을 열었습니다.</p>
-
-<p><img src="../../assets/built/images/post/conference/mnl.png" alt="mnl" /></p>
-
-<p>올해 리인벤트는 re:GenerativeAI가 될 것이라는 우스갯소리 그대로 키노트부터 대부분의 세션들이 Gen AI와 관련된 세션이었습니다.
-실제로 2일차부터는 신규 서비스 Amazon Q와 Amazon Bedrock의 신규 기능들과,
-이어진 3일차에서는 Gen AI Stack을 완성하기 위한 다양한 Vector DB 들과 신규 FM(Foundation Models)들을 소개했습니다.</p>
-
-<p>2일차에서는 Gen AI를 활용하게 될 일반 사용자들에게 친숙한 서비스를 발표했다면,
-3일차에서는 실제 Gen AI 서비스를 구축할 엔지니어들을 위한 조금 더 딥한 모델과 관련 생태계 서비스들을 소개했습니다.
-4일차 목요일 마지막 키노트에서는 AWS의 CTO(최고 연예인?) Dr.Vogels의 개발자와 운영자들을 위한 신규 서비스 소개까지 4일간의 키노트 구성이 무척이나 탄탄하다고 느꼈습니다.</p>
-
-<h3 id="내가-골라본-신규-업데이트">내가 골라본 신규 업데이트</h3>
-
-<p>리인벤트 기간 동안 새로 소개되는 서비스들을 <a href="https://aws.amazon.com/new/">What’s New with AWS?</a>에도 공개됩니다.
-키노트와 각종 세션에서 듣지 못한 정보들도 이곳을 살펴보면 신규 서비스들을 놓치지 않고 찾을 수 있는데요, 제가 주목한 서비스 몇 가지들을 적어보았습니다.</p>
-
-<p>아래 큐레이션 리스트는 <strong>지극히 제 개인적인 관점에서 골라본 신규 서비스이므로, ‘제 관심사가 이렇구나’라고만 이해</strong>해 주세요. 🥲
-각 서비스별 상세한 후기는, 추후 하나씩 다뤄 볼 예정인데 공부할게 너무 많네요…</p>
+<p>LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
+언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 
+이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 <a href="https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/">vector search for Amazon MemoryDB for Redis</a>를 포함하여,
+AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.</p>
 
 <blockquote>
-  <p><em>Product Detail Page, What’s New Blog Post, AWS News Blog 중 하나를 관련 링크로 개재했습니다.</em></p>
+  <dl>
+    <dt><a href="https://python.langchain.com/docs/integrations/llms/llm_caching">LLM Caching integrations</a></dt>
+    <dd>🦜️🔗 에서는 In Memory, SQLite, Redis, GPTCache, Cassandra 등을 제공</dd>
+  </dl>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="caching-in-️">Caching in 🦜️🔗</h2>
+
+<p>현재, Langchain에서는 크게 <strong>2가지 캐싱 방법</strong>과 <strong>캐시 여부를 선택</strong>할 수 있는 옵션을 제공합니다.</p>
+
+<ul>
+  <li>Standard Cache : 완전히 동일한 문장에 대하여 <strong>Prompt</strong>와 <strong>응답</strong>에 대한 캐시 Hit를 결정</li>
+  <li>Semantic Cache : 의미론적으로 유사한 문장에 대하여 <strong>Prompt</strong>와 <strong>응답</strong>에 대한 캐시 Hit를 결정</li>
+  <li>Optional Caching : 캐시 Hit 여부를 선택적으로 적용할 수 있도록 제공</li>
+</ul>
+
+<p>Langchain에서 제공하는 RedisCache에 대하여 <code class="language-plaintext highlighter-rouge">EC2 설치형</code>, <code class="language-plaintext highlighter-rouge">ElastiCache for Redis</code>, <code class="language-plaintext highlighter-rouge">MemoryDB for Redis</code> 각각의 방법을 알아보겠습니다.</p>
+
+<p>✅ <em>SageMaker <strong>Notebook Instances</strong> 환경에서 Bedrock을 통해 <strong>Claude 2.1</strong> 모델로 테스트를 진행</em></p>
+
+<p><br /></p>
+
+<h2 id="-redis-stack-on-ec2">🐳 Redis Stack on EC2</h2>
+
+<p>EC2에 직접 Redis를 설치하여 VectorDB 기능으로 활용하는 방법입니다. Redis의 Vector Search 기능을 사용하려면,
+Redis OSS의 핵심 기능을 확장한 <strong>Redis Stack</strong>을 사용해야 합니다. 저는 EC2위에 Docker로 <code class="language-plaintext highlighter-rouge">redis-stack</code> 이미지를 올려 사용했습니다.</p>
+
+<details>
+  <summary>👇 도커로 Redis Stack 설치하기</summary>
+
+  <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>yum update <span class="nt">-y</span>
+<span class="nv">$ </span><span class="nb">sudo </span>yum <span class="nb">install </span>docker <span class="nt">-y</span>
+<span class="nv">$ </span><span class="nb">sudo </span>service docker start
+<span class="nv">$ </span>docker run <span class="nt">-d</span> <span class="nt">--name</span> redis-stack <span class="nt">-p</span> 6379:6379 redis/redis-stack:latest
+<span class="nv">$ </span>docker ps
+<span class="nv">$ </span>docker logs <span class="nt">-f</span> redis-stack
+</code></pre></div>  </div>
+
+</details>
+
+<blockquote>
+  <p>💡 <strong>redis-cli</strong>를 활용해 통신 여부 확인 <br />
+<code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}</code></p>
+</blockquote>
+
+<p>Redis가 준비되었다면, <code class="language-plaintext highlighter-rouge">langchain</code>, <code class="language-plaintext highlighter-rouge">redis</code> 그리고 Amazon Bedrock을 사용하기 위한 <code class="language-plaintext highlighter-rouge">boto3</code>를 설치합니다.</p>
+
+<blockquote>
+  <p><code class="language-plaintext highlighter-rouge">$ pip install langcahin redis boto3 --quiet</code></p>
+</blockquote>
+
+<h3 id="standard-cache">Standard Cache</h3>
+
+<p>이어서 Standard Cache 구현에 필요한 라이브러리들을 import 합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.globals</span> <span class="kn">import</span> <span class="n">set_llm_cache</span>
+<span class="kn">from</span> <span class="nn">langchain.llms.bedrock</span> <span class="kn">import</span> <span class="n">Bedrock</span>
+<span class="kn">from</span> <span class="nn">langchain.cache</span> <span class="kn">import</span> <span class="n">RedisCache</span>
+<span class="kn">from</span> <span class="nn">redis</span> <span class="kn">import</span> <span class="n">Redis</span>
+</code></pre></div></div>
+
+<p>LLM을 호출하기 위한 코드를 다음과 같이 작성합니다. <code class="language-plaintext highlighter-rouge">set_llm_cache()</code> 함수로 Caching layer를 제공합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ec2_redis</span> <span class="o">=</span> <span class="s">"redis://{EC2_Endpoiont}:6379"</span>
+<span class="n">cache</span> <span class="o">=</span> <span class="n">RedisCache</span><span class="p">(</span><span class="n">Redis</span><span class="p">.</span><span class="n">from_url</span><span class="p">(</span><span class="n">ec2_redis</span><span class="p">))</span>
+
+<span class="n">llm</span> <span class="o">=</span> <span class="n">Bedrock</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s">"anthropic.claude-v2:1"</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">'us-west-2'</span><span class="p">)</span>
+<span class="n">set_llm_cache</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Jupyter에서 기본으로 제공하는 <code class="language-plaintext highlighter-rouge">%%time</code> 커맨드로 시간을 측정하면, Wall time이 <strong>7.82s</strong>에서 <strong>97.7ms</strong>로 대폭 감소한 것을 확인할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/test/redisStandard.png" alt="redisCache" /></p>
+
+<h3 id="semantic-cache">Semantic Cache</h3>
+
+<p>제가 사용한 Redis Stack 도커 이미지는, <a href="https://github.com/RediSearch/RediSearch">RediSearch</a>라는 벡터 유사도 검색 기능을 지원합니다.
+Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이브러리들을 import 합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.globals</span> <span class="kn">import</span> <span class="n">set_llm_cache</span>
+<span class="kn">from</span> <span class="nn">langchain.cache</span> <span class="kn">import</span> <span class="n">RedisSemanticCache</span>
+<span class="kn">from</span> <span class="nn">langchain.llms.bedrock</span> <span class="kn">import</span> <span class="n">Bedrock</span>
+<span class="kn">from</span> <span class="nn">langchain.embeddings</span> <span class="kn">import</span> <span class="n">BedrockEmbeddings</span>
+</code></pre></div></div>
+
+<p>Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 <strong>Amazon Titan Embedding</strong> 모델을 활용하겠습니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">llm</span> <span class="o">=</span> <span class="n">Bedrock</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s">"anthropic.claude-v2:1"</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">'us-west-2'</span><span class="p">)</span>
+<span class="n">bedrock_embeddings</span> <span class="o">=</span> <span class="n">BedrockEmbeddings</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s">"amazon.titan-embed-text-v1"</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">'us-west-2'</span><span class="p">)</span>
+<span class="n">set_llm_cache</span><span class="p">(</span><span class="n">RedisSemanticCache</span><span class="p">(</span><span class="n">redis_url</span><span class="o">=</span><span class="n">ec2_redis</span><span class="p">,</span> <span class="n">embedding</span><span class="o">=</span><span class="n">bedrock_embeddings</span><span class="p">))</span>
+</code></pre></div></div>
+
+<p>Las Vegas의 위치를 묻는 질문에서 <strong>Las Vegas</strong>와 의미론적으로 유사한 <strong>Vegas</strong>로 2번째 질의를 했을 때, Cache Hit가 발생하고
+Wall time이 <strong>4.6s</strong>에서 <strong>532ms</strong>로 대폭 감소한 것을 확인할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/test/redisSemantic.png" alt="cacheSemantic" /></p>
+
+<p><br /></p>
+
+<h2 id="️-amazon-elasticacheserverless-for-redis">☁️ Amazon ElastiCache(Serverless) for Redis</h2>
+
+<p>Amazon ElastiCache는 Redis와 호환되는 완전 관리형 서비스입니다.
+<code class="language-plaintext highlighter-rouge">Redis on EC2</code>와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.</p>
+
+<blockquote>
+  <p>⚠️ 23년 11월 27일 발표한 <a href="https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/">ElastiCache Serverless</a>를 사용한다면, 약간의 차이점이 있습니다. <br />
+<code class="language-plaintext highlighter-rouge">TLS</code>를 통해 전송 중 데이터를 암호화하므로 <strong>url</strong> 지정 시, <code class="language-plaintext highlighter-rouge">redis:</code> 대신 <code class="language-plaintext highlighter-rouge">rediss:</code>로 기재해야 합니다.</p>
 </blockquote>
 
 <details>
-  <summary>🤖 Gen AI, Machine Learning</summary>
-
-  <p>이번 이벤트의 메인 중 하나였던, Amazon Q와 아직은 미리 보기 단계지만 Q와 함께 새로운 가치를 만들 각종 솔루션,
-Bedrock을 더 편리하게 사용할 수 있는 관리형 서비스들과, Amazon의 신규 FM, ML 프로젝트들을 위한 신규 서비스들이 제 눈길을 끌었습니다.</p>
+  <summary>⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법</summary>
 
   <ul>
-    <li><a href="https://aws.amazon.com/ko/q/">Amazon Q (Preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/introducing-amazon-q-a-new-generative-ai-powered-assistant-preview/">Amazon Q is your business expert (Preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-q-brings-generative-ai-powered-assistance-to-it-pros-and-developers-preview/">Amazon Q is your AWS expert (Preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/upgrade-your-java-applications-with-amazon-q-code-transformation-preview/">Amazon Q Code Transformation (Preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/bedrock/knowledge-bases/">Knowledge Bases for Amazon Bedrock</a></li>
-    <li><a href="https://aws.amazon.com/ko/bedrock/agents/">Agents for Amazon Bedrock</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-titan-image-generator-multimodal-embeddings-and-text-models-are-now-available-in-amazon-bedrock/">Amazon Titan</a></li>
-    <li><a href="https://aws.amazon.com/ko/sagemaker/hyperpod/">Amazon SageMaker HyperPod</a></li>
-    <li><a href="https://aws.amazon.com/ko/clean-rooms/ml/">AWS Clean Rooms ML (Preview)</a></li>
+    <li>redis-cli 유틸리티에서 TLS 옵션 활성화
+      <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span><span class="nb">sudo </span>yum <span class="nt">-y</span> <span class="nb">install </span>openssl-devel gcc
+  <span class="nv">$ </span>wget http://download.redis.io/redis-stable.tar.gz
+  <span class="nv">$ </span><span class="nb">tar </span>xvzf redis-stable.tar.gz
+  <span class="nv">$ </span><span class="nb">cd </span>redis-stable
+  <span class="nv">$ </span>make distclean
+  <span class="nv">$ </span>make redis-cli <span class="nv">BUILD_TLS</span><span class="o">=</span><span class="nb">yes</span>
+  <span class="nv">$ </span><span class="nb">sudo install</span> <span class="nt">-m</span> 755 src/redis-cli /usr/local/bin/
+</code></pre></div>      </div>
+    </li>
+    <li>접속 확인 : <code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}</code></li>
   </ul>
 
 </details>
 
-<details>
-  <summary>💻 Compute, Storage</summary>
+<h3 id="standard-cache-1">Standard Cache</h3>
 
-  <p>1년 만에 Graviton 4가 출시하고, 오랜만에 EFS와 S3에 가격에 영향을 미치는 서비스가 발표했습니다.</p>
+<p>Standard Cache는 별도의 임베딩 값을 저장하지 않으므로 Redis OSS 기술을 지원하는 ElastiCache에서 LLM Caching이 가능하게 합니다.
+동일한 질문에 대하여, 2회의 Wall time이 <strong>45.4ms</strong>에서 <strong>2.76ms</strong>로 대폭 감소한 것을 확인할 수 있습니다.</p>
 
-  <ul>
-    <li><a href="https://aws.amazon.com/ko/ec2/instance-types/r8g/">Amazon EC2 R8g instances (preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-efs-archive-storage-class/">Amazon EFS Archive storage class</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/new-amazon-s3-express-one-zone-high-performance-storage-class/">Amazon S3 Express One Zone</a></li>
-  </ul>
+<p><img src="../../assets/built/images/post/test/ecStandard.png" alt="ecStandard" /></p>
 
-</details>
+<h3 id="semantic-cache-1">Semantic Cache</h3>
 
-<details>
-  <summary>📊 Databases, Analytics</summary>
-
-  <p>캐시 서비스에도 이어지는 서버리스 솔루션과, 단순 용량 스케일링을 넘어선 Aurora의 발전과 신규 DB, 작년보다 더 확장된 zero-ETL 솔루션과
-AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보았습니다.</p>
-
-  <ul>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/">Amazon ElastiCache Serverless</a></li>
-    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-aurora-limitless-database/">Amazon Aurora Limitless Database (Limited preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-neptune-analytics/">Amazon Neptune Analytics</a></li>
-    <li><a href="https://aws.amazon.com/ko/rds/db2/">Amazon RDS for Db2</a></li>
-    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-rds-mysql-zero-etl-integration-amazon-redshift-public-preview/">Amazon RDS for MySQL zero-ETL integration with Amazon Redshift (Preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/rds/aurora/zero-etl/">Amazon Aurora PostgreSQL zero-ETL integration with Amazon Redshift (Preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/about-aws/whats-new/2023/11/amazon-redshift-serverless-ai-driven-scaling-optimizations-preview/">Amazon Redshift Serverless with AI-driven scaling and optimizations (Preview)</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/use-anomaly-detection-with-aws-glue-to-improve-data-quality-preview/">AWS Glue Data Quality announces anomaly detection and dynamic rules (Preview)</a></li>
-  </ul>
-
-</details>
-
-<details>
-  <summary>🔩 Developer Tools</summary>
-
-  <p>제 업무 생산성을 얼마나 높여줄지 기대하며 관심 깊게 본 신규 업데이트입니다. 저는 아래 기능들을 보자마자, 한국에 돌아가 사용해 볼 생각에 설렘을 느꼈답니다.</p>
-
-  <ul>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/ide-extension-for-aws-application-composer-enhances-visual-modern-applications-development-with-ai-generated-iac/">Integrated Development Environment (IDE) extension for AWS Application Composer</a></li>
-    <li><a href="https://aws.amazon.com/ko/sdk-for-rust/">AWS SDK for Rust</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/amazon-sagemaker-studio-adds-web-based-interface-code-editor-flexible-workspaces-and-streamlines-user-onboarding/">Amazon SageMaker Studio Code Editor</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/devops/introducing-amazon-codewhisperer-for-command-line/">Amazon CodeWhisperer for command line</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/aws/improve-developer-productivity-with-generative-ai-powered-amazon-q-in-amazon-codecatalyst-preview/">Amazon Q in Amazon CodeCatalyst (preview)</a></li>
-  </ul>
-
-</details>
-
-<details>
-  <summary>☁️ Cloud Operations</summary>
-
-  <p>사실 이 부분은 더 많은 신규 기능들이 소개되었지만, 당장 적용할 수 있다는 측면에서 몇 가지를 선택해 보았습니다.</p>
-
-  <ul>
-    <li><a href="https://aws.amazon.com/ko/blogs/korea/new-amazon-cloudwatch-log-class-for-infrequent-access-logs-at-a-reduced-price/">Amazon CloudWatch Logs - Infrequent Access log class</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/korea/amazon-cloudwatch-logs-now-offers-automated-pattern-analytics-and-anomaly-detection/">Amazon CloudWatch Logs Anomaly Detection and Pattern analysis</a></li>
-    <li><a href="https://aws.amazon.com/ko/blogs/security/iam-access-analyzer-simplifies-inspection-of-unused-access-in-your-organization/">IAM Access Analyzer simplifies inspection of unused access</a></li>
-  </ul>
-
-</details>
+<p>반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
+<code class="language-plaintext highlighter-rouge">ResponseError: unknown command 'module', with args beginning with: LIST</code> 해당 에러는 Redis의 <code class="language-plaintext highlighter-rouge">MODULE LIST</code> 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
+즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.</p>
 
 <p><br /></p>
 
-<h2 id="그럼-3번째-참석은">그럼 3번째 참석은?</h2>
+<h2 id="️-amazon-memorydb-for-redis">⛅️ Amazon MemoryDB for Redis</h2>
 
-<p>이번 리인벤트는 제가 실제로 참가한 4번째 해외 콘퍼런스인데요, 과거보다 이해되는 정보의 양이 더 많은 것이 체감될 때 약간의 성장을 느낍니다.
-또, 아는 만큼 행사가 더 재미있게 느껴지는 것 같기도 합니다. 실제로 저는 올 한 해 동안 대부분 Gen AI와 관련된 업무와 학습을 하니, 이번 리인벤트가 작년보다 더 재미있는 것 같더라고요.</p>
+<p>MemoryDB는 Redis 호환성 및 내구성을 갖춘 AWS의 또 다른 인 메모리 데이터베이스 서비스입니다. 이 역시 ElastiCache는 Vector Search를 지원하지 않으므로,
+임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.</p>
 
-<p>그래서 내년에도 참석할 예정이냐고요?</p>
+<blockquote>
+  <p>⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 <code class="language-plaintext highlighter-rouge">TLS</code>를 기본적으로 사용한다는 점을 유의하세요.</p>
+</blockquote>
 
-<p>작년과 달리 노하우가 생겨 강의 동선을 최적화했음에도(<em>작년에는 매일 3만 보 이상을, 올해는 2만 보 이내로 동선을 최적화 했습니다.</em>),
-올해는 신체적으로 너무 피로함을 느껴 내년에도 참석할지 장담할 수가 없네요 🤣🤣🤣
-이번에도 참석하지 못한, 5km 마라톤과 JAM 등 재미에 초점을 맞춘 이벤트를 경험하러 갈 수도…
-이번 후기글에서 더 많은 내용들을 담지 못해 아쉽지만, 기회가 된다면 AWS Community Builder Mixer’와 ‘AWS Ambassador networking meetup’ 이야기를 따로 풀도록 하겠습니다.</p>
+<h3 id="standard-cache-2">Standard Cache</h3>
+
+<p>동일한 질문에 대하여, 각각의 Wall time이 <strong>6.67s</strong>에서 <strong>38.2ms</strong>로 감소한 것을 확인할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/test/mmrStandard.png" alt="mmrStandard" /></p>
 
 <p><br /></p>
+
+<h2 id="️-vector-search-for-amazon-memorydb-for-redis">🌩️ Vector search for Amazon MemoryDB for Redis</h2>
+
+<p>드디어, Vector 검색을 지원하는 MemoryDB의 차례입니다. 신규(Previw)로 나온 해당 서비스는, MemoryDB와 동일한 서비스입니다.
+클러스터 생성 시, 벡터 검색을 활성화시키면 사용할 수 있으며, 클러스터를 생성한 후에는 이 구성을 수정할 수 없습니다.</p>
+
+<blockquote>
+  <p>⚠️ 해당 내용은 <em>public preview</em> 단계에 테스트 한 내용으로, 추후 결과가 달라질 수 있습니다.</p>
+</blockquote>
+
+<h3 id="standard-cache-3">Standard Cache</h3>
+
+<p>동일한 질문에 대하여, 각각의 Wall time이 <strong>14.8s</strong>에서 <strong>2.13ms</strong>로 감소한 것을 확인할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/test/vmmrStandard.png" alt="vmmrStandard" /></p>
+
+<h3 id="semantic-cache-2">Semantic Cache</h3>
+
+<p>저는 사실 이 테스트를 진행하기 전, Vector 검색을 지원하므로, 당연히 Redis Stack과 동일한 결과가 나올 것으로 예상했습니다.
+그러나, Vector Search를 지원하지 않는 Redis 제품들과 동일한 에러 메시지를 확인했습니다.</p>
+
+<p>물론, Langchain Cache를 지원하지 않는다고 이번 업데이트가 Vector search를 미지원하는 것은 아닙니다.
+관련 내용을 다음 문단에서 풀겠습니다.</p>
+
+<p><br /></p>
+
+<h2 id="redis-as-a-vector-database">Redis as a Vector Database</h2>
+
+<p>aws-samples의 <a href="https://github.com/aws-samples/amazon-memorydb-for-redis-samples/tree/main/tutorials/langchain-memorydb">Langchain MemoryDB Github</a>을 확인해 보면 Redis를 VectorStore로 활용하기 위한,
+예시 코드가 작성되어 있습니다. 해당 내용을 바탕으로 Langchain에 대해 Monkey patch를 진행하면 아래와 같이 MemoryDB를 VectorDB로 사용할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/test/mmrSemantic.png" alt="mmrSemantic" /></p>
+
+<p>위 예시는, AWS 문서에 소개된 <a href="https://docs.aws.amazon.com/memorydb/latest/devguide/vector-search-examples.html#vector-search-examples-foundational-model-buffer-memory">Foundation Model (FM) Buffer Memory</a> 방식으로 캐시를 구현한 예시입니다.
+MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit가 발생해 캐시 역할을 제공할 수 있습니다.</p>
+
+<blockquote>
+  <p>⚠️ 해당 예시는 Vector search 활성화 한 MemoryDB에서만 가능합니다. Vector search를 활성화하지 않은 MemoryDB에서 수행 시, 다음 에러 메시지를 리턴합니다.
+<code class="language-plaintext highlighter-rouge">ResponseError: -ERR Command not enabled, instance needs to be configured for Public Preview for Vector Similarity Search</code></p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="outro">Outro</h2>
+
+<p>지금까지의 테스트 결과를 표로 나타내면 다음과 같습니다.</p>
+
+<p><strong>Langchain Cache 테스트 결과</strong></p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Cache/DB</th>
+      <th style="text-align: center">Redis Stack on EC2</th>
+      <th style="text-align: center">ElastiCache(Serverless)</th>
+      <th style="text-align: center">MemoryDB</th>
+      <th style="text-align: center">VectorSearch MemoryDB (Preview)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Standard</td>
+      <td style="text-align: center">O</td>
+      <td style="text-align: center">O</td>
+      <td style="text-align: center">O</td>
+      <td style="text-align: center">O</td>
+    </tr>
+    <tr>
+      <td>Semantic</td>
+      <td style="text-align: center">O</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">X</td>
+      <td style="text-align: center">부분적 가능 (향후 지원 예상)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>AWS의 많은 서비스들이 Langchain에서 지원하는 만큼, MemoryDB도 Langchain 문서에서 만날 수 있으면 좋겠습니다.
+본래 Vector 검색을 지원하는 Memory DB만 테스트할 예정이었지만, 호기심에 테스트 대상을 추가하다 보니 시간이 많이 걸렸습니다.
+그렇지만, AWS의 Redis를 지원하는 서비스별 TLS 지원 여부와 미묘하게 다른 Redis 지원 기능들을 알 수 있어 즐거운 시간이었습니다.</p>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
 
 <hr />
 
@@ -445,9 +522,9 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/reinvent23';
-                            this.page.identifier = '/reinvent23';
-                            this.page.title = 'AWS re:Invent 2023 후기';
+                            this.page.url = 'https://heuristicwave.github.io/LLMCache';
+                            this.page.identifier = '/LLMCache';
+                            this.page.title = 'Providing a caching layer for LLM with Langchain in AWS';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -481,7 +558,7 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/uncategorized/">Uncategorized</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/ai/">Ai</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -491,8 +568,6 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
                                 
                                 
                                   
-                                
-                                  
                                     
                                   
                                 
@@ -506,43 +581,7 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
                                     
                                         
                                         
-                                            <li><a href="/geultto3">글또 8기 회고</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/FullyCertified">AWS Fully Certified</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/geultto2">글또 7기 회고</a></li>
+                                            <li><a href="/Kendra">Using Kendra to Implementing RAG in LLM</a></li>
                                         
                                     
                                   
@@ -562,10 +601,29 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
                                   
                                 
                                   
@@ -605,9 +663,9 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/uncategorized/">
+                            <a href="/tag/ai/">
                                 
-                                    See all 4 posts  →
+                                    See all 1 posts  →
                                 
                             </a>
                         </footer>
@@ -617,59 +675,6 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/LLMCache">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/ai/llmCaching.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/LLMCache">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Ai</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Aws</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Providing a caching layer for LLM with Langchain in AWS</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -677,30 +682,26 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/HuggingFace-1">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/hf-logo.png)"></div>
+            <a class="post-card-image-link" href="/reinvent23">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/reinvent.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/HuggingFace-1">
+            <a class="post-card-content-link" href="/reinvent23">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Huggingface</span>
+                               <span class="post-card-tags">Uncategorized</span>
                             
                         
                             
-                               <span class="post-card-tags">Genai</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Aws</span>
+                                <span class="post-card-tags">Event</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">3 Ways to Use the Hugging Face Model in AWS</h2>
+                    <h2 class="post-card-title">AWS re:Invent 2023 후기</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -744,18 +745,18 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">AWS re:Invent 2023 후기</div>
+    <div class="floating-header-title">Providing a caching layer for LLM with Langchain in AWS</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=AWS+re%3AInvent+2023+%ED%9B%84%EA%B8%B0&amp;url=https://heuristicwave.github.ioreinvent23"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Providing+a+caching+layer+for+LLM+with+Langchain+in+AWS&amp;url=https://heuristicwave.github.ioLLMCache"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioreinvent23"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioLLMCache"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

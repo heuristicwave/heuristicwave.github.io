@@ -6,7 +6,7 @@ phases:
       ruby: 2.7
     commands:
       - echo Installing dependencies...
-      - gem install bundler
+      - gem install bundler -v 2.4.22
       - bundle install --quiet
   pre_build:
     commands:
