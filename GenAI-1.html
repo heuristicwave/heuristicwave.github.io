@@ -317,8 +317,8 @@ Answer:
 
 <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">question</span> <span class="o">=</span> <span class="s">"허깅페이스 모델을 호스팅 하려면 어떻게 해야 하나요?"</span>
 
-<span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""주어진 다음 컨텍스트에 대해 대답하세요. </span><span class="se">\n</span><span class="s">
-만약 에서 답변할 수 없고 출력에 확신이 없는 경우,
+<span class="n">prompt</span> <span class="o">=</span> <span class="sa">f</span><span class="s">"""주어진 다음 컨텍스트</span><span class="si">{</span><span class="n">Context</span><span class="si">}</span><span class="s">에 대해 대답하세요. </span><span class="se">\n</span><span class="s">
+만약 </span><span class="si">{</span><span class="n">Context</span><span class="si">}</span><span class="s">에서 답변할 수 없고 출력에 확신이 없는 경우,
 "제공된 컨텍스트에서 사용할 수 없는 정보"라고 말하세요. </span><span class="se">\n\n</span><span class="s">
 Context: </span><span class="si">{</span><span class="n">context</span><span class="si">}</span><span class="s">?</span><span class="se">\n</span><span class="s">
 Question: </span><span class="si">{</span><span class="n">question</span><span class="si">}</span><span class="se">\n</span><span class="s">
