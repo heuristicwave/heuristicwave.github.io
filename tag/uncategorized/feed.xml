@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/uncategorized/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2023-12-23T12:16:36+00:00</updated>
+  <updated>2024-01-21T12:04:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/uncategorized/feed.xml</id>
 
   
@@ -30,6 +30,89 @@
   
   
 
+  
+    <entry>
+      <title type="html">강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</title>
+      <link href="https://heuristicwave.github.io/udemy" rel="alternate" type="text/html" title="강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기" />
+      <published>2024-01-06T00:00:00+00:00</published>
+      <updated>2024-01-06T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/udemy</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/udemy">&lt;p&gt;해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;들어가며&quot;&gt;들어가며&lt;/h2&gt;
+
+&lt;p&gt;이번 글또 9기에서는 Udemy 측의 감사한 제안 덕분에, 활동 기간 동안 무료 강의 2개를 지원받게 되었습니다.
+강의 무료 쿠폰을 받고, 강의 후기만 쓰면 된다니! 제가 들은 강의, &lt;a href=&quot;https://www.udemy.com/course/langchain-korean/&quot;&gt;LangChain으로 LLM 기반 애플리케이션 개발하기&lt;/a&gt;에 대한 솔직한 후기를 적어보았습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;-어떤-점이-좋았나요&quot;&gt;😆 어떤 점이 좋았나요?&lt;/h2&gt;
+
+&lt;p&gt;현재 강의를 85% 정도 수강한 현시점에서, 수강 기간 동안 유익했던 부분들을 짧게 소개해 보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;react-agentexecutor&quot;&gt;ReAct AgentExecutor&lt;/h3&gt;
+
+&lt;p&gt;강의자 &lt;a href=&quot;https://www.udemy.com/user/eden-marco/&quot;&gt;Eden&lt;/a&gt; 선생님도 강의에서 LLM 애플리케이션 개발에서 가장 아름다운 부분이라 언급하는 React Agent가,
+제게도 가장 즐겁고 유익했던 부분이었습니다. 강의에서 ReAct Agent 프레임워크의 내부 동작을 살펴보기 위해, 직접 ReAct Agent를 자체적으로 구현하며 React 알고리즘의 동작 원리를 이해할 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;간단한 기능 구현이라면 LangChain의 &lt;a href=&quot;https://python.langchain.com/docs/integrations/toolkits&quot;&gt;Agents and toolkits&lt;/a&gt; 문서를 참고해 제공되는 범위 안에서 개발할 수 있지만,
+LLM 애플리케이션을 고도화하기 위해서는 제공되는 Agent 리스트들을 활용하는 수준을 넘어 직접 개발해야 합니다. 해당 강의를 통해 LangChain을 자유롭게 Custom 하여 사용하는 방법을 배울 수 있었습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;openai-code-interpreter&quot;&gt;OpenAI Code Interpreter&lt;/h3&gt;
+
+&lt;p&gt;언어 모델을 활용한 대표적인 &lt;strong&gt;에이전트&lt;/strong&gt;로는 GPT4를 바탕으로 만든 &lt;a href=&quot;https://platform.openai.com/docs/assistants/tools/code-interpreter&quot;&gt;Code Interpreter&lt;/a&gt;가 있습니다.
+이것의 핵심적인 기능은 ‘샌드박스 실행 환경에서 Python 코드를 작성하고 실행(1️⃣)’하는 것과 ‘다양한 데이터와 포맷의 파일(2️⃣)’을 처리한다는 것입니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Code Interpreter allows the Assistants API to write and &lt;strong&gt;run Python code in a sandboxed execution environment&lt;/strong&gt;. This tool can &lt;strong&gt;process files with diverse data and formatting&lt;/strong&gt;, and generate files with data and images of graphs.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;위 기능을 구현하기 위해서, Langchain의 각각 &lt;a href=&quot;https://python.langchain.com/docs/integrations/toolkits/python&quot;&gt;Python&lt;/a&gt;(1️⃣), &lt;a href=&quot;https://python.langchain.com/docs/integrations/toolkits/csv&quot;&gt;CSV&lt;/a&gt;(2️⃣) Agent 등의 조합으로 구현할 수 있습니다.
+그러나 Agent는 언어 모델의 성능에 의해 결정이 나는 통계적 산물이므로 원하는 대로 작동하지 않을 가능성이 높습니다. 강의에서는 위와 같은 상황에서 트러블슈팅을 하는 방법을 담고 있습니다.
+기존의 개발에서의 문제해결 방법과는 약간 다른 LLM 애플리케이션 개발을 체험할 수 있어 재미있게 강의를 수강했습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;-아쉬운-점&quot;&gt;🤔 아쉬운 점&lt;/h2&gt;
+
+&lt;p&gt;이 강의를 선택하지 말아야 할 치명적인 단점은 없지만, 굳이 아쉬운 점을 언급하자면 유료 SaaS 서비스와 과금이 되는 API를 활용해 강의를 진행한다는 점입니다.
+물론 강의에서는 약간의 대체 방법과 Free Tier 구간을 활용하여 개발을 진행하지만, 개인적으로 실습을 더 하거나 다양한 시도를 하려 하면 결제가 필요합니다.
+저의 경우 유료로 사용하고 있는 언어 모델과 벡터 DB 등이 있어 실습들을 무리 없이 진행했지만, 노트북 한대의 자원으로만 이 강의를 원활히 듣기에는 불편함이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;그렇지만 Linkedin 데이터 프로세싱 수업을 진행하며 사용하는 &lt;a href=&quot;https://nubela.co/proxycurl/&quot;&gt;Proxycurl&lt;/a&gt;를 비롯하여 각종 API를 활용하여 앱을 개발하는 사례들을 경험하니,
+적절히 유용한 SaaS 서비스들과 연계하여 무궁무진한 LLM 기반의 앱을 만들 수 있도록 영감을 받을 수 있어 좋았습니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;마치며&quot;&gt;마치며&lt;/h2&gt;
+
+&lt;p&gt;사실 저는 LangChain을 이미 업에서도 사용하고 있고, 이번 강의의 배울 내용(목차)에 나오는 대부분의 내용에 대한 경험이 있습니다.
+그렇지만, 배움에는 왕도가 없고 내가 독학으로 이해한 LangChain의 지식도 복습과 점검할 겸 강의를 수강했습니다. 아무런 생각 없이 경험에 의거하여 사용하고 있는 기법들도 재확인하며 LangChain과 더 친해질 수 있었고,
+Agent를 직접 다루며 ‘이런 것까지 돼?’라는 생각을 하며 LangChain 공부 의지를 돋아주는 재미있는 강의였습니다. 다음 포스팅은 해당 강의에서 배운 기법들을 응용하여 LLM 애플리케이션을 개발하는 내용을 담은 포스팅을 약속하며 글을 마칩니다. 😋&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="uncategorized" />
+      
+        <category term="extracurricular" />
+      
+
+      
+        <summary type="html">해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">AWS re:Invent 2023 후기</title>

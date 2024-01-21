@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</title>
+        
+          <description>&lt;p&gt;해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 06 Jan 2024 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/udemy</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/udemy</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Providing a caching layer for LLM with Langchain in AWS</title>
         
           <description>&lt;p&gt;AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기&lt;/p&gt;

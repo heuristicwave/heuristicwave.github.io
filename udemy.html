@@ -11,7 +11,7 @@
 
 
 
-    <title>Terraform Tips 1 - Module & Output</title>
+    <title>강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips1" />
+    <link rel="canonical" href="https://heuristicwave.github.io/udemy" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Terraform Tips 1 - Module & Output" />
-    <meta property="og:description" content="Terraform 더 익숙하게 1 - Module &amp; Output AWS 리소스로 알아보는 terraform Module 연계 팁 Intro Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한" />
-    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips1" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta property="og:title" content="강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기" />
+    <meta property="og:description" content="해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다. 들어가며 이번 글또 9기에서는 Udemy 측의 감사한 제안 덕분에, 활동 기간 동안 무료 강의 2개를 지원받게 되었습니다. 강의 무료 쿠폰을 받고, 강의 후기만 쓰면 된다니! 제가 들은 강의, LangChain으로 LLM 기반 애플리케이션 개발하기에 대한 솔직한 후기를 적어보았습니다. 😆 어떤 점이 좋았나요? 현재 강의를" />
+    <meta property="og:url" content="https://heuristicwave.github.io/udemy" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/udemy.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-01-01T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-01-01T00:00:00+00:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2024-01-06T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2024-01-06T00:00:00+00:00" />
+    <meta property="article:tag" content="Uncategorized" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Terraform Tips 1 - Module & Output" />
-    <meta name="twitter:description" content="Terraform 더 익숙하게 1 - Module &amp; Output AWS 리소스로 알아보는 terraform Module 연계 팁 Intro Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한" />
+    <meta name="twitter:title" content="강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기" />
+    <meta name="twitter:description" content="해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다. 들어가며 이번 글또 9기에서는 Udemy 측의 감사한 제안 덕분에, 활동 기간 동안 무료 강의 2개를 지원받게 되었습니다. 강의 무료 쿠폰을 받고, 강의 후기만 쓰면 된다니! 제가 들은 강의, LangChain으로 LLM 기반 애플리케이션 개발하기에 대한 솔직한 후기를 적어보았습니다. 😆 어떤 점이 좋았나요? 현재 강의를" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/udemy.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Uncategorized" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/TerraformTips1",
+    "url": "https://heuristicwave.github.io/udemy",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/udemy.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/TerraformTips1"
+        "@id": "https://heuristicwave.github.io/udemy"
     },
-    "description": "Terraform 더 익숙하게 1 - Module &amp; Output AWS 리소스로 알아보는 terraform Module 연계 팁 Intro Terraform Module을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다. 레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요, 이번 포스팅에서는 모듈 내에 작성된 Output value들을 활용하는 방법을 알아보겠습니다. 해당 포스팅은 Output에 대한"
+    "description": "해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다. 들어가며 이번 글또 9기에서는 Udemy 측의 감사한 제안 덕분에, 활동 기간 동안 무료 강의 2개를 지원받게 되었습니다. 강의 무료 쿠폰을 받고, 강의 후기만 쓰면 된다니! 제가 들은 강의, LangChain으로 LLM 기반 애플리케이션 개발하기에 대한 솔직한 후기를 적어보았습니다. 😆 어떤 점이 좋았나요? 현재 강의를"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Terraform Tips 1 - Module & Output" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -182,152 +182,82 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-terraform post tag-devops ">
+        <article class="post-full  tag-uncategorized tag-extracurricular post tag-extracurricular ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 1 January 2022"> 1 January 2022</time>
+                    <time class="post-full-meta-date" datetime=" 6 January 2024"> 6 January 2024</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
+                               <a href='/tag/uncategorized/'>UNCATEGORIZED</a>,
                             
                         
                             
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/extracurricular/'>EXTRACURRICULAR</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Terraform Tips 1 - Module & Output</h1>
+                <h1 class="post-full-title">강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/udemy.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform 더 익숙하게 1 - Module &amp; Output <br />
-AWS 리소스로 알아보는 terraform Module 연계 팁</p>
+                    <p>해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다.</p>
 
-<h2 id="intro">Intro</h2>
+<h2 id="들어가며">들어가며</h2>
 
-<p><strong>Terraform Module</strong>을 잘 활용하면 본인이 원하는 대로 인프라를 레고처럼 조립할 수 있습니다.
-레고처럼 인프라를 조립하기 위해서는 모듈 간의 연계가 중요한데요,
-이번 포스팅에서는 모듈 내에 작성된 <strong>Output value</strong>들을 활용하는 방법을 알아보겠습니다.</p>
+<p>이번 글또 9기에서는 Udemy 측의 감사한 제안 덕분에, 활동 기간 동안 무료 강의 2개를 지원받게 되었습니다.
+강의 무료 쿠폰을 받고, 강의 후기만 쓰면 된다니! 제가 들은 강의, <a href="https://www.udemy.com/course/langchain-korean/">LangChain으로 LLM 기반 애플리케이션 개발하기</a>에 대한 솔직한 후기를 적어보았습니다.</p>
 
-<p>해당 포스팅은 Output에 대한 이해가 있다는 가정하에 기술하였으므로, Output에 대한 설명이 필요하시면 아래 링크들을 참고해 주세요!</p>
+<h2 id="-어떤-점이-좋았나요">😆 어떤 점이 좋았나요?</h2>
 
-<p>🥲 사실, 아래 문서보다 더 잘 설명할 자신이 없어서… 언제나 가장 좋은 교재는 공식 문서입니다!</p>
+<p>현재 강의를 85% 정도 수강한 현시점에서, 수강 기간 동안 유익했던 부분들을 짧게 소개해 보겠습니다.</p>
 
-<ul>
-  <li><a href="https://www.terraform.io/docs/language/values/outputs.html">Terraform Docs</a></li>
-  <li><a href="https://learn.hashicorp.com/tutorials/terraform/outputs">Tutorial : Output Data from Terraform</a></li>
-</ul>
+<h3 id="react-agentexecutor">ReAct AgentExecutor</h3>
 
-<p><br /></p>
+<p>강의자 <a href="https://www.udemy.com/user/eden-marco/">Eden</a> 선생님도 강의에서 LLM 애플리케이션 개발에서 가장 아름다운 부분이라 언급하는 React Agent가,
+제게도 가장 즐겁고 유익했던 부분이었습니다. 강의에서 ReAct Agent 프레임워크의 내부 동작을 살펴보기 위해, 직접 ReAct Agent를 자체적으로 구현하며 React 알고리즘의 동작 원리를 이해할 수 있었습니다.</p>
 
-<h2 id="output-command-option">Output Command Option</h2>
+<p>간단한 기능 구현이라면 LangChain의 <a href="https://python.langchain.com/docs/integrations/toolkits">Agents and toolkits</a> 문서를 참고해 제공되는 범위 안에서 개발할 수 있지만,
+LLM 애플리케이션을 고도화하기 위해서는 제공되는 Agent 리스트들을 활용하는 수준을 넘어 직접 개발해야 합니다. 해당 강의를 통해 LangChain을 자유롭게 Custom 하여 사용하는 방법을 배울 수 있었습니다.</p>
 
-<p>Output은 terraform apply 명령어를 수행하고 난 후, 맨 마지막에 Value 들이 렌더링 되어 나옵니다.
-그러나 테라폼 코드를 작성하는 중간중간 인프라의 value 값들이 필요할 때가 있습니다.</p>
+<h3 id="openai-code-interpreter">OpenAI Code Interpreter</h3>
 
-<p>그럴 때, output이 정의된 상황에서 <code class="language-plaintext highlighter-rouge">terraform output {label}</code> 명령어로 Ouput 값을 확인합니다.
-<code class="language-plaintext highlighter-rouge">-raw</code> 옵션을 함께 주면 문자열 형태가 아닌 raw한 텍스트 값만을 얻을 수 있습니다.</p>
+<p>언어 모델을 활용한 대표적인 <strong>에이전트</strong>로는 GPT4를 바탕으로 만든 <a href="https://platform.openai.com/docs/assistants/tools/code-interpreter">Code Interpreter</a>가 있습니다.
+이것의 핵심적인 기능은 ‘샌드박스 실행 환경에서 Python 코드를 작성하고 실행(1️⃣)’하는 것과 ‘다양한 데이터와 포맷의 파일(2️⃣)’을 처리한다는 것입니다.</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>terraform output <span class="nt">-raw</span> security_group_id
-</code></pre></div></div>
+<blockquote>
+  <p>Code Interpreter allows the Assistants API to write and <strong>run Python code in a sandboxed execution environment</strong>. This tool can <strong>process files with diverse data and formatting</strong>, and generate files with data and images of graphs.</p>
+</blockquote>
 
-<h2 id="accessing-child-module-outputs">Accessing Child Module Outputs</h2>
+<p>위 기능을 구현하기 위해서, Langchain의 각각 <a href="https://python.langchain.com/docs/integrations/toolkits/python">Python</a>(1️⃣), <a href="https://python.langchain.com/docs/integrations/toolkits/csv">CSV</a>(2️⃣) Agent 등의 조합으로 구현할 수 있습니다.
+그러나 Agent는 언어 모델의 성능에 의해 결정이 나는 통계적 산물이므로 원하는 대로 작동하지 않을 가능성이 높습니다. 강의에서는 위와 같은 상황에서 트러블슈팅을 하는 방법을 담고 있습니다.
+기존의 개발에서의 문제해결 방법과는 약간 다른 LLM 애플리케이션 개발을 체험할 수 있어 재미있게 강의를 수강했습니다.</p>
 
-<p>하위 모듈의 아웃풋에 접근할 경우도 종종 있는데요, 이때는 <code class="language-plaintext highlighter-rouge">module.&lt;모듈 명&gt;.&lt;Output 명&gt;</code> 이런 형식으로 조회가 가능합니다.
-하위 모듈 출력값에 접근하는 것이, 모듈과 모듈은 연계하는 방법이기에 아래 예시에서 알아보겠습니다.</p>
+<h2 id="-아쉬운-점">🤔 아쉬운 점</h2>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module <span class="s2">"vpc"</span> <span class="o">{</span>
-  <span class="nb">source</span> <span class="o">=</span> <span class="s2">"terraform-aws-modules/vpc/aws"</span>
-  name   <span class="o">=</span> <span class="s2">"sample_vpc"</span>
+<p>이 강의를 선택하지 말아야 할 치명적인 단점은 없지만, 굳이 아쉬운 점을 언급하자면 유료 SaaS 서비스와 과금이 되는 API를 활용해 강의를 진행한다는 점입니다.
+물론 강의에서는 약간의 대체 방법과 Free Tier 구간을 활용하여 개발을 진행하지만, 개인적으로 실습을 더 하거나 다양한 시도를 하려 하면 결제가 필요합니다.
+저의 경우 유료로 사용하고 있는 언어 모델과 벡터 DB 등이 있어 실습들을 무리 없이 진행했지만, 노트북 한대의 자원으로만 이 강의를 원활히 듣기에는 불편함이 있습니다.</p>
 
-  cidr <span class="o">=</span> <span class="s2">"10.10.0.0/16"</span>
+<p>그렇지만 Linkedin 데이터 프로세싱 수업을 진행하며 사용하는 <a href="https://nubela.co/proxycurl/">Proxycurl</a>를 비롯하여 각종 API를 활용하여 앱을 개발하는 사례들을 경험하니,
+적절히 유용한 SaaS 서비스들과 연계하여 무궁무진한 LLM 기반의 앱을 만들 수 있도록 영감을 받을 수 있어 좋았습니다.</p>
 
-  azs            <span class="o">=</span> <span class="o">[</span><span class="s2">"us-west-2a"</span><span class="o">]</span>
-  public_subnets <span class="o">=</span> <span class="o">[</span><span class="s2">"10.10.1.0/24"</span><span class="o">]</span>
+<h2 id="마치며">마치며</h2>
 
-  tags <span class="o">=</span> <span class="o">{</span>
-    Owner       <span class="o">=</span> <span class="s2">"me"</span>
-    Environment <span class="o">=</span> <span class="s2">"stage"</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>위와 같은 vpc 모듈은 security group 모듈과 거의 단짝 수준으로 함께 움직이는데요,
-security group 모듈을 활용하려면 다음과 같이 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값이 필요합니다.</p>
-
-<p>이 경우, vpc를 먼저 생성하고 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값을 알아내어 사용할 수 있지만, 다음과 같은 방법으로 모듈을 연계합니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>module <span class="s2">"security_group"</span> <span class="o">{</span>
-  <span class="nb">source</span>      <span class="o">=</span> <span class="s2">"terraform-aws-modules/security-group/aws"</span>
-  name        <span class="o">=</span> <span class="s2">"ssh"</span>
-  description <span class="o">=</span> <span class="s2">"ssh from workstation"</span>
-  vpc_id      <span class="o">=</span> module.vpc.vpc_id
-
-  ingress_cidr_blocks <span class="o">=</span> <span class="o">[</span><span class="s2">"0.0.0.0/0"</span><span class="o">]</span>
-  ingress_rules       <span class="o">=</span> <span class="o">[</span><span class="s2">"ssh-tcp"</span><span class="o">]</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<h2 id="find-module-output-label">Find Module Output Label</h2>
-
-<p>방금 전, 모듈을 연계하는 방법을 배워 보았습니다. 그런데, 모듈을 연계하기 위해서는 미리 사전에 작성된 모듈의 Output Label을 알아야 합니다.</p>
-
-<p>우선 에디터의 Explorer 탭에서 <code class="language-plaintext highlighter-rouge">.terraform</code> 폴더를 열어봅시다.</p>
-
-<p><img src="../../assets/built/images/post/module.png" alt="module.png" /></p>
-
-<p>apply를 적용한 <em>security-group, vpc</em> 모듈이 내 로컬 머신에 숨어 있습니다.
-해당 모듈 폴더 안에 들어가면 <code class="language-plaintext highlighter-rouge">outputs.tf</code> 가 정의되어 있으므로 해당 파일을 참고하여 Label 값을 얻어오면 됩니다!</p>
-
-<h3 id="example">Example</h3>
-
-<p>상황 : VPC 모듈을 사용해 VPC와 서브넷을 구축한 상황에서, EFS를 각 서브넷에서 사용하려고 합니다.
-EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
-
-<details>
-  <summary>🖍 정답 보기</summary>
-
-  <p>위에서 언급한대로 <code class="language-plaintext highlighter-rouge">modules/vpc/output.tf</code> 에서 프라이빗 서브넷의 Label을 확인해보면,
-<code class="language-plaintext highlighter-rouge">private_subnets</code> 이라 기재된 것을 확인할 수 있습니다. 이를 활용해 아래와 같이 모듈을 참조 할 수 있습니다.</p>
-
-  <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource <span class="s2">"aws_efs_mount_target"</span> <span class="s2">"mount"</span> <span class="o">{</span>
-  count <span class="o">=</span> length<span class="o">(</span>module.vpc.private_subnets<span class="o">)</span>
-
-  file_system_id <span class="o">=</span> aws_efs_file_system.foo.id
-  subnet_id      <span class="o">=</span> module.vpc.private_subnets[count.index]
-<span class="o">}</span>
-</code></pre></div>  </div>
-</details>
-
-<p><br /></p>
-
-<h2 id="outro">Outro</h2>
-
-<p>이렇게 Module의 Output 값을 활용하는 방법을 알게 되니, 테라폼 모듈 조립에 대한 자신감이 생겼습니다. 
-앞으로도 테라폼에 더 익숙하지기 위한 방법들을 시리즈로 연재할 계획인데, 언제 끝날지 모르겠습니다. 😑</p>
-
-<p>지금까지 테라폼 더 익숙하게 Module &amp; Output 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+<p>사실 저는 LangChain을 이미 업에서도 사용하고 있고, 이번 강의의 배울 내용(목차)에 나오는 대부분의 내용에 대한 경험이 있습니다.
+그렇지만, 배움에는 왕도가 없고 내가 독학으로 이해한 LangChain의 지식도 복습과 점검할 겸 강의를 수강했습니다. 아무런 생각 없이 경험에 의거하여 사용하고 있는 기법들도 재확인하며 LangChain과 더 친해질 수 있었고,
+Agent를 직접 다루며 ‘이런 것까지 돼?’라는 생각을 하며 LangChain 공부 의지를 돋아주는 재미있는 강의였습니다. 다음 포스팅은 해당 강의에서 배운 기법들을 응용하여 LLM 애플리케이션을 개발하는 내용을 담은 포스팅을 약속하며 글을 마칩니다. 😋</p>
 
 <hr />
-
-<p><span class="table-of-contents-list">Terraform Tips</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./TerraformTips1">Module &amp; Output</a></li>
-    <li><a href="./TerraformTips2">Data &amp; Index</a></li>
-    <li><a href="./TerraformTips3">Refresh &amp; Replace</a></li>
-    <li><a href="./TerraformTips4">Move (Refactoring)</a></li>
-    <li><a href="./TerraformTips5">Import</a></li>
-</ul>
 
                 </div>
             </section>
@@ -385,9 +315,9 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/TerraformTips1';
-                            this.page.identifier = '/TerraformTips1';
-                            this.page.title = 'Terraform Tips 1 - Module & Output';
+                            this.page.url = 'https://heuristicwave.github.io/udemy';
+                            this.page.identifier = '/udemy';
+                            this.page.title = '강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -421,7 +351,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/uncategorized/">Uncategorized</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -431,6 +361,68 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                                 
                                 
                                   
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/reinvent23">AWS re:Invent 2023 후기</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/geultto3">글또 8기 회고</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/FullyCertified">AWS Fully Certified</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
                                 
                                   
                                 
@@ -450,41 +442,6 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                                     
                                         
                                         
-                                            <li><a href="/Chart">Helm Chart Repository in AWS</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/migrateCodebuild">Automating git submodules with AWS Code Series (Build, Pipeline)</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/EKS_Upgrade">Amazon EKS Multi Cluster Upgrade with ExternalDNS</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
                                     
                                   
                                 
@@ -497,69 +454,13 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
                                 
                                   
                                 
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
-                                  
                                 
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
                                   
                                 
                                   
@@ -569,52 +470,11 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
-                                  
                                 
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
                                   
                                 
                                   
@@ -622,9 +482,9 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
+                            <a href="/tag/uncategorized/">
                                 
-                                    See all 19 posts  →
+                                    See all 5 posts  →
                                 
                             </a>
                         </footer>
@@ -634,59 +494,6 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/TerraformTips2">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/TerraformTips2">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Devops</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Terraform</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Terraform Tips 2 - Data & Index</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -694,14 +501,18 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/ConstructHub">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/construct/hub1.png)"></div>
+            <a class="post-card-image-link" href="/LLMCache">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/post/ai/llmCaching.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/ConstructHub">
+            <a class="post-card-content-link" href="/LLMCache">
                 <header class="post-card-header">
                     
+                        
+                            
+                               <span class="post-card-tags">Ai</span>
+                            
                         
                             
                                 <span class="post-card-tags">Aws</span>
@@ -709,7 +520,7 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
                         
                     
 
-                    <h2 class="post-card-title">AWS CDK Library, Construct Hub</h2>
+                    <h2 class="post-card-title">Providing a caching layer for LLM with Langchain in AWS</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -753,18 +564,18 @@ EFS에서 모듈로 생성한 Subnets을 어떻게 참조할까요?</p>
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Terraform Tips 1 - Module & Output</div>
+    <div class="floating-header-title">강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Tips+1+-+Module+%26+Output&amp;url=https://heuristicwave.github.ioTerraformTips1"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=%EA%B0%95%EC%9D%98+%ED%9B%84%EA%B8%B0+-+LangChain+%EC%9C%BC%EB%A1%9C+LLM+%EA%B8%B0%EB%B0%98+%EC%95%A0%ED%94%8C%EB%A6%AC%EC%BC%80%EC%9D%B4%EC%85%98+%EA%B0%9C%EB%B0%9C%ED%95%98%EA%B8%B0&amp;url=https://heuristicwave.github.ioudemy"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips1"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioudemy"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
