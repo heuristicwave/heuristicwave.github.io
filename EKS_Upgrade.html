@@ -283,9 +283,9 @@ into the {body} of the default.hbs template -->
 <p>ExternalDNS를 제대로 설정했다면, 이어서 외부로 노출할 <code class="language-plaintext highlighter-rouge">Ingress</code>의 <code class="language-plaintext highlighter-rouge">annotations</code>를 수정합니다.</p>
 
 <div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">external-dns</span><span class="pi">:</span> <span class="s">public</span>
-<span class="s">external-dns.alpha.kubernetes.io/hostname</span><span class="pi">:</span> <span class="s">myDomain.com</span>
-<span class="s">external-dns.alpha.kubernetes.io/set-identifier</span><span class="pi">:</span> <span class="s">recordID</span>
-<span class="s">external-dns.alpha.kubernetes.io/aws-weight</span><span class="pi">:</span> <span class="s1">'</span><span class="s">1'</span>
+<span class="na">external-dns.alpha.kubernetes.io/hostname</span><span class="pi">:</span> <span class="s">myDomain.com</span>
+<span class="na">external-dns.alpha.kubernetes.io/set-identifier</span><span class="pi">:</span> <span class="s">recordID</span>
+<span class="na">external-dns.alpha.kubernetes.io/aws-weight</span><span class="pi">:</span> <span class="s1">'</span><span class="s">1'</span>
 </code></pre></div></div>
 
 <p>Simple 라우팅 정책에서는 <code class="language-plaintext highlighter-rouge">set-identifier</code>가 없어도 되지만, 이외 라우팅 정책에서는 <strong>필수</strong>적으로 들어가야 합니다. 
@@ -455,6 +455,15 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                                 
                                 
                                   
+                                    
+                                        
+                                        
+                                            <li><a href="/ReAct">ReAct leverages LLM as a reasoning engine</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
                                 
                                   
                                     
@@ -481,8 +490,6 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                                   
                                     
                                         
-                                        
-                                            <li><a href="/Kendra">Using Kendra to Implementing RAG in LLM</a></li>
                                         
                                     
                                   
@@ -678,7 +685,7 @@ terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한�
                         <footer class="read-next-card-footer">
                             <a href="/tag/aws/">
                                 
-                                    See all 25 posts  →
+                                    See all 26 posts  →
                                 
                             </a>
                         </footer>

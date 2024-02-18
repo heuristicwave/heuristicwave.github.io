@@ -313,7 +313,7 @@ git remote <span class="nt">-v</span>   <span class="c"># 원격 저장소 확�
 
 <p>해당 포스팅의 2 &amp; 3편에서 ECR에 올릴 이미지 파일 생성하기 위해 아래 샘플 <strong>Dockerfile</strong>을 생성하겠습니다.</p>
 <div class="language-Dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code>cat &lt;&lt;EOF &gt; Dockerfile
-<span class="k">FROM</span><span class="s"> golang:1.12-alpine AS build</span>
+<span class="k">FROM</span><span class="w"> </span><span class="s">golang:1.12-alpine</span><span class="w"> </span><span class="k">AS</span><span class="w"> </span><span class="s">build</span>
 <span class="c">#Install git</span>
 <span class="k">RUN </span>apk add <span class="nt">--no-cache</span> git
 <span class="c">#Get the hello world package from a GitHub repository</span>
@@ -465,6 +465,15 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
                                 
                                 
                                   
+                                    
+                                        
+                                        
+                                            <li><a href="/ReAct">ReAct leverages LLM as a reasoning engine</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
                                 
                                   
                                     
@@ -491,8 +500,6 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
                                   
                                     
                                         
-                                        
-                                            <li><a href="/Kendra">Using Kendra to Implementing RAG in LLM</a></li>
                                         
                                     
                                   
@@ -688,7 +695,7 @@ git config <span class="nt">--global</span> credential.UseHttpPath <span class="
                         <footer class="read-next-card-footer">
                             <a href="/tag/aws/">
                                 
-                                    See all 25 posts  →
+                                    See all 26 posts  →
                                 
                             </a>
                         </footer>

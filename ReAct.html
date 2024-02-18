@@ -11,7 +11,7 @@
 
 
 
-    <title>DIY Amazon EKS with eksctl</title>
+    <title>ReAct leverages LLM as a reasoning engine</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/eksctl_ppt" />
+    <link rel="canonical" href="https://heuristicwave.github.io/ReAct" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="DIY Amazon EKS with eksctl" />
-    <meta property="og:description" content="AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표 자료 Intro eksctl을 현업에서 적용하기 위해 필수적으로 필요한 최소한의 요소들을 다룹니다. 💡 SlideShare 링크를 통해 다운로드 받을 수 있습니다. Outro AWSKRUG에서는 첫 발표였는데, 부족한 발표임에도 19일 당일 소중한 시간을 내주셔서 감사합니다. 추후, 해당 장표들을 설명하는 블로그 포스팅을 함께 개제할 예정입니다. EKSCTL Tips DIY" />
-    <meta property="og:url" content="https://heuristicwave.github.io/eksctl_ppt" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/eksctl.png" />
+    <meta property="og:title" content="ReAct leverages LLM as a reasoning engine" />
+    <meta property="og:description" content="LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp; Amazon Bedrock) Intro LangChain for LLM Application Development 강의에서 Andrew Ng 교수님은 “사람들은 때때로 LLM이 많은 정보를 암기하기 위해 학습된 지식 저장소라 생각한다”라며, LLM을 더 유용하게 사용하는 방법은 추론(Reasoning) 엔진으로 생각하는 것이 더 유용하다고 말합니다. 교수님의 말대로 추론엔진으로써의 LLM을 활용하기 위해서는 ReAct 개념을" />
+    <meta property="og:url" content="https://heuristicwave.github.io/ReAct" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/langchain.svg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2023-01-19T19:00:00+00:00" />
-    <meta property="article:modified_time" content="2023-01-19T19:00:00+00:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2024-02-18T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2024-02-18T00:00:00+00:00" />
+    <meta property="article:tag" content="Llm" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="DIY Amazon EKS with eksctl" />
-    <meta name="twitter:description" content="AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표 자료 Intro eksctl을 현업에서 적용하기 위해 필수적으로 필요한 최소한의 요소들을 다룹니다. 💡 SlideShare 링크를 통해 다운로드 받을 수 있습니다. Outro AWSKRUG에서는 첫 발표였는데, 부족한 발표임에도 19일 당일 소중한 시간을 내주셔서 감사합니다. 추후, 해당 장표들을 설명하는 블로그 포스팅을 함께 개제할 예정입니다. EKSCTL Tips DIY" />
+    <meta name="twitter:title" content="ReAct leverages LLM as a reasoning engine" />
+    <meta name="twitter:description" content="LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp; Amazon Bedrock) Intro LangChain for LLM Application Development 강의에서 Andrew Ng 교수님은 “사람들은 때때로 LLM이 많은 정보를 암기하기 위해 학습된 지식 저장소라 생각한다”라며, LLM을 더 유용하게 사용하는 방법은 추론(Reasoning) 엔진으로 생각하는 것이 더 유용하다고 말합니다. 교수님의 말대로 추론엔진으로써의 LLM을 활용하기 위해서는 ReAct 개념을" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/eksctl.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/langchain.svg" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Llm" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/eksctl_ppt",
+    "url": "https://heuristicwave.github.io/ReAct",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/eksctl.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/langchain.svg",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/eksctl_ppt"
+        "@id": "https://heuristicwave.github.io/ReAct"
     },
-    "description": "AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목) 발표 자료 Intro eksctl을 현업에서 적용하기 위해 필수적으로 필요한 최소한의 요소들을 다룹니다. 💡 SlideShare 링크를 통해 다운로드 받을 수 있습니다. Outro AWSKRUG에서는 첫 발표였는데, 부족한 발표임에도 19일 당일 소중한 시간을 내주셔서 감사합니다. 추후, 해당 장표들을 설명하는 블로그 포스팅을 함께 개제할 예정입니다. EKSCTL Tips DIY"
+    "description": "LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp; Amazon Bedrock) Intro LangChain for LLM Application Development 강의에서 Andrew Ng 교수님은 “사람들은 때때로 LLM이 많은 정보를 암기하기 위해 학습된 지식 저장소라 생각한다”라며, LLM을 더 유용하게 사용하는 방법은 추론(Reasoning) 엔진으로 생각하는 것이 더 유용하다고 말합니다. 교수님의 말대로 추론엔진으로써의 LLM을 활용하기 위해서는 ReAct 개념을"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="DIY Amazon EKS with eksctl" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="ReAct leverages LLM as a reasoning engine" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -182,20 +182,20 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-eks tag-aws post tag-devops ">
+        <article class="post-full  tag-llm tag-genai tag-aws post tag-ai ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="19 January 2023">19 January 2023</time>
+                    <time class="post-full-meta-date" datetime="18 February 2024">18 February 2024</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
+                               <a href='/tag/llm/'>LLM</a>,
                             
                         
                             
-                               <a href='/tag/eks/'>EKS</a>,
+                               <a href='/tag/genai/'>GENAI</a>,
                             
                         
                             
@@ -204,39 +204,172 @@ into the {body} of the default.hbs template -->
                         
                     
                 </section>
-                <h1 class="post-full-title">DIY Amazon EKS with eksctl</h1>
+                <h1 class="post-full-title">ReAct leverages LLM as a reasoning engine</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/eksctl.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/langchain.svg)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p><a href="https://www.meetup.com/awskrug/events/290666942/">AWSKRUG 컨테이너 소모임🐳 - 1월 19일(목)</a> 발표 자료</p>
+                    <p>LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp; Amazon Bedrock)</p>
 
-<h2 id="intro">Intro</h2>
+<h1 id="intro">Intro</h1>
 
-<p>eksctl을 현업에서 적용하기 위해 필수적으로 필요한 최소한의 요소들을 다룹니다.</p>
+<p><a href="https://www.deeplearning.ai/short-courses/langchain-for-llm-application-development/">LangChain for LLM Application Development</a> 강의에서 Andrew Ng 교수님은 <em>“사람들은 때때로 LLM이 많은 정보를 암기하기 위해 학습된 지식 저장소라 생각한다”</em>라며,
+LLM을 더 유용하게 사용하는 방법은 추론(Reasoning) 엔진으로 생각하는 것이 더 유용하다고 말합니다. 교수님의 말대로 추론엔진으로써의 LLM을 활용하기 위해서는 ReAct 개념을 숙지해야 하는데요,
+저는 작년 5월경 AutoGPT, BabyAGI가 소개될 때 ReAct를 처음 접했는데 굉장히 어려운 개념이다 보니 이해하는데 시간이 오래 걸렸습니다.</p>
 
-<iframe src="https://www.slideshare.net/slideshow/embed_code/key/KnHQ8gpSIFKpbE?hostedIn=slideshare&amp;page=upload" width="840" height="523" frameborder="0" marginwidth="0" marginheight="0" scrolling="no"></iframe>
+<p>ICLR 2023, <a href="https://arxiv.org/abs/2210.03629">ReAct: Synergizing Reasoning and Acting in Language Models</a> 논문에서 LLM을 사용하여 인터리브 방식으로 <strong>추론 추적(reasoning traces)</strong>과 <strong>작업별 동작(task-specific actions)</strong>을 모두 생성하는 ReAct라는 프레임워크를 소개했습니다.
+이후, LangChain(이하, 🦜️🔗)에서는 Agents를 통해 ReAct 기법을 지원하기 시작했습니다. 앞으로 3편 이상의 시리즈물을 통해, ReAct 개념과 구현 및 AWS, OpenAI 등의 회사가 어떻게 ReAct와 관련된 제품을 설계했는지 등을 알아보겠습니다.
+이번 포스팅에서는 LLM을 추론엔진으로 활용하는 ReAct의 개념과 Amazon Bedrock과 🦜️🔗을 활용해 ReAct 기법을 알아보겠습니다.</p>
 
 <p><br /></p>
 
-<p>💡 SlideShare 링크를 통해 다운로드 받을 수 있습니다.</p>
+<h2 id="1️⃣-react-prompting">1️⃣ <a href="https://www.promptingguide.ai/techniques/react">ReAct Prompting</a></h2>
+
+<p>앞서 언급한 ReAct 논문을 바탕으로 작성된 Prompt Engineering Guide 문서는 ReAct Prompting을 다음과 같이 설명합니다.</p>
+
+<p>ReAct는 인간이 새로운 작업을 학습하고 의사 결정이나 추론을 할 수 있도록 하는 “행동” 과 “추론”의 시너지 효과에서 영감을 받았다고 합니다.
+첫 번째 단계는 트레이닝 세트(예:<a href="https://huggingface.co/datasets/hotpot_qa">HotPotQA</a>)에서 사례를 선택하고 ReAct 형식의 궤적(trajectories)을 구성합니다.
+이는 일종의 퓨샷(few-shot) 예시로 사용됩니다. 궤적은 여러 생각-행동-관찰(thought-action-observation) 단계로 구성됩니다.</p>
+
+<h3 id="️-agents">🦜️🔗 <a href="https://python.langchain.com/docs/modules/agents/concepts">Agents</a></h3>
+
+<p>앞서 소개한 ReAct의 개념을 🦜️🔗에서는 Agents라는 개념으로 구현했습니다. Agents의 핵심 아이디어는 언어 모델을 추론 엔진으로 사용해 어떤 작업을 어떤 순서로 수행할지 결정하는 것입니다.
+Agents를 크게 5개의 핵심 컴포넌트로 구성되어 있습니다.</p>
+
+<ol>
+  <li>Schema
+    <ul>
+      <li>AgentAction : Agent가 수행해야 하는 작업을 나타내는 dataclass</li>
+      <li>AgentFinish : Agent의 최종 결과, <code class="language-plaintext highlighter-rouge">return_values</code>의 경우 <strong>key-value</strong> 형태로 리턴</li>
+      <li>Intermidiate Steps : Agents 사이의 출력, <code class="language-plaintext highlighter-rouge">List[Tuple[AgentAction, Any]]</code> 타입으로 Observation은 최대한의 유연성을 위해 <code class="language-plaintext highlighter-rouge">Any</code>로 남겨짐(실제로는 대부분 문자열)</li>
+    </ul>
+  </li>
+  <li>Agent : 다음 단계에 수행할 역할을 결정하며, 보통 <em>‘언어 모델’, ‘프롬프트’</em> 와 <em>‘output parser’</em>로 실행됨
+    <ul>
+      <li>Agent Inputs : <strong>key-value</strong> 매핑의 형. 일반적으로 PromptTemplate은 LLM에 잘 전달할 수 있는 형식으로 변환하는 처리</li>
+      <li>Agent Outputs : 다음에 수행할 작업(<strong>AgentActions</strong>) 혹은 최종 응답(<strong>AgentFinish</strong>)</li>
+    </ul>
+  </li>
+  <li>AgentExecutor : Agent의 런타임. Agent를 호출하고, 선택한 작업을 실행하고, 출력을 Agent로 전달하고 반복하는 역할</li>
+  <li>Tools : Agent가 호출할 수 있는 함수. (Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함)</li>
+  <li>Toolkits : 특정 목표를 달성하기 위해 여러 개의 tool이 필요하다면, toolkit을 통해 제공</li>
+</ol>
+
+<p><br /></p>
+
+<h2 id="2️⃣-실시간으로-상호-작용하는-llm-with-bedrock">2️⃣ 실시간으로 상호 작용하는 LLM (with Bedrock)</h2>
+
+<p>Amazon Bedrock Playground에서 Claude 2.1 모델에 23년 아시안컵 우승국을 물어보면, 아직 개최되지 않았다는 정보와 함께 22년 아시안컵이 우승국이 호주라는 환각이 발생합니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/23AFC.png" alt="AFC" /></p>
+
+<p>아직 Claude 2.1 모델은 23년 아시안컵에 대해서 사전학습된 정보가 없지만, LangChain을 활용해 실시간으로 정보를 검색해 답변이 가능하도록 구현해 보겠습니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.agents</span> <span class="kn">import</span> <span class="n">load_tools</span><span class="p">,</span> <span class="n">initialize_agent</span><span class="p">,</span> <span class="n">AgentType</span>
+<span class="kn">from</span> <span class="nn">langchain_community.chat_models</span> <span class="kn">import</span> <span class="n">BedrockChat</span>
+
+<span class="n">chat</span> <span class="o">=</span> <span class="n">BedrockChat</span><span class="p">(</span>
+    <span class="n">model_id</span><span class="o">=</span><span class="s">"anthropic.claude-v2:1"</span><span class="p">,</span>
+    <span class="n">model_kwargs</span><span class="o">=</span><span class="p">{</span><span class="s">"max_tokens_to_sample"</span><span class="p">:</span> <span class="mi">700</span><span class="p">,</span> <span class="s">"temperature"</span><span class="p">:</span> <span class="mi">0</span><span class="p">},</span>
+    <span class="n">region_name</span><span class="o">=</span><span class="s">"us-west-2"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">initialize_agent</span><span class="p">(</span>
+    <span class="n">tools</span><span class="o">=</span><span class="n">load_tools</span><span class="p">([</span><span class="s">"wikipedia"</span><span class="p">]),</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">chat</span><span class="p">,</span>
+    <span class="n">agent</span><span class="o">=</span><span class="n">AgentType</span><span class="p">.</span><span class="n">CHAT_ZERO_SHOT_REACT_DESCRIPTION</span><span class="p">,</span>
+    <span class="n">handle_parsing_errors</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="p">(</span><span class="s">"2023년, AFC 아시안컵에서 우승한 나라는?"</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p><code class="language-plaintext highlighter-rouge">initialize_agent</code> 함수를 사용해 간단하게 Agent를 구현했습니다. Agent를 사용하기 위해, 사용할 도구, 모델, Agent Type 등을 인자로 받습니다.
+여기서는 Wikipedia를 사용하는 도구를 로드하고, 위에서 초기화한 BedrockChat 모델을 대화(chat) 모델로 사용합니다. 그리고 <code class="language-plaintext highlighter-rouge">CHAT_ZERO_SHOT_REACT_DESCRIPTION</code> 타입의 Agent로 초기화해 사용합니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/ReAct.png" alt="ReAct" /></p>
+
+<p>위와 같이 질문을 받아, wikipedia를 tool로 사용하여 thought-action-observation 단계를 거쳐 최종적으로 2023 아시안컵 우승국이 카타르라는 사실을 성공적으로 도출했습니다.</p>
+
+<p><em>해당 예시는 앞서 소개한 🦜️🔗 Agents의 5가지 컴포넌트가 나와있지만, 아주 간단한 Agent라 앞서 배운 AgentExecutor, Toolkits 등의 개념이 나와있지 않습니다.
+다음 편에서 <code class="language-plaintext highlighter-rouge">create_react_agent</code> 등의 함수로 교체하며 자세히 다루겠습니다.</em></p>
+
+<blockquote>
+  <p>💡 이번 예시에서 다룬 <code class="language-plaintext highlighter-rouge">initialize_agent</code>는 0.1.0(<a href="https://blog.langchain.dev/langchain-v0-1-0/">24년 1월 8일 release</a>)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. <br />
+<em>LangChainDeprecationWarning: The function <code class="language-plaintext highlighter-rouge">initialize_agent</code> was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
+Use Use new agent constructor methods like create_react_agent, create_json_agent, create_structured_chat_agent, etc. instead.</em></p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="3️⃣-tools">3️⃣ Tools</h2>
+
+<h3 id="️-load_tools">🛠️ <a href="https://api.python.langchain.com/en/latest/agents/langchain.agents.load_tools.load_tools.html">load_tools</a></h3>
+
+<p>이전 예시에서는 단 하나의 tool(wikipedia)만을 정의해, llm의 선택지가 하나밖에 존재하지 않았지만, 다음과 같은 형태로 다양할 tool 들을 준비하고 LLM의 추론을 완성시킬 수 있습니다.
+<code class="language-plaintext highlighter-rouge">tools = load_tools(["llm-math","wikipedia"])</code></p>
+
+<p>만약, 특정 액션 이후 누군가에게 이메일을 보내야 하는 Action을 추가하려면, AWS Lambda에 email을 보내는 함수를 만들어두고 다음과 같이 tool로 활용해 llm에 의해 이메일을 발송할 수도 있습니다.</p>
+
+<p><strong>Example : <a href="https://python.langchain.com/docs/integrations/tools/awslambda">AWS Lambda</a></strong></p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">tools</span> <span class="o">=</span> <span class="n">load_tools</span><span class="p">(</span>
+    <span class="p">[</span><span class="s">"awslambda"</span><span class="p">],</span>
+    <span class="n">awslambda_tool_name</span><span class="o">=</span><span class="s">"email-sender"</span><span class="p">,</span>
+    <span class="n">awslambda_tool_description</span><span class="o">=</span><span class="s">"sends an email with the specified content to test@testing123.com"</span><span class="p">,</span>
+    <span class="n">function_name</span><span class="o">=</span><span class="s">"testFunction1"</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">initialize_agent</span><span class="p">(</span>
+    <span class="n">tools</span><span class="p">,</span> <span class="n">llm</span><span class="p">,</span> <span class="n">agent</span><span class="o">=</span><span class="n">AgentType</span><span class="p">.</span><span class="n">ZERO_SHOT_REACT_DESCRIPTION</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span>
+<span class="p">)</span>
+
+<span class="n">agent</span><span class="p">.</span><span class="n">run</span><span class="p">(</span><span class="s">"Send an email to test@testing123.com saying hello world."</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>load_tools에는 AWS Lambda 외에 Amazon API Gateway도 있고, 필요하다면 다음과 같이 직접 tool을 만들 수도 있습니다.</p>
+
+<h3 id="️-custom-tools">⚒️ <a href="https://python.langchain.com/docs/modules/agents/tools/custom_tools">Custom Tools</a></h3>
+
+<p>다음은 단어의 글자 수를 구하는 간단한 Custom Tool입니다. <code class="language-plaintext highlighter-rouge">@tool</code> decorator와 함께 함수(tool 이름)와 <code class="language-plaintext highlighter-rouge">description</code> 정의 후, Agent에서 호출해 사용합니다.
+Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴포넌트를 유의하여 작성해야 합니다.</p>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">@</span><span class="n">tool</span>
+<span class="k">def</span> <span class="nf">get_length</span><span class="p">(</span><span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+    <span class="s">"""단어의 글자수를 구합니다."""</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">text</span><span class="p">)</span>
+
+<span class="n">agent</span> <span class="o">=</span> <span class="n">initialize_agent</span><span class="p">(</span>
+    <span class="n">tools</span><span class="o">=</span><span class="p">[</span><span class="n">get_length</span><span class="p">],</span>
+    <span class="n">llm</span><span class="o">=</span><span class="n">chat</span><span class="p">,</span>
+    <span class="n">agent</span><span class="o">=</span><span class="n">AgentType</span><span class="p">.</span><span class="n">ZERO_SHOT_REACT_DESCRIPTION</span><span class="p">,</span>
+    <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
+<span class="p">)</span>
+
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"langchain의 글자수를 구하시오."</span><span class="p">})</span> 
+</code></pre></div></div>
+
+<p>코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다. 
+예를 들어, ‘Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함’을 무시하고 <code class="language-plaintext highlighter-rouge">description</code>에 ‘<em>단어의 글자 수를 구하는 질문에 해당 도구를 사용하지 마세요.</em>‘라고 기재하면 다음과 같이 잘못된 추론을 진행합니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/customTool.png" alt="customTool" /></p>
+
+<p><br /></p>
 
 <h2 id="outro">Outro</h2>
 
-<p>AWSKRUG에서는 첫 발표였는데, 부족한 발표임에도 19일 당일 소중한 시간을 내주셔서 감사합니다. 
-추후, 해당 장표들을 설명하는 블로그 포스팅을 함께 개제할 예정입니다.</p>
+<p>이번 포스팅에서는 ReAct 개념을 🦜️🔗에서 <strong>Agents</strong>로 알아보았습니다.
+다음 포스팅에서는 AWS가 ReAct 개념을 구현한 <strong>Agents for Amazon Bedrock</strong>과 Open AI의 <strong>Function calling</strong>를 비교하며 각각 어떻게 ReAct를 구현했는지 알아보겠습니다.</p>
+
+<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
 
 <hr />
-
-<p><span class="table-of-contents-list">EKSCTL Tips</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./eksctl_ppt">DIY Amazon EKS with eksctl (Deck)</a></li>
-</ul>
 
                 </div>
             </section>
@@ -294,9 +427,9 @@ into the {body} of the default.hbs template -->
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/eksctl_ppt';
-                            this.page.identifier = '/eksctl_ppt';
-                            this.page.title = 'DIY Amazon EKS with eksctl';
+                            this.page.url = 'https://heuristicwave.github.io/ReAct';
+                            this.page.identifier = '/ReAct';
+                            this.page.title = 'ReAct leverages LLM as a reasoning engine';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -322,281 +455,9 @@ into the {body} of the default.hbs template -->
                 
                 
                 
-                    <article class="read-next-card"
-                        
-                            style="background-image: url(/assets/built/images/blog-cover.jpg)"
-                        
-                    >
-                        <header class="read-next-card-header">
-                            <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
-                            
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
-                            
-                        </header>
-                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
-</div>
-                        <div class="read-next-card-content">
-                            <ul>
-                                
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/Chart">Helm Chart Repository in AWS</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/migrateCodebuild">Automating git submodules with AWS Code Series (Build, Pipeline)</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/EKS_Upgrade">Amazon EKS Multi Cluster Upgrade with ExternalDNS</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                            </ul>
-                        </div>
-                        <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
-                                
-                                    See all 19 posts  →
-                                
-                            </a>
-                        </footer>
-                    </article>
-                
             
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
-            
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/OpenAI_Lambda">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/OpenAI.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/OpenAI_Lambda">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Serverless</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Using OpenAI API with AWS Lambda</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
             
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
@@ -605,26 +466,26 @@ into the {body} of the default.hbs template -->
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/Goroutines">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/Go-Logo_Blue.png)"></div>
+            <a class="post-card-image-link" href="/udemy">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/udemy.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/Goroutines">
+            <a class="post-card-content-link" href="/udemy">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Backend</span>
+                               <span class="post-card-tags">Uncategorized</span>
                             
                         
                             
-                                <span class="post-card-tags">Programming</span>
+                                <span class="post-card-tags">Extracurricular</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Goroutines</h2>
+                    <h2 class="post-card-title">강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -668,18 +529,18 @@ into the {body} of the default.hbs template -->
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">DIY Amazon EKS with eksctl</div>
+    <div class="floating-header-title">ReAct leverages LLM as a reasoning engine</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=DIY+Amazon+EKS+with+eksctl&amp;url=https://heuristicwave.github.ioeksctl_ppt"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=ReAct+leverages+LLM+as+a+reasoning+engine&amp;url=https://heuristicwave.github.ioReAct"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioeksctl_ppt"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioReAct"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

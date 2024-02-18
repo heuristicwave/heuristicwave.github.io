@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.3">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-01-21T12:04:22+00:00</updated>
+  <updated>2024-02-18T14:06:35+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,199 @@
   
   
 
+  
+    <entry>
+      <title type="html">ReAct leverages LLM as a reasoning engine</title>
+      <link href="https://heuristicwave.github.io/ReAct" rel="alternate" type="text/html" title="ReAct leverages LLM as a reasoning engine" />
+      <published>2024-02-18T00:00:00+00:00</published>
+      <updated>2024-02-18T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/ReAct</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/ReAct">&lt;p&gt;LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp;amp; Amazon Bedrock)&lt;/p&gt;
+
+&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://www.deeplearning.ai/short-courses/langchain-for-llm-application-development/&quot;&gt;LangChain for LLM Application Development&lt;/a&gt; 강의에서 Andrew Ng 교수님은 &lt;em&gt;“사람들은 때때로 LLM이 많은 정보를 암기하기 위해 학습된 지식 저장소라 생각한다”&lt;/em&gt;라며,
+LLM을 더 유용하게 사용하는 방법은 추론(Reasoning) 엔진으로 생각하는 것이 더 유용하다고 말합니다. 교수님의 말대로 추론엔진으로써의 LLM을 활용하기 위해서는 ReAct 개념을 숙지해야 하는데요,
+저는 작년 5월경 AutoGPT, BabyAGI가 소개될 때 ReAct를 처음 접했는데 굉장히 어려운 개념이다 보니 이해하는데 시간이 오래 걸렸습니다.&lt;/p&gt;
+
+&lt;p&gt;ICLR 2023, &lt;a href=&quot;https://arxiv.org/abs/2210.03629&quot;&gt;ReAct: Synergizing Reasoning and Acting in Language Models&lt;/a&gt; 논문에서 LLM을 사용하여 인터리브 방식으로 &lt;strong&gt;추론 추적(reasoning traces)&lt;/strong&gt;과 &lt;strong&gt;작업별 동작(task-specific actions)&lt;/strong&gt;을 모두 생성하는 ReAct라는 프레임워크를 소개했습니다.
+이후, LangChain(이하, 🦜️🔗)에서는 Agents를 통해 ReAct 기법을 지원하기 시작했습니다. 앞으로 3편 이상의 시리즈물을 통해, ReAct 개념과 구현 및 AWS, OpenAI 등의 회사가 어떻게 ReAct와 관련된 제품을 설계했는지 등을 알아보겠습니다.
+이번 포스팅에서는 LLM을 추론엔진으로 활용하는 ReAct의 개념과 Amazon Bedrock과 🦜️🔗을 활용해 ReAct 기법을 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;1️⃣-react-prompting&quot;&gt;1️⃣ &lt;a href=&quot;https://www.promptingguide.ai/techniques/react&quot;&gt;ReAct Prompting&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;앞서 언급한 ReAct 논문을 바탕으로 작성된 Prompt Engineering Guide 문서는 ReAct Prompting을 다음과 같이 설명합니다.&lt;/p&gt;
+
+&lt;p&gt;ReAct는 인간이 새로운 작업을 학습하고 의사 결정이나 추론을 할 수 있도록 하는 “행동” 과 “추론”의 시너지 효과에서 영감을 받았다고 합니다.
+첫 번째 단계는 트레이닝 세트(예:&lt;a href=&quot;https://huggingface.co/datasets/hotpot_qa&quot;&gt;HotPotQA&lt;/a&gt;)에서 사례를 선택하고 ReAct 형식의 궤적(trajectories)을 구성합니다.
+이는 일종의 퓨샷(few-shot) 예시로 사용됩니다. 궤적은 여러 생각-행동-관찰(thought-action-observation) 단계로 구성됩니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;️-agents&quot;&gt;🦜️🔗 &lt;a href=&quot;https://python.langchain.com/docs/modules/agents/concepts&quot;&gt;Agents&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;앞서 소개한 ReAct의 개념을 🦜️🔗에서는 Agents라는 개념으로 구현했습니다. Agents의 핵심 아이디어는 언어 모델을 추론 엔진으로 사용해 어떤 작업을 어떤 순서로 수행할지 결정하는 것입니다.
+Agents를 크게 5개의 핵심 컴포넌트로 구성되어 있습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Schema
+    &lt;ul&gt;
+      &lt;li&gt;AgentAction : Agent가 수행해야 하는 작업을 나타내는 dataclass&lt;/li&gt;
+      &lt;li&gt;AgentFinish : Agent의 최종 결과, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;return_values&lt;/code&gt;의 경우 &lt;strong&gt;key-value&lt;/strong&gt; 형태로 리턴&lt;/li&gt;
+      &lt;li&gt;Intermidiate Steps : Agents 사이의 출력, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;List[Tuple[AgentAction, Any]]&lt;/code&gt; 타입으로 Observation은 최대한의 유연성을 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Any&lt;/code&gt;로 남겨짐(실제로는 대부분 문자열)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Agent : 다음 단계에 수행할 역할을 결정하며, 보통 &lt;em&gt;‘언어 모델’, ‘프롬프트’&lt;/em&gt; 와 &lt;em&gt;‘output parser’&lt;/em&gt;로 실행됨
+    &lt;ul&gt;
+      &lt;li&gt;Agent Inputs : &lt;strong&gt;key-value&lt;/strong&gt; 매핑의 형. 일반적으로 PromptTemplate은 LLM에 잘 전달할 수 있는 형식으로 변환하는 처리&lt;/li&gt;
+      &lt;li&gt;Agent Outputs : 다음에 수행할 작업(&lt;strong&gt;AgentActions&lt;/strong&gt;) 혹은 최종 응답(&lt;strong&gt;AgentFinish&lt;/strong&gt;)&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;AgentExecutor : Agent의 런타임. Agent를 호출하고, 선택한 작업을 실행하고, 출력을 Agent로 전달하고 반복하는 역할&lt;/li&gt;
+  &lt;li&gt;Tools : Agent가 호출할 수 있는 함수. (Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함)&lt;/li&gt;
+  &lt;li&gt;Toolkits : 특정 목표를 달성하기 위해 여러 개의 tool이 필요하다면, toolkit을 통해 제공&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;2️⃣-실시간으로-상호-작용하는-llm-with-bedrock&quot;&gt;2️⃣ 실시간으로 상호 작용하는 LLM (with Bedrock)&lt;/h2&gt;
+
+&lt;p&gt;Amazon Bedrock Playground에서 Claude 2.1 모델에 23년 아시안컵 우승국을 물어보면, 아직 개최되지 않았다는 정보와 함께 22년 아시안컵이 우승국이 호주라는 환각이 발생합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/23AFC.png&quot; alt=&quot;AFC&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;아직 Claude 2.1 모델은 23년 아시안컵에 대해서 사전학습된 정보가 없지만, LangChain을 활용해 실시간으로 정보를 검색해 답변이 가능하도록 구현해 보겠습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.agents&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;load_tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain_community.chat_models&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockChat&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockChat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;model_kwargs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;max_tokens_to_sample&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;700&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;temperature&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;us-west-2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;load_tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;wikipedia&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CHAT_ZERO_SHOT_REACT_DESCRIPTION&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;handle_parsing_errors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;2023년, AFC 아시안컵에서 우승한 나라는?&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; 함수를 사용해 간단하게 Agent를 구현했습니다. Agent를 사용하기 위해, 사용할 도구, 모델, Agent Type 등을 인자로 받습니다.
+여기서는 Wikipedia를 사용하는 도구를 로드하고, 위에서 초기화한 BedrockChat 모델을 대화(chat) 모델로 사용합니다. 그리고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CHAT_ZERO_SHOT_REACT_DESCRIPTION&lt;/code&gt; 타입의 Agent로 초기화해 사용합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/ReAct.png&quot; alt=&quot;ReAct&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위와 같이 질문을 받아, wikipedia를 tool로 사용하여 thought-action-observation 단계를 거쳐 최종적으로 2023 아시안컵 우승국이 카타르라는 사실을 성공적으로 도출했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;해당 예시는 앞서 소개한 🦜️🔗 Agents의 5가지 컴포넌트가 나와있지만, 아주 간단한 Agent라 앞서 배운 AgentExecutor, Toolkits 등의 개념이 나와있지 않습니다.
+다음 편에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt; 등의 함수로 교체하며 자세히 다루겠습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;💡 이번 예시에서 다룬 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt;는 0.1.0(&lt;a href=&quot;https://blog.langchain.dev/langchain-v0-1-0/&quot;&gt;24년 1월 8일 release&lt;/a&gt;)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. &lt;br /&gt;
+&lt;em&gt;LangChainDeprecationWarning: The function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
+Use Use new agent constructor methods like create_react_agent, create_json_agent, create_structured_chat_agent, etc. instead.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;3️⃣-tools&quot;&gt;3️⃣ Tools&lt;/h2&gt;
+
+&lt;h3 id=&quot;️-load_tools&quot;&gt;🛠️ &lt;a href=&quot;https://api.python.langchain.com/en/latest/agents/langchain.agents.load_tools.load_tools.html&quot;&gt;load_tools&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;이전 예시에서는 단 하나의 tool(wikipedia)만을 정의해, llm의 선택지가 하나밖에 존재하지 않았지만, 다음과 같은 형태로 다양할 tool 들을 준비하고 LLM의 추론을 완성시킬 수 있습니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tools = load_tools([&quot;llm-math&quot;,&quot;wikipedia&quot;])&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;만약, 특정 액션 이후 누군가에게 이메일을 보내야 하는 Action을 추가하려면, AWS Lambda에 email을 보내는 함수를 만들어두고 다음과 같이 tool로 활용해 llm에 의해 이메일을 발송할 수도 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Example : &lt;a href=&quot;https://python.langchain.com/docs/integrations/tools/awslambda&quot;&gt;AWS Lambda&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;load_tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;awslambda&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;awslambda_tool_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;email-sender&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;awslambda_tool_description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sends an email with the specified content to test@testing123.com&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;function_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;testFunction1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ZERO_SHOT_REACT_DESCRIPTION&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Send an email to test@testing123.com saying hello world.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;load_tools에는 AWS Lambda 외에 Amazon API Gateway도 있고, 필요하다면 다음과 같이 직접 tool을 만들 수도 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;️-custom-tools&quot;&gt;⚒️ &lt;a href=&quot;https://python.langchain.com/docs/modules/agents/tools/custom_tools&quot;&gt;Custom Tools&lt;/a&gt;&lt;/h3&gt;
+
+&lt;p&gt;다음은 단어의 글자 수를 구하는 간단한 Custom Tool입니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@tool&lt;/code&gt; decorator와 함께 함수(tool 이름)와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt; 정의 후, Agent에서 호출해 사용합니다.
+Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의 핵심 컴포넌트를 유의하여 작성해야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tool&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;단어의 글자수를 구합니다.&quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ZERO_SHOT_REACT_DESCRIPTION&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;invoke&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;langchain의 글자수를 구하시오.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt; 
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다. 
+예를 들어, ‘Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함’을 무시하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt;에 ‘&lt;em&gt;단어의 글자 수를 구하는 질문에 해당 도구를 사용하지 마세요.&lt;/em&gt;‘라고 기재하면 다음과 같이 잘못된 추론을 진행합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/customTool.png&quot; alt=&quot;customTool&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+
+&lt;p&gt;이번 포스팅에서는 ReAct 개념을 🦜️🔗에서 &lt;strong&gt;Agents&lt;/strong&gt;로 알아보았습니다.
+다음 포스팅에서는 AWS가 ReAct 개념을 구현한 &lt;strong&gt;Agents for Amazon Bedrock&lt;/strong&gt;과 Open AI의 &lt;strong&gt;Function calling&lt;/strong&gt;를 비교하며 각각 어떻게 ReAct를 구현했는지 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="llm" />
+      
+        <category term="genai" />
+      
+        <category term="aws" />
+      
+
+      
+        <summary type="html">LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp;amp; Amazon Bedrock)</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Providing a caching layer for LLM with Langchain in AWS</title>
@@ -1799,181 +1992,6 @@ CodeBuild의 경우 일일이 다 확인하며 설정해 줘야 하는 점은 �
 
       
         <summary type="html">AWS Code Series (Build, Pipeline)으로 git submodule 자동화</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Amazon EKS Multi Cluster Upgrade with ExternalDNS</title>
-      <link href="https://heuristicwave.github.io/EKS_Upgrade" rel="alternate" type="text/html" title="Amazon EKS Multi Cluster Upgrade with ExternalDNS" />
-      <published>2023-02-25T00:00:00+00:00</published>
-      <updated>2023-02-25T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/EKS_Upgrade</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/EKS_Upgrade">&lt;p&gt;ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;Amazon EKS(이하 EKS)는 &lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar&quot;&gt;약 3 ~ 5&lt;/a&gt; 개월마다 새로운 버전이 출시합니다.
-운영 측면에서 새로운 버전 출시는 기존 EKS의 버전 업그레이드가 필요하다는 것을 의미합니다. EKS 업그레이드는 EKS 콘솔에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지금 업데이트&lt;/code&gt; 버튼을 눌러 손쉽게 가능합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-single-cluster-upgrade&quot;&gt;🏠 Single Cluster Upgrade&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/cluster.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위와 같은 &lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html&quot;&gt;EKS 클러스터 버전 업데이트&lt;/a&gt;를 싱글 클러스터 기반의 업그레이드라고 하며, 비교적 손쉽게 k8s 버전 업데이트가 가능합니다.
-업데이트가 손쉬운 반면 몇 가지 제약 사항도 존재합니다. 대표적으로 아래와 같이 원하는 버전으로 바로 업데이트되는 것이 아니라 순차적 단계를 거쳐야 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/singleUpdate.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-multi-cluster-upgrade&quot;&gt;🏘️‍ Multi Cluster Upgrade&lt;/h2&gt;
-
-&lt;p&gt;멀티 클러스터 업그레이드는 동일한 환경의 EKS를 멀티로 구성하다 보니,
-싱글 클러스터와는 달리 &lt;strong&gt;원하는 버전으로 바로 생성&lt;/strong&gt;이 가능하고 만에 하나 &lt;strong&gt;롤백&lt;/strong&gt;이 필요할 경우 기존 환경으로 돌아갈 수도 있습니다.&lt;/p&gt;
-
-&lt;p&gt;멀티 클러스터 기반의 업그레이드 방법은 여러 가지 방법으로 진행할 수 있습니다. 그중에서도 이번 포스팅에서는 &lt;a href=&quot;https://aws.amazon.com/blogs/containers/onfidos-journey-to-a-multi-cluster-amazon-eks-architecture/&quot;&gt;AWS Blog&lt;/a&gt;에 소개된 3가지 방법 중,
-&lt;strong&gt;비교적 가장 수월한 방법인 첫 번째 방법으로 한정&lt;/strong&gt;해서 이야기해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/multiCluster.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;첫 번째로 소개된 Option 1의 방법은 2개의 동일한 환경에서 Amazon Route 53의 가중치 기능을 활용하여 업그레이드하는 방식입니다.&lt;/p&gt;
-
-&lt;p&gt;방법은 간단합니다. &lt;strong&gt;싱글 클러스터&lt;/strong&gt;에서 별다른 작업을 해주지 않았다면, 아마 Route 53의 &lt;strong&gt;Routing policy&lt;/strong&gt;를 &lt;strong&gt;Simple&lt;/strong&gt;로 설정해 두었을 겁니다.
-&lt;strong&gt;멀티 클러스터&lt;/strong&gt;에서는 &lt;strong&gt;Routing policy&lt;/strong&gt;를 &lt;strong&gt;Weighted&lt;/strong&gt;로 설정해 설정한 비율로 트래픽을 분배하는 원리입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/defineWeighted.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 캡처와 같이 레코드를 생성할 때, 아래 3가지 요소를 주목하여 가중치 정책을 생성합니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;DNS의 &lt;strong&gt;캐시를 최소화&lt;/strong&gt;하기 위해 &lt;strong&gt;TTL은 1m&lt;/strong&gt;(60 seconds)를 권장&lt;/li&gt;
-  &lt;li&gt;각 다른 환경에서 &lt;strong&gt;50:50 가중치&lt;/strong&gt;를 주고 싶을 경우, &lt;strong&gt;2개의 가중치 레코드에 Weighted 값 1&lt;/strong&gt;을 부여&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;는 레코드의 &lt;strong&gt;주석&lt;/strong&gt;과 같은 역할을 하지만 &lt;strong&gt;필수&lt;/strong&gt;로 작성해야 함 (이어서 이 값의 중요성을~~ 😱)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;externaldns&quot;&gt;ExternalDNS&lt;/h2&gt;
-
-&lt;p&gt;Kubernetes는 KubeDNS를 내부 DNS 서버로 활용합니다. Route 53과 같은 다른 DNS 공급자를 사용하기 위해서는 &lt;a href=&quot;https://github.com/kubernetes-sigs/external-dns&quot;&gt;external-dns&lt;/a&gt;를 추가적으로 설치해 사용합니다.
-물론 external-dns를 사용하지 않고 &lt;strong&gt;외부 DNS의 영역과 k8s의 영역을 분리하여 사용&lt;/strong&gt;할 수도 있지만, external-dns를 적용한다면 &lt;strong&gt;외부 DNS 공급자도 코드로 제어&lt;/strong&gt;할 수 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;set-up&quot;&gt;Set up&lt;/h3&gt;
-
-&lt;p&gt;ExternalDNS를 EKS에 설정하는 방법은 &lt;a href=&quot;https://aws.amazon.com/premiumsupport/knowledge-center/eks-set-up-externaldns/&quot;&gt;첨부 링크&lt;/a&gt;에 자세하게 설명되어 있지만, 놓치기 쉬운 2가지 부분을 언급하고 넘어가겠습니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;externaldns-1&quot;&gt;ExternalDNS&lt;/h4&gt;
-
-&lt;p&gt;external-dns를 최종 배포하기 전, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Deployment&lt;/code&gt;의 아래 2가지 인자를 수정해야 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;--domain-filter=&amp;lt;Your_R53_Domain_Name&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;--txt-owner-id=&amp;lt;Your_R53_HostedZone_Id&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🐞 이번 포스팅을 준비하며 external-dns가 간헐적으로 동작하는 경우를 목격했습니다. &lt;br /&gt;
-원인은 해당 인자를 오기재했기 때문인데, 원래대로라면 동작하지 않아야 하는데 버그인 것 같습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;ingress&quot;&gt;Ingress&lt;/h4&gt;
-
-&lt;p&gt;ExternalDNS를 제대로 설정했다면, 이어서 외부로 노출할 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ingress&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;annotations&lt;/code&gt;를 수정합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;external-dns&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;public&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;external-dns.alpha.kubernetes.io/hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;myDomain.com&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;external-dns.alpha.kubernetes.io/set-identifier&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;recordID&lt;/span&gt;
-&lt;span class=&quot;s&quot;&gt;external-dns.alpha.kubernetes.io/aws-weight&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;1'&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Simple 라우팅 정책에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set-identifier&lt;/code&gt;가 없어도 되지만, 이외 라우팅 정책에서는 &lt;strong&gt;필수&lt;/strong&gt;적으로 들어가야 합니다. 
-직전 콘솔에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;를 기재하지 않았을 경우 화면이 넘어가지 않지만, external-dns에서 해당 값이 빠지면 로그와 파드 상태 모두 특이점이 발견되지 않아 원인을 찾기 어려워집니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;issue&quot;&gt;Issue&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;yaml 파일에 의도를 기재하여 배포했지만, 정작 Route 53에서 레코드가 업데이트되지 않는 경우&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;구축 초기부터 가중치 정책을 적용한 멀티 클러스터를 생성한다면 해당 이슈를 만나지 않겠지만,
-싱글 클러스터로 external-dns를 운영하고 있는 환경에서 멀티 클러스터를 적용하면 &lt;a href=&quot;https://github.com/kubernetes-sigs/external-dns/issues/1411&quot;&gt;해당 이슈&lt;/a&gt;를 만날 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;UPSERT is not possible, doing UPSERT will actually do a CREATE that will fail&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이를 해결하기 위해 노출하고자 하는 Ingress를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delete &amp;amp; apply&lt;/code&gt; 한다면 우회가 가능하겠지만, 운영하고 있는 서비스라면 &lt;strong&gt;다운타임&lt;/strong&gt;이 발생할 것입니다.
-지금으로서는 Route 53 콘솔 화면에서 수동으로 기존의 정책을 수정해 주고 후속으로 생성하는 클러스터는 코드로 제어하는 방법이 있습니다. 그러나 코드와 콘솔 2가지 채널에서 인프라를 다루는 방법은 바람직하지 않습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;해당 이슈를 해결한 직후 external-dns의 logs&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:56Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Applying provider record filter for domains: [myDomain.com. .myDomain.com.]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Desired change: CREATE ex.myDomain.com A [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Desired change: CREATE ex.myDomain.com TXT [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;error &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Failure in zone myDomain.com. [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;error &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;InvalidChangeBatch: [RRSet with DNS name ex.myDomain.com.,
-│ type TXT, SetIdentifier recordID cannot be created as a non-weighted set exists with the same name and type.]&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n\t&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;status code: 400, request
-│ time=&quot;&lt;/span&gt;2023-02-25T16:28:57Z&lt;span class=&quot;s2&quot;&gt;&quot; level=error msg=&quot;&lt;/span&gt;failed to submit all changes &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the following zones: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;/hostedzone/Z0HOSTEDZONEID]&lt;span class=&quot;s2&quot;&gt;&quot;
-
--- After changing Simple Routing policy --
-
-│ time=&quot;&lt;/span&gt;2023-02-25T16:29:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;2 record&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;zone myDomain.com. &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Id: /hostedzone/Z0HOSTEDZONEID] were successfully updated&lt;span class=&quot;s2&quot;&gt;&quot;
-│ time=&quot;&lt;/span&gt;2023-02-25T16:30:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;Applying provider record filter &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;domains: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;myDomain.com. .myDomain.com.]&lt;span class=&quot;s2&quot;&gt;&quot;
-│ time=&quot;&lt;/span&gt;2023-02-25T16:30:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;All records are already up to &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;검증&quot;&gt;검증&lt;/h3&gt;
-
-&lt;p&gt;실제 1:1로 라우팅이 일어나고 있나 확인하고 싶다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;웹&lt;/code&gt; 혹은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dig&lt;/code&gt; 명령어로 확인이 가능하지만 가장 정확한 방법은 Route 53 내 &lt;strong&gt;Test record&lt;/strong&gt;를 사용하는 것입니다.
-Record 테스트를 위해 Record name을 기재하고 &lt;strong&gt;Get response&lt;/strong&gt; 버튼을 누르면 &lt;strong&gt;Response returned by Route 53&lt;/strong&gt; 화면에서 실시간으로 바뀌는 IP를 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/testRecord.png&quot; alt=&quot;testRecord&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;멀티-클러스터-교체-작업&quot;&gt;멀티 클러스터 교체 작업&lt;/h4&gt;
-
-&lt;p&gt;❗️ 기존 클러스터를 A, 업그레이드를 진행할 클러스터를 B라 가정하겠습니다.&lt;/p&gt;
-
-&lt;p&gt;B 클러스터가 문제없다 판단되면, 다시 한번 가중치를 조절해 A 클러스터를 대체합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;가중치 변화, 1:0 🔜 1:1 🔜 0:1&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;B 클러스터에서 문제가 있다 판단되면 B의 가중치를 0으로 바꾸면 롤백의 효과를 볼 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;external-dns는 Route 53 리소스를 제어할 수 있어 편리하면서도 운영이 복잡합니다. 위에서 언급한 이슈 외에도 GitOps를 구축한 상태에서 멀티 클러스터를 운용하려면, 각 클러스터마다 다른 Repository가 필요합니다.
-terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한다면 external-dns가 도움이 되니 사용 환경에 따라 적절한 도구를 사용해야 할 것 같습니다.
-모든 것을 코드로 관리하는 것은 쉽지 않네요. 🤣&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-        <category term="eks" />
-      
-
-      
-        <summary type="html">ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기</summary>
       
 
       
