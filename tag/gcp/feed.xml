@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/gcp/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-03-10T07:58:57+00:00</updated>
+  <updated>2024-03-30T00:30:37+00:00</updated>
   <id>https://heuristicwave.github.io/tag/gcp/feed.xml</id>
 
   
@@ -45,12 +45,12 @@
 &lt;p&gt;요즘 주목받는 GenAI를 공부하며, 많은 자료들을 찾아보고 있습니다. 과거에도 Google은 제가 k8s나 terraform을 공부할 때도 도움이 되는 학습자료를 많이 제공해 주었는데, GenAI 분야에서도 큰 도움을 주고 있네요. (&lt;em&gt;🤗 문서와 더불어 학습하기 정말 최고인 것 같습니다.&lt;/em&gt;)&lt;/p&gt;
 
 &lt;p&gt;실습 환경을 제공해 주는 Qwiklabs(&lt;a href=&quot;https://www.cloudskillsboost.google/focuses/63251?parent=catalog&quot;&gt;Generative AI with Vertex AI: Prompt Design&lt;/a&gt;)에서 실습을 할 수 있지만,
-해당 과정은 크레딧이 필요한 유료과정입니다. 그러나, &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/examples/prompt-design&quot;&gt;GoogleCloudPlatform의 generative-ai 깃헙&lt;/a&gt;에서 Colab에서 실습할 수 있는 환경을 제공하고 있습니다.
+해당 과정은 크레딧이 필요한 유료과정입니다. 그러나, &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/prompts/examples&quot;&gt;GoogleCloudPlatform의 generative-ai 깃헙&lt;/a&gt;에서 Colab에서 실습할 수 있는 환경을 제공하고 있습니다.
 또한, 파이썬 코드만 참고하여 Google Cloud의 Vertex AI 대신 다른 언어 모델을 활용해 과금을 피할 수 있습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;-prompt-design-best-practices&quot;&gt;👍 &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/intro_prompt_design.ipynb&quot;&gt;Prompt Design Best Practices&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;-prompt-design-best-practices&quot;&gt;👍 Prompt Design Best Practices&lt;/h2&gt;
 
 &lt;p&gt;프롬프트의 의도를 잘못 해석할 가능성을 줄이기 위해 “unfancy” 하게 작성하는 방법을 다음과 같이 안내합니다.&lt;/p&gt;
 
@@ -59,19 +59,17 @@
   &lt;li&gt;구체적이고 명확하게 정의&lt;/li&gt;
   &lt;li&gt;한 번에 하나의 작업만 요청&lt;/li&gt;
   &lt;li&gt;예시를 포함하여 응답 품질 개선&lt;/li&gt;
-  &lt;li&gt;생성 작업을 분류 작업으로 바꿔 안전성 개선
-    &lt;blockquote&gt;
-      &lt;p&gt;생성형 작업은 브레인스토밍에 유용한 개방형 응답을 유도합니다. &lt;br /&gt;
-&lt;em&gt;예) 프로그래밍 실력을 향상시키는 방법을 추천해 주세요.&lt;/em&gt; &lt;br /&gt;
-분류 작업은 결과의 가변성을 줄입니다. &lt;br /&gt;
-&lt;em&gt;예) Python, Java, C 중 어떤 활동을 추천하고 이유를 알려주세요&lt;/em&gt;&lt;/p&gt;
-    &lt;/blockquote&gt;
-  &lt;/li&gt;
+  &lt;li&gt;생성 작업을 분류 작업으로 바꿔 안전성 개선&lt;/li&gt;
 &lt;/ul&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;생성형 작업은 브레인스토밍에 유용한 개방형 응답을 유도합니다. &lt;br /&gt; &lt;em&gt;예) 프로그래밍 실력을 향상시키는 방법을 추천해 주세요.&lt;/em&gt; &lt;br /&gt;
+분류 작업은 결과의 가변성을 줄입니다. &lt;br /&gt; &lt;em&gt;예) Python, Java, C 중 어떤 활동을 추천하고 이유를 알려주세요&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 
 &lt;p&gt;위 원칙을 포함하여 N-shot Prompting을 통해 향상된 답변을 받을 수 있습니다.&lt;/p&gt;
 
-&lt;h2 id=&quot;️-prompt-design&quot;&gt;🖥️ &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/tree/main/language/examples/prompt-design&quot;&gt;Prompt Design&lt;/a&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;️-prompt-design&quot;&gt;🖥️ &lt;a href=&quot;https://github.com/GoogleCloudPlatform/generative-ai/blob/main/language/prompts/intro_prompt_design.ipynb&quot;&gt;Prompt Design&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;해당 부분에서는 5가지 분야에서 효과적인 Prompt를 작성하는 방법을 안내합니다.&lt;/p&gt;
 
