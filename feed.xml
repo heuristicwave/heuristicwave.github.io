@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 31 Mar 2024 00:10:03 +0000</pubDate>
-        <lastBuildDate>Sun, 31 Mar 2024 00:10:03 +0000</lastBuildDate>
+        <pubDate>Sun, 31 Mar 2024 00:17:52 +0000</pubDate>
+        <lastBuildDate>Sun, 31 Mar 2024 00:17:52 +0000</lastBuildDate>
         <generator>Jekyll v3.9.5</generator>
         
             <item>
@@ -202,10 +202,8 @@ Ragas는 &lt;strong&gt;&lt;a href=&quot;https://docs.ragas.io/en/stable/concepts
 평가 &lt;strong&gt;Data의 재사용성&lt;/strong&gt;을 높이기 위해 고려할 지점이 있어 보여, 다음과 같이 몇 자 끄적이며 마치도록 하겠습니다.&lt;/p&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;strong&gt;Fine-tuning&lt;/strong&gt;
-sLM 도입 및 파인튜닝 시, 튜닝을 위한 Datasets에 평가 Datasets을 활용할 수 있음&lt;/li&gt;
-  &lt;li&gt;&lt;strong&gt;호환성&lt;/strong&gt;
-다양한 평가도구들이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jsonl&lt;/code&gt; 형태로 지원하여, 이기종 간 호환이 자유롭게 하면 다양한 평가 가능&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Training&lt;/strong&gt; : sLM 도입 및 파인튜닝 시, 튜닝을 위한 Datasets에 평가 Datasets을 활용할 수 있음&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;호환성&lt;/strong&gt; : 다양한 평가도구들이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jsonl&lt;/code&gt; 형태로 지원하여, 이기종 간 호환이 자유롭다면 다양한 평가 가능&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
