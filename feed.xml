@@ -5,12 +5,12 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 14 Apr 2024 07:40:06 +0000</pubDate>
-        <lastBuildDate>Sun, 14 Apr 2024 07:40:06 +0000</lastBuildDate>
+        <pubDate>Sun, 14 Apr 2024 08:07:42 +0000</pubDate>
+        <lastBuildDate>Sun, 14 Apr 2024 08:07:42 +0000</lastBuildDate>
         <generator>Jekyll v3.9.5</generator>
         
             <item>
-                <title>Create a Multi-Tool Agent with Cluade 3 and Langchain</title>
+                <title>Create a Multi-Tool Agent with Cluade 3 and LangChain</title>
                 <description>&lt;p&gt;ReAct 2편 - Multi-Tool Agent 만들기&lt;/p&gt;
 
 &lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
@@ -425,9 +425,11 @@ Ragas는 &lt;strong&gt;&lt;a href=&quot;https://docs.ragas.io/en/stable/concepts
                 <link>https://heuristicwave.github.io//LLMEvaluation</link>
                 <guid isPermaLink="true">https://heuristicwave.github.io//LLMEvaluation</guid>
                 
-                <category>llm</category>
+                <category>ai</category>
                 
                 <category>genai</category>
+                
+                <category>llm</category>
                 
                 
             </item>
@@ -521,8 +523,7 @@ Agents를 크게 5개의 핵심 컴포넌트로 구성되어 있습니다.&lt;/p
 다음 편에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt; 등의 함수로 교체하며 자세히 다루겠습니다.&lt;/em&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;💡 이번 예시에서 다룬 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt;는 0.1.0(&lt;a href=&quot;https://blog.langchain.dev/langchain-v0-1-0/&quot;&gt;24년 1월 8일 release&lt;/a&gt;)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. &lt;br /&gt;
-&lt;em&gt;LangChainDeprecationWarning: The function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
+  &lt;p&gt;💡 이번 예시에서 다룬 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt;는 0.1.0(&lt;a href=&quot;https://blog.langchain.dev/langchain-v0-1-0/&quot;&gt;24년 1월 8일 release&lt;/a&gt;)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. &lt;br /&gt; &amp;gt; &lt;em&gt;LangChainDeprecationWarning: The function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
 Use Use new agent constructor methods like create_react_agent, create_json_agent, create_structured_chat_agent, etc. instead.&lt;/em&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -572,10 +573,10 @@ Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의
     &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;invoke&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;langchain의 글자수를 구하시오.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;invoke&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;langchain의 글자수를 구하시오.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다. 
+&lt;p&gt;코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다.
 예를 들어, ‘Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함’을 무시하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt;에 ‘&lt;em&gt;단어의 글자 수를 구하는 질문에 해당 도구를 사용하지 마세요.&lt;/em&gt;‘라고 기재하면 다음과 같이 잘못된 추론을 진행합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/customTool.png&quot; alt=&quot;customTool&quot; /&gt;&lt;/p&gt;
@@ -590,16 +591,23 @@ Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
 
 &lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
 </description>
                 <pubDate>Sun, 18 Feb 2024 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//ReAct</link>
                 <guid isPermaLink="true">https://heuristicwave.github.io//ReAct</guid>
                 
-                <category>llm</category>
+                <category>ai</category>
                 
                 <category>genai</category>
                 
-                <category>aws</category>
+                <category>llm</category>
                 
                 
             </item>
@@ -673,9 +681,8 @@ Agent를 직접 다루며 ‘이런 것까지 돼?’라는 생각을 하며 Lan
 &lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
 
 &lt;p&gt;LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
-언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 
-이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/&quot;&gt;vector search for Amazon MemoryDB for Redis&lt;/a&gt;를 포함하여,
-AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.&lt;/p&gt;
+언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다.
+이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/&quot;&gt;vector search for Amazon MemoryDB for Redis&lt;/a&gt;를 포함하여, AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.&lt;/p&gt;
 
 &lt;blockquote&gt;
   &lt;dl&gt;
@@ -721,8 +728,7 @@ Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;
 &lt;/details&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;💡 &lt;strong&gt;redis-cli&lt;/strong&gt;를 활용해 통신 여부 확인 &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}&lt;/code&gt;&lt;/p&gt;
+  &lt;p&gt;💡 &lt;strong&gt;redis-cli&lt;/strong&gt;를 활용해 통신 여부 확인 &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}&lt;/code&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;p&gt;Redis가 준비되었다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis&lt;/code&gt; 그리고 Amazon Bedrock을 사용하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;boto3&lt;/code&gt;를 설치합니다.&lt;/p&gt;
@@ -785,25 +791,28 @@ Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/str
 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Redis on EC2&lt;/code&gt;와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;⚠️ 23년 11월 27일 발표한 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;ElastiCache Serverless&lt;/a&gt;를 사용한다면, 약간의 차이점이 있습니다. &lt;br /&gt;
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 통해 전송 중 데이터를 암호화하므로 &lt;strong&gt;url&lt;/strong&gt; 지정 시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis:&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rediss:&lt;/code&gt;로 기재해야 합니다.&lt;/p&gt;
+  &lt;p&gt;⚠️ 23년 11월 27일 발표한 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;ElastiCache Serverless&lt;/a&gt;를 사용한다면, 약간의 차이점이 있습니다. &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 통해 전송 중 데이터를 암호화하므로 &lt;strong&gt;url&lt;/strong&gt; 지정 시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis:&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rediss:&lt;/code&gt;로 기재해야 합니다.&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;details&gt;
   &lt;summary&gt;⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법&lt;/summary&gt;
 
   &lt;ul&gt;
-    &lt;li&gt;redis-cli 유틸리티에서 TLS 옵션 활성화
-      &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssl-devel gcc
-  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget http://download.redis.io/redis-stable.tar.gz
-  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xvzf redis-stable.tar.gz
-  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;redis-stable
-  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make distclean
-  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make redis-cli &lt;span class=&quot;nv&quot;&gt;BUILD_TLS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-  &lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 src/redis-cli /usr/local/bin/
+    &lt;li&gt;
+      &lt;p&gt;redis-cli 유틸리티에서 TLS 옵션 활성화&lt;/p&gt;
+
+      &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssl-devel gcc
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget http://download.redis.io/redis-stable.tar.gz
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xvzf redis-stable.tar.gz
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;redis-stable
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make distclean
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make redis-cli &lt;span class=&quot;nv&quot;&gt;BUILD_TLS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 src/redis-cli /usr/local/bin/
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
     &lt;/li&gt;
-    &lt;li&gt;접속 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}&lt;/code&gt;&lt;/li&gt;
+    &lt;li&gt;
+      &lt;p&gt;접속 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}&lt;/code&gt;&lt;/p&gt;
+    &lt;/li&gt;
   &lt;/ul&gt;
 
 &lt;/details&gt;
@@ -929,6 +938,8 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                 <guid isPermaLink="true">https://heuristicwave.github.io//LLMCache</guid>
                 
                 <category>ai</category>
+                
+                <category>genai</category>
                 
                 <category>aws</category>
                 
@@ -1203,6 +1214,7 @@ GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교�
 
 &lt;blockquote&gt;
   &lt;p&gt;⚡️ Security level&lt;/p&gt;
+
   &lt;ul&gt;
     &lt;li&gt;Protected : 🤗의 토큰 기반 인증 과정이 필요합니다.&lt;/li&gt;
     &lt;li&gt;Public : 완전히 공개된 API로 별도의 인증이 필요 없습니다.&lt;/li&gt;
@@ -1232,7 +1244,7 @@ GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교�
                 
                 <category>huggingface</category>
                 
-                <category>genai</category>
+                <category>ai</category>
                 
                 <category>aws</category>
                 

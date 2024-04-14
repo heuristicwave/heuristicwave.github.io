@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/llm/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-04-14T07:40:06+00:00</updated>
+  <updated>2024-04-14T08:07:42+00:00</updated>
   <id>https://heuristicwave.github.io/tag/llm/feed.xml</id>
 
   
@@ -32,8 +32,8 @@
 
   
     <entry>
-      <title type="html">Create a Multi-Tool Agent with Cluade 3 and Langchain</title>
-      <link href="https://heuristicwave.github.io/Agents" rel="alternate" type="text/html" title="Create a Multi-Tool Agent with Cluade 3 and Langchain" />
+      <title type="html">Create a Multi-Tool Agent with Cluade 3 and LangChain</title>
+      <link href="https://heuristicwave.github.io/Agents" rel="alternate" type="text/html" title="Create a Multi-Tool Agent with Cluade 3 and LangChain" />
       <published>2024-04-13T00:00:00+00:00</published>
       <updated>2024-04-13T00:00:00+00:00</updated>
       <id>https://heuristicwave.github.io/Agents</id>
@@ -482,9 +482,11 @@ Ragas는 &lt;strong&gt;&lt;a href=&quot;https://docs.ragas.io/en/stable/concepts
       
 
       
-        <category term="llm" />
+        <category term="ai" />
       
         <category term="genai" />
+      
+        <category term="llm" />
       
 
       
@@ -588,8 +590,7 @@ Agents를 크게 5개의 핵심 컴포넌트로 구성되어 있습니다.&lt;/p
 다음 편에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt; 등의 함수로 교체하며 자세히 다루겠습니다.&lt;/em&gt;&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;💡 이번 예시에서 다룬 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt;는 0.1.0(&lt;a href=&quot;https://blog.langchain.dev/langchain-v0-1-0/&quot;&gt;24년 1월 8일 release&lt;/a&gt;)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. &lt;br /&gt;
-&lt;em&gt;LangChainDeprecationWarning: The function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
+  &lt;p&gt;💡 이번 예시에서 다룬 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt;는 0.1.0(&lt;a href=&quot;https://blog.langchain.dev/langchain-v0-1-0/&quot;&gt;24년 1월 8일 release&lt;/a&gt;)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. &lt;br /&gt; &amp;gt; &lt;em&gt;LangChainDeprecationWarning: The function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
 Use Use new agent constructor methods like create_react_agent, create_json_agent, create_structured_chat_agent, etc. instead.&lt;/em&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
 
@@ -639,10 +640,10 @@ Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의
     &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;invoke&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;langchain의 글자수를 구하시오.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt; 
+&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;invoke&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;langchain의 글자수를 구하시오.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
-&lt;p&gt;코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다. 
+&lt;p&gt;코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다.
 예를 들어, ‘Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함’을 무시하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt;에 ‘&lt;em&gt;단어의 글자 수를 구하는 질문에 해당 도구를 사용하지 마세요.&lt;/em&gt;‘라고 기재하면 다음과 같이 잘못된 추론을 진행합니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/customTool.png&quot; alt=&quot;customTool&quot; /&gt;&lt;/p&gt;
@@ -656,7 +657,13 @@ Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의
 
 &lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
 
-&lt;hr /&gt;</content>
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
 
       
       
@@ -673,11 +680,11 @@ Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의
       
 
       
-        <category term="llm" />
+        <category term="ai" />
       
         <category term="genai" />
       
-        <category term="aws" />
+        <category term="llm" />
       
 
       

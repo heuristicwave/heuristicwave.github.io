@@ -182,7 +182,7 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-ai tag-aws post tag-ai ">
+        <article class="post-full  tag-ai tag-genai tag-aws post tag-ai ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
@@ -192,6 +192,10 @@ into the {body} of the default.hbs template -->
                         
                             
                                <a href='/tag/ai/'>AI</a>,
+                            
+                        
+                            
+                               <a href='/tag/genai/'>GENAI</a>,
                             
                         
                             
@@ -215,9 +219,8 @@ into the {body} of the default.hbs template -->
 <h1 id="intro">Intro</h1>
 
 <p>LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
-언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 
-이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 <a href="https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/">vector search for Amazon MemoryDB for Redis</a>를 포함하여,
-AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.</p>
+언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다.
+이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 <a href="https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/">vector search for Amazon MemoryDB for Redis</a>를 포함하여, AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.</p>
 
 <blockquote>
   <dl>
@@ -263,8 +266,7 @@ Redis OSS의 핵심 기능을 확장한 <strong>Redis Stack</strong>을 사용�
 </details>
 
 <blockquote>
-  <p>💡 <strong>redis-cli</strong>를 활용해 통신 여부 확인 <br />
-<code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}</code></p>
+  <p>💡 <strong>redis-cli</strong>를 활용해 통신 여부 확인 <br /> &gt; <code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}</code></p>
 </blockquote>
 
 <p>Redis가 준비되었다면, <code class="language-plaintext highlighter-rouge">langchain</code>, <code class="language-plaintext highlighter-rouge">redis</code> 그리고 Amazon Bedrock을 사용하기 위한 <code class="language-plaintext highlighter-rouge">boto3</code>를 설치합니다.</p>
@@ -327,25 +329,28 @@ Wall time이 <strong>4.6s</strong>에서 <strong>532ms</strong>로 대폭 감소
 <code class="language-plaintext highlighter-rouge">Redis on EC2</code>와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.</p>
 
 <blockquote>
-  <p>⚠️ 23년 11월 27일 발표한 <a href="https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/">ElastiCache Serverless</a>를 사용한다면, 약간의 차이점이 있습니다. <br />
-<code class="language-plaintext highlighter-rouge">TLS</code>를 통해 전송 중 데이터를 암호화하므로 <strong>url</strong> 지정 시, <code class="language-plaintext highlighter-rouge">redis:</code> 대신 <code class="language-plaintext highlighter-rouge">rediss:</code>로 기재해야 합니다.</p>
+  <p>⚠️ 23년 11월 27일 발표한 <a href="https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/">ElastiCache Serverless</a>를 사용한다면, 약간의 차이점이 있습니다. <br /> &gt; <code class="language-plaintext highlighter-rouge">TLS</code>를 통해 전송 중 데이터를 암호화하므로 <strong>url</strong> 지정 시, <code class="language-plaintext highlighter-rouge">redis:</code> 대신 <code class="language-plaintext highlighter-rouge">rediss:</code>로 기재해야 합니다.</p>
 </blockquote>
 
 <details>
   <summary>⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법</summary>
 
   <ul>
-    <li>redis-cli 유틸리티에서 TLS 옵션 활성화
-      <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span><span class="nb">sudo </span>yum <span class="nt">-y</span> <span class="nb">install </span>openssl-devel gcc
-  <span class="nv">$ </span>wget http://download.redis.io/redis-stable.tar.gz
-  <span class="nv">$ </span><span class="nb">tar </span>xvzf redis-stable.tar.gz
-  <span class="nv">$ </span><span class="nb">cd </span>redis-stable
-  <span class="nv">$ </span>make distclean
-  <span class="nv">$ </span>make redis-cli <span class="nv">BUILD_TLS</span><span class="o">=</span><span class="nb">yes</span>
-  <span class="nv">$ </span><span class="nb">sudo install</span> <span class="nt">-m</span> 755 src/redis-cli /usr/local/bin/
+    <li>
+      <p>redis-cli 유틸리티에서 TLS 옵션 활성화</p>
+
+      <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>yum <span class="nt">-y</span> <span class="nb">install </span>openssl-devel gcc
+<span class="nv">$ </span>wget http://download.redis.io/redis-stable.tar.gz
+<span class="nv">$ </span><span class="nb">tar </span>xvzf redis-stable.tar.gz
+<span class="nv">$ </span><span class="nb">cd </span>redis-stable
+<span class="nv">$ </span>make distclean
+<span class="nv">$ </span>make redis-cli <span class="nv">BUILD_TLS</span><span class="o">=</span><span class="nb">yes</span>
+<span class="nv">$ </span><span class="nb">sudo install</span> <span class="nt">-m</span> 755 src/redis-cli /usr/local/bin/
 </code></pre></div>      </div>
     </li>
-    <li>접속 확인 : <code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}</code></li>
+    <li>
+      <p>접속 확인 : <code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}</code></p>
+    </li>
   </ul>
 
 </details>
@@ -571,7 +576,25 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                                     
                                         
                                         
-                                            <li><a href="/Agents">Create a Multi-Tool Agent with Cluade 3 and Langchain</a></li>
+                                            <li><a href="/Agents">Create a Multi-Tool Agent with Cluade 3 and LangChain</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/LLMEvaluation">LLM Evaluation에 대해 끄적이기</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/ReAct">ReAct leverages LLM as a reasoning engine</a></li>
                                         
                                     
                                   
@@ -579,15 +602,7 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                                   
                                 
                                   
-                                
-                                  
-                                
-                                  
                                     
-                                  
-                                
-                                  
-                                
                                   
                                 
                                   
@@ -596,7 +611,14 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                                     
                                         
                                         
-                                            <li><a href="/Kendra">Using Kendra to Implementing RAG in LLM</a></li>
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
                                         
                                     
                                   
@@ -680,7 +702,7 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                         <footer class="read-next-card-footer">
                             <a href="/tag/ai/">
                                 
-                                    See all 2 posts  →
+                                    See all 5 posts  →
                                 
                             </a>
                         </footer>

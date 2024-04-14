@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/huggingface/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-04-14T07:40:06+00:00</updated>
+  <updated>2024-04-14T08:07:42+00:00</updated>
   <id>https://heuristicwave.github.io/tag/huggingface/feed.xml</id>
 
   
@@ -111,6 +111,7 @@ GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교�
 
 &lt;blockquote&gt;
   &lt;p&gt;⚡️ Security level&lt;/p&gt;
+
   &lt;ul&gt;
     &lt;li&gt;Protected : 🤗의 토큰 기반 인증 과정이 필요합니다.&lt;/li&gt;
     &lt;li&gt;Public : 완전히 공개된 API로 별도의 인증이 필요 없습니다.&lt;/li&gt;
@@ -151,7 +152,7 @@ GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교�
       
         <category term="huggingface" />
       
-        <category term="genai" />
+        <category term="ai" />
       
         <category term="aws" />
       

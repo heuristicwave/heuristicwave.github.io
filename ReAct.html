@@ -63,7 +63,7 @@
     <meta property="article:author" content="https://www.facebook.com/" />
     <meta property="article:published_time" content="2024-02-18T00:00:00+00:00" />
     <meta property="article:modified_time" content="2024-02-18T00:00:00+00:00" />
-    <meta property="article:tag" content="Llm" />
+    <meta property="article:tag" content="Ai" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="ReAct leverages LLM as a reasoning engine" />
     <meta name="twitter:description" content="LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp; Amazon Bedrock) Intro LangChain for LLM Application Development 강의에서 Andrew Ng 교수님은 “사람들은 때때로 LLM이 많은 정보를 암기하기 위해 학습된 지식 저장소라 생각한다”라며, LLM을 더 유용하게 사용하는 방법은 추론(Reasoning) 엔진으로 생각하는 것이 더 유용하다고 말합니다. 교수님의 말대로 추론엔진으로써의 LLM을 활용하기 위해서는 ReAct 개념을" />
@@ -72,7 +72,7 @@
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Llm" />
+    <meta name="twitter:data2" content="Ai" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -182,7 +182,7 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-llm tag-genai tag-aws post tag-ai ">
+        <article class="post-full  tag-ai tag-genai tag-llm post tag-ai ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
@@ -191,7 +191,7 @@ into the {body} of the default.hbs template -->
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/llm/'>LLM</a>,
+                               <a href='/tag/ai/'>AI</a>,
                             
                         
                             
@@ -199,7 +199,7 @@ into the {body} of the default.hbs template -->
                             
                         
                             
-                               <a href='/tag/aws/'>AWS</a>
+                               <a href='/tag/llm/'>LLM</a>
                             
                         
                     
@@ -301,8 +301,7 @@ Agents를 크게 5개의 핵심 컴포넌트로 구성되어 있습니다.</p>
 다음 편에서 <code class="language-plaintext highlighter-rouge">create_react_agent</code> 등의 함수로 교체하며 자세히 다루겠습니다.</em></p>
 
 <blockquote>
-  <p>💡 이번 예시에서 다룬 <code class="language-plaintext highlighter-rouge">initialize_agent</code>는 0.1.0(<a href="https://blog.langchain.dev/langchain-v0-1-0/">24년 1월 8일 release</a>)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. <br />
-<em>LangChainDeprecationWarning: The function <code class="language-plaintext highlighter-rouge">initialize_agent</code> was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
+  <p>💡 이번 예시에서 다룬 <code class="language-plaintext highlighter-rouge">initialize_agent</code>는 0.1.0(<a href="https://blog.langchain.dev/langchain-v0-1-0/">24년 1월 8일 release</a>)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. <br /> &gt; <em>LangChainDeprecationWarning: The function <code class="language-plaintext highlighter-rouge">initialize_agent</code> was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
 Use Use new agent constructor methods like create_react_agent, create_json_agent, create_structured_chat_agent, etc. instead.</em></p>
 </blockquote>
 
@@ -352,10 +351,10 @@ Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴�
     <span class="n">verbose</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span>
 <span class="p">)</span>
 
-<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"langchain의 글자수를 구하시오."</span><span class="p">})</span> 
+<span class="n">result</span> <span class="o">=</span> <span class="n">agent</span><span class="p">.</span><span class="n">invoke</span><span class="p">({</span><span class="s">"input"</span><span class="p">:</span> <span class="s">"langchain의 글자수를 구하시오."</span><span class="p">})</span>
 </code></pre></div></div>
 
-<p>코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다. 
+<p>코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다.
 예를 들어, ‘Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함’을 무시하고 <code class="language-plaintext highlighter-rouge">description</code>에 ‘<em>단어의 글자 수를 구하는 질문에 해당 도구를 사용하지 마세요.</em>‘라고 기재하면 다음과 같이 잘못된 추론을 진행합니다.</p>
 
 <p><img src="../../assets/built/images/post/ai/customTool.png" alt="customTool" /></p>
@@ -370,6 +369,13 @@ Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴�
 <p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
 
 <hr />
+
+<p><span class="table-of-contents-list">🦜️🔗 LangChain</span></p>
+<ul class="table-of-contents-list">
+  <li><a href="./GenAI-1">ReAct</a></li>
+  <li><a href="./GenAI-1">Multi Tool Agents</a></li>
+</ul>
+
 
                 </div>
             </section>
@@ -463,7 +469,7 @@ Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴�
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/llm/">Llm</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/ai/">Ai</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -476,7 +482,7 @@ Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴�
                                     
                                         
                                         
-                                            <li><a href="/Agents">Create a Multi-Tool Agent with Cluade 3 and Langchain</a></li>
+                                            <li><a href="/Agents">Create a Multi-Tool Agent with Cluade 3 and LangChain</a></li>
                                         
                                     
                                   
@@ -497,13 +503,30 @@ Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴�
                                   
                                 
                                   
-                                
+                                    
+                                        
+                                        
+                                            <li><a href="/LLMCache">Providing a caching layer for LLM with Langchain in AWS</a></li>
+                                        
+                                    
                                   
                                 
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
                                 
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
                                   
                                 
                                   
@@ -583,9 +606,9 @@ Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴�
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/llm/">
+                            <a href="/tag/ai/">
                                 
-                                    See all 2 posts  →
+                                    See all 5 posts  →
                                 
                             </a>
                         </footer>
@@ -605,11 +628,15 @@ Custom Tools은 앞서 배운 <strong>🦜️🔗 Agents</strong>의 핵심 컴�
                     
                         
                             
-                               <span class="post-card-tags">Llm</span>
+                               <span class="post-card-tags">Ai</span>
                             
                         
                             
-                                <span class="post-card-tags">Genai</span>
+                               <span class="post-card-tags">Genai</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Llm</span>
                             
                         
                     
