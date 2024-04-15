@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 14 Apr 2024 08:07:42 +0000</pubDate>
-        <lastBuildDate>Sun, 14 Apr 2024 08:07:42 +0000</lastBuildDate>
+        <pubDate>Mon, 15 Apr 2024 09:35:17 +0000</pubDate>
+        <lastBuildDate>Mon, 15 Apr 2024 09:35:17 +0000</lastBuildDate>
         <generator>Jekyll v3.9.5</generator>
         
             <item>
@@ -202,8 +202,8 @@
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./ReAct&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./Agents&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 </description>
@@ -594,8 +594,8 @@ Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의
 
 &lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
 &lt;ul class=&quot;table-of-contents-list&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./ReAct&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./Agents&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;
 
 </description>
