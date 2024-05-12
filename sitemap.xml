@@ -4,6 +4,22 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
         <url>
+            <loc>https://heuristicwave.github.io/udemy2.html</loc>
+            
+                <lastmod>2024-05-12T00:00:00+00:00</lastmod>
+            
+
+            
+                <changefreq>weekly</changefreq>
+            
+
+            
+                <priority>0.5</priority>
+            
+
+        </url>
+    
+        <url>
             <loc>https://heuristicwave.github.io/Agents.html</loc>
             
                 <lastmod>2024-04-13T00:00:00+00:00</lastmod>
