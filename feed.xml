@@ -5,8 +5,8 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sat, 30 Nov 2024 14:23:22 +0000</pubDate>
-        <lastBuildDate>Sat, 30 Nov 2024 14:23:22 +0000</lastBuildDate>
+        <pubDate>Sat, 30 Nov 2024 14:28:48 +0000</pubDate>
+        <lastBuildDate>Sat, 30 Nov 2024 14:28:48 +0000</lastBuildDate>
         <generator>Jekyll v3.10.0</generator>
         
             <item>
@@ -104,13 +104,6 @@ AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하�
 &lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/unicorn.jpeg&quot; alt=&quot;unicorn&quot; /&gt;&lt;/p&gt;
 
 &lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;./ReAct&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;./Agents&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
 </description>
                 <pubDate>Sat, 30 Nov 2024 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//gameday</link>
