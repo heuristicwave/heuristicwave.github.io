@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-11-30T14:28:48+00:00</updated>
+  <updated>2024-11-30T15:24:08+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -39,7 +39,7 @@
       <id>https://heuristicwave.github.io/gameday</id>
       <content type="html" xml:base="https://heuristicwave.github.io/gameday">&lt;p&gt;4년 간의 기다림, AWS APJC PLES GameDay 우승 후기&lt;/p&gt;
 
-&lt;h1 id=&quot;aws-gameday-&quot;&gt;AWS GameDay 🦄&lt;/h1&gt;
+&lt;h1 id=&quot;aws-gameday-&quot;&gt;&lt;a href=&quot;#AWS-GameDay&quot;&gt;AWS GameDay 🦄&lt;/a&gt;&lt;a id=&quot;AWS-GameDay&quot;&gt;&lt;/a&gt;&lt;/h1&gt;
 
 &lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/ko/gameday/&quot;&gt;GameDay&lt;/a&gt;는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다.
 보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다.
@@ -50,7 +50,7 @@ AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하�
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;apjc-ples-gameday-지난-기록들&quot;&gt;APJC PLES GameDay 지난 기록들&lt;/h2&gt;
+&lt;h2 id=&quot;apjc-ples-gameday-지난-기록들&quot;&gt;&lt;a href=&quot;#history&quot;&gt;APJC PLES GameDay 지난 기록들&lt;/a&gt;&lt;a id=&quot;history&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;사실 저는 2020년에 입사한 후, 2021년부터 매년 대회에 출전해왔어요.
 처음 참가했던 대회에는 22개 팀이 참여했는데, 저희 팀은 순위권과는 거리가 멀었습니다.
@@ -78,7 +78,7 @@ AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하�
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;2024-genai-gameday&quot;&gt;2024 GenAI GameDay&lt;/h2&gt;
+&lt;h2 id=&quot;2024-genai-gameday&quot;&gt;&lt;a href=&quot;#2024-gameday&quot;&gt;2024 GenAI GameDay&lt;/a&gt;&lt;a id=&quot;2024-gameday&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;2024년 11월 14일, 올해의 최대 화두인 GenAI를 주제로 한 대회가 개최되었고, 약 44여 개 팀이 참가했습니다.&lt;/p&gt;
 
@@ -114,7 +114,7 @@ AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하�
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;감사-인사&quot;&gt;감사 인사&lt;/h2&gt;
+&lt;h2 id=&quot;감사-인사&quot;&gt;&lt;a href=&quot;#thankyou&quot;&gt;감사 인사&lt;/a&gt;&lt;a id=&quot;thankyou&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;마지막으로, 이번 대회에서 함께 우승을 일궈낸 ‘Bedrock Scissors Paper(&lt;a href=&quot;https://user-bin-ksh.medium.com/&quot;&gt;🏃🏻 usr/bin/ksh&lt;/a&gt;, &lt;a href=&quot;https://medium.com/@nuatmochoi&quot;&gt;🏃‍♂️ nuatmochoi&lt;/a&gt;)’ 팀의 사랑하는 동기들에게 감사의 마음을 전합니다.&lt;/p&gt;
 
