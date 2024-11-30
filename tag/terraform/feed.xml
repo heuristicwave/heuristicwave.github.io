@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/terraform/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-05-12T09:20:18+00:00</updated>
+  <updated>2024-11-30T14:23:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/terraform/feed.xml</id>
 
   
@@ -134,9 +134,9 @@ resource &quot;aws_ssm_association&quot; &quot;copycat&quot; {}
 
 &lt;blockquote&gt;
   &lt;p&gt;Resource configured with count &lt;br /&gt;
-➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import 'aws_instance.baz[0]' i-abcd1234&lt;/code&gt; &lt;br /&gt;
+➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import &apos;aws_instance.baz[0]&apos; i-abcd1234&lt;/code&gt; &lt;br /&gt;
 Resource configured with for_each &lt;br /&gt;
-➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import 'aws_instance.baz[&quot;example&quot;]' i-abcd1234&lt;/code&gt; &lt;br /&gt;
+➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import &apos;aws_instance.baz[&quot;example&quot;]&apos; i-abcd1234&lt;/code&gt; &lt;br /&gt;
 Module &lt;br /&gt;
 ➡️ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;terraform import module.foo.aws_instance.bar i-abcd1234&lt;/code&gt;&lt;/p&gt;
 &lt;/blockquote&gt;
@@ -1398,7 +1398,7 @@ BUILDSPEC
       &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:latest&lt;/span&gt;
       &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;docker push $REPOSITORY_URI:$IMAGE_TAG&lt;/span&gt;
       &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;echo Writing image definitions file...&lt;/span&gt;
-      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;printf '[{&quot;name&quot;:&quot;%s&quot;,&quot;imageUri&quot;:&quot;%s&quot;}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &amp;gt; imagedefinitions.json&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;printf &apos;[{&quot;name&quot;:&quot;%s&quot;,&quot;imageUri&quot;:&quot;%s&quot;}]&apos; $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &amp;gt; imagedefinitions.json&lt;/span&gt;
 &lt;span class=&quot;na&quot;&gt;artifacts&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
   &lt;span class=&quot;na&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;imagedefinitions.json&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
@@ -1584,7 +1584,7 @@ git remote &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt;   &lt;span class=&qu
 &lt;span class=&quot;k&quot;&gt;RUN &lt;/span&gt;go build &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; /bin/HelloWorld
 
 &lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; golang:1.12-alpine&lt;/span&gt;
-&lt;span class=&quot;c&quot;&gt;#Copy the build's output binary from the previous build container&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#Copy the build&apos;s output binary from the previous build container&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;COPY&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; --from=build /bin/HelloWorld /bin/HelloWorld&lt;/span&gt;
 &lt;span class=&quot;k&quot;&gt;ENTRYPOINT&lt;/span&gt;&lt;span class=&quot;s&quot;&gt; [&quot;/bin/HelloWorld&quot;]&lt;/span&gt;
 EOF
@@ -1598,7 +1598,7 @@ git push origin &lt;span class=&quot;c&quot;&gt;# main branch로 push&lt;/span&g
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;자격 증명 문제가 있다면 아래 명령어로 해결합니다. &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/codecommit/latest/userguide/troubleshooting-ch.html&quot;&gt;자격 증명 헬퍼 및 AWS CodeCommit에 대한 HTTPS 연결 문제 해결&lt;/a&gt;&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.helper &lt;span class=&quot;s1&quot;&gt;'!aws codecommit credential-helper $@'&lt;/span&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.helper &lt;span class=&quot;s1&quot;&gt;&apos;!aws codecommit credential-helper $@&apos;&lt;/span&gt;
 git config &lt;span class=&quot;nt&quot;&gt;--global&lt;/span&gt; credential.UseHttpPath &lt;span class=&quot;nb&quot;&gt;true&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 

@@ -5,9 +5,127 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Sun, 12 May 2024 09:20:18 +0000</pubDate>
-        <lastBuildDate>Sun, 12 May 2024 09:20:18 +0000</lastBuildDate>
-        <generator>Jekyll v3.9.5</generator>
+        <pubDate>Sat, 30 Nov 2024 14:23:22 +0000</pubDate>
+        <lastBuildDate>Sat, 30 Nov 2024 14:23:22 +0000</lastBuildDate>
+        <generator>Jekyll v3.10.0</generator>
+        
+            <item>
+                <title>AWS APJC PLES GameDay 일기</title>
+                <description>&lt;p&gt;4년 간의 기다림, AWS APJC PLES GameDay 우승 후기&lt;/p&gt;
+
+&lt;h1 id=&quot;aws-gameday-&quot;&gt;AWS GameDay 🦄&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/ko/gameday/&quot;&gt;GameDay&lt;/a&gt;는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다.
+보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다.
+팀원들과 협력하여 클라우드 인프라 구축, 장애 대응, 보안 문제 해결 등 실제 상황과 유사한 다양한 과제를 수행하면서 AWS 서비스에 대한 실전 경험을 쌓을 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;일반적인 GameDay는 누구나 참여할 수 있는 공개 행사로 진행되며, PLES GameDay는 AWS 파트너사 직원들을 대상으로 특별히 진행되는 대회입니다.
+AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하는데, 그 중 아시아 태평양 지역(APJC) 파트너사들이 참여하는 대규모 GameDay는 연 1회 진행됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;apjc-ples-gameday-지난-기록들&quot;&gt;APJC PLES GameDay 지난 기록들&lt;/h2&gt;
+
+&lt;p&gt;사실 저는 2020년에 입사한 후, 2021년부터 매년 대회에 출전해왔어요.
+처음 참가했던 대회에는 22개 팀이 참여했는데, 저희 팀은 순위권과는 거리가 멀었습니다.
+그때 느낀 좌절감을 사내 Wiki에 회고글로 남기기도 했어요.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/review.png&quot; alt=&quot;후기&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2022년 대회는 Security를 주제로 6개 리전에서 23개 팀이 참가했습니다. 작년보다 진화된 실력?으로 동기와 후배님들과 함께 팀을 이뤄 도전했지만…&lt;/p&gt;
+
+&lt;p&gt;네.. 또 다음을 기약했습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;흥민이 형 죄송합니다. 흥민이 형의 아쉬움과 비교할 수는 없겠지만, 당시 너무 마음이 아팠어요.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/review2.png&quot; alt=&quot;후기2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;비록 제가 속한 팀은 아니었지만, 동료들이 한국 리전에서 1등을 차지해서 정말 기뻤습니다. (저는 12등 😭) &lt;br /&gt;
+하지만 한국 1등이 APJC에서는 7등에 그쳤다는 점에서, 아직 세계와의 벽은… 여전히…&lt;/p&gt;
+
+&lt;p&gt;2023년 대회는 Sustainability를 주제로 진행되었으며, 한국을 비롯해 일본, 인도, 호주, 뉴질랜드, 싱가포르, 대만에서 총 39개 팀, 약 140여 명이 참가했습니다.&lt;/p&gt;
+
+&lt;p&gt;여러 번의 도전 경험 덕분인지, 2023년 대회에서는 크게 긴장되지 않더라고요. 아마, 이때부터는 문제별 순위가 제공되었던 것으로 기억해요.
+비록 전체 순위권에는 들지 못했지만, 제가 맡은 문제 중 하나가 전체 1등을 차지했다는 점이 작은 위안이 되었답니다. 😌&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;2024-genai-gameday&quot;&gt;2024 GenAI GameDay&lt;/h2&gt;
+
+&lt;p&gt;2024년 11월 14일, 올해의 최대 화두인 GenAI를 주제로 한 대회가 개최되었고, 약 44여 개 팀이 참가했습니다.&lt;/p&gt;
+
+&lt;p&gt;사실 올해 대회는 지난 4번의 GameDay에서 좋은 성적을 거두지 못했기에 참가를 망설였습니다. 하지만 이번 주제가 GenAI였고, 회사의 적극적인 참가 독려도 있어 참가를 결정하게 되었습니다.&lt;/p&gt;
+
+&lt;p&gt;4년간 AWS를 다루며 쌓은 경험도 있고, 최근에는 Amazon Bedrock 관련 서적을 준비하고 있어서 이번에는 꼭 좋은 결과를 내고 싶었습니다. 🙏&lt;/p&gt;
+
+&lt;p&gt;그래서 대회 전날에는 야근을 하면서까지 사전 공지된 출제 범위에 대해 미리 예습을 하고 갔답니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;방심은-금물-&quot;&gt;방심은 금물 🚫&lt;/h3&gt;
+
+&lt;p&gt;저는 과거 2022년 대회에서 중간에 1등을 하다가 사소한 실수로 순위권 밖으로 밀려난 쓰라린 경험이 있습니다.
+과거 교훈을 통해, 이번 대회도 겸손한 마음으로 임해야지 하고, 침착하고 여러 번의 검토 과정을 거치며 문제를 풀었습니다.
+저희 팀원 모두 압도적인 문제 해결로 대회 중반 즈음에 1위를 달성했습니다.&lt;/p&gt;
+
+&lt;p&gt;따라잡기 힘든 점수 차이를 만들었다고 생각하고 잠시 휴식을 취하던 중, 순위가 2위로 떨어졌습니다.&lt;/p&gt;
+
+&lt;p&gt;순간 과거의 악몽이 떠올라 식겁했죠. 알고 보니 보너스 점수가 부여되는 설문조사에 참여하지 않아 순위가 역전된 것이었습니다. 다행히 빠르게 설문에 참여해 다시 1등 자리를 되찾을 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;전리품?으로 가지고 있는 당시 최종 스코어보드 입니다. 설문 조사 점수가 5,000점인데, 만약 설문에 참여하지 않았다면 순위권 밖인 4위로 밀려났을 것을 생각하면 아찔합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/scoreboard.png&quot; alt=&quot;scoreboard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;‘끝날 때까지 끝난 게 아니다’라는 교훈을 다시 한번 되새기며 대회를 마무리했습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;우승--전문가-&quot;&gt;우승 != 전문가 🧑🏻‍💻&lt;/h3&gt;
+
+&lt;p&gt;저는 4년간의 기다림 끝에 마침내 우승을 할 수 있었어요.
+앞선 3번의 실패 경험을 통해, 실력은 둘째치고 운도 따라야 한다는 것을 너무나 잘 알고 있어요.&lt;/p&gt;
+
+&lt;p&gt;또 아시아를 넘어 EMEA, LATAM, NAMER 등 다른 리전에 엄청난 실력자들이 있다는 것도 잘 알고 있습니다.
+이번 성과가 기존의 노력들을 위로하는 작은 선물이라 생각하고, 내실을 다져가는데 노력하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;감사-인사&quot;&gt;감사 인사&lt;/h2&gt;
+
+&lt;p&gt;마지막으로, 이번 대회에서 함께 우승을 일궈낸 ‘Bedrock Scissors Paper(&lt;a href=&quot;https://user-bin-ksh.medium.com/&quot;&gt;🏃🏻 usr/bin/ksh&lt;/a&gt;, &lt;a href=&quot;https://medium.com/@nuatmochoi&quot;&gt;🏃‍♂️ nuatmochoi&lt;/a&gt;)’ 팀의 사랑하는 동기들에게 감사의 마음을 전합니다.&lt;/p&gt;
+
+&lt;p&gt;또한, 끝까지 포기하지 않고 꾸준히 도전하여 2등이라는 놀라운 성과를 이룬 ‘GSN Growth Lab’ 팀의 동료들에게도 축하와 감사의 인사를 전합니다!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/team.png&quot; alt=&quot;team&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;현재 트로피가 미국에서 배송 중이라고 하는데, 하루빨리 받아보고 싶네요!
+이틀 후에는 인터뷰도 예정되어 있습니다. 기사가 나오면 이 글 하단에 참고 자료로 추가하도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;🦄 행운을 가져다주는 유니콘과 함께, 소중한 시간을 내어 읽어주셔서 감사합니다! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/unicorn.jpeg&quot; alt=&quot;unicorn&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;./ReAct&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./Agents&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+                <pubDate>Sat, 30 Nov 2024 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//gameday</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//gameday</guid>
+                
+                <category>uncategorized</category>
+                
+                <category>aws</category>
+                
+                <category>genai</category>
+                
+                <category>event</category>
+                
+                
+            </item>
         
             <item>
                 <title>강의 후기 - 머신러닝의 모든 것 with AI, Python &amp; R</title>
@@ -69,13 +187,13 @@
                 <title>Create a Multi-Tool Agent with Cluade 3 and LangChain</title>
                 <description>&lt;p&gt;ReAct 2편 - Multi-Tool Agent 만들기&lt;/p&gt;
 
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+&lt;h1 id=&quot;intro&quot;&gt;&lt;a href=&quot;#intro&quot;&gt;Intro&lt;/a&gt;&lt;/h1&gt;
 
 &lt;p&gt;이번 포스팅은 &lt;a href=&quot;https://heuristicwave.github.io/ReAct&quot;&gt;1편&lt;/a&gt;에서 미뤘던 ReAct Agent 생성자(Constructor) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt;와 여러 개의 Task를 수행하는 &lt;strong&gt;Multi-Agents&lt;/strong&gt;를 구현하는 방법에 대해 알아보겠습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;1️⃣-편-복습&quot;&gt;1️⃣ 편 복습&lt;/h2&gt;
+&lt;h2 id=&quot;1️⃣-1편-복습&quot;&gt;&lt;a href=&quot;#review-part-1&quot;&gt;1️⃣ 1편 복습&lt;/a&gt;&lt;a id=&quot;review-part-1&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;&lt;strong&gt;❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요?&lt;/strong&gt;&lt;/p&gt;
 
@@ -128,7 +246,7 @@
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;2️⃣-create_xxx_agent&quot;&gt;2️⃣ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_XXX_agent&lt;/code&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;2️⃣-create_xxx_agent&quot;&gt;&lt;a href=&quot;#create-xxx-agent&quot;&gt;2️⃣ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_XXX_agent&lt;/code&gt;&lt;/a&gt;&lt;a id=&quot;create-xxx-agent&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;이번에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; 생성자 대신, 새로운 생성자인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt; 생성자를 사용해 Agent를 만들어 보겠습니다. url의 정보를 읽어들여 질문에 대하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt;를 활용해 추론하는 간단한 에이전트입니다.&lt;/p&gt;
 
@@ -182,7 +300,7 @@
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;3️⃣-multi-tool-agent️-tool--custom-tool&quot;&gt;3️⃣ Multi-Tool Agent(🦜️🔗 Tool &amp;amp; Custom Tool)&lt;/h2&gt;
+&lt;h2 id=&quot;3️⃣-multi-tool-agent️-tool--custom-tool&quot;&gt;&lt;a href=&quot;#multi-tool-agent&quot;&gt;3️⃣ Multi-Tool Agent(🦜️🔗 Tool &amp;amp; Custom Tool)&lt;/a&gt;&lt;a id=&quot;multi-tool-agent&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;이번에는 Built-in Tool이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain_community&lt;/code&gt;에서 제공하는 도구와 조금 더 복잡한 작업을 지원하는 Custom Tool을 사용하여 Multi-Tool Agent를 만들어 보겠습니다. &lt;em&gt;(PPT를 만들기 위해 Markdown을 PPT로 만드는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_marp&lt;/code&gt;라는 Custom Tool을 사전에 정의해 두었습니다.)&lt;/em&gt;&lt;/p&gt;
 
@@ -248,7 +366,7 @@
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+&lt;h2 id=&quot;outro&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;Outro&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;1편을 작성하고 2편이 나오기까지 2달이 걸렸습니다. 그래도 다짐을 글로 적어두니, 돌고 돌아 작성하게 되는 것 같습니다. 매번 글쓰기는 고통스럽지만, 작성하고 나면 뿌듯하기에 3편은 LangGraph와 Routing에 대한 내용을 약속하며 이번 포스팅을 마무리 짓겠습니다.&lt;/p&gt;
 
@@ -378,19 +496,19 @@ Amazon Bedrock 서비스를 사용하는 경우, Settings를 활용해 LLM 주�
     The extracted context contains two separate paragraphs, each addressing one of the two queries. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     The first paragraph discusses the popularity of sports globally, &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     mentioning that football is considered the most popular sport with a large following. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    This information can answer the first query 'Which is the most popular global sport?' completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    This information can answer the first query &apos;Which is the most popular global sport?&apos; completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     The second paragraph provides details about the creation of the Python programming language by Guido van Rossum, &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    which can answer the second query 'Who created the Python language?' completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    which can answer the second query &apos;Who created the Python language?&apos; completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     Therefore, the extracted context can answer both queries in their entirety.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Choice&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;score_factual_accuracy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;explanation_factual_accuracy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;{&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: [&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;        {&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Fact&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Football is the most popular sport with around 4 billion followers worldwide.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context directly states that 'Football is undoubtedly the world's most popular sport' &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    and mentions that it has 'a followership of more than 4 billion people'. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context directly states that &apos;Football is undoubtedly the world&apos;s most popular sport&apos; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    and mentions that it has &apos;a followership of more than 4 billion people&apos;. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     This supports the given fact.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;            &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Judgement&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;yes&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;        },&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     {&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;            &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Fact&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Python language was created by Guido van Rossum.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context explicitly mentions that 'Python, created by Guido van Rossum in the late 1980s,
-    is a high-level general-purpose programming language'. This directly supports the given fact.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context explicitly mentions that &apos;Python, created by Guido van Rossum in the late 1980s,
+    is a high-level general-purpose programming language&apos;. This directly supports the given fact.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Judgement&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;yes&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;        }&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;    ]&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;score_response_completeness&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;explanation_response_completeness&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;_comment&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;생략&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
@@ -808,7 +926,7 @@ Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;redis://{EC2_Endpoiont}:6379&quot;&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -829,8 +947,8 @@ Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이�
 
 &lt;p&gt;Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 &lt;strong&gt;Amazon Titan Embedding&lt;/strong&gt; 모델을 활용하겠습니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redis_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -883,7 +1001,7 @@ Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/str
 &lt;h3 id=&quot;semantic-cache-1&quot;&gt;Semantic Cache&lt;/h3&gt;
 
 &lt;p&gt;반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command 'module', with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command &apos;module&apos;, with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
 즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
@@ -894,7 +1012,8 @@ Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/str
 임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요.&lt;/p&gt;
+  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요. &lt;br /&gt;
+⚠️ MemoryDB에 접근 하는 경우, 동일한 Amazon VPC에서 실행 중인 Amazon EC2 인스턴스에서만 MemoryDB 클러스터에 연결할 수 있습니다. (외부 액세스가 필요한 경우, VPN을 통해 수행할 수 있습니다.)&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&quot;standard-cache-2&quot;&gt;Standard Cache&lt;/h3&gt;
@@ -1509,144 +1628,6 @@ Answer:
                 <category>genai</category>
                 
                 <category>gcp</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>Using Kendra to Implementing RAG in LLM</title>
-                <description>&lt;p&gt;본 글은 23년 5월 3일 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/machine-learning/&quot;&gt;AWS Machine Learning Blog&lt;/a&gt;에 실린
-&lt;a href=&quot;https://aws.amazon.com/ko/blogs/machine-learning/quickly-build-high-accuracy-generative-ai-applications-on-enterprise-data-using-amazon-kendra-langchain-and-large-language-models/&quot;&gt;Quickly build high-accuracy Generative AI applications on enterprise data using Amazon Kendra, LangChain, and large language models(이하, AWS Blog)&lt;/a&gt;를 읽고 실습에 약간의 설명과 RAG에 대하여 알아본 내용을 담은 글입니다.&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;ChatGPT와 같은 Gen AI의 대표적인 단점으로는 hallucinations(환각) 증상이 있습니다. 
-AI 업계에서는 Gen AI로부터 정확도 높은 답변을 얻기 위하여, Prompt Tuning 및 In-Context Learning 등 다양한 방법들을 제시하고 있습니다.
-본문에서는 Gen AI의 응답을 특정 데이터로 제한하여 LLM의 정확도를 높이는 RAG 기술을 설명하고 이를 &lt;a href=&quot;https://aws.amazon.com/ko/kendra/&quot;&gt;Amazon Kendra&lt;/a&gt;로 구현합니다.
-이번 포스팅에서는 RAG에 대하여 알아보고 어떻게 Kendra와 함께 사용하는지 알아보겠습니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;️-ragretrieval-augmented-generation&quot;&gt;👆️ RAG(Retrieval-Augmented Generation)&lt;/h2&gt;
-
-&lt;h3 id=&quot;amazon-sagemaker-개발자-가이드&quot;&gt;&lt;a href=&quot;https://docs.aws.amazon.com/sagemaker/latest/dg/jumpstart-foundation-models-customize-rag.html&quot;&gt;Amazon SageMaker 개발자 가이드&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;아마존의 세이지메이커 개발자 가이드에서는 RAG를 다음과 같이 설명합니다. &lt;strong&gt;기초 모델을 보강하기 위해 외부 데이터를 검색하고, 검색된 관련 데이터를 컨텍스트에 추가하여 프롬프트를 강화하는 방법.&lt;/strong&gt;
-즉, RAG는 생성 모델의 창의성과 검색 엔진의 정확성을 조합하여 높은 정확성(high-accuracy)을 가진 결과물을 생성합니다. 해당 문서에 함께 첨부된 워크플로 그림을 보면서 다시 한번 상기해 보세요!&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://docs.aws.amazon.com/images/sagemaker/latest/dg/images/jumpstart/jumpstart-fm-rag.jpg&quot; alt=&quot;amazon rag&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;RAG 모델 아키텍처에 대한 추가 정보로 2020년 Facebook AI Research(Meta AI)가 발표한 &lt;a href=&quot;https://arxiv.org/abs/2005.11401&quot;&gt;Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks&lt;/a&gt; 논문을 참조로 제공합니다.
-해당 논문을 이해하여 글을 작성해 보려 했으나, 아직 저에게는 너무 어려워 검색을 통해 학습하다 알게 된 Meta AI 블로그 글을 소개해 드리겠습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;rag-streamlining-the-creation-of-intelligent-natural-language-processing-models&quot;&gt;&lt;a href=&quot;https://ai.facebook.com/blog/retrieval-augmented-generation-streamlining-the-creation-of-intelligent-natural-language-processing-models/&quot;&gt;RAG: Streamlining the creation of intelligent natural language processing models&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;위 블로그 “Combining the strengths of open-book and closed-book” 파트에서, RAG를 다음과 같이 설명합니다. RAG는 기존의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;seq2seq&lt;/code&gt; 모델과 비슷하게 작동하지만, 중간 단계에서 차이가 있어 일반적인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;seq2seq&lt;/code&gt; 방법보다 더욱 뛰어납니다.
-예를 들어 &lt;em&gt;“지구상에 첫 번째 포유류가 언제 나타났는가?”&lt;/em&gt; 와 같은 프롬프트에 대해 RAG는 &lt;em&gt;“포유류”, “지구의 역사”, “포유류의 진화”&lt;/em&gt; 와 같은 문서를 찾아냅니다.
-이런 지원(supporting) 문서들은 원래 입력과 컨텍스트로 연결되어 실제 출력을 생성하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;seq2seq&lt;/code&gt; 모델에 공급됩니다.&lt;/p&gt;
-
-&lt;p&gt;RAG는 다음 두 가지 지식을 갖게 되고, 이 두 가지는 서로 상호 보완적입니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;seq2seq&lt;/code&gt; 모델의 매개 변수에 저장된 지식 (파라미터 기반 메모리)&lt;/li&gt;
-  &lt;li&gt;RAG가 검색하여 얻은 말뭉치(corpus)에 저장된 지식 (비파라미터 기반 메모리)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;해당 파트의 제목이 “오픈북과 클로즈드북의 장점 결합”인데 위 2가지 지식이 각각 ‘오픈북’과 ‘클로즈드 북’을 의미하는 것 같습니다. 이어서 RAG의 진정한 강점을 유연성이라 언급하며 다음과 같이 소개합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;사전 학습된 언어 모델이 알고 있는 내용을 변경하려면 전체 모델을 새로운 문서로 재학습&lt;/strong&gt;해야 합니다. 그러나 &lt;strong&gt;RAG를 사용하면 지식 검색에 사용되는 문서를 교체함으로써 모델이 알고 있는 내용을 쉽게 제어&lt;/strong&gt;할 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;여담으로, 본문에서 RAG가 비파라미터 기반 메모리를 사용하여 seq2seq 모델이 올바른 응답을 생성하도록 하는 것을 &lt;em&gt;큐(cue)&lt;/em&gt; 한다라고 하는데,
-최근 언론에 공개된 곧 출시가 예정된 네이버의 검색 AI 챗봇 이름도 &lt;em&gt;Cue:&lt;/em&gt; 인 점이 흥미롭네요.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;prompt-engineering-guide---rag&quot;&gt;&lt;a href=&quot;https://www.promptingguide.ai/techniques/rag&quot;&gt;Prompt Engineering Guide - RAG&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;마지막으로, 글 작성 시점 Github Star가 33.6k인 &lt;a href=&quot;https://github.com/dair-ai/Prompt-Engineering-Guide&quot;&gt;Prompt Engineering Guide&lt;/a&gt;의 문서를 소개해 드리며 실습 리뷰로 넘어가겠습니다. &lt;em&gt;(내용은 앞서 언급한 Meta AI와 유사합니다.)&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-review&quot;&gt;✌️ Review&lt;/h2&gt;
-
-&lt;p&gt;해당 파트의 내용은 &lt;strong&gt;AWS Blog에서도 다루고 있으므로, 실습을 위한 모든 부분을 설명하지는 않습니다.&lt;/strong&gt; &lt;em&gt;(한 달째 글을 작성하고 있는데, &lt;a href=&quot;https://aws.amazon.com/ko/blogs/tech/quickly-build-high-accuracy-generative-ai-applications-on-enterprise-data-using-amazon-kendra-langchain-and-large-language-models/&quot;&gt;AWS Korea에서도 번역본&lt;/a&gt;이 올라왔네요.)&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;amazon-kendra&quot;&gt;Amazon Kendra&lt;/h3&gt;
-
-&lt;p&gt;우선 AWS Blog에서 RAG를 구현하는 Kendra에 대하여 짧게 알아보겠습니다. &lt;a href=&quot;https://docs.aws.amazon.com/kendra/latest/dg/what-is-kendra.html&quot;&gt;Developer Guide&lt;/a&gt;에서는 Kendra를 
-자연어 처리(NLP) 및 ML 알고리즘을 사용해 데이터(your data)에서 검색 질문에 대한 답을 반환하는 지능형 검색 서비스라고 정의합니다.
-개발자 가이드에서 언급되어 있다시피 your data를 기반으로 답변을 생성하기 때문에, Kendra를 사용하기 위해서는 Index를 구축해야 합니다.
-인덱스를 수집하는 방법은 S3, Service Now와 같은 외부 서비스 및 웹 크롤러를 통해서도 직접 구축할 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;AWS Blog에서 제공하는 &lt;a href=&quot;https://github.com/aws-samples/amazon-kendra-langchain-extensions/blob/main/kendra_retriever_samples/kendra-docs-index.yaml#L110&quot;&gt;Cloudformation의 110L&lt;/a&gt;을 확인해 보면, Web Crawler를 사용해 실습을 진행하는 것을 확인할 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;제공된 Cloudformation 코드의 배포를 성공하고, Kendra 콘솔에서 질의를 남기면 아래와 같이 내가 수집한 Data를 기반으로 검색 결과를 반환합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/kendra.png&quot; alt=&quot;kendra&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;sagemaker-jumpstart&quot;&gt;SageMaker JumpStart&lt;/h3&gt;
-
-&lt;p&gt;Kendra Index를 생성했다면, 이제 생성형 AI를 구축해야 합니다. Open AI의 Key를 발급받아 사용할 수도 있지만, 내 데이터가 외부(LLM)로 유출되지 않기를 원한다면 직접 생성형 모델을 구축해야 합니다.
-SageMaker JumpStart에서는 자연어 처리, 객체 감지 및 이미지 분류와 같은 다양한 오픈 소스 모델을 클릭 한 번으로 배포할 수 있게 제공합니다.&lt;/p&gt;
-
-&lt;p&gt;Blog 글에는 SageMaker 생성 방법은 나와있지 않지만 &lt;a href=&quot;https://docs.aws.amazon.com/sagemaker/latest/dg/studio-launch.html&quot;&gt;문서&lt;/a&gt;를 참고해 생성하고, JumpStart에서 아래와 같이 사용할 환경을 설정하세요. 저는 Flan-T5 모델과 가장 크기가 작은 ml.g5.2xlarge를 선택했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/flan.png&quot; alt=&quot;flan_xl&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;streamlit-langchain&quot;&gt;Streamlit, LangChain&lt;/h3&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://streamlit.io/&quot;&gt;Streamlit&lt;/a&gt;은 ML 혹은 Data Science 프로젝트를 쉽게 구축할 수 있는 오픈소스 앱 프레임워크이며, &lt;a href=&quot;https://python.langchain.com/docs/get_started/introduction.html&quot;&gt;LangChain&lt;/a&gt;은 언어 모델로 구동되는 앱을 개발할 수 있는 프레임워크입니다.&lt;/p&gt;
-
-&lt;p&gt;실습을 제공하는 &lt;a href=&quot;https://github.com/aws-samples/amazon-kendra-langchain-extensions/tree/main/kendra_retriever_samples&quot;&gt;Github&lt;/a&gt;에서는
-다음 4가지(anthropic, flan_xl, flan_xxl, open_ai)에 대해서만 샘플 코드를 제공하며, 다른 모델을 사용하고 싶다면 &lt;a href=&quot;https://python.langchain.com/docs/get_started/introduction.html&quot;&gt;LangChain&lt;/a&gt;을 활용해 직접 코드를 작성해야 합니다.&lt;/p&gt;
-
-&lt;p&gt;이어서, 데모 웹 앱 Streamlit(여기서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt;)과 연동할 LangChain 코드(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kendra_chat_*.py&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kendra_retriever_*.py&lt;/code&gt;)에 사용되는 환경 변수를 설정해야 합니다.
-이때 SageMaker의 ENDPOINT는 ARN 주소가 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;jumpstart-&lt;/code&gt;로 시작하는 name 값이며, &lt;a href=&quot;https://github.com/aws-samples/amazon-kendra-langchain-extensions/tree/main/kendra_retriever_samples#running-samples&quot;&gt;Github&lt;/a&gt;에서는
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS_REGION&lt;/code&gt; 값 만을 지정하나 실행 간 오류가 있을 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS_DEFAULT_REGION&lt;/code&gt; 값도 함께 환경 변수로 설정하세요. &lt;em&gt;(참고 : &lt;a href=&quot;https://boto3.amazonaws.com/v1/documentation/api/latest/guide/configuration.html#using-environment-variables&quot;&gt;Boto3 documentation&lt;/a&gt;)&lt;/em&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;구현-결과&quot;&gt;구현 결과&lt;/h3&gt;
-
-&lt;p&gt;모든 과정을 수행하고 나면, 아래와 같이 Kendra Index에 검색된 결과가 Sources와 함께 flan_xl 모델이 질문에 대한 정확도 높은 답변을 생성합니다.
-&lt;a href=&quot;https://huggingface.co/google/flan-t5-xl#model-description&quot;&gt;flan-t5-xl&lt;/a&gt; 모델은 한국어도 지원하기 때문에, 한국어로 질문해도 원하는 답변을 얻을 수 있는 것을 확인할 수 있습니다.
-만약, 답변도 한국어로 받고 싶다면 LangChain 코드를 수정해야 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/RAGwithKendra.png&quot; alt=&quot;RAGwithKendra&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;clean-up&quot;&gt;Clean Up&lt;/h3&gt;
-
-&lt;p&gt;실습 이후, 비용을 절약하기 위해 리소스를 정리해야 합니다. Kendra의 경우 CloudFormation을 삭제하면 되지만, JumpStart는 아래와 같이 ‘Launched JumpStart assets(왼쪽 하단)’에서
-배포한 endpoint를 찾아 직접 삭제해 주어야 합니다. 잊지 마세요!&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/jumpstart.png&quot; alt=&quot;jumpstart&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지 RAG에 대해서 알아보고, AWS에서 Kendra와 SageMaker JumpStart를 활용해 자체적으로 구축한 LLM에 RAG를 적용시켜 높은 정확도의 답변을 생성하는 법을 알아봤습니다.
-JumpStart를 활용해 손쉽게 Private 언어 모델을 배포하고 LangChain을 활용한 코드 몇 줄로 정확도 높은 답변을 생성하는 게 무척이나 신기합니다.&lt;/p&gt;
-
-&lt;p&gt;만약 RAG를 Kendra가 아닌 다른 방법으로 구축한다면, 다음과 같이 구축할 수도 있습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;&lt;a href=&quot;https://sagemaker-examples.readthedocs.io/en/latest/introduction_to_amazon_algorithms/jumpstart-foundation-models/question_answering_retrieval_augmented_generation/question_answering_jumpstart_knn.html#Retrieval-Augmented-Generation:-Question-Answering-based-on-Custom-Dataset&quot;&gt;Custom Dataset&lt;/a&gt; : SageMaker KNN 알고리즘을 사용해 임베딩 지식을 인덱스&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://sagemaker-examples.readthedocs.io/en/latest/introduction_to_amazon_algorithms/jumpstart-foundation-models/question_answering_retrieval_augmented_generation/question_answering_langchain_jumpstart.html#Retrieval-Augmented-Generation:-Question-Answering-based-on-Custom-Dataset-with-Open-sourced-LangChain-Library&quot;&gt;Custom Dataset with Open-sourced LangChain Library&lt;/a&gt; : 커스텀 데이터 셋을 준비하고 LangChain과 결합해 사용&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/ko/blogs/machine-learning/build-a-powerful-question-answering-bot-with-amazon-sagemaker-amazon-opensearch-service-streamlit-and-langchain/&quot;&gt;Amazon OpenSearch Service&lt;/a&gt; : OpenSearch Service로 인덱스하여 RAG 구현&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;Kendra를 사용하기 위해서는 엔터프라이즈 에디션을 기준으로 시간당 $1.4가 청구되지만, OpenSearch로 인덱스를 생성하거나 직접 Dataset을 구축하는데 필요한 인력과 비용을 생각하면 Kendra를 활용하는 것이 RAG 구현의 최선의 방법이 아닌가 싶습니다.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-</description>
-                <pubDate>Tue, 11 Jul 2023 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//Kendra</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//Kendra</guid>
-                
-                <category>ai</category>
-                
-                <category>aws</category>
                 
                 
             </item>

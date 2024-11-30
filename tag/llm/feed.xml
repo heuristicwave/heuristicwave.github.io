@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/llm/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-05-12T09:20:18+00:00</updated>
+  <updated>2024-11-30T14:23:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/llm/feed.xml</id>
 
   
@@ -39,13 +39,13 @@
       <id>https://heuristicwave.github.io/Agents</id>
       <content type="html" xml:base="https://heuristicwave.github.io/Agents">&lt;p&gt;ReAct 2편 - Multi-Tool Agent 만들기&lt;/p&gt;
 
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
+&lt;h1 id=&quot;intro&quot;&gt;&lt;a href=&quot;#intro&quot;&gt;Intro&lt;/a&gt;&lt;/h1&gt;
 
 &lt;p&gt;이번 포스팅은 &lt;a href=&quot;https://heuristicwave.github.io/ReAct&quot;&gt;1편&lt;/a&gt;에서 미뤘던 ReAct Agent 생성자(Constructor) &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt;와 여러 개의 Task를 수행하는 &lt;strong&gt;Multi-Agents&lt;/strong&gt;를 구현하는 방법에 대해 알아보겠습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;1️⃣-편-복습&quot;&gt;1️⃣ 편 복습&lt;/h2&gt;
+&lt;h2 id=&quot;1️⃣-1편-복습&quot;&gt;&lt;a href=&quot;#review-part-1&quot;&gt;1️⃣ 1편 복습&lt;/a&gt;&lt;a id=&quot;review-part-1&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;&lt;strong&gt;❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요?&lt;/strong&gt;&lt;/p&gt;
 
@@ -98,7 +98,7 @@
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;2️⃣-create_xxx_agent&quot;&gt;2️⃣ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_XXX_agent&lt;/code&gt;&lt;/h2&gt;
+&lt;h2 id=&quot;2️⃣-create_xxx_agent&quot;&gt;&lt;a href=&quot;#create-xxx-agent&quot;&gt;2️⃣ &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_XXX_agent&lt;/code&gt;&lt;/a&gt;&lt;a id=&quot;create-xxx-agent&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;이번에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; 생성자 대신, 새로운 생성자인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt; 생성자를 사용해 Agent를 만들어 보겠습니다. url의 정보를 읽어들여 질문에 대하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt;를 활용해 추론하는 간단한 에이전트입니다.&lt;/p&gt;
 
@@ -152,7 +152,7 @@
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;3️⃣-multi-tool-agent️-tool--custom-tool&quot;&gt;3️⃣ Multi-Tool Agent(🦜️🔗 Tool &amp;amp; Custom Tool)&lt;/h2&gt;
+&lt;h2 id=&quot;3️⃣-multi-tool-agent️-tool--custom-tool&quot;&gt;&lt;a href=&quot;#multi-tool-agent&quot;&gt;3️⃣ Multi-Tool Agent(🦜️🔗 Tool &amp;amp; Custom Tool)&lt;/a&gt;&lt;a id=&quot;multi-tool-agent&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;이번에는 Built-in Tool이 아닌 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain_community&lt;/code&gt;에서 제공하는 도구와 조금 더 복잡한 작업을 지원하는 Custom Tool을 사용하여 Multi-Tool Agent를 만들어 보겠습니다. &lt;em&gt;(PPT를 만들기 위해 Markdown을 PPT로 만드는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_marp&lt;/code&gt;라는 Custom Tool을 사전에 정의해 두었습니다.)&lt;/em&gt;&lt;/p&gt;
 
@@ -218,7 +218,7 @@
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
 
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
+&lt;h2 id=&quot;outro&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;Outro&lt;/a&gt;&lt;/h2&gt;
 
 &lt;p&gt;1편을 작성하고 2편이 나오기까지 2달이 걸렸습니다. 그래도 다짐을 글로 적어두니, 돌고 돌아 작성하게 되는 것 같습니다. 매번 글쓰기는 고통스럽지만, 작성하고 나면 뿌듯하기에 3편은 LangGraph와 Routing에 대한 내용을 약속하며 이번 포스팅을 마무리 짓겠습니다.&lt;/p&gt;
 
@@ -368,19 +368,19 @@ Amazon Bedrock 서비스를 사용하는 경우, Settings를 활용해 LLM 주�
     The extracted context contains two separate paragraphs, each addressing one of the two queries. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     The first paragraph discusses the popularity of sports globally, &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     mentioning that football is considered the most popular sport with a large following. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    This information can answer the first query 'Which is the most popular global sport?' completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    This information can answer the first query &apos;Which is the most popular global sport?&apos; completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     The second paragraph provides details about the creation of the Python programming language by Guido van Rossum, &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    which can answer the second query 'Who created the Python language?' completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    which can answer the second query &apos;Who created the Python language?&apos; completely. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     Therefore, the extracted context can answer both queries in their entirety.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Choice&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;A&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;score_factual_accuracy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;explanation_factual_accuracy&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;{&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Result&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: [&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;        {&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Fact&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Football is the most popular sport with around 4 billion followers worldwide.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context directly states that 'Football is undoubtedly the world's most popular sport' &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    and mentions that it has 'a followership of more than 4 billion people'. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context directly states that &apos;Football is undoubtedly the world&apos;s most popular sport&apos; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    and mentions that it has &apos;a followership of more than 4 billion people&apos;. &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     This supports the given fact.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;            &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Judgement&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;yes&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;        },&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     {&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;            &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Fact&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Python language was created by Guido van Rossum.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context explicitly mentions that 'Python, created by Guido van Rossum in the late 1980s,
-    is a high-level general-purpose programming language'. This directly supports the given fact.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Reasoning&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;The context explicitly mentions that &apos;Python, created by Guido van Rossum in the late 1980s,
+    is a high-level general-purpose programming language&apos;. This directly supports the given fact.&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;Judgement&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;: &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;yes&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&quot;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;        }&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;    ]&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;score_response_completeness&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mf&quot;&gt;1.0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
     &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;explanation_response_completeness&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;_comment&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;생략&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;

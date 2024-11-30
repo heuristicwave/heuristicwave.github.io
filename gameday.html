@@ -11,7 +11,7 @@
 
 
 
-    <title>Terraform Tips 2 - Data & Index</title>
+    <title>AWS APJC PLES GameDay 일기</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,30 +49,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/TerraformTips2" />
+    <link rel="canonical" href="https://heuristicwave.github.io/gameday" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Terraform Tips 2 - Data & Index" />
-    <meta property="og:description" content="Terraform 더 익숙하게 2 - Data &amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁 Intro 이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. Terraform Data를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다. 모든" />
-    <meta property="og:url" content="https://heuristicwave.github.io/TerraformTips2" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta property="og:title" content="AWS APJC PLES GameDay 일기" />
+    <meta property="og:description" content="4년 간의 기다림, AWS APJC PLES GameDay 우승 후기 AWS GameDay 🦄 GameDay는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다. 보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다. 팀원들과" />
+    <meta property="og:url" content="https://heuristicwave.github.io/gameday" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/unicorn.jpeg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2022-01-02T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2022-01-02T00:00:00+00:00" />
-    <meta property="article:tag" content="Devops" />
+    <meta property="article:published_time" content="2024-11-30T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2024-11-30T00:00:00+00:00" />
+    <meta property="article:tag" content="Uncategorized" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Terraform Tips 2 - Data & Index" />
-    <meta name="twitter:description" content="Terraform 더 익숙하게 2 - Data &amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁 Intro 이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. Terraform Data를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다. 모든" />
+    <meta name="twitter:title" content="AWS APJC PLES GameDay 일기" />
+    <meta name="twitter:description" content="4년 간의 기다림, AWS APJC PLES GameDay 우승 후기 AWS GameDay 🦄 GameDay는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다. 보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다. 팀원들과" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/terraform.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/unicorn.jpeg" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Devops" />
+    <meta name="twitter:data2" content="Uncategorized" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/TerraformTips2",
+    "url": "https://heuristicwave.github.io/gameday",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/background/terraform.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/unicorn.jpeg",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/TerraformTips2"
+        "@id": "https://heuristicwave.github.io/gameday"
     },
-    "description": "Terraform 더 익숙하게 2 - Data &amp; Index AWS 리소스로 알아보는 terraform Data 활용 팁 Intro 이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. Terraform Data를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다. 모든"
+    "description": "4년 간의 기다림, AWS APJC PLES GameDay 우승 후기 AWS GameDay 🦄 GameDay는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다. 보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다. 팀원들과"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Terraform Tips 2 - Data & Index" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="AWS APJC PLES GameDay 일기" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -182,198 +182,142 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-devops tag-terraform post tag-devops ">
+        <article class="post-full  tag-uncategorized tag-aws tag-genai tag-event post tag-extracurricular ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 2 January 2022"> 2 January 2022</time>
+                    <time class="post-full-meta-date" datetime="30 November 2024">30 November 2024</time>
                     
                         <span class="date-divider">/</span>
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
+                               <a href='/tag/uncategorized/'>UNCATEGORIZED</a>,
                             
                         
                             
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/aws/'>AWS</a>,
+                            
+                        
+                            
+                               <a href='/tag/genai/'>GENAI</a>,
+                            
+                        
+                            
+                               <a href='/tag/event/'>EVENT</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Terraform Tips 2 - Data & Index</h1>
+                <h1 class="post-full-title">AWS APJC PLES GameDay 일기</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/terraform.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/unicorn.jpeg)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform 더 익숙하게 2 - Data &amp; Index <br />
-AWS 리소스로 알아보는 terraform Data 활용 팁</p>
+                    <p>4년 간의 기다림, AWS APJC PLES GameDay 우승 후기</p>
 
-<h2 id="intro">Intro</h2>
+<h1 id="aws-gameday-">AWS GameDay 🦄</h1>
 
-<p>이번 포스팅은 Tip이라 하기에는 부끄러운 사소한 지식이지만, 제가 자주 잊어버리는 내용이라 글로 남기게 되었습니다. <strong>Terraform Data</strong>를 잘 활용하면 디스크 이미지, 코드로 정의한 다양한 리소스 및 클라우드 공급자 API에서 가져온 정보들을 알 수 있습니다.
-모든 <code class="language-plaintext highlighter-rouge">Data Sources</code>가 동일한 방법으로 간편하게 조회할 수 있으면 좋겠지만, 막상 사용하려고 하면 이런 저런 문제들을 만나게 됩니다.</p>
+<p><a href="https://aws.amazon.com/ko/gameday/">GameDay</a>는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다.
+보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다.
+팀원들과 협력하여 클라우드 인프라 구축, 장애 대응, 보안 문제 해결 등 실제 상황과 유사한 다양한 과제를 수행하면서 AWS 서비스에 대한 실전 경험을 쌓을 수 있습니다.</p>
 
-<p>공식문서(<a href="https://learn.hashicorp.com/tutorials/terraform/data-sources">Tutorial : Query Data Sources</a>)에서도 Data 활용방법을 배울 수 있지만,
-이번 포스팅에서는 3가지 예제와 함께 리소스를 Query 하는 방법을 배워 보겠습니다.</p>
-
-<p><br /></p>
-
-<h2 id="query-ami">Query AMI</h2>
-
-<p>AWS의 최신 AMI는 주기적으로 갱신됩니다. 따라서 재사용 가능한 코드를 작성하기 위해, 항상 최신 AMI를 참조하는 코드를 작성하는데 다음과 같은 방법을 사용할 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_ami"</span> <span class="s2">"amazon_linux"</span> <span class="o">{</span>
-  most_recent <span class="o">=</span> <span class="nb">true
-
-  </span>owners <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon"</span><span class="o">]</span>
-
-  filter <span class="o">{</span>
-    name   <span class="o">=</span> <span class="s2">"name"</span>
-    values <span class="o">=</span> <span class="o">[</span><span class="s2">"amzn2-ami-kernel-*-hvm-*-x86_64-gp2"</span><span class="o">]</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-
-output <span class="s2">"name"</span> <span class="o">{</span>
-  value <span class="o">=</span> data.aws_ami.amazon_linux.id
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>위와 같은 방법으로 <code class="language-plaintext highlighter-rouge">filter</code>와 <code class="language-plaintext highlighter-rouge">owners</code> 값을 조정하며 어떤 이미지든지 id 값(output)을 얻어 낼 수 있습니다.
-예를 들어 ECS의 Optimized AMI를 사용하는 경우, 다음과 같은 filter 값을 줄 수 있습니다.</p>
-
-<blockquote>
-  <p>values = [“amzn2-ami-ecs-hvm-*-x86_64-ebs”]</p>
-</blockquote>
-
-<p>ECS와 달리 EKS는 AMI 명명 규칙이 약간 달라 <code class="language-plaintext highlighter-rouge">filter</code> 기능을 활용해야, 조건에 맞는 Optimized 이미지를 얻을 수 있습니다.
-EKS 이미지의 경우 모든 이미지의 첫 문자열이 <code class="language-plaintext highlighter-rouge">amazon-eks-</code>으로 시작하기 때문에, <code class="language-plaintext highlighter-rouge">*</code>를 함께 넣어 Optimized AMI를 얻을 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_ami"</span> <span class="s2">"amazon_linux_eks"</span> <span class="o">{</span>
-  most_recent <span class="o">=</span> <span class="nb">true
-
-  </span>owners <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon"</span><span class="o">]</span>
-
-  filter <span class="o">{</span>
-    name   <span class="o">=</span> <span class="s2">"name"</span>
-    values <span class="o">=</span> <span class="o">[</span><span class="s2">"amazon-eks-*"</span><span class="o">]</span>
-  <span class="o">}</span>
-
-  filter <span class="o">{</span>
-    name   <span class="o">=</span> <span class="s2">"architecture"</span>
-    values <span class="o">=</span> <span class="o">[</span><span class="s2">"x86_64"</span><span class="o">]</span>
-  <span class="o">}</span>
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>그러나 위 Query의 결과 값을 <a href="https://docs.aws.amazon.com/ko_kr/eks/latest/userguide/eks-optimized-ami.html">공식 문서</a>에 기재된 AMI ID와 비교해 보면,
-<strong>x86</strong> ID가 아닌, <strong>x86 가속</strong> ID 값과 일치한 다는 것을 알 수 있을 겁니다.
-문서에 기재된 <strong>x86 가속</strong>은 gpu가 사용 가능한 Optimized AMI입니다. gpu를 사용하는 노드의 명명 규칙이 <code class="language-plaintext highlighter-rouge">amazon-eks-gpu</code>로 시작하기 때문에 위 filter 조건으로는 gpu 노드가 조회됩니다.</p>
-
-<p>그렇다면 일반 x86 노드는 어떻게 조회해야 할까요? 🧐 어느 문서에도 기재되어 있지 않지만,
-대략적인 명명 규칙을 유추하여 보니 일반 EKS 노드는 다음과 같은 필터를 사용해야 한다는 것을 알게 되었습니다.</p>
-
-<blockquote>
-  <p>values = [“amazon-eks-node-1.22-*”]</p>
-
-  <p>value 값의 <em>prefix</em> 규칙을 보니 EKS의 버전도 <em>prefix</em> 안에 포함되어, <br />
-이 값을 응용하면 다양한 버전의 EKS Optimized AMI를 얻을 수 있다는 것을 추측 할 수 있습니다.</p>
-</blockquote>
-
-<p>이외에도 리전마다 다른 Optimized AMI는 <code class="language-plaintext highlighter-rouge">data</code>에는 명시하지 않았지만, <strong>Provider에 명시한 리전에 종속성</strong>을 갖게 됩니다.
-또 하나의 팁을 드리자면, 만약 Filter에서 지원하지 않는 명명 규칙을 가진 AMI라면 정규식으로도 조회가 가능합니다!</p>
-
-<p>여기까지 제가 자주 사용하는 다양한 AMI ID를 조회하는 방법을 알아보았습니다. 이제 어떤 AMI라도 조회가 가능하겠죠? 😎</p>
-
-<h2 id="query-az">Query AZ</h2>
-
-<p>AWS의 리전마다 사용가능한 az가 다르기 때문에, 조금 더 유연한 코드를 작성하기 위해 다음 코드를 사용해 사용가능한 az를 검색합니다.
-이후, <code class="language-plaintext highlighter-rouge">data.&lt;NAME&gt;.&lt;ATTRIBUTE&gt;.names</code> 로 사용가능한 az 값들을 확인할 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span>data <span class="s2">"aws_availability_zones"</span> <span class="s2">"available"</span> <span class="o">{</span>
-  state <span class="o">=</span> <span class="s2">"available"</span>
-<span class="o">}</span>
-
-<span class="nv">$ </span>output <span class="s2">"azs"</span> <span class="o">{</span>
- value <span class="o">=</span> data.aws_availability_zones.available.names
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">names</code>에는 사용가능한 az가 배열 형태로 들어가 있어, <code class="language-plaintext highlighter-rouge">names[0]</code>, <code class="language-plaintext highlighter-rouge">names[1]</code>과 같이 Index 값으로 특정 값을 지정할 수 있습니다.
-그러나, 모든 data가 Index 값을 가지고 있는 것은 아닙니다.</p>
-
-<h2 id="query-vpc_id">Query vpc_id</h2>
-
-<p>다른 리소스와 AWS 솔루션들을 연계하기 위해서는 <code class="language-plaintext highlighter-rouge">vpc_id</code> 값이 필수적으로 들어갑니다.
-vpc의 id를 구하기 위해서는 다음과 같은 방법으로 id를 조회할 수 있습니다.
-(tags 값을 활용해 일종의 필터링을 사용할 수도 있습니다.)</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_vpcs"</span> <span class="s2">"vpcs"</span> <span class="o">{</span>
-    tags <span class="o">=</span> <span class="o">{</span>
-        Name <span class="o">=</span> var.vpc_name
-    <span class="o">}</span>
-<span class="o">}</span>
-
-output <span class="s2">"vpc_id"</span> <span class="o">{</span>
-    value <span class="o">=</span> data.aws_vpcs.vpcs.ids
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p>위 코드로 다음과 같이 Output 값을 얻을 수 있지만, 하나의 <code class="language-plaintext highlighter-rouge">az</code> 값을 얻을때와 동일한 방식으로 <code class="language-plaintext highlighter-rouge">ids[0]</code> 형식으로 값을 조회하려 하면,
-“This value does not have any indices.” 라는 에러 메시지와 함께 출력을 지원하지 않습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Changes to Outputs:
-  + vpc_id <span class="o">=</span> <span class="o">[</span>
-      + <span class="s2">"vpc-0x1234567890"</span>,
-    <span class="o">]</span>
-</code></pre></div></div>
-
-<p>도대체 무엇이 잘못된 것일까요? az와 동일한 방법으로 접근했지만, 왜 지원하지 않는지는 아직까지도 모르겠습니다…
-누구 아시는 분이 있다면 알려주세요.</p>
-
-<h3 id="count로-index-부여하기">count로 index 부여하기</h3>
-
-<p>위 문제를 해결하기 위해서는 az를 검색할 때보다는 불편하지만, <code class="language-plaintext highlighter-rouge">count</code>를 사용해 해결할 수 있습니다.</p>
-
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>data <span class="s2">"aws_vpc"</span> <span class="s2">"target"</span> <span class="o">{</span>
-  count <span class="o">=</span> length<span class="o">(</span>data.aws_vpcs.vpcs.ids<span class="o">)</span>
-  <span class="nb">id</span>    <span class="o">=</span> tolist<span class="o">(</span>data.aws_vpcs.vpcs.ids<span class="o">)[</span>count.index]
-<span class="o">}</span>
-
-<span class="c"># sample code using vpc_id</span>
-resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_resource"</span> <span class="o">{</span>
-  count <span class="o">=</span> length<span class="o">(</span>data.aws_vpcs.vpcs.ids<span class="o">)</span>
-  <span class="c"># Skip Config</span>
-  vpc_id      <span class="o">=</span> data.aws_vpc.target[count.index].id
-<span class="o">}</span>
-</code></pre></div></div>
-
-<p><code class="language-plaintext highlighter-rouge">aws_vpcs</code>가 아닌 <code class="language-plaintext highlighter-rouge">aws_vpc</code>를 추가하고 index 를 부여하기 위한 내장 함수들을 사용해 index를 부여합니다.
-이후, 리소스에서 data 값들을 식별하기 위한 <code class="language-plaintext highlighter-rouge">count</code>를 기입하고 위와 같이 index 값으로 조회가 가능합니다.</p>
+<p>일반적인 GameDay는 누구나 참여할 수 있는 공개 행사로 진행되며, PLES GameDay는 AWS 파트너사 직원들을 대상으로 특별히 진행되는 대회입니다.
+AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하는데, 그 중 아시아 태평양 지역(APJC) 파트너사들이 참여하는 대규모 GameDay는 연 1회 진행됩니다.</p>
 
 <p><br /></p>
 
-<h2 id="outro">Outro</h2>
+<h2 id="apjc-ples-gameday-지난-기록들">APJC PLES GameDay 지난 기록들</h2>
 
-<p>지금까지 Data를 활용해 각종 리소스들을 검색하는 방법을 알아 보았습니다.<code class="language-plaintext highlighter-rouge">vpc_id</code>도 <code class="language-plaintext highlighter-rouge">az</code>와 같이 별도의 index 과정 없이,
-간편한 조회가 가능하면 좋겠습니다. (제가 아직 방법을 모르는 것일 수도 있어요!)</p>
+<p>사실 저는 2020년에 입사한 후, 2021년부터 매년 대회에 출전해왔어요.
+처음 참가했던 대회에는 22개 팀이 참여했는데, 저희 팀은 순위권과는 거리가 멀었습니다.
+그때 느낀 좌절감을 사내 Wiki에 회고글로 남기기도 했어요.</p>
 
-<p>지금까지 테라폼 더 익숙하게 Data &amp; Index 편을 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃</p>
+<p><img src="../../assets/built/images/post/etc/review.png" alt="후기" /></p>
+
+<p>2022년 대회는 Security를 주제로 6개 리전에서 23개 팀이 참가했습니다. 작년보다 진화된 실력?으로 동기와 후배님들과 함께 팀을 이뤄 도전했지만…</p>
+
+<p>네.. 또 다음을 기약했습니다.</p>
+
+<blockquote>
+  <p><em>흥민이 형 죄송합니다. 흥민이 형의 아쉬움과 비교할 수는 없겠지만, 당시 너무 마음이 아팠어요.</em></p>
+</blockquote>
+
+<p><img src="../../assets/built/images/post/etc/review2.png" alt="후기2" /></p>
+
+<p>비록 제가 속한 팀은 아니었지만, 동료들이 한국 리전에서 1등을 차지해서 정말 기뻤습니다. (저는 12등 😭) <br />
+하지만 한국 1등이 APJC에서는 7등에 그쳤다는 점에서, 아직 세계와의 벽은… 여전히…</p>
+
+<p>2023년 대회는 Sustainability를 주제로 진행되었으며, 한국을 비롯해 일본, 인도, 호주, 뉴질랜드, 싱가포르, 대만에서 총 39개 팀, 약 140여 명이 참가했습니다.</p>
+
+<p>여러 번의 도전 경험 덕분인지, 2023년 대회에서는 크게 긴장되지 않더라고요. 아마, 이때부터는 문제별 순위가 제공되었던 것으로 기억해요.
+비록 전체 순위권에는 들지 못했지만, 제가 맡은 문제 중 하나가 전체 1등을 차지했다는 점이 작은 위안이 되었답니다. 😌</p>
+
+<p><br /></p>
+
+<h2 id="2024-genai-gameday">2024 GenAI GameDay</h2>
+
+<p>2024년 11월 14일, 올해의 최대 화두인 GenAI를 주제로 한 대회가 개최되었고, 약 44여 개 팀이 참가했습니다.</p>
+
+<p>사실 올해 대회는 지난 4번의 GameDay에서 좋은 성적을 거두지 못했기에 참가를 망설였습니다. 하지만 이번 주제가 GenAI였고, 회사의 적극적인 참가 독려도 있어 참가를 결정하게 되었습니다.</p>
+
+<p>4년간 AWS를 다루며 쌓은 경험도 있고, 최근에는 Amazon Bedrock 관련 서적을 준비하고 있어서 이번에는 꼭 좋은 결과를 내고 싶었습니다. 🙏</p>
+
+<p>그래서 대회 전날에는 야근을 하면서까지 사전 공지된 출제 범위에 대해 미리 예습을 하고 갔답니다.</p>
+
+<h3 id="방심은-금물-">방심은 금물 🚫</h3>
+
+<p>저는 과거 2022년 대회에서 중간에 1등을 하다가 사소한 실수로 순위권 밖으로 밀려난 쓰라린 경험이 있습니다.
+과거 교훈을 통해, 이번 대회도 겸손한 마음으로 임해야지 하고, 침착하고 여러 번의 검토 과정을 거치며 문제를 풀었습니다.
+저희 팀원 모두 압도적인 문제 해결로 대회 중반 즈음에 1위를 달성했습니다.</p>
+
+<p>따라잡기 힘든 점수 차이를 만들었다고 생각하고 잠시 휴식을 취하던 중, 순위가 2위로 떨어졌습니다.</p>
+
+<p>순간 과거의 악몽이 떠올라 식겁했죠. 알고 보니 보너스 점수가 부여되는 설문조사에 참여하지 않아 순위가 역전된 것이었습니다. 다행히 빠르게 설문에 참여해 다시 1등 자리를 되찾을 수 있었습니다.</p>
+
+<p>전리품?으로 가지고 있는 당시 최종 스코어보드 입니다. 설문 조사 점수가 5,000점인데, 만약 설문에 참여하지 않았다면 순위권 밖인 4위로 밀려났을 것을 생각하면 아찔합니다.</p>
+
+<p><img src="../../assets/built/images/post/etc/scoreboard.png" alt="scoreboard" /></p>
+
+<p>‘끝날 때까지 끝난 게 아니다’라는 교훈을 다시 한번 되새기며 대회를 마무리했습니다.</p>
+
+<h3 id="우승--전문가-">우승 != 전문가 🧑🏻‍💻</h3>
+
+<p>저는 4년간의 기다림 끝에 마침내 우승을 할 수 있었어요.
+앞선 3번의 실패 경험을 통해, 실력은 둘째치고 운도 따라야 한다는 것을 너무나 잘 알고 있어요.</p>
+
+<p>또 아시아를 넘어 EMEA, LATAM, NAMER 등 다른 리전에 엄청난 실력자들이 있다는 것도 잘 알고 있습니다.
+이번 성과가 기존의 노력들을 위로하는 작은 선물이라 생각하고, 내실을 다져가는데 노력하겠습니다.</p>
+
+<p><br /></p>
+
+<h2 id="감사-인사">감사 인사</h2>
+
+<p>마지막으로, 이번 대회에서 함께 우승을 일궈낸 ‘Bedrock Scissors Paper(<a href="https://user-bin-ksh.medium.com/">🏃🏻 usr/bin/ksh</a>, <a href="https://medium.com/@nuatmochoi">🏃‍♂️ nuatmochoi</a>)’ 팀의 사랑하는 동기들에게 감사의 마음을 전합니다.</p>
+
+<p>또한, 끝까지 포기하지 않고 꾸준히 도전하여 2등이라는 놀라운 성과를 이룬 ‘GSN Growth Lab’ 팀의 동료들에게도 축하와 감사의 인사를 전합니다!</p>
+
+<p><img src="../../assets/built/images/post/etc/team.png" alt="team" /></p>
+
+<p>현재 트로피가 미국에서 배송 중이라고 하는데, 하루빨리 받아보고 싶네요!
+이틀 후에는 인터뷰도 예정되어 있습니다. 기사가 나오면 이 글 하단에 참고 자료로 추가하도록 하겠습니다.</p>
+
+<p>🦄 행운을 가져다주는 유니콘과 함께, 소중한 시간을 내어 읽어주셔서 감사합니다! 😃</p>
+
+<p><img src="../../assets/built/images/background/unicorn.jpeg" alt="unicorn" /></p>
 
 <hr />
 
-<p><span class="table-of-contents-list">Terraform Tips</span></p>
+<p><span class="table-of-contents-list">🦜️🔗 LangChain</span></p>
 <ul class="table-of-contents-list">
-    <li><a href="./TerraformTips1">Module &amp; Output</a></li>
-    <li><a href="./TerraformTips2">Data &amp; Index</a></li>
-    <li><a href="./TerraformTips3">Refresh &amp; Replace</a></li>
-    <li><a href="./TerraformTips4">Move (Refactoring)</a></li>
-    <li><a href="./TerraformTips5">Import</a></li>
+  <li><a href="./ReAct">ReAct</a></li>
+  <li><a href="./Agents">Multi Tool Agents</a></li>
 </ul>
+
 
                 </div>
             </section>
@@ -431,9 +375,9 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/TerraformTips2';
-                            this.page.identifier = '/TerraformTips2';
-                            this.page.title = 'Terraform Tips 2 - Data & Index';
+                            this.page.url = 'https://heuristicwave.github.io/gameday';
+                            this.page.identifier = '/gameday';
+                            this.page.title = 'AWS APJC PLES GameDay 일기';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -467,7 +411,7 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/devops/">Devops</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/uncategorized/">Uncategorized</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -477,36 +421,14 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                 
                                 
                                   
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
+                                    
                                   
                                 
                                   
                                     
                                         
                                         
-                                            <li><a href="/Chart">Helm Chart Repository in AWS</a></li>
+                                            <li><a href="/udemy2">강의 후기 - 머신러닝의 모든 것 with AI, Python & R</a></li>
                                         
                                     
                                   
@@ -521,16 +443,7 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                     
                                         
                                         
-                                            <li><a href="/migrateCodebuild">Automating git submodules with AWS Code Series (Build, Pipeline)</a></li>
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                            <li><a href="/EKS_Upgrade">Amazon EKS Multi Cluster Upgrade with ExternalDNS</a></li>
+                                            <li><a href="/udemy">강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</a></li>
                                         
                                     
                                   
@@ -541,43 +454,7 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/reinvent23">AWS re:Invent 2023 후기</a></li>
                                         
                                     
                                   
@@ -586,29 +463,6 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                 
                                   
                                 
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
-                                        
-                                        
-                                    
-                                  
-                                
-                                  
-                                    
                                   
                                 
                                   
@@ -632,10 +486,15 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
                                   
                                 
                                   
@@ -646,10 +505,17 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
                                   
                                 
                                   
@@ -660,17 +526,35 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
                                   
                                 
                                   
-                                    
-                                        
-                                        
-                                    
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
                                   
                                 
                                   
@@ -678,9 +562,9 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/devops/">
+                            <a href="/tag/uncategorized/">
                                 
-                                    See all 19 posts  →
+                                    See all 7 posts  →
                                 
                             </a>
                         </footer>
@@ -690,59 +574,6 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/ImageBuilder">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/imagebuilder.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/ImageBuilder">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Devops</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">Create Immutable Server using AWS Image Builder & Auto Scaling Group</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -750,26 +581,26 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/TerraformTips1">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/terraform.png)"></div>
+            <a class="post-card-image-link" href="/udemy2">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/udemy.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/TerraformTips1">
+            <a class="post-card-content-link" href="/udemy2">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Devops</span>
+                               <span class="post-card-tags">Uncategorized</span>
                             
                         
                             
-                                <span class="post-card-tags">Terraform</span>
+                                <span class="post-card-tags">Extracurricular</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">Terraform Tips 1 - Module & Output</h2>
+                    <h2 class="post-card-title">강의 후기 - 머신러닝의 모든 것 with AI, Python & R</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -813,18 +644,18 @@ resource <span class="s2">"aws_lb_target_group"</span> <span class="s2">"sample_
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Terraform Tips 2 - Data & Index</div>
+    <div class="floating-header-title">AWS APJC PLES GameDay 일기</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Terraform+Tips+2+-+Data+%26+Index&amp;url=https://heuristicwave.github.ioTerraformTips2"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=AWS+APJC+PLES+GameDay+%EC%9D%BC%EA%B8%B0&amp;url=https://heuristicwave.github.iogameday"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioTerraformTips2"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.iogameday"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

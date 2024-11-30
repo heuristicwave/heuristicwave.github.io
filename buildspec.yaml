@@ -3,10 +3,10 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      ruby: 2.7
+      ruby: 3.3
     commands:
       - echo Installing dependencies...
-      - gem install bundler -v 2.4.22
+      - gem install bundler -v "~> 2.5"
       - bundle install --quiet
   pre_build:
     commands:

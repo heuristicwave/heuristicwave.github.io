@@ -56,7 +56,7 @@
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
     <meta property="og:title" content="Create a Multi-Tool Agent with Cluade 3 and LangChain" />
-    <meta property="og:description" content="ReAct 2편 - Multi-Tool Agent 만들기 Intro 이번 포스팅은 1편에서 미뤘던 ReAct Agent 생성자(Constructor) create_react_agent와 여러 개의 Task를 수행하는 Multi-Agents를 구현하는 방법에 대해 알아보겠습니다. 1️⃣ 편 복습 ❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요? ✅ 정답 보기 Click 👈 정답은 가능할 수도 아닐 수도 있습니다. 🙄 무슨 말이냐고요? 콘솔" />
+    <meta property="og:description" content="ReAct 2편 - Multi-Tool Agent 만들기 Intro 이번 포스팅은 1편에서 미뤘던 ReAct Agent 생성자(Constructor) create_react_agent와 여러 개의 Task를 수행하는 Multi-Agents를 구현하는 방법에 대해 알아보겠습니다. 1️⃣ 1편 복습 ❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요? ✅ 정답 보기 Click 👈 정답은 가능할 수도 아닐 수도 있습니다. 🙄 무슨 말이냐고요? 콘솔" />
     <meta property="og:url" content="https://heuristicwave.github.io/Agents" />
     <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/langchain.svg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
@@ -66,7 +66,7 @@
     <meta property="article:tag" content="Ai" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Create a Multi-Tool Agent with Cluade 3 and LangChain" />
-    <meta name="twitter:description" content="ReAct 2편 - Multi-Tool Agent 만들기 Intro 이번 포스팅은 1편에서 미뤘던 ReAct Agent 생성자(Constructor) create_react_agent와 여러 개의 Task를 수행하는 Multi-Agents를 구현하는 방법에 대해 알아보겠습니다. 1️⃣ 편 복습 ❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요? ✅ 정답 보기 Click 👈 정답은 가능할 수도 아닐 수도 있습니다. 🙄 무슨 말이냐고요? 콘솔" />
+    <meta name="twitter:description" content="ReAct 2편 - Multi-Tool Agent 만들기 Intro 이번 포스팅은 1편에서 미뤘던 ReAct Agent 생성자(Constructor) create_react_agent와 여러 개의 Task를 수행하는 Multi-Agents를 구현하는 방법에 대해 알아보겠습니다. 1️⃣ 1편 복습 ❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요? ✅ 정답 보기 Click 👈 정답은 가능할 수도 아닐 수도 있습니다. 🙄 무슨 말이냐고요? 콘솔" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
     <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/langchain.svg" />
     <meta name="twitter:label1" content="Written by" />
@@ -98,7 +98,7 @@
         "@type": "WebPage",
         "@id": "https://heuristicwave.github.io/Agents"
     },
-    "description": "ReAct 2편 - Multi-Tool Agent 만들기 Intro 이번 포스팅은 1편에서 미뤘던 ReAct Agent 생성자(Constructor) create_react_agent와 여러 개의 Task를 수행하는 Multi-Agents를 구현하는 방법에 대해 알아보겠습니다. 1️⃣ 편 복습 ❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요? ✅ 정답 보기 Click 👈 정답은 가능할 수도 아닐 수도 있습니다. 🙄 무슨 말이냐고요? 콘솔"
+    "description": "ReAct 2편 - Multi-Tool Agent 만들기 Intro 이번 포스팅은 1편에서 미뤘던 ReAct Agent 생성자(Constructor) create_react_agent와 여러 개의 Task를 수행하는 Multi-Agents를 구현하는 방법에 대해 알아보겠습니다. 1️⃣ 1편 복습 ❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요? ✅ 정답 보기 Click 👈 정답은 가능할 수도 아닐 수도 있습니다. 🙄 무슨 말이냐고요? 콘솔"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -216,13 +216,13 @@ into the {body} of the default.hbs template -->
                 <div class="kg-card-markdown">
                     <p>ReAct 2편 - Multi-Tool Agent 만들기</p>
 
-<h1 id="intro">Intro</h1>
+<h1 id="intro"><a href="#intro">Intro</a></h1>
 
 <p>이번 포스팅은 <a href="https://heuristicwave.github.io/ReAct">1편</a>에서 미뤘던 ReAct Agent 생성자(Constructor) <code class="language-plaintext highlighter-rouge">create_react_agent</code>와 여러 개의 Task를 수행하는 <strong>Multi-Agents</strong>를 구현하는 방법에 대해 알아보겠습니다.</p>
 
 <p><br /></p>
 
-<h2 id="1️⃣-편-복습">1️⃣ 편 복습</h2>
+<h2 id="1️⃣-1편-복습"><a href="#review-part-1">1️⃣ 1편 복습</a><a id="review-part-1"></a></h2>
 
 <p><strong>❓ 다음 Cluade 3와의 채팅 화면은 가능한 대화인가요?</strong></p>
 
@@ -275,7 +275,7 @@ into the {body} of the default.hbs template -->
 
 <p><br /></p>
 
-<h2 id="2️⃣-create_xxx_agent">2️⃣ <code class="language-plaintext highlighter-rouge">create_XXX_agent</code></h2>
+<h2 id="2️⃣-create_xxx_agent"><a href="#create-xxx-agent">2️⃣ <code class="language-plaintext highlighter-rouge">create_XXX_agent</code></a><a id="create-xxx-agent"></a></h2>
 
 <p>이번에는 <code class="language-plaintext highlighter-rouge">initialize_agent</code> 생성자 대신, 새로운 생성자인 <code class="language-plaintext highlighter-rouge">create_react_agent</code> 생성자를 사용해 Agent를 만들어 보겠습니다. url의 정보를 읽어들여 질문에 대하여 <code class="language-plaintext highlighter-rouge">create_react_agent</code>를 활용해 추론하는 간단한 에이전트입니다.</p>
 
@@ -329,7 +329,7 @@ into the {body} of the default.hbs template -->
 
 <p><br /></p>
 
-<h2 id="3️⃣-multi-tool-agent️-tool--custom-tool">3️⃣ Multi-Tool Agent(🦜️🔗 Tool &amp; Custom Tool)</h2>
+<h2 id="3️⃣-multi-tool-agent️-tool--custom-tool"><a href="#multi-tool-agent">3️⃣ Multi-Tool Agent(🦜️🔗 Tool &amp; Custom Tool)</a><a id="multi-tool-agent"></a></h2>
 
 <p>이번에는 Built-in Tool이 아닌 <code class="language-plaintext highlighter-rouge">langchain_community</code>에서 제공하는 도구와 조금 더 복잡한 작업을 지원하는 Custom Tool을 사용하여 Multi-Tool Agent를 만들어 보겠습니다. <em>(PPT를 만들기 위해 Markdown을 PPT로 만드는 <code class="language-plaintext highlighter-rouge">get_marp</code>라는 Custom Tool을 사전에 정의해 두었습니다.)</em></p>
 
@@ -395,7 +395,7 @@ into the {body} of the default.hbs template -->
 
 <p><br /></p>
 
-<h2 id="outro">Outro</h2>
+<h2 id="outro"><a href="#outro">Outro</a></h2>
 
 <p>1편을 작성하고 2편이 나오기까지 2달이 걸렸습니다. 그래도 다짐을 글로 적어두니, 돌고 돌아 작성하게 되는 것 같습니다. 매번 글쓰기는 고통스럽지만, 작성하고 나면 뿌듯하기에 3편은 LangGraph와 Routing에 대한 내용을 약속하며 이번 포스팅을 마무리 짓겠습니다.</p>
 
@@ -510,6 +510,8 @@ into the {body} of the default.hbs template -->
                         <div class="read-next-card-content">
                             <ul>
                                 
+                                
+                                  
                                 
                                   
                                 

@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/security/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-05-12T09:20:18+00:00</updated>
+  <updated>2024-11-30T14:23:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/security/feed.xml</id>
 
   
@@ -354,10 +354,10 @@ AuthN(인증) &amp;amp; AuthZ(인가, 권한 부여)&lt;/p&gt;
   |    |                                         |      |
   ^    v                                         |      |
 +---------+                                      |      |
-|         |&amp;gt;---&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;D&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Code &lt;span class=&quot;nt&quot;&gt;---------&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;'      |
+|         |&amp;gt;---&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;D&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt; Authorization Code &lt;span class=&quot;nt&quot;&gt;---------&lt;/span&gt;&lt;span class=&quot;s1&quot;&gt;&apos;      |
 |  Client |          &amp;amp; Redirection URI                  |
 |         |                                             |
-|         |&amp;lt;---(E)----- Access Token -------------------'&lt;/span&gt;
+|         |&amp;lt;---(E)----- Access Token -------------------&apos;&lt;/span&gt;
 +---------+       &lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;w/ Optional Refresh Token&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 

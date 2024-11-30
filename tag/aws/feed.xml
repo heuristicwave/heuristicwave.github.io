@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-05-12T09:20:18+00:00</updated>
+  <updated>2024-11-30T14:23:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,144 @@
   
   
 
+  
+    <entry>
+      <title type="html">AWS APJC PLES GameDay 일기</title>
+      <link href="https://heuristicwave.github.io/gameday" rel="alternate" type="text/html" title="AWS APJC PLES GameDay 일기" />
+      <published>2024-11-30T00:00:00+00:00</published>
+      <updated>2024-11-30T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/gameday</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/gameday">&lt;p&gt;4년 간의 기다림, AWS APJC PLES GameDay 우승 후기&lt;/p&gt;
+
+&lt;h1 id=&quot;aws-gameday-&quot;&gt;AWS GameDay 🦄&lt;/h1&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/ko/gameday/&quot;&gt;GameDay&lt;/a&gt;는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다.
+보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다.
+팀원들과 협력하여 클라우드 인프라 구축, 장애 대응, 보안 문제 해결 등 실제 상황과 유사한 다양한 과제를 수행하면서 AWS 서비스에 대한 실전 경험을 쌓을 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;일반적인 GameDay는 누구나 참여할 수 있는 공개 행사로 진행되며, PLES GameDay는 AWS 파트너사 직원들을 대상으로 특별히 진행되는 대회입니다.
+AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하는데, 그 중 아시아 태평양 지역(APJC) 파트너사들이 참여하는 대규모 GameDay는 연 1회 진행됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;apjc-ples-gameday-지난-기록들&quot;&gt;APJC PLES GameDay 지난 기록들&lt;/h2&gt;
+
+&lt;p&gt;사실 저는 2020년에 입사한 후, 2021년부터 매년 대회에 출전해왔어요.
+처음 참가했던 대회에는 22개 팀이 참여했는데, 저희 팀은 순위권과는 거리가 멀었습니다.
+그때 느낀 좌절감을 사내 Wiki에 회고글로 남기기도 했어요.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/review.png&quot; alt=&quot;후기&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;2022년 대회는 Security를 주제로 6개 리전에서 23개 팀이 참가했습니다. 작년보다 진화된 실력?으로 동기와 후배님들과 함께 팀을 이뤄 도전했지만…&lt;/p&gt;
+
+&lt;p&gt;네.. 또 다음을 기약했습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;em&gt;흥민이 형 죄송합니다. 흥민이 형의 아쉬움과 비교할 수는 없겠지만, 당시 너무 마음이 아팠어요.&lt;/em&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/review2.png&quot; alt=&quot;후기2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;비록 제가 속한 팀은 아니었지만, 동료들이 한국 리전에서 1등을 차지해서 정말 기뻤습니다. (저는 12등 😭) &lt;br /&gt;
+하지만 한국 1등이 APJC에서는 7등에 그쳤다는 점에서, 아직 세계와의 벽은… 여전히…&lt;/p&gt;
+
+&lt;p&gt;2023년 대회는 Sustainability를 주제로 진행되었으며, 한국을 비롯해 일본, 인도, 호주, 뉴질랜드, 싱가포르, 대만에서 총 39개 팀, 약 140여 명이 참가했습니다.&lt;/p&gt;
+
+&lt;p&gt;여러 번의 도전 경험 덕분인지, 2023년 대회에서는 크게 긴장되지 않더라고요. 아마, 이때부터는 문제별 순위가 제공되었던 것으로 기억해요.
+비록 전체 순위권에는 들지 못했지만, 제가 맡은 문제 중 하나가 전체 1등을 차지했다는 점이 작은 위안이 되었답니다. 😌&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;2024-genai-gameday&quot;&gt;2024 GenAI GameDay&lt;/h2&gt;
+
+&lt;p&gt;2024년 11월 14일, 올해의 최대 화두인 GenAI를 주제로 한 대회가 개최되었고, 약 44여 개 팀이 참가했습니다.&lt;/p&gt;
+
+&lt;p&gt;사실 올해 대회는 지난 4번의 GameDay에서 좋은 성적을 거두지 못했기에 참가를 망설였습니다. 하지만 이번 주제가 GenAI였고, 회사의 적극적인 참가 독려도 있어 참가를 결정하게 되었습니다.&lt;/p&gt;
+
+&lt;p&gt;4년간 AWS를 다루며 쌓은 경험도 있고, 최근에는 Amazon Bedrock 관련 서적을 준비하고 있어서 이번에는 꼭 좋은 결과를 내고 싶었습니다. 🙏&lt;/p&gt;
+
+&lt;p&gt;그래서 대회 전날에는 야근을 하면서까지 사전 공지된 출제 범위에 대해 미리 예습을 하고 갔답니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;방심은-금물-&quot;&gt;방심은 금물 🚫&lt;/h3&gt;
+
+&lt;p&gt;저는 과거 2022년 대회에서 중간에 1등을 하다가 사소한 실수로 순위권 밖으로 밀려난 쓰라린 경험이 있습니다.
+과거 교훈을 통해, 이번 대회도 겸손한 마음으로 임해야지 하고, 침착하고 여러 번의 검토 과정을 거치며 문제를 풀었습니다.
+저희 팀원 모두 압도적인 문제 해결로 대회 중반 즈음에 1위를 달성했습니다.&lt;/p&gt;
+
+&lt;p&gt;따라잡기 힘든 점수 차이를 만들었다고 생각하고 잠시 휴식을 취하던 중, 순위가 2위로 떨어졌습니다.&lt;/p&gt;
+
+&lt;p&gt;순간 과거의 악몽이 떠올라 식겁했죠. 알고 보니 보너스 점수가 부여되는 설문조사에 참여하지 않아 순위가 역전된 것이었습니다. 다행히 빠르게 설문에 참여해 다시 1등 자리를 되찾을 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;전리품?으로 가지고 있는 당시 최종 스코어보드 입니다. 설문 조사 점수가 5,000점인데, 만약 설문에 참여하지 않았다면 순위권 밖인 4위로 밀려났을 것을 생각하면 아찔합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/scoreboard.png&quot; alt=&quot;scoreboard&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;‘끝날 때까지 끝난 게 아니다’라는 교훈을 다시 한번 되새기며 대회를 마무리했습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;우승--전문가-&quot;&gt;우승 != 전문가 🧑🏻‍💻&lt;/h3&gt;
+
+&lt;p&gt;저는 4년간의 기다림 끝에 마침내 우승을 할 수 있었어요.
+앞선 3번의 실패 경험을 통해, 실력은 둘째치고 운도 따라야 한다는 것을 너무나 잘 알고 있어요.&lt;/p&gt;
+
+&lt;p&gt;또 아시아를 넘어 EMEA, LATAM, NAMER 등 다른 리전에 엄청난 실력자들이 있다는 것도 잘 알고 있습니다.
+이번 성과가 기존의 노력들을 위로하는 작은 선물이라 생각하고, 내실을 다져가는데 노력하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;감사-인사&quot;&gt;감사 인사&lt;/h2&gt;
+
+&lt;p&gt;마지막으로, 이번 대회에서 함께 우승을 일궈낸 ‘Bedrock Scissors Paper(&lt;a href=&quot;https://user-bin-ksh.medium.com/&quot;&gt;🏃🏻 usr/bin/ksh&lt;/a&gt;, &lt;a href=&quot;https://medium.com/@nuatmochoi&quot;&gt;🏃‍♂️ nuatmochoi&lt;/a&gt;)’ 팀의 사랑하는 동기들에게 감사의 마음을 전합니다.&lt;/p&gt;
+
+&lt;p&gt;또한, 끝까지 포기하지 않고 꾸준히 도전하여 2등이라는 놀라운 성과를 이룬 ‘GSN Growth Lab’ 팀의 동료들에게도 축하와 감사의 인사를 전합니다!&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/team.png&quot; alt=&quot;team&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;현재 트로피가 미국에서 배송 중이라고 하는데, 하루빨리 받아보고 싶네요!
+이틀 후에는 인터뷰도 예정되어 있습니다. 기사가 나오면 이 글 하단에 참고 자료로 추가하도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;🦄 행운을 가져다주는 유니콘과 함께, 소중한 시간을 내어 읽어주셔서 감사합니다! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/unicorn.jpeg&quot; alt=&quot;unicorn&quot; /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+  &lt;li&gt;&lt;a href=&quot;./ReAct&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;./Agents&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="uncategorized" />
+      
+        <category term="aws" />
+      
+        <category term="genai" />
+      
+        <category term="event" />
+      
+
+      
+        <summary type="html">4년 간의 기다림, AWS APJC PLES GameDay 우승 후기</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Providing a caching layer for LLM with Langchain in AWS</title>
@@ -113,7 +251,7 @@ Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;
 &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;redis://{EC2_Endpoiont}:6379&quot;&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 
-&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -134,8 +272,8 @@ Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이�
 
 &lt;p&gt;Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 &lt;strong&gt;Amazon Titan Embedding&lt;/strong&gt; 모델을 활용하겠습니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;'us-west-2'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redis_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
@@ -188,7 +326,7 @@ Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/str
 &lt;h3 id=&quot;semantic-cache-1&quot;&gt;Semantic Cache&lt;/h3&gt;
 
 &lt;p&gt;반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command 'module', with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command &apos;module&apos;, with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
 즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.&lt;/p&gt;
 
 &lt;p&gt;&lt;br /&gt;&lt;/p&gt;
@@ -199,7 +337,8 @@ Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/str
 임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.&lt;/p&gt;
 
 &lt;blockquote&gt;
-  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요.&lt;/p&gt;
+  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요. &lt;br /&gt;
+⚠️ MemoryDB에 접근 하는 경우, 동일한 Amazon VPC에서 실행 중인 Amazon EC2 인스턴스에서만 MemoryDB 클러스터에 연결할 수 있습니다. (외부 액세스가 필요한 경우, VPN을 통해 수행할 수 있습니다.)&lt;/p&gt;
 &lt;/blockquote&gt;
 
 &lt;h3 id=&quot;standard-cache-2&quot;&gt;Standard Cache&lt;/h3&gt;
@@ -1803,181 +1942,6 @@ CodeBuild의 경우 일일이 다 확인하며 설정해 줘야 하는 점은 �
 
       
         <summary type="html">AWS Code Series (Build, Pipeline)으로 git submodule 자동화</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Amazon EKS Multi Cluster Upgrade with ExternalDNS</title>
-      <link href="https://heuristicwave.github.io/EKS_Upgrade" rel="alternate" type="text/html" title="Amazon EKS Multi Cluster Upgrade with ExternalDNS" />
-      <published>2023-02-25T00:00:00+00:00</published>
-      <updated>2023-02-25T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/EKS_Upgrade</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/EKS_Upgrade">&lt;p&gt;ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;Amazon EKS(이하 EKS)는 &lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html#kubernetes-release-calendar&quot;&gt;약 3 ~ 5&lt;/a&gt; 개월마다 새로운 버전이 출시합니다.
-운영 측면에서 새로운 버전 출시는 기존 EKS의 버전 업그레이드가 필요하다는 것을 의미합니다. EKS 업그레이드는 EKS 콘솔에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지금 업데이트&lt;/code&gt; 버튼을 눌러 손쉽게 가능합니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;-single-cluster-upgrade&quot;&gt;🏠 Single Cluster Upgrade&lt;/h2&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/cluster.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위와 같은 &lt;a href=&quot;https://docs.aws.amazon.com/eks/latest/userguide/update-cluster.html&quot;&gt;EKS 클러스터 버전 업데이트&lt;/a&gt;를 싱글 클러스터 기반의 업그레이드라고 하며, 비교적 손쉽게 k8s 버전 업데이트가 가능합니다.
-업데이트가 손쉬운 반면 몇 가지 제약 사항도 존재합니다. 대표적으로 아래와 같이 원하는 버전으로 바로 업데이트되는 것이 아니라 순차적 단계를 거쳐야 합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/singleUpdate.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-multi-cluster-upgrade&quot;&gt;🏘️‍ Multi Cluster Upgrade&lt;/h2&gt;
-
-&lt;p&gt;멀티 클러스터 업그레이드는 동일한 환경의 EKS를 멀티로 구성하다 보니,
-싱글 클러스터와는 달리 &lt;strong&gt;원하는 버전으로 바로 생성&lt;/strong&gt;이 가능하고 만에 하나 &lt;strong&gt;롤백&lt;/strong&gt;이 필요할 경우 기존 환경으로 돌아갈 수도 있습니다.&lt;/p&gt;
-
-&lt;p&gt;멀티 클러스터 기반의 업그레이드 방법은 여러 가지 방법으로 진행할 수 있습니다. 그중에서도 이번 포스팅에서는 &lt;a href=&quot;https://aws.amazon.com/blogs/containers/onfidos-journey-to-a-multi-cluster-amazon-eks-architecture/&quot;&gt;AWS Blog&lt;/a&gt;에 소개된 3가지 방법 중,
-&lt;strong&gt;비교적 가장 수월한 방법인 첫 번째 방법으로 한정&lt;/strong&gt;해서 이야기해 보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/eks/multiCluster.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;첫 번째로 소개된 Option 1의 방법은 2개의 동일한 환경에서 Amazon Route 53의 가중치 기능을 활용하여 업그레이드하는 방식입니다.&lt;/p&gt;
-
-&lt;p&gt;방법은 간단합니다. &lt;strong&gt;싱글 클러스터&lt;/strong&gt;에서 별다른 작업을 해주지 않았다면, 아마 Route 53의 &lt;strong&gt;Routing policy&lt;/strong&gt;를 &lt;strong&gt;Simple&lt;/strong&gt;로 설정해 두었을 겁니다.
-&lt;strong&gt;멀티 클러스터&lt;/strong&gt;에서는 &lt;strong&gt;Routing policy&lt;/strong&gt;를 &lt;strong&gt;Weighted&lt;/strong&gt;로 설정해 설정한 비율로 트래픽을 분배하는 원리입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/defineWeighted.png&quot; alt=&quot;clusterUpdate&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 캡처와 같이 레코드를 생성할 때, 아래 3가지 요소를 주목하여 가중치 정책을 생성합니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;DNS의 &lt;strong&gt;캐시를 최소화&lt;/strong&gt;하기 위해 &lt;strong&gt;TTL은 1m&lt;/strong&gt;(60 seconds)를 권장&lt;/li&gt;
-  &lt;li&gt;각 다른 환경에서 &lt;strong&gt;50:50 가중치&lt;/strong&gt;를 주고 싶을 경우, &lt;strong&gt;2개의 가중치 레코드에 Weighted 값 1&lt;/strong&gt;을 부여&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;는 레코드의 &lt;strong&gt;주석&lt;/strong&gt;과 같은 역할을 하지만 &lt;strong&gt;필수&lt;/strong&gt;로 작성해야 함 (이어서 이 값의 중요성을~~ 😱)&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;h2 id=&quot;externaldns&quot;&gt;ExternalDNS&lt;/h2&gt;
-
-&lt;p&gt;Kubernetes는 KubeDNS를 내부 DNS 서버로 활용합니다. Route 53과 같은 다른 DNS 공급자를 사용하기 위해서는 &lt;a href=&quot;https://github.com/kubernetes-sigs/external-dns&quot;&gt;external-dns&lt;/a&gt;를 추가적으로 설치해 사용합니다.
-물론 external-dns를 사용하지 않고 &lt;strong&gt;외부 DNS의 영역과 k8s의 영역을 분리하여 사용&lt;/strong&gt;할 수도 있지만, external-dns를 적용한다면 &lt;strong&gt;외부 DNS 공급자도 코드로 제어&lt;/strong&gt;할 수 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;set-up&quot;&gt;Set up&lt;/h3&gt;
-
-&lt;p&gt;ExternalDNS를 EKS에 설정하는 방법은 &lt;a href=&quot;https://aws.amazon.com/premiumsupport/knowledge-center/eks-set-up-externaldns/&quot;&gt;첨부 링크&lt;/a&gt;에 자세하게 설명되어 있지만, 놓치기 쉬운 2가지 부분을 언급하고 넘어가겠습니다.&lt;/p&gt;
-
-&lt;h4 id=&quot;externaldns-1&quot;&gt;ExternalDNS&lt;/h4&gt;
-
-&lt;p&gt;external-dns를 최종 배포하기 전, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Deployment&lt;/code&gt;의 아래 2가지 인자를 수정해야 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;args&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;--domain-filter=&amp;lt;Your_R53_Domain_Name&amp;gt;&lt;/span&gt;
-    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;--txt-owner-id=&amp;lt;Your_R53_HostedZone_Id&amp;gt;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🐞 이번 포스팅을 준비하며 external-dns가 간헐적으로 동작하는 경우를 목격했습니다. &lt;br /&gt;
-원인은 해당 인자를 오기재했기 때문인데, 원래대로라면 동작하지 않아야 하는데 버그인 것 같습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h4 id=&quot;ingress&quot;&gt;Ingress&lt;/h4&gt;
-
-&lt;p&gt;ExternalDNS를 제대로 설정했다면, 이어서 외부로 노출할 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Ingress&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;annotations&lt;/code&gt;를 수정합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;external-dns&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;public&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;external-dns.alpha.kubernetes.io/hostname&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;myDomain.com&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;external-dns.alpha.kubernetes.io/set-identifier&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;recordID&lt;/span&gt;
-&lt;span class=&quot;na&quot;&gt;external-dns.alpha.kubernetes.io/aws-weight&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;1'&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Simple 라우팅 정책에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set-identifier&lt;/code&gt;가 없어도 되지만, 이외 라우팅 정책에서는 &lt;strong&gt;필수&lt;/strong&gt;적으로 들어가야 합니다. 
-직전 콘솔에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Record ID&lt;/code&gt;를 기재하지 않았을 경우 화면이 넘어가지 않지만, external-dns에서 해당 값이 빠지면 로그와 파드 상태 모두 특이점이 발견되지 않아 원인을 찾기 어려워집니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;issue&quot;&gt;Issue&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;yaml 파일에 의도를 기재하여 배포했지만, 정작 Route 53에서 레코드가 업데이트되지 않는 경우&lt;/strong&gt;&lt;/p&gt;
-
-&lt;p&gt;구축 초기부터 가중치 정책을 적용한 멀티 클러스터를 생성한다면 해당 이슈를 만나지 않겠지만,
-싱글 클러스터로 external-dns를 운영하고 있는 환경에서 멀티 클러스터를 적용하면 &lt;a href=&quot;https://github.com/kubernetes-sigs/external-dns/issues/1411&quot;&gt;해당 이슈&lt;/a&gt;를 만날 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;UPSERT is not possible, doing UPSERT will actually do a CREATE that will fail&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;이를 해결하기 위해 노출하고자 하는 Ingress를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;delete &amp;amp; apply&lt;/code&gt; 한다면 우회가 가능하겠지만, 운영하고 있는 서비스라면 &lt;strong&gt;다운타임&lt;/strong&gt;이 발생할 것입니다.
-지금으로서는 Route 53 콘솔 화면에서 수동으로 기존의 정책을 수정해 주고 후속으로 생성하는 클러스터는 코드로 제어하는 방법이 있습니다. 그러나 코드와 콘솔 2가지 채널에서 인프라를 다루는 방법은 바람직하지 않습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;해당 이슈를 해결한 직후 external-dns의 logs&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:56Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Applying provider record filter for domains: [myDomain.com. .myDomain.com.]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Desired change: CREATE ex.myDomain.com A [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;info &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Desired change: CREATE ex.myDomain.com TXT [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;error &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Failure in zone myDomain.com. [Id: /hostedzone/Z0HOSTEDZONEID]&quot;&lt;/span&gt;
-│ &lt;span class=&quot;nb&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;2023-02-25T16:28:57Z&quot;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;level&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;error &lt;span class=&quot;nv&quot;&gt;msg&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;InvalidChangeBatch: [RRSet with DNS name ex.myDomain.com.,
-│ type TXT, SetIdentifier recordID cannot be created as a non-weighted set exists with the same name and type.]&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n\t&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;status code: 400, request
-│ time=&quot;&lt;/span&gt;2023-02-25T16:28:57Z&lt;span class=&quot;s2&quot;&gt;&quot; level=error msg=&quot;&lt;/span&gt;failed to submit all changes &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;the following zones: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;/hostedzone/Z0HOSTEDZONEID]&lt;span class=&quot;s2&quot;&gt;&quot;
-
--- After changing Simple Routing policy --
-
-│ time=&quot;&lt;/span&gt;2023-02-25T16:29:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;2 record&lt;span class=&quot;o&quot;&gt;(&lt;/span&gt;s&lt;span class=&quot;o&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;in &lt;/span&gt;zone myDomain.com. &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;Id: /hostedzone/Z0HOSTEDZONEID] were successfully updated&lt;span class=&quot;s2&quot;&gt;&quot;
-│ time=&quot;&lt;/span&gt;2023-02-25T16:30:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;Applying provider record filter &lt;span class=&quot;k&quot;&gt;for &lt;/span&gt;domains: &lt;span class=&quot;o&quot;&gt;[&lt;/span&gt;myDomain.com. .myDomain.com.]&lt;span class=&quot;s2&quot;&gt;&quot;
-│ time=&quot;&lt;/span&gt;2023-02-25T16:30:58Z&lt;span class=&quot;s2&quot;&gt;&quot; level=info msg=&quot;&lt;/span&gt;All records are already up to &lt;span class=&quot;nb&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;검증&quot;&gt;검증&lt;/h3&gt;
-
-&lt;p&gt;실제 1:1로 라우팅이 일어나고 있나 확인하고 싶다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;웹&lt;/code&gt; 혹은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;dig&lt;/code&gt; 명령어로 확인이 가능하지만 가장 정확한 방법은 Route 53 내 &lt;strong&gt;Test record&lt;/strong&gt;를 사용하는 것입니다.
-Record 테스트를 위해 Record name을 기재하고 &lt;strong&gt;Get response&lt;/strong&gt; 버튼을 누르면 &lt;strong&gt;Response returned by Route 53&lt;/strong&gt; 화면에서 실시간으로 바뀌는 IP를 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/aws/testRecord.png&quot; alt=&quot;testRecord&quot; /&gt;&lt;/p&gt;
-
-&lt;h4 id=&quot;멀티-클러스터-교체-작업&quot;&gt;멀티 클러스터 교체 작업&lt;/h4&gt;
-
-&lt;p&gt;❗️ 기존 클러스터를 A, 업그레이드를 진행할 클러스터를 B라 가정하겠습니다.&lt;/p&gt;
-
-&lt;p&gt;B 클러스터가 문제없다 판단되면, 다시 한번 가중치를 조절해 A 클러스터를 대체합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;가중치 변화, 1:0 🔜 1:1 🔜 0:1&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;B 클러스터에서 문제가 있다 판단되면 B의 가중치를 0으로 바꾸면 롤백의 효과를 볼 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;external-dns는 Route 53 리소스를 제어할 수 있어 편리하면서도 운영이 복잡합니다. 위에서 언급한 이슈 외에도 GitOps를 구축한 상태에서 멀티 클러스터를 운용하려면, 각 클러스터마다 다른 Repository가 필요합니다.
-terraform으로 external-dns를 대체할 수도 있지만, eksctl를 사용한다면 external-dns가 도움이 되니 사용 환경에 따라 적절한 도구를 사용해야 할 것 같습니다.
-모든 것을 코드로 관리하는 것은 쉽지 않네요. 🤣&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="aws" />
-      
-        <category term="devops" />
-      
-        <category term="eks" />
-      
-
-      
-        <summary type="html">ExternalDNS로 Amazon EKS 멀티 클러스터 업그레이드하기</summary>
       
 
       

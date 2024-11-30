@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 <feed xmlns="http://www.w3.org/2005/Atom" >
-  <generator uri="https://jekyllrb.com/" version="3.9.5">Jekyll</generator>
+  <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/backend/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2024-05-12T09:20:18+00:00</updated>
+  <updated>2024-11-30T14:23:22+00:00</updated>
   <id>https://heuristicwave.github.io/tag/backend/feed.xml</id>
 
   
@@ -85,7 +85,7 @@
 &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 
 &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PrintHangul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;hanguls&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;rune&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'가'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'나'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'다'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'라'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'마'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'바'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'사'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;hanguls&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;rune&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;&apos;가&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;나&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;다&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;라&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;마&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;바&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;사&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 	&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hanguls&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 		&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;300&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Millisecond&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 		&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -141,7 +141,7 @@
 &lt;span class=&quot;k&quot;&gt;var&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;wg&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;sync&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;WaitGroup&lt;/span&gt;
 
 &lt;span class=&quot;k&quot;&gt;func&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PrintHangul&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
-	&lt;span class=&quot;n&quot;&gt;hanguls&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;rune&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;'가'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'나'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'다'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'라'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'마'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'바'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;'사'&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+	&lt;span class=&quot;n&quot;&gt;hanguls&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[]&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;rune&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;sc&quot;&gt;&apos;가&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;나&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;다&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;라&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;마&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;바&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;sc&quot;&gt;&apos;사&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
 	&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;_&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;:=&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;range&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;hanguls&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
 		&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Sleep&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;m&quot;&gt;300&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Millisecond&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
 		&lt;span class=&quot;n&quot;&gt;fmt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;%c&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;v&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
@@ -176,31 +176,31 @@
 &lt;p&gt;고루틴은 명령을 수행하는 단일 흐름으로 &lt;strong&gt;OS 스레드&lt;/strong&gt;를 이용하는 &lt;strong&gt;경량 스레드&lt;/strong&gt;입니다. 해당 정의를 이해하기 위해 OS 스레드와 고루틴이 어떻게 다른지 알아보겠습니다.
 2개의 코어에서 2개의 고루틴이 존재한다 가정하면, 아래 그림과 같이 각 코어 별, OS 스레드에 하나의 고루틴이 실행됩니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ________           ______________         .&lt;span class=&quot;s1&quot;&gt;''''''''&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ________           ______________         .&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
 |        |         /             /        /    Go    &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | CORE 1 |--------/ OS Thread 1 /---------&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine1 /
-|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;'........'&lt;/span&gt;
- ________           ______________         .&lt;span class=&quot;s1&quot;&gt;''''''''&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;&apos;........&apos;&lt;/span&gt;
+ ________           ______________         .&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
 |        |         /             /        /    Go    &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | CORE 2 |--------/ OS Thread 2 /---------&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine2 /
-|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;'........'&lt;/span&gt;
+|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;&apos;........&apos;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;위 상황에서 고루틴을 하나 더 생성하면, 남는 코어가 없으므로 3번째 고루틴은 다른 고루틴이 실행 완료될 때까지 대기 상태로 멈춰 있습니다.
 만약 고루틴 2가 실행 완료되면, 그제야 대기하던 고루틴 3이 실행됩니다.&lt;/p&gt;
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ________           ______________         .&lt;span class=&quot;s1&quot;&gt;''''''''&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ________           ______________         .&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
 |        |         /             /        /    Go    &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | CORE 1 |--------/ OS Thread 1 /---------&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine1 /
-|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;'........'&lt;/span&gt;
- ________           ______________         .&lt;span class=&quot;s1&quot;&gt;''''''''&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;&apos;........&apos;&lt;/span&gt;
+ ________           ______________         .&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
 |        |         /             /        /    Go    &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | CORE 2 |--------/ OS Thread 2 /---------&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine2 /
-|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;'........'&lt;/span&gt;
+|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;&apos;........&apos;&lt;/span&gt;
                                                 ^
- .&lt;span class=&quot;s1&quot;&gt;'!Wait!'&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;                                     |
+ .&lt;span class=&quot;s1&quot;&gt;&apos;!Wait!&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;                                     |
 /    Go    &lt;span class=&quot;se&quot;&gt;\_&lt;/span&gt;_____After Goroutin 2 is removed___|
 &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine3 /
- &lt;span class=&quot;s1&quot;&gt;'.!Wait!.'&lt;/span&gt;
+ &lt;span class=&quot;s1&quot;&gt;&apos;.!Wait!.&apos;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;h3 id=&quot;system-call&quot;&gt;System Call&lt;/h3&gt;
@@ -209,19 +209,19 @@
 앞선 예시에서는 실행 중인 고루틴이 완료되기까지 대기 상태를 유지했다면, 시스템 콜이 발생한 상황(고루틴 3)에서는 해당 고루틴을 대기열로 보내고
 대기하던 다른 고루틴(고루틴 4)을 실행하며 &lt;strong&gt;코어와 스레드 변경 없이&lt;/strong&gt; 고루틴만을 이동시킵니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ________           ______________         .&lt;span class=&quot;s1&quot;&gt;''''''''&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; ________           ______________         .&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
 |        |         /             /        /    Go    &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | CORE 1 |--------/ OS Thread 1 /---------&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine1 /
-|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;'........'&lt;/span&gt;
- ________           ______________         .&lt;span class=&quot;s1&quot;&gt;''''''''&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
+|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;&apos;........&apos;&lt;/span&gt;
+ ________           ______________         .&lt;span class=&quot;s1&quot;&gt;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;
 |        |         /             /        /    Go    &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 | CORE 2 |--------/ OS Thread 2 /---------&lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine3 /
-|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;'........'&lt;/span&gt;
+|________|       /_____________/           &lt;span class=&quot;s1&quot;&gt;&apos;........&apos;&lt;/span&gt;
                                                 ^
- .&lt;span class=&quot;s1&quot;&gt;'!Wait!'&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;                                     |
+ .&lt;span class=&quot;s1&quot;&gt;&apos;!Wait!&apos;&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt;                                     |
 /    Go    &lt;span class=&quot;se&quot;&gt;\&amp;lt;&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;------&lt;/span&gt; Switch only Goroutin &lt;span class=&quot;nt&quot;&gt;-------&lt;/span&gt;|
 &lt;span class=&quot;se&quot;&gt;\ &lt;/span&gt;routine4 /  without changing cores and threads
- &lt;span class=&quot;s1&quot;&gt;'.!Wait!.'&lt;/span&gt;
+ &lt;span class=&quot;s1&quot;&gt;&apos;.!Wait!.&apos;&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
 &lt;p&gt;이와 같이 고루틴을 이용하면 컨텍스트 스위칭과 없이 오직 고루틴만 옮겨 다니므로, 컨텍스트 스위칭 비용이 증가하면서 발생하는 프로그램 성능 저하로부터 자유로워지게 됩니다.&lt;/p&gt;
@@ -816,7 +816,7 @@ Content-Type: multipart/mixed&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;
 &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;MYBOUNDARY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;
 Content-Type: text/x-shellscript&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;charset&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;us-ascii&quot;&lt;/span&gt;
 &lt;span class=&quot;c&quot;&gt;#!/bin/bash&lt;/span&gt;
-/etc/eks/bootstrap.sh &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;Cluster Name&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--use-max-pods&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--kubelet-extra-args&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'--max-pods=10'&lt;/span&gt;
+/etc/eks/bootstrap.sh &lt;span class=&quot;o&quot;&gt;{&lt;/span&gt;Cluster Name&lt;span class=&quot;o&quot;&gt;}&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--use-max-pods&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;false&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--kubelet-extra-args&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;--max-pods=10&apos;&lt;/span&gt;
 &lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;MYBOUNDARY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;==&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;--&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
 
