@@ -4,6 +4,22 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
         <url>
+            <loc>https://heuristicwave.github.io/reflection.html</loc>
+            
+                <lastmod>2025-01-05T00:00:00+00:00</lastmod>
+            
+
+            
+                <changefreq>weekly</changefreq>
+            
+
+            
+                <priority>0.5</priority>
+            
+
+        </url>
+    
+        <url>
             <loc>https://heuristicwave.github.io/gameday.html</loc>
             
                 <lastmod>2024-11-30T00:00:00+00:00</lastmod>
