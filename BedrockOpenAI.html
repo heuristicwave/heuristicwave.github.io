@@ -11,7 +11,7 @@
 
 
 
-    <title>ECR CodePipeline with Terraform Ⅱ</title>
+    <title>OpenAI-Compatible RESTful APIs</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -49,26 +49,26 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/CodeBuild" />
+    <link rel="canonical" href="https://heuristicwave.github.io/BedrockOpenAI" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="ECR CodePipeline with Terraform Ⅱ" />
-    <meta property="og:description" content="Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo" {" />
-    <meta property="og:url" content="https://heuristicwave.github.io/CodeBuild" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png" />
+    <meta property="og:title" content="OpenAI-Compatible RESTful APIs" />
+    <meta property="og:description" content="Amazon Bedrock Access Gateway로 OpenAI 호환 API 구현하기 🤖 OpenAI Provider 2024년 12월 19일 발행된 LangChain State of AI 2024 Report에 따르면, OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되는 LLM 공급업체 입니다. 이 데이터는 LangSmith 사용자들의 사용량만을 기반으로 하고 있어, 전체 LLM 시장의 실제 점유율과는 차이가 있습니다. (당장 저만" />
+    <meta property="og:url" content="https://heuristicwave.github.io/BedrockOpenAI" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2021-04-08T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2021-04-08T00:00:00+00:00" />
+    <meta property="article:published_time" content="2025-01-18T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2025-01-18T00:00:00+00:00" />
     <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="ECR CodePipeline with Terraform Ⅱ" />
-    <meta name="twitter:description" content="Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo" {" />
+    <meta name="twitter:title" content="OpenAI-Compatible RESTful APIs" />
+    <meta name="twitter:description" content="Amazon Bedrock Access Gateway로 OpenAI 호환 API 구현하기 🤖 OpenAI Provider 2024년 12월 19일 발행된 LangChain State of AI 2024 Report에 따르면, OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되는 LLM 공급업체 입니다. 이 데이터는 LangSmith 사용자들의 사용량만을 기반으로 하고 있어, 전체 LLM 시장의 실제 점유율과는 차이가 있습니다. (당장 저만" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
@@ -87,18 +87,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/CodeBuild",
+    "url": "https://heuristicwave.github.io/BedrockOpenAI",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/post/CodePipeline.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/blog-cover.jpg",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/CodeBuild"
+        "@id": "https://heuristicwave.github.io/BedrockOpenAI"
     },
-    "description": "Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM) 2편에서는 ECR과 CodeBuild를 생성하고 IAM 역할, 정책을 부여하는 법을 학습합니다. ECR ECR 역시 공식 문서에서 사용방법을 확인합니다. 공식문서에서 image_scanning_configuration config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다. 더불어, output도 함께 작성하겠습니다. cat &lt;&lt;EOF &gt; ecr.tf resource "aws_ecr_repository" "image_repo" {"
+    "description": "Amazon Bedrock Access Gateway로 OpenAI 호환 API 구현하기 🤖 OpenAI Provider 2024년 12월 19일 발행된 LangChain State of AI 2024 Report에 따르면, OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되는 LLM 공급업체 입니다. 이 데이터는 LangSmith 사용자들의 사용량만을 기반으로 하고 있어, 전체 LLM 시장의 실제 점유율과는 차이가 있습니다. (당장 저만"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -120,7 +120,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="ECR CodePipeline with Terraform Ⅱ" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="OpenAI-Compatible RESTful APIs" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -182,11 +182,11 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-aws tag-devops tag-terraform post tag-aws ">
+        <article class="post-full  tag-aws tag-genai post tag-ai no-image">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime=" 8 April 2021"> 8 April 2021</time>
+                    <time class="post-full-meta-date" datetime="18 January 2025">18 January 2025</time>
                     
                         <span class="date-divider">/</span>
                         
@@ -195,276 +195,240 @@ into the {body} of the default.hbs template -->
                             
                         
                             
-                               <a href='/tag/devops/'>DEVOPS</a>,
-                            
-                        
-                            
-                               <a href='/tag/terraform/'>TERRAFORM</a>
+                               <a href='/tag/genai/'>GENAI</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">ECR CodePipeline with Terraform Ⅱ</h1>
+                <h1 class="post-full-title">OpenAI-Compatible RESTful APIs</h1>
             </header>
 
-            
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)">
-            </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>Terraform으로 ECR 파이프라인 구축하기 2 (ECR, CodeBuild, IAM)</p>
+                    <p>Amazon Bedrock Access Gateway로 OpenAI 호환 API 구현하기</p>
 
-<p>2편에서는 <strong>ECR</strong>과 <strong>CodeBuild</strong>를 생성하고 <strong>IAM 역할, 정책을 부여</strong>하는 법을 학습합니다.</p>
+<h2 id="-openai-provider"><a href="#openai">🤖 OpenAI Provider</a><a id="openai"></a></h2>
 
-<h2 id="ecr">ECR</h2>
+<p>2024년 12월 19일 발행된 <a href="https://blog.langchain.dev/langchain-state-of-ai-2024/">LangChain State of AI 2024 Report</a>에 따르면,
+OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되는 LLM 공급업체 입니다.</p>
 
-<p>ECR 역시 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ecr_repository">공식 문서</a>에서 사용방법을 확인합니다.
-공식문서에서 <code class="language-plaintext highlighter-rouge">image_scanning_configuration</code> config를 사용하면 취약점 스캔이 가능하다 설명되어 있지만, 필요하지 않기 때문에 제외하겠습니다.
-더불어, output도 함께 작성하겠습니다.</p>
+<p><img src="https://blog.langchain.dev/content/images/size/w1600/2024/12/Top-10-LLM-Providers-bar-chart.png" alt="Top 10 LLM Providers 2024" /></p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; ecr.tf
-resource "aws_ecr_repository" "image_repo" {
-  name                 = var.image_repo_name
-  image_tag_mutability = "MUTABLE"
-}
+<p>이 데이터는 LangSmith 사용자들의 사용량만을 기반으로 하고 있어, 전체 LLM 시장의 실제 점유율과는 차이가 있습니다.
+<em>(당장 저만 해도 LangChain을 통해 모델을 호출하지 않고 각 CSP가 권장하는 호출 방법으로 사용하고 있습니다. 😆)</em></p>
 
-output "image_repo_url" {
-  value = aws_ecr_repository.image_repo.repository_url
-}
+<p>그러나, OpenAI는 59.2%의 점유율로 2위인 Ollama(8.5%)보다 약 7배 높은 사용률을 보여주며 LLM 시장에서 OpenAI가 압도적인 지배력을 가지고 있음을 보여줍니다.</p>
 
-output "image_repo_arn" {
-  value = aws_ecr_repository.image_repo.arn
-}
-</span><span class="no">EOF
-</span></code></pre></div></div>
+<p>각 Provider가 공식적으로 발표한 사용량 데이터를 기반으로 직접적인 비교자료는 없지만, OpenAI가 시장에서 가지는 영향력이 매우 크기 때문에 Google(Gemini), xAI(Grok) 등의 Provider들은 OpenAI와 호환되는 라이브러리를 출시하고 있습니다.</p>
 
-<p>이어서 <code class="language-plaintext highlighter-rouge">ecr.tf</code>에서 변수로 사용하기 위한 <strong>var.image_repo_name</strong> 부분이 작동하도록 1편에서 작성한 <code class="language-plaintext highlighter-rouge">variables.tf</code> 아래 값을 추가합니다.</p>
+<p><strong><a href="https://developers.googleblog.com/en/gemini-is-now-accessible-from-the-openai-library/">Gemini is now accessible from the OpenAI Library</a></strong></p>
 
-<p>✅ 편의상 이번 단계에 필요한 variable을 함께 포함했습니다.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>variable "image_repo_name" {
-  description = "Image repo name"
-  type        = string
-}
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s">"gemini_api_key"</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s">"https://generativelanguage.googleapis.com/v1beta/"</span>
+<span class="p">)</span>
 
-variable "container_name" {
-  description = "Container Name"
-  default     = "my-container"
-}
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">chat</span><span class="p">.</span><span class="n">completions</span><span class="p">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s">"gemini-1.5-flash"</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s">"role"</span><span class="p">:</span> <span class="s">"system"</span><span class="p">,</span> <span class="s">"content"</span><span class="p">:</span> <span class="s">"You are a helpful assistant."</span><span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">"role"</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span>
+            <span class="s">"content"</span><span class="p">:</span> <span class="s">"Explain to me how AI works"</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">)</span>
 
-variable "source_repo_branch" {
-  description = "Source repo branch"
-  type        = string
-}
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">message</span><span class="p">)</span>
 </code></pre></div></div>
 
-<p>ecr 작성을 완료햇으니 <code class="language-plaintext highlighter-rouge">plan, apply</code> 명령어를 차례로 입력해 인프라를 생성하고 <code class="language-plaintext highlighter-rouge">terraform state list</code>명령어나 <a href="https://console.aws.amazon.com/ecr/home">콘솔</a>에서 생성된 인프라를 확인합니다.</p>
+<p><strong><a href="https://docs.x.ai/docs/overview#migrating-from-another-llm-provider">xAI, Migrating from another LLM provider?</a></strong></p>
 
-<h2 id="codebuild">CodeBuild</h2>
+<p>Grok의 경우, OpenAI 뿐만 아니라 Anthropic SDK와도 호환성을 제공합니다.</p>
 
-<p>CodeBuild를 사용하기 위해 <a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project">Terraform 도큐먼트</a>에서 사용법을 확인합니다.
-기존까지의 작업과는 달리 상당히 어려워 보입니다. 그러나 쓱 훝어보면 크게 4가지(bucket, IAM Role과 Policy, Codebuild)로 정리됩니다.</p>
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">XAI_API_KEY</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s">"https://api.x.ai/v1"</span><span class="p">)</span>
 
-<h3 id="bucket">Bucket</h3>
+<span class="kn">from</span> <span class="nn">anthropic</span> <span class="kn">import</span> <span class="n">Anthropic</span>
+<span class="n">client</span> <span class="o">=</span> <span class="n">Anthropic</span><span class="p">(</span><span class="n">api_key</span><span class="o">=</span><span class="n">XAI_API_KEY</span><span class="p">,</span> <span class="n">base_url</span><span class="o">=</span><span class="s">"https://api.x.ai"</span><span class="p">)</span>
+</code></pre></div></div>
 
-<p>도큐먼트와 같이 우선적으로 S3를 생성합니다. bucket의 이름은 선택이지만, 여러개의 버킷을 가지고 있는 저는 식별을 위해 이름을 부여했습니다.</p>
+<p><br /></p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cat</span> <span class="o">&lt;&lt;</span><span class="no">EOF</span><span class="sh"> &gt; codebuild.tf
-resource "aws_s3_bucket" "artifact_bucket" {
-  bucket = "ecr-pipeline"
-}
-</span><span class="no">EOF
+<h2 id="️-openai-호환-bedrock-사용하기"><a href="#bedrock">🖇️ OpenAI 호환 Bedrock 사용하기</a><a id="bedrock"></a></h2>
+
+<p>AWS의 공식 서비스는 아니지만, AWS의 Application Load Balancer와 Lambda 등을 활용해 Amazon Bedrock의 다양한 AI 모델들을 OpenAI API 형식으로 손쉽게 사용할 수 있게 해주는 ‘<a href="https://github.com/aws-samples/bedrock-access-gateway">Bedrock Access Gateway</a>‘에 대해 알아보겠습니다.</p>
+
+<h3 id="아키텍처">아키텍처</h3>
+
+<p><img src="https://raw.githubusercontent.com/aws-samples/bedrock-access-gateway/refs/heads/main/assets/arch.svg" alt="아키텍처" /></p>
+
+<p>Bedrock Access Gateway는 API Key 생성을 위한 Parameter Store, 스트리밍 응답과 API URL을 제공하는 Application Load Balancer(ALB), 그리고 Bedrock API를 OpenAI 형식으로 변환해주는 Proxy 서버 역할의 Lambda로 구성되어 있습니다.</p>
+
+<h3 id="지원-기능">지원 기능</h3>
+
+<p>이 서비스는 Bedrock의 Guardrails와 같은 고급(편의) 기능은 지원하지 않지만, 다음과 같은 기본적인 기능들을 제공합니다.</p>
+
+<ul>
+  <li>스트리밍 응답</li>
+  <li>Model, Chat Completion API</li>
+  <li>Tool 호출</li>
+  <li>Embedding/Multimodal API</li>
+  <li>교차 리전 호출</li>
+</ul>
+
+<h3 id="구축하기">구축하기</h3>
+
+<h4 id="1-api-키-설정">1. API 키 설정</h4>
+
+<p>Parameter Store를 사용하는 방법과 컨테이너에 직접 환경 변수를 설정하는 2가지 방법이 있지만, 이번 포스팅에서는 Parameter Store를 사용하겠습니다.</p>
+
+<ol>
+  <li>AWS Systems Manager &gt; Parameter Store 접속 &gt; ‘Create parameter’ 클릭</li>
+  <li>파라미터 설정
+    <ul>
+      <li>이름: <code class="language-plaintext highlighter-rouge">BedrockProxyAPIKey</code></li>
+      <li>계층: 표준</li>
+      <li>유형: 문자열</li>
+      <li>데이터 형식: text</li>
+      <li>값: 원하는 API 키 값</li>
+    </ul>
+  </li>
+</ol>
+
+<h4 id="2-cloudformation-스택-배포">2. CloudFormation 스택 배포</h4>
+
+<p>AWS 콘솔에서 원하는 리전과 CloudFormation 템플릿을 선택합니다. 이번 포스팅에서는 서울리전과 ALB + Fargate 조합을 선택했습니다.</p>
+
+<ol>
+  <li>제공된 <a href="https://github.com/aws-samples/bedrock-access-gateway/tree/main?tab=readme-ov-file#store-api-key-in-env-variable">Github</a>에서 CloudFormation 템플릿 선택
+    <ul>
+      <li>ALB + Lambda</li>
+      <li>ALB + Fargate</li>
+    </ul>
+  </li>
+  <li>스택 세부정보 입력
+    <ul>
+      <li>1단계에서 API 키를 설정한 경우, API 키를 저장하는데 사용한 파라미터 이름을 입력 (예: <code class="language-plaintext highlighter-rouge">BedrockProxyAPIKey</code>)</li>
+      <li>API 키를 설정하지 않은 경우, 해당 필드를 비우고 “다음” 단계로 넘어가세요</li>
+    </ul>
+  </li>
+  <li>IAM 리소스 생성 권한 확인
+    <ul>
+      <li>CloudFormation이 필요한 IAM 리소스를 자동으로 생성할 수 있도록, 3단계 하단의 권한 부여 체크박스를 선택합니다.</li>
+    </ul>
+  </li>
+  <li>스택 생성 약 10분 내외 소요</li>
+</ol>
+
+<h3 id="사용하기">사용하기</h3>
+
+<p>배포 후, 다음 환경 변수를 설정합니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">OPENAI_API_KEY</span><span class="o">=</span>&lt;API key&gt;
+<span class="nb">export </span><span class="nv">OPENAI_BASE_URL</span><span class="o">=</span>&lt;API base url&gt;
+</code></pre></div></div>
+
+<h4 id="사용-가능한-모델-확인">사용 가능한 모델 확인</h4>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nt">-s</span> <span class="nv">$OPENAI_BASE_URL</span>/models <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$OPENAI_API_KEY</span><span class="s2">"</span> | jq .data
+</code></pre></div></div>
+
+<h4 id="sdk에서-사용하기">SDK에서 사용하기</h4>
+
+<p>이제 다음 세 가지 정보만 있으면 OpenAI SDK 형식으로 모델을 사용할 수 있습니다.</p>
+
+<ul>
+  <li>API Key (Parameter Store 생성 시 설정한 값)</li>
+  <li>Base URL (CloudFormation 출력 값)</li>
+  <li>Bedrock에서 사용할 Model ID</li>
+</ul>
+
+<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">openai</span> <span class="kn">import</span> <span class="n">OpenAI</span>
+
+<span class="n">client</span> <span class="o">=</span> <span class="n">OpenAI</span><span class="p">(</span>
+    <span class="n">api_key</span><span class="o">=</span><span class="s">"{API Key}"</span><span class="p">,</span>
+    <span class="n">base_url</span><span class="o">=</span><span class="s">"{API Base URL}"</span>
+<span class="p">)</span>
+
+<span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">chat</span><span class="p">.</span><span class="n">completions</span><span class="p">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s">"anthropic.claude-3-5-sonnet-20240620-v1:0"</span><span class="p">,</span>
+    <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+        <span class="p">{</span><span class="s">"role"</span><span class="p">:</span> <span class="s">"system"</span><span class="p">,</span> <span class="s">"content"</span><span class="p">:</span> <span class="s">"You are a helpful assistant."</span><span class="p">},</span>
+        <span class="p">{</span>
+            <span class="s">"role"</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span>
+            <span class="s">"content"</span><span class="p">:</span> <span class="s">"너는 무슨 모델이니?"</span>
+        <span class="p">}</span>
+    <span class="p">]</span>
+<span class="p">)</span>
+
+<span class="k">print</span><span class="p">(</span><span class="n">response</span><span class="p">.</span><span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">message</span><span class="p">)</span>
+
+<span class="c1"># 저는 Anthropic에서 개발한 AI 어시스턴트인 Claude입니다. 정확한 모델 버전은 잘 모르겠습니다.
 </span></code></pre></div></div>
 
-<h3 id="iam-role">IAM Role</h3>
+<h4 id="api-사용하기">API 사용하기</h4>
 
-<p>도큐먼트를 따라 AssumeRole을 사용합시다. <br />
-➕ S3을 만들때 사용한 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 아래 코드를 추가합니다.</p>
+<p>다음과 같이 터미널에서 직접 API를 호출하여 사용할 수 도 있습니다.</p>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_iam_role" "codebuild_role" {
-  name = "terraform-codebuild"
-  assume_role_policy = &lt;&lt;EOF
-{
-   "Version": "2012-10-17",
-   "Statement": [
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>curl <span class="nv">$OPENAI_BASE_URL</span>/chat/completions <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Content-Type: application/json"</span> <span class="se">\</span>
+  <span class="nt">-H</span> <span class="s2">"Authorization: Bearer </span><span class="nv">$OPENAI_API_KEY</span><span class="s2">"</span> <span class="se">\</span>
+  <span class="nt">-d</span> <span class="s1">'{
+    "model": "anthropic.claude-3-5-sonnet-20240620-v1:0",
+    "messages": [
       {
-         "Effect": "Allow",
-         "Principal": {
-            "Service": "codebuild.amazonaws.com"
-         },
-         "Action": "sts:AssumeRole"
+        "role": "user",
+        "content": "너는 무슨 모델이니?"
       }
-   ]
-}
-EOF
-}
+    ]
+  }'</span>
 </code></pre></div></div>
 
-<h3 id="iam-policy">IAM Policy</h3>
+<blockquote>
+  <p>{“id”:”chatcmpl-39fd0f67”,”created”:1737187206,”model”:”anthropic.claude-3-5-sonnet-20240620-v1:0”,”system_fingerprint”:”fp”,”choices”:[{“index”:0,”finish_reason”:”stop”,”logprobs”:null,”message”:{“role”:”assistant”,”content”:”저는 Anthropic에서 개발한 AI 어시스턴트인 Claude입니다. 정확한 모델 버전은 잘 모르겠습니다.”}}],”object”:”chat.completion”,”usage”:{“prompt_tokens”:20,”completion_tokens”:55,”total_tokens”:75}}</p>
+</blockquote>
 
-<p>정책은 IAM 콘솔에서 기존에 만들어진 정책을 사용할 수도 있지만, 아래와 같이 직접 작성할 수도 있습니다.
-도큐먼트에서 EC2에 대한 정책을 사용하지만, 우리는 ECR을 사용하므로 아래와 같은 정책을 사용하겠습니다.</p>
-<noscript>
-  <pre>resource &quot;aws_iam_policy&quot; &quot;codebuild_policy&quot; {
-  description = &quot;CodeBuild Execution Policy&quot;
-  policy      = &lt;&lt;EOF
-{
-  &quot;Version&quot;: &quot;2012-10-17&quot;,
-  &quot;Statement&quot;: [
-    {
-      &quot;Action&quot;: [
-        &quot;logs:CreateLogGroup&quot;, &quot;logs:CreateLogStream&quot;, &quot;logs:PutLogEvents&quot;,
-        &quot;ecr:GetAuthorizationToken&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;*&quot;
-    },
-    {
-      &quot;Action&quot;: [
-        &quot;s3:GetObject&quot;, &quot;s3:GetObjectVersion&quot;, &quot;s3:PutObject&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_s3_bucket.artifact_bucket.arn}/*&quot;
-    },
-    {
-      &quot;Action&quot;: [
-        &quot;ecr:GetDownloadUrlForLayer&quot;, &quot;ecr:BatchGetImage&quot;,
-        &quot;ecr:BatchCheckLayerAvailability&quot;, &quot;ecr:PutImage&quot;,
-        &quot;ecr:InitiateLayerUpload&quot;, &quot;ecr:UploadLayerPart&quot;,
-        &quot;ecr:CompleteLayerUpload&quot;
-      ],
-      &quot;Effect&quot;: &quot;Allow&quot;,
-      &quot;Resource&quot;: &quot;${aws_ecr_repository.image_repo.arn}&quot;
-    }
-  ]
-}
-EOF
-}</pre>
-</noscript>
-<script src="https://gist.github.com/heuristicwave/09103b88af041153ccd206ec6d51b7c1.js"> </script>
+<p>CloudWatch에서 확인한 Bedrock API 호출 정보를 보면(👇), ConverseAPI의 사용량 정보가 OpenAI의 usage 형식(☝️)과 동일한 형태로 호환되어 출력된 것을 확인할 수 있습니다.</p>
 
-<p>20, 30라인에서 앞서 생성한 리소스를 <code class="language-plaintext highlighter-rouge">${채움참조}</code> 문법으로 유연한 코드를 작성합니다.</p>
+<p><img src="../../assets/built/images/post/ai/Bedrock/bedrock_cw.png" alt="bedrock_cw" /></p>
 
-<p>🚩 이어서 생성한 <strong>Policy를 Role에 부여</strong>합니다. 이것 역시 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 추가합니다.</p>
+<blockquote>
+  <p>🚨 광고 : Converse API 및 모델 사용량 모니터링은 “Amazon Bedrock으로 시작하는 실전 생성형 AI 개발”를 참고하세요! <br />
+판매 링크 : <a href="https://www.yes24.com/Product/Goods/140049541">📘 예스24</a>, <a href="https://product.kyobobook.co.kr/detail/S000214962344">📗 교보문고</a>, <a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=353662061&amp;start=slayer">📕 알라딘</a></p>
+</blockquote>
 
-<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>resource "aws_iam_role_policy_attachment" "codebuild-attach" {
-  role       = aws_iam_role.codebuild_role.name
-  policy_arn = aws_iam_policy.codebuild_policy.arn
-}
-</code></pre></div></div>
+<p><br /></p>
 
-<h3 id="codebuild-1">CodeBuild</h3>
+<h2 id="-고려-사항"><a href="#notes">✋ 고려 사항</a><a id="notes"></a></h2>
 
-<p><a href="https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/codebuild_project">Terraform 도큐먼트</a>를 보아도 어떻게 해야 ECR에 적용시킬 수 있는지 알기 어렵습니다.
-우선 CodeBuild를 이해하기 위해 <a href="https://docs.aws.amazon.com/ko_kr/codebuild/latest/userguide/sample-docker.html">AWS docs</a>를 읽어봅시다.
-대략 리소스 이름을 정하고, 환경을 구성하고 빌드를 하기 위한 방법을 정의해야 한다는 사실을 알 수 있습니다.
-CodeBuild가 정의된 아래 코드를 활용해 <code class="language-plaintext highlighter-rouge">codebuild.tf</code>에 추가합니다.</p>
-<noscript>
-  <pre>resource &quot;aws_codebuild_project&quot; &quot;codebuild&quot; {
-  name         = &quot;codebuild-${var.source_repo_name}-${var.source_repo_branch}&quot;
-  service_role = aws_iam_role.codebuild_role.arn
+<ul>
+  <li>성능: 프록시 구조로 인한 약간의 지연시간이 발생할 수 있습니다.</li>
+  <li>업그레이드: 최신 기능을 사용하려면 최신 이미지(프록시 서버)로 업데이트가 필요합니다.</li>
+  <li>비용: ALB와 같은 AWS 리소스를 활용하므로 약간의 비용이 부과됩니다.
+    <ul>
+      <li>Lambda 웹 어댑터 + Lambda URL(<a href="https://github.com/awslabs/aws-lambda-web-adapter/tree/main/examples/fastapi-response-streaming">예시</a>)을 사용하여 ALB를 대체 할 수 있습니다.</li>
+    </ul>
+  </li>
+</ul>
 
-  artifacts {
-    type = &quot;CODEPIPELINE&quot;
-  }
-  
-  environment {
-    compute_type                = &quot;BUILD_GENERAL1_MEDIUM&quot;
-    image                       = &quot;aws/codebuild/standard:3.0&quot;
-    type                        = &quot;LINUX_CONTAINER&quot;
-    privileged_mode             = true
-    image_pull_credentials_type = &quot;CODEBUILD&quot;
-    environment_variable {
-      name  = &quot;REPOSITORY_URI&quot;
-      value = aws_ecr_repository.image_repo.repository_url
-    }
-    environment_variable {
-      name  = &quot;AWS_DEFAULT_REGION&quot;
-      value = var.aws_region
-    }
-    environment_variable {
-      name  = &quot;CONTAINER_NAME&quot;
-      value = var.container_name
-    }
-  }
-  source {
-    type      = &quot;CODEPIPELINE&quot;
-    buildspec = &lt;&lt;BUILDSPEC
-${file(&quot;buildspec.yml&quot;)}
-BUILDSPEC
-  }
-}</pre>
-</noscript>
-<script src="https://gist.github.com/heuristicwave/2ebf79ce3cbdf4a87657b272f9e1d994.js"> </script>
+<h2 id="-마치며"><a href="#outro">🌟 마치며</a><a id="outro"></a></h2>
 
-<p>31라인이 참조하는 <code class="language-plaintext highlighter-rouge">buildspec.yml</code>을 생성하고, pre_build, build, post_build에 맞춰 작성합니다.</p>
+<p>Bedrock Access Gateway는 OpenAI API 형식을 사용하기 때문에 Guardrails, Agents 등 Bedrock 고유의 기능을 완전히 활용할 수는 없습니다. 하지만 이 도구를 통해 기존 OpenAI API 기반 애플리케이션을 Amazon Bedrock으로 쉽게 마이그레이션하거나 테스트할 수 있으며, 다양한 AI 모델들을 일관된 인터페이스로 사용할 수 있다는 장점이 있습니다.</p>
 
-<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">version</span><span class="pi">:</span> <span class="m">0.2</span>
-<span class="na">phases</span><span class="pi">:</span>
-  <span class="na">install</span><span class="pi">:</span>
-    <span class="na">runtime-versions</span><span class="pi">:</span>
-      <span class="na">docker</span><span class="pi">:</span> <span class="m">18</span>
-  <span class="na">pre_build</span><span class="pi">:</span>
-    <span class="na">commands</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">echo Logging in to Amazon ECR...</span>
-      <span class="pi">-</span> <span class="s">$(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)</span>
-      <span class="pi">-</span> <span class="s">COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)</span>
-      <span class="pi">-</span> <span class="s">IMAGE_TAG=${COMMIT_HASH:=latest}</span>
-  <span class="na">build</span><span class="pi">:</span>
-    <span class="na">commands</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">echo Build started on `date`</span>
-      <span class="pi">-</span> <span class="s">echo Building the Docker image...</span>
-      <span class="pi">-</span> <span class="s">docker build -t $REPOSITORY_URI:latest .</span>
-      <span class="pi">-</span> <span class="s">docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG</span>
-  <span class="na">post_build</span><span class="pi">:</span>
-    <span class="na">commands</span><span class="pi">:</span>
-      <span class="pi">-</span> <span class="s">echo Build completed on `date`</span>
-      <span class="pi">-</span> <span class="s">echo Pushing the Docker image...</span>
-      <span class="pi">-</span> <span class="s">docker push $REPOSITORY_URI:latest</span>
-      <span class="pi">-</span> <span class="s">docker push $REPOSITORY_URI:$IMAGE_TAG</span>
-      <span class="pi">-</span> <span class="s">echo Writing image definitions file...</span>
-      <span class="pi">-</span> <span class="s">printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG &gt; imagedefinitions.json</span>
-<span class="na">artifacts</span><span class="pi">:</span>
-  <span class="na">files</span><span class="pi">:</span> <span class="s">imagedefinitions.json</span>
-</code></pre></div></div>
+<p>특히 기존에는 매력적인 오픈소스 도구들이 OpenAI만 지원하여 Bedrock 모델 활용이 제한적이었지만, 이제는 Bedrock Access Gateway를 통해 이러한 도구들을 Bedrock 모델들과 함께 간편하고 빠르게 테스트해볼 수 있게 되었습니다.</p>
 
-<p>지금까지 작성된 인프라를 <code class="language-plaintext highlighter-rouge">terraform state list</code>명령어를 통해 확인하면 아래와 같습니다.</p>
+<p>더불어 GitHub 레포지토리의 코드를 활용하면 로컬 환경에서도 실행 가능한 나만의 게이트웨이를 구축할 수 있습니다. 이처럼 Bedrock Access Gateway는 Amazon Bedrock의 활용성을 한층 더 높여주는 유용한 도구가 될 것으로 기대됩니다.</p>
 
-<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>❯ terraform state list
-aws_codebuild_project.codebuild
-aws_codecommit_repository.test
-aws_ecr_repository.image_repo
-aws_iam_policy.codebuild_policy
-aws_iam_role.codebuild_role
-aws_iam_role_policy_attachment.codebuild-attach
-aws_s3_bucket.artifact_bucket
-</code></pre></div></div>
-
-<details>
-  <summary>생성한 인프라가 위와 같지 않을 경우, 👉 Click</summary>
-
-  <p>실수로 의도치 않은 인프라가 프로비저닝 되었다면 2가지 방법을 통해 원 상태로 복구 할 수 있습니다.</p>
-
-  <ol>
-    <li><code class="language-plaintext highlighter-rouge">terraform destroy</code> 명령어로 특정 인프라만 되돌리거나 프로비저닝 하고싶은 경우, <code class="language-plaintext highlighter-rouge">-target</code> 옵션과 함께 resource 명으로 명령어를 작성합니다. <br />
-<em>예시) terraform destory -target aws_vpc.main</em></li>
-    <li>잘못 작성한 코드를 수정 후, <code class="language-plaintext highlighter-rouge">terraform apply</code>명령어를 적용하여 최신 상태의 인프라를 반영합니다.</li>
-  </ol>
-
-</details>
+<p><br /></p>
 
 <hr />
-
-<p><span class="table-of-contents-list">Terraform Courses</span></p>
-<ul class="table-of-contents-list">
-    <li><a href="./3Tier">3-Tier VPC Architecture with Terraform</a></li>
-    <li><a href="./CodeCommit">ECR Pipeline with Terraform Ⅰ (CodeCommit)</a></li>
-    <li><a href="./CodeBuild">ECR Pipeline with Terraform Ⅱ (ECR, CodeBuild, IAM)</a></li>
-    <li><a href="./CodePipeline">ECR Pipeline with Terraform Ⅲ (CodePipeline)</a></li>
-    <li><a href="./Packer">Provision Infrastructure with Packer</a></li>
-</ul>
 
                 </div>
             </section>
@@ -522,9 +486,9 @@ aws_s3_bucket.artifact_bucket
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/CodeBuild';
-                            this.page.identifier = '/CodeBuild';
-                            this.page.title = 'ECR CodePipeline with Terraform Ⅱ';
+                            this.page.url = 'https://heuristicwave.github.io/BedrockOpenAI';
+                            this.page.identifier = '/BedrockOpenAI';
+                            this.page.title = 'OpenAI-Compatible RESTful APIs';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -569,11 +533,6 @@ aws_s3_bucket.artifact_bucket
                                 
                                   
                                     
-                                        
-                                        
-                                            <li><a href="/BedrockOpenAI">OpenAI-Compatible RESTful APIs</a></li>
-                                        
-                                    
                                   
                                 
                                   
@@ -608,14 +567,7 @@ aws_s3_bucket.artifact_bucket
                                     
                                         
                                         
-                                    
-                                  
-                                
-                                  
-                                
-                                  
-                                    
-                                        
+                                            <li><a href="/LLMCache">Providing a caching layer for LLM with Langchain in AWS</a></li>
                                         
                                     
                                   
@@ -636,6 +588,8 @@ aws_s3_bucket.artifact_bucket
                                         
                                         
                                     
+                                  
+                                
                                   
                                 
                                   
@@ -695,6 +649,13 @@ aws_s3_bucket.artifact_bucket
                                   
                                 
                                   
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
                                 
                                   
                                 
@@ -796,6 +757,9 @@ aws_s3_bucket.artifact_bucket
                                   
                                 
                                   
+                                    
+                                        
+                                        
                                     
                                   
                                 
@@ -830,63 +794,6 @@ aws_s3_bucket.artifact_bucket
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/CodePipeline">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/CodePipeline">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Aws</span>
-                            
-                        
-                            
-                               <span class="post-card-tags">Devops</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Terraform</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅲ</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -894,30 +801,34 @@ aws_s3_bucket.artifact_bucket
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/CodeCommit">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/post/CodePipeline.png)"></div>
+            <a class="post-card-image-link" href="/reflection">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/bedrock.jpg)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/CodeCommit">
+            <a class="post-card-content-link" href="/reflection">
                 <header class="post-card-header">
                     
+                        
+                            
+                               <span class="post-card-tags">Uncategorized</span>
+                            
                         
                             
                                <span class="post-card-tags">Aws</span>
                             
                         
                             
-                               <span class="post-card-tags">Devops</span>
+                               <span class="post-card-tags">Genai</span>
                             
                         
                             
-                                <span class="post-card-tags">Terraform</span>
+                                <span class="post-card-tags">Event</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">ECR CodePipeline with Terraform Ⅰ</h2>
+                    <h2 class="post-card-title">출판 후기 - 첫 책을 출간하면서 놓쳤던 것들</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -961,18 +872,18 @@ aws_s3_bucket.artifact_bucket
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">ECR CodePipeline with Terraform Ⅱ</div>
+    <div class="floating-header-title">OpenAI-Compatible RESTful APIs</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=ECR+CodePipeline+with+Terraform+%E2%85%A1&amp;url=https://heuristicwave.github.ioCodeBuild"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=OpenAI-Compatible+RESTful+APIs&amp;url=https://heuristicwave.github.ioBedrockOpenAI"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioCodeBuild"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioBedrockOpenAI"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 

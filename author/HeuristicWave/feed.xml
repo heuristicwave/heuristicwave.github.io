@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2025-01-05T14:26:05+00:00</updated>
+  <updated>2025-01-18T10:04:39+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -30,6 +30,263 @@
   
   
 
+  
+    <entry>
+      <title type="html">OpenAI-Compatible RESTful APIs</title>
+      <link href="https://heuristicwave.github.io/BedrockOpenAI" rel="alternate" type="text/html" title="OpenAI-Compatible RESTful APIs" />
+      <published>2025-01-18T00:00:00+00:00</published>
+      <updated>2025-01-18T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/%08BedrockOpenAI</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/BedrockOpenAI">&lt;p&gt;Amazon Bedrock Access Gateway로 OpenAI 호환 API 구현하기&lt;/p&gt;
+
+&lt;h2 id=&quot;-openai-provider&quot;&gt;&lt;a href=&quot;#openai&quot;&gt;🤖 OpenAI Provider&lt;/a&gt;&lt;a id=&quot;openai&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;2024년 12월 19일 발행된 &lt;a href=&quot;https://blog.langchain.dev/langchain-state-of-ai-2024/&quot;&gt;LangChain State of AI 2024 Report&lt;/a&gt;에 따르면,
+OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되는 LLM 공급업체 입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://blog.langchain.dev/content/images/size/w1600/2024/12/Top-10-LLM-Providers-bar-chart.png&quot; alt=&quot;Top 10 LLM Providers 2024&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;이 데이터는 LangSmith 사용자들의 사용량만을 기반으로 하고 있어, 전체 LLM 시장의 실제 점유율과는 차이가 있습니다.
+&lt;em&gt;(당장 저만 해도 LangChain을 통해 모델을 호출하지 않고 각 CSP가 권장하는 호출 방법으로 사용하고 있습니다. 😆)&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;그러나, OpenAI는 59.2%의 점유율로 2위인 Ollama(8.5%)보다 약 7배 높은 사용률을 보여주며 LLM 시장에서 OpenAI가 압도적인 지배력을 가지고 있음을 보여줍니다.&lt;/p&gt;
+
+&lt;p&gt;각 Provider가 공식적으로 발표한 사용량 데이터를 기반으로 직접적인 비교자료는 없지만, OpenAI가 시장에서 가지는 영향력이 매우 크기 때문에 Google(Gemini), xAI(Grok) 등의 Provider들은 OpenAI와 호환되는 라이브러리를 출시하고 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://developers.googleblog.com/en/gemini-is-now-accessible-from-the-openai-library/&quot;&gt;Gemini is now accessible from the OpenAI Library&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;openai&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OpenAI&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OpenAI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;api_key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;gemini_api_key&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;base_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;https://generativelanguage.googleapis.com/v1beta/&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;completions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;gemini-1.5-flash&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;system&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;You are a helpful assistant.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;user&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;Explain to me how AI works&quot;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;choices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;strong&gt;&lt;a href=&quot;https://docs.x.ai/docs/overview#migrating-from-another-llm-provider&quot;&gt;xAI, Migrating from another LLM provider?&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;Grok의 경우, OpenAI 뿐만 아니라 Anthropic SDK와도 호환성을 제공합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;openai&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OpenAI&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OpenAI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;api_key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;XAI_API_KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;base_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;https://api.x.ai/v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;anthropic&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Anthropic&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Anthropic&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;api_key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;XAI_API_KEY&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;base_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;https://api.x.ai&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-openai-호환-bedrock-사용하기&quot;&gt;&lt;a href=&quot;#bedrock&quot;&gt;🖇️ OpenAI 호환 Bedrock 사용하기&lt;/a&gt;&lt;a id=&quot;bedrock&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;AWS의 공식 서비스는 아니지만, AWS의 Application Load Balancer와 Lambda 등을 활용해 Amazon Bedrock의 다양한 AI 모델들을 OpenAI API 형식으로 손쉽게 사용할 수 있게 해주는 ‘&lt;a href=&quot;https://github.com/aws-samples/bedrock-access-gateway&quot;&gt;Bedrock Access Gateway&lt;/a&gt;‘에 대해 알아보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;아키텍처&quot;&gt;아키텍처&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/aws-samples/bedrock-access-gateway/refs/heads/main/assets/arch.svg&quot; alt=&quot;아키텍처&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Bedrock Access Gateway는 API Key 생성을 위한 Parameter Store, 스트리밍 응답과 API URL을 제공하는 Application Load Balancer(ALB), 그리고 Bedrock API를 OpenAI 형식으로 변환해주는 Proxy 서버 역할의 Lambda로 구성되어 있습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;지원-기능&quot;&gt;지원 기능&lt;/h3&gt;
+
+&lt;p&gt;이 서비스는 Bedrock의 Guardrails와 같은 고급(편의) 기능은 지원하지 않지만, 다음과 같은 기본적인 기능들을 제공합니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;스트리밍 응답&lt;/li&gt;
+  &lt;li&gt;Model, Chat Completion API&lt;/li&gt;
+  &lt;li&gt;Tool 호출&lt;/li&gt;
+  &lt;li&gt;Embedding/Multimodal API&lt;/li&gt;
+  &lt;li&gt;교차 리전 호출&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;구축하기&quot;&gt;구축하기&lt;/h3&gt;
+
+&lt;h4 id=&quot;1-api-키-설정&quot;&gt;1. API 키 설정&lt;/h4&gt;
+
+&lt;p&gt;Parameter Store를 사용하는 방법과 컨테이너에 직접 환경 변수를 설정하는 2가지 방법이 있지만, 이번 포스팅에서는 Parameter Store를 사용하겠습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;AWS Systems Manager &amp;gt; Parameter Store 접속 &amp;gt; ‘Create parameter’ 클릭&lt;/li&gt;
+  &lt;li&gt;파라미터 설정
+    &lt;ul&gt;
+      &lt;li&gt;이름: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BedrockProxyAPIKey&lt;/code&gt;&lt;/li&gt;
+      &lt;li&gt;계층: 표준&lt;/li&gt;
+      &lt;li&gt;유형: 문자열&lt;/li&gt;
+      &lt;li&gt;데이터 형식: text&lt;/li&gt;
+      &lt;li&gt;값: 원하는 API 키 값&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h4 id=&quot;2-cloudformation-스택-배포&quot;&gt;2. CloudFormation 스택 배포&lt;/h4&gt;
+
+&lt;p&gt;AWS 콘솔에서 원하는 리전과 CloudFormation 템플릿을 선택합니다. 이번 포스팅에서는 서울리전과 ALB + Fargate 조합을 선택했습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;제공된 &lt;a href=&quot;https://github.com/aws-samples/bedrock-access-gateway/tree/main?tab=readme-ov-file#store-api-key-in-env-variable&quot;&gt;Github&lt;/a&gt;에서 CloudFormation 템플릿 선택
+    &lt;ul&gt;
+      &lt;li&gt;ALB + Lambda&lt;/li&gt;
+      &lt;li&gt;ALB + Fargate&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;스택 세부정보 입력
+    &lt;ul&gt;
+      &lt;li&gt;1단계에서 API 키를 설정한 경우, API 키를 저장하는데 사용한 파라미터 이름을 입력 (예: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BedrockProxyAPIKey&lt;/code&gt;)&lt;/li&gt;
+      &lt;li&gt;API 키를 설정하지 않은 경우, 해당 필드를 비우고 “다음” 단계로 넘어가세요&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;IAM 리소스 생성 권한 확인
+    &lt;ul&gt;
+      &lt;li&gt;CloudFormation이 필요한 IAM 리소스를 자동으로 생성할 수 있도록, 3단계 하단의 권한 부여 체크박스를 선택합니다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;스택 생성 약 10분 내외 소요&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h3 id=&quot;사용하기&quot;&gt;사용하기&lt;/h3&gt;
+
+&lt;p&gt;배포 후, 다음 환경 변수를 설정합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;OPENAI_API_KEY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;API key&amp;gt;
+&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;OPENAI_BASE_URL&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&amp;lt;API base url&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;사용-가능한-모델-확인&quot;&gt;사용 가능한 모델 확인&lt;/h4&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &lt;span class=&quot;nt&quot;&gt;-s&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;$OPENAI_BASE_URL&lt;/span&gt;/models &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Authorization: Bearer &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$OPENAI_API_KEY&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; | jq .data
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;sdk에서-사용하기&quot;&gt;SDK에서 사용하기&lt;/h4&gt;
+
+&lt;p&gt;이제 다음 세 가지 정보만 있으면 OpenAI SDK 형식으로 모델을 사용할 수 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;API Key (Parameter Store 생성 시 설정한 값)&lt;/li&gt;
+  &lt;li&gt;Base URL (CloudFormation 출력 값)&lt;/li&gt;
+  &lt;li&gt;Bedrock에서 사용할 Model ID&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;openai&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OpenAI&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;OpenAI&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;api_key&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{API Key}&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;base_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;{API Base URL}&quot;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;completions&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-3-5-sonnet-20240620-v1:0&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;system&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;You are a helpful assistant.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;user&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+            &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;너는 무슨 모델이니?&quot;&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;choices&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;message&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 저는 Anthropic에서 개발한 AI 어시스턴트인 Claude입니다. 정확한 모델 버전은 잘 모르겠습니다.
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;api-사용하기&quot;&gt;API 사용하기&lt;/h4&gt;
+
+&lt;p&gt;다음과 같이 터미널에서 직접 API를 호출하여 사용할 수 도 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;curl &lt;span class=&quot;nv&quot;&gt;$OPENAI_BASE_URL&lt;/span&gt;/chat/completions &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Content-Type: application/json&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-H&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;Authorization: Bearer &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$OPENAI_API_KEY&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;{
+    &quot;model&quot;: &quot;anthropic.claude-3-5-sonnet-20240620-v1:0&quot;,
+    &quot;messages&quot;: [
+      {
+        &quot;role&quot;: &quot;user&quot;,
+        &quot;content&quot;: &quot;너는 무슨 모델이니?&quot;
+      }
+    ]
+  }&apos;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;{“id”:”chatcmpl-39fd0f67”,”created”:1737187206,”model”:”anthropic.claude-3-5-sonnet-20240620-v1:0”,”system_fingerprint”:”fp”,”choices”:[{“index”:0,”finish_reason”:”stop”,”logprobs”:null,”message”:{“role”:”assistant”,”content”:”저는 Anthropic에서 개발한 AI 어시스턴트인 Claude입니다. 정확한 모델 버전은 잘 모르겠습니다.”}}],”object”:”chat.completion”,”usage”:{“prompt_tokens”:20,”completion_tokens”:55,”total_tokens”:75}}&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;CloudWatch에서 확인한 Bedrock API 호출 정보를 보면(👇), ConverseAPI의 사용량 정보가 OpenAI의 usage 형식(☝️)과 동일한 형태로 호환되어 출력된 것을 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/bedrock_cw.png&quot; alt=&quot;bedrock_cw&quot; /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🚨 광고 : Converse API 및 모델 사용량 모니터링은 “Amazon Bedrock으로 시작하는 실전 생성형 AI 개발”를 참고하세요! &lt;br /&gt;
+판매 링크 : &lt;a href=&quot;https://www.yes24.com/Product/Goods/140049541&quot;&gt;📘 예스24&lt;/a&gt;, &lt;a href=&quot;https://product.kyobobook.co.kr/detail/S000214962344&quot;&gt;📗 교보문고&lt;/a&gt;, &lt;a href=&quot;https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=353662061&amp;amp;start=slayer&quot;&gt;📕 알라딘&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-고려-사항&quot;&gt;&lt;a href=&quot;#notes&quot;&gt;✋ 고려 사항&lt;/a&gt;&lt;a id=&quot;notes&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;성능: 프록시 구조로 인한 약간의 지연시간이 발생할 수 있습니다.&lt;/li&gt;
+  &lt;li&gt;업그레이드: 최신 기능을 사용하려면 최신 이미지(프록시 서버)로 업데이트가 필요합니다.&lt;/li&gt;
+  &lt;li&gt;비용: ALB와 같은 AWS 리소스를 활용하므로 약간의 비용이 부과됩니다.
+    &lt;ul&gt;
+      &lt;li&gt;Lambda 웹 어댑터 + Lambda URL(&lt;a href=&quot;https://github.com/awslabs/aws-lambda-web-adapter/tree/main/examples/fastapi-response-streaming&quot;&gt;예시&lt;/a&gt;)을 사용하여 ALB를 대체 할 수 있습니다.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;-마치며&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;🌟 마치며&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Bedrock Access Gateway는 OpenAI API 형식을 사용하기 때문에 Guardrails, Agents 등 Bedrock 고유의 기능을 완전히 활용할 수는 없습니다. 하지만 이 도구를 통해 기존 OpenAI API 기반 애플리케이션을 Amazon Bedrock으로 쉽게 마이그레이션하거나 테스트할 수 있으며, 다양한 AI 모델들을 일관된 인터페이스로 사용할 수 있다는 장점이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;특히 기존에는 매력적인 오픈소스 도구들이 OpenAI만 지원하여 Bedrock 모델 활용이 제한적이었지만, 이제는 Bedrock Access Gateway를 통해 이러한 도구들을 Bedrock 모델들과 함께 간편하고 빠르게 테스트해볼 수 있게 되었습니다.&lt;/p&gt;
+
+&lt;p&gt;더불어 GitHub 레포지토리의 코드를 활용하면 로컬 환경에서도 실행 가능한 나만의 게이트웨이를 구축할 수 있습니다. 이처럼 Bedrock Access Gateway는 Amazon Bedrock의 활용성을 한층 더 높여주는 유용한 도구가 될 것으로 기대됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="genai" />
+      
+
+      
+        <summary type="html">Amazon Bedrock Access Gateway로 OpenAI 호환 API 구현하기</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">출판 후기 - 첫 책을 출간하면서 놓쳤던 것들</title>
@@ -1621,140 +1878,6 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
 
       
         <summary type="html">re:Invent 2번이나 가도 괜찮을까?</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">3 Ways to Use the Hugging Face Model in AWS</title>
-      <link href="https://heuristicwave.github.io/HuggingFace-1" rel="alternate" type="text/html" title="3 Ways to Use the Hugging Face Model in AWS" />
-      <published>2023-08-23T00:00:00+00:00</published>
-      <updated>2023-08-23T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/HuggingFace-1</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/HuggingFace-1">&lt;p&gt;AWS에서 Hugging Face 모델을 사용하는 3가지 방법&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;Hugging Face(이하, 🤗)는 2016년에 설립되어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Transformer&lt;/code&gt; 라이브러리와 다양한 사전훈련된(pre-trained) 모델을 제공하는 NLP 커뮤니티(?)의 선두주자입니다.
-AWS와 🤗는 21년도부터 협업하여 AWS에서 🤗를 활용할 수 있는 다양한 방법들을 제공하고 있는데요, 이번 포스팅에서는 AWS에서 🤗 모델을 사용하는 3가지 방법에 대하여 가볍게 알아보도록 하겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;1️⃣--모델을-amazon-sagemaker-sdk로-직접-올리기&quot;&gt;1️⃣ 🤗 모델을 Amazon SageMaker SDK로 직접 올리기&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/03/leverage-state-of-the-art-natural-language-processing-with-hugging-face-and-amazon-sagemaker/&quot;&gt;21년 3월 23일&lt;/a&gt;, AWS whats-new에 처음 소개된 이 방법은 🤗 모델을 직접 SageMaker SDK를 사용해 올리는 가장 일반적인 방법입니다.
-아주 유명한 Text Generation 모델인 Google의 &lt;a href=&quot;https://huggingface.co/google/flan-t5-small&quot;&gt;FLAN-T5&lt;/a&gt;를 예시로 들어보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/flan.png&quot; alt=&quot;flan-t5&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 그림의 좌측 Deploy 버튼을 보면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flan-t5&lt;/code&gt; 모델의 5가지 배포 방법이 나와 있습니다. 해당 모델의 경우, 인기가 많은 모델이라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Inference API&lt;/code&gt;를 눌러 무료로 API를 활용할 수도 있고,
-Amazon SageMaker에 직접 배포해 사용할 수도 있습니다. SageMaker를 사용하기로 하고 해당 버튼을 누르면, 아래와 같이 쉽게 배포할 수 있는 코드를 제공해 줍니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/hf-sagemaker.png&quot; alt=&quot;hf-sagemaker&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 그림의 상단을 확인하면 &lt;strong&gt;SageMaker SDK, Jumpstart, Cloudformation(soon)&lt;/strong&gt; 이라 적힌, 1️⃣번 방법은 &lt;strong&gt;SageMaker SDK&lt;/strong&gt;를 활용한 방법입니다.
-제공되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 호스팅을 위한 사전 작업(spec, role 등)을 정의하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy()&lt;/code&gt; 함수로 모델을 배포합니다.&lt;/p&gt;
-
-&lt;p&gt;1️⃣번 방법은 배포에 필요한 환경을 일일이 코드로 작성하기 때문에, 배포는 번거롭지만 방법만 안다면 사용해 보고 싶은 모든 모델에 활용할 수 있습니다.
-이어서 소개드릴 2️⃣, 3️⃣번 방법이 간단하지만, 모든 모델에 적용되는 것은 아니므로 1️⃣번 방법을 배제할 수는 없습니다.
-뿐만 아니라, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 제공하는 코드가 멱등성을 보장하지 않으므로 모델 배포 도중 발생하는 오류들을 핸들링 해야 하는 지식이 필요합니다.
-그러나, Cloudformation으로 배포하는 기능이 Soon인 것으로 보아 향후 더 손쉽게 배포가 가능할 것 같아 기대됩니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;2️⃣-amazon-sagemaker-jumpstart로--모델-사용하기&quot;&gt;2️⃣ Amazon SageMaker JumpStart로 🤗 모델 사용하기&lt;/h2&gt;
-
-&lt;p&gt;AWS의 서비스들을 보면 Managed 서비스를 참 잘 만듭니다. 21년 3월 직접 호스팅 하는 방법이 소개되었다면, &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/08/amazon-sagemaker-one-click-model-inference-fine-tuning-hugging-face-models-amazon-sagemaker-jumpstart/&quot;&gt;21년 8월 10일&lt;/a&gt;
-one-click으로 🤗의 모델들을 사용할 수 있는 JumpStart 서비스가 출시했습니다.&lt;/p&gt;
-
-&lt;p&gt;오늘을 기준으로 🤗 모델을 검색했을 때, 263개의 모델들을 Deploy 버튼 한 번으로 손쉽게 배포할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/jumpstart-hf.png&quot; alt=&quot;jumpstart&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;추가적으로 위와 같이 콘솔 화면에서 클릭을 통한 배포 이외에도, 1️⃣번 방법에서 소개한 🤗 Hub에서 모델을 검색하고 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 코드를 참고해 스크립트를 사용해 배포가 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;flan-t5-small &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 예시&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# SageMaker JumpStart provides APIs as part of SageMaker SDK that allow you
-# to deploy and fine-tune models in network isolation using scripts that SageMaker maintains.
-&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sagemaker.jumpstart.model&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;
-
-
-&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;huggingface-text2text-flan-t5-small&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;A step by step recipe to make bolognese pasta:&quot;&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deploy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Inference:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Input: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Response: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;3️⃣--inference-endpoints-사용하기&quot;&gt;3️⃣ 🤗 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoints&lt;/a&gt; 사용하기&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;23년 8월 10일&lt;/a&gt; 🤗 플랫폼이 AWS Marketplace에서 사용할 수 있게 되었습니다.
-🤗 계정에서 Organization을 생성하고 AWS Marketplace에서 구독 버튼을 눌려 계정 간 연결을 진행하면 🤗 플랫폼 사용료를 내 AWS 계정으로 비용 청구가 가능합니다.
-자세한 계정 간 연동 방법은 &lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;여기&lt;/a&gt;를 참조하세요.&lt;/p&gt;
-
-&lt;p&gt;계정 통합이 완료되면 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoints&lt;/a&gt;에서 아래와 같이, 모델을 검색하고 리전, Instance 등 배포 유형을 선택하면 손쉽게 배포가 가능합니다.
-GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교는 어려웠지만, 대략 &lt;strong&gt;AWS 인스턴스 가격 대비 1.X&lt;/strong&gt; 배라고 생각하시면 됩니다.
-3️⃣번 방법의 경우, 2️⃣번 방법과 비교하여 🤗 계정을 만들어야 하지만 지원하는 모델도 다양하고 1️⃣번 방법과 비교하여 매우 편리한 방법으로 제공되기 때문에, 제가 가장 좋아하는 방법입니다.
-물론 모든 모델들이 해당 방법으로 원활히 제공되는 것은 아니지만, 다양한 오픈소스 모델들을 빠르게 PoC 하고 싶을 때 사용하면 굉장히 좋은 방법 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/inferenceEP.png&quot; alt=&quot;inferenceEP&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚡️ Security level&lt;/p&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;Protected : 🤗의 토큰 기반 인증 과정이 필요합니다.&lt;/li&gt;
-    &lt;li&gt;Public : 완전히 공개된 API로 별도의 인증이 필요 없습니다.&lt;/li&gt;
-    &lt;li&gt;Private : AWS Account ID를 기재하고 PrivateLink로 연결합니다.&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;시간순으로 소개한 위 3가지 방법에서, AWS의 상품화 과정과 타 회사와의 협업 방식도 알 수 있었습니다.
-오픈소스 모델을 AWS로 호스팅 하는 1️⃣번과 2️⃣번 방법으로는 🤗 측면에서 매출을 만들기 어려운데, 3️⃣번 방식을 통해 🤗와 AWS 모두 Win-Win 하는 비즈니스 모델을 만들어 나간 것 같아 무척 흥미롭네요.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Gen AI Study Checkpoint&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Prompt Design Study&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="huggingface" />
-      
-        <category term="ai" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">AWS에서 Hugging Face 모델을 사용하는 3가지 방법</summary>
       
 
       
