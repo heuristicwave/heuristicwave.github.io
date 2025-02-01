@@ -1,0 +1,1298 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <!-- Document Settings -->
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <!-- Base Meta -->
+    <!-- dynamically fixing the title for tag/author pages -->
+
+
+
+    <title>Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</title>
+    <meta name="HandheldFriendly" content="True" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Styles'n'Scripts -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/screen.edited.css" />
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- Custom.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
+
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <!-- webfont -->
+    <link rel="stylesheet" href="https://fonts.googleapis.com/earlyaccess/nanumgothic.css">
+
+    <!-- syntax.css -->
+    <link rel="stylesheet" type="text/css" href="/assets/built/syntax.css" />
+
+    <!-- highlight.js -->
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css">
+    <style>.hljs { background: none; }</style>
+
+    <!--[if IE]>
+        <style>
+            p, ol, ul{
+                width: 100%;
+            }
+            blockquote{
+                width: 100%;
+            }
+        </style>
+    <![endif]-->
+    
+    <!-- This tag outputs SEO meta+structured data and other important settings -->
+    <meta name="description" content="Careful Writer" />
+    <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
+    <link rel="canonical" href="https://heuristicwave.github.io/Kendra2" />
+    <meta name="referrer" content="no-referrer-when-downgrade" />
+
+     <!--title below is coming from _includes/dynamic_title-->
+    <meta property="og:site_name" content="Heuristic Wave Blog" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases" />
+    <meta property="og:description" content="Amazon Bedrock Knowledge Bases로 알아보는 Amazon Kendra GenAI Index 🔍 Kendra GenAI Index 2023년 12월 12일 Amazon Bedrock Knowledge Bases(이하 지식 기반)가 정식 출시된 이후, AWS 생태계에서 유일한 Retriever 역할을 담당하던 Kendra는 한동안 주목받지 못했습니다. 하지만 2024년 re:Invent에서 Amazon Kendra GenAI Index라는 새로운 기능이 추가되었습니다. 이는 Bedrock 지식 기반의 관리형" />
+    <meta property="og:url" content="https://heuristicwave.github.io/Kendra2" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/ai/AmazonKendra.png" />
+    <meta property="article:publisher" content="https://www.facebook.com/" />
+    <meta property="article:author" content="https://www.facebook.com/" />
+    <meta property="article:published_time" content="2025-02-01T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2025-02-01T00:00:00+00:00" />
+    <meta property="article:tag" content="Aws" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases" />
+    <meta name="twitter:description" content="Amazon Bedrock Knowledge Bases로 알아보는 Amazon Kendra GenAI Index 🔍 Kendra GenAI Index 2023년 12월 12일 Amazon Bedrock Knowledge Bases(이하 지식 기반)가 정식 출시된 이후, AWS 생태계에서 유일한 Retriever 역할을 담당하던 Kendra는 한동안 주목받지 못했습니다. 하지만 2024년 re:Invent에서 Amazon Kendra GenAI Index라는 새로운 기능이 추가되었습니다. 이는 Bedrock 지식 기반의 관리형" />
+    <meta name="twitter:url" content="https://heuristicwave.github.io/" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/ai/AmazonKendra.png" />
+    <meta name="twitter:label1" content="Written by" />
+    <meta name="twitter:data1" content="Heuristic Wave Blog" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Aws" />
+    <meta name="twitter:site" content="@" />
+    <meta name="twitter:creator" content="@" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
+
+    <script type="application/ld+json">
+{
+    "@context": "https://schema.org",
+    "@type": "Website",
+    "publisher": {
+        "@type": "Organization",
+        "name": "Heuristic Wave Blog",
+        "logo": "https://heuristicwave.github.io/"
+    },
+    "url": "https://heuristicwave.github.io/Kendra2",
+    "image": {
+        "@type": "ImageObject",
+        "url": "https://heuristicwave.github.io/assets/built/images/post/ai/AmazonKendra.png",
+        "width": 2000,
+        "height": 666
+    },
+    "mainEntityOfPage": {
+        "@type": "WebPage",
+        "@id": "https://heuristicwave.github.io/Kendra2"
+    },
+    "description": "Amazon Bedrock Knowledge Bases로 알아보는 Amazon Kendra GenAI Index 🔍 Kendra GenAI Index 2023년 12월 12일 Amazon Bedrock Knowledge Bases(이하 지식 기반)가 정식 출시된 이후, AWS 생태계에서 유일한 Retriever 역할을 담당하던 Kendra는 한동안 주목받지 못했습니다. 하지만 2024년 re:Invent에서 Amazon Kendra GenAI Index라는 새로운 기능이 추가되었습니다. 이는 Bedrock 지식 기반의 관리형"
+}
+    </script>
+    <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
+    <!-- <script type="text/javascript" src="https://demo.ghost.io/public/ghost-sdk.min.js?v=724281a32e"></script>
+    <script type="text/javascript">
+    ghost.init({
+    	clientId: "ghost-frontend",
+    	clientSecret: "f84a07a72b17"
+    });
+    </script> -->
+
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0FTXSPJZFY"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-0FTXSPJZFY');
+    </script>
+    <meta name="generator" content="Jekyll 3.6.2" />
+    <link rel="alternate" type="application/rss+xml" title="Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases" href="https://heuristicwave.github.io/feed.xml" />
+
+
+</head>
+<body class="post-template">
+
+    <div class="site-wrapper">
+        <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
+        <!-- default -->
+
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
+
+<header class="site-header outer">
+    <div class="inner">
+        <nav class="site-nav">
+    <div class="site-nav-left">
+        
+            
+                <a class="site-nav-logo" href="https://heuristicwave.github.io/">Heuristic Wave Blog</a>
+            
+        
+        
+            <ul class="nav" role="menu">
+    <li class="nav-home" role="menuitem"><a href="/">Home</a></li>
+    <li class="nav-about" role="menuitem"><a href="/about/">About</a></li>
+    <li class="nav-extracurricular" role="menuitem"><a href="/tag/uncategorized/">Uncategorized</a></li>
+    <li class="nav-aws" role="menuitem"><a href="/tag/ai/">AI</a></li>
+    <li class="nav-aws" role="menuitem"><a href="/tag/aws/">AWS</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/backend/">Back-end</a></li>
+    <li class="nav-devops" role="menuitem"><a href="/tag/devops/">DevOps</a></li>
+    <li class="nav-backend" role="menuitem"><a href="/tag/security/">Security</a></li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/archive">All Posts</a>
+    </li>
+    <li class="nav-archive" role="menuitem">
+        <a href="/author_archive.html">Tag별 Posts</a>
+    </li>
+</ul>
+
+        
+    </div>
+    <div class="site-nav-right">
+        <div class="social-links">
+            
+            
+        </div>
+        
+            <a class="subscribe-button" href="#subscribe">Search</a>
+        
+    </div>
+</nav>
+
+    </div>
+</header>
+
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
+<main id="site-main" class="site-main outer" role="main">
+    <div class="inner">
+
+        <article class="post-full  tag-aws tag-genai post tag-ai ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime=" 1 February 2025"> 1 February 2025</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/aws/'>AWS</a>,
+                            
+                        
+                            
+                               <a href='/tag/genai/'>GENAI</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/ai/AmazonKendra.png)">
+            </figure>
+            
+
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>Amazon Bedrock Knowledge Bases로 알아보는 Amazon Kendra GenAI Index</p>
+
+<h2 id="-kendra-genai-index"><a href="#kendra">🔍 Kendra GenAI Index</a><a id="kendra"></a></h2>
+
+<p>2023년 12월 12일 Amazon Bedrock Knowledge Bases(이하 지식 기반)가 정식 출시된 이후, AWS 생태계에서 유일한 Retriever 역할을 담당하던 Kendra는 한동안 주목받지 못했습니다.
+하지만 <a href="https://aws.amazon.com/ko/about-aws/whats-new/2024/12/genai-index-amazon-kendra/">2024년 re:Invent에서 Amazon Kendra GenAI Index</a>라는 새로운 기능이 추가되었습니다.
+이는 <strong>Bedrock 지식 기반의 관리형 리트리버로 제공</strong>되어, 사용자들이 보다 손쉽게 관리형 서비스를 통해 RAG를 구축할 수 있게 되었습니다.</p>
+
+<p>새로운 기능의 도입과 함께, AWS는 Amazon Kendra GenAI Index에 대한 새로운 가격 정책을 발표하였습니다.
+이 가격 구조는 최신 기능의 가치를 반영하면서도, 서비스의 접근성을 높여 더 많은 사용자들이 고급 검색 및 RAG 기능을 활용할 수 있도록 설계되었습니다.
+그럼 이제 Amazon Kendra GenAI Index의 새로운 가격 정책과 그 특징들을 자세히 살펴보겠습니다.</p>
+
+<h3 id="가격-정책"><a href="https://aws.amazon.com/ko/kendra/pricing/">가격 정책</a></h3>
+
+<p>새로운 GenAI 에디션은 커넥터를 제외한 기본 인덱스(스토리지 및 쿼리 요금)의 시간당 비용이 $0.32로, <strong>기존 베이직 에디션 대비 1/4 수준으로 낮아져 더 경제적</strong>으로 서비스를 이용할 수 있게 되었습니다.
+커넥터 요금의 경우, 데이터 동기화가 빈번한 서비스에서는 GenAI 에디션이 비용 효율적일 수 있습니다. 다만, 기본 인덱스 요금만큼 큰 폭의 가격 인하가 이루어지지 않은 점은 아쉬움으로 남습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">구성 요소</th>
+      <th style="text-align: left">GenAI 엔터프라이즈 에디션</th>
+      <th style="text-align: left">베이직 엔터프라이즈 에디션</th>
+      <th style="text-align: left">기본 개발자 에디션</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>기본<br /> 인덱스</strong></td>
+      <td style="text-align: left">시간당 0.32 USD <br /><br /> 포함 항목 <br />- 최대 문서 20,000개 or 추출된 텍스트 200MB <br />- 0.1 QPS(하루 약 8,000개의 쿼리)</td>
+      <td style="text-align: left">시간당 1.4 USD <br /><br /> 포함 항목 <br />- 최대 문서 100,000개 or 추출된 텍스트 30GB <br />- 0.1 QPS(하루 약 8,000개의 쿼리)</td>
+      <td style="text-align: left">시간당 1.125 USD <br /><br /> 포함 항목 <br />- 최대 문서 10,000개 or 추출된 텍스트 3GB<br />- 0.05 QPS(하루 약 4,000개의 쿼리)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>커넥터</strong></td>
+      <td style="text-align: left">인덱스당 월 30 USD 고정 요금</td>
+      <td style="text-align: left">- 동기화 시 시간당 0.35 USD <br /> - 동기화 중 스캔한 문서 100만 개당 1 USD</td>
+      <td style="text-align: left">- 동기화 시 시간당 0.35 USD <br /> - 동기화 중 스캔한 문서 100만 개당 1 USD</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br /></p>
+
+<h2 id="-kendra로-지식-기반-구축하기"><a href="#setting">📑 Kendra로 지식 기반 구축하기</a><a id="setting"></a></h2>
+
+<p>구축 방법은 <a href="https://aws.amazon.com/ko/blogs/machine-learning/introducing-amazon-kendra-genai-index-enhanced-semantic-search-and-retrieval-capabilities/">AWS Blog</a>에 상세히 설명되어 있으므로, 이 글에서는 주요 포인트만 간략히 살펴보도록 하겠습니다.</p>
+
+<h3 id="1-knowledge-base-with-kendra-genai-index-생성">1. Knowledge Base with Kendra GenAI Index 생성</h3>
+
+<p>Bedrock 지식 기반에서 GenAI Index를 선택하고 필요한 권한을 부여하면, Kendra GenAI Index를 지식 기반으로 활용하기 위한 기본 인프라 구성이 완료됩니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/genaiIndex.png" alt="genaiIndex" />
+<img src="../../assets/built/images/post/ai/Kendra/genaiIndexRole.png" alt="genaiIndexRole" /></p>
+
+<h3 id="2-kendra에서-amazon-s3-connector-생성">2. Kendra에서 Amazon S3 connector 생성</h3>
+
+<p>Kendra GenAI Index가 생성되면 Bedrock 지식 기반 화면에서 확인할 수 있습니다. 이후 화면 하단의 <strong>데이터 소스</strong> 메뉴에서 S3 커넥터를 선택하여 데이터 소스 연결을 완료하면 됩니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/kendraConnector.png" alt="kendraConnector" /></p>
+
+<h3 id="3-데이터-업로드-및-데이터-소스-동기화">3. 데이터 업로드 및 데이터 소스 동기화</h3>
+
+<p>S3 커넥터로 지정한 버킷에 테스트용 데이터<em>(최근 🔥한 arXiv에 게재된 <a href="https://arxiv.org/pdf/2501.12948">DeepSeek-R1 논문</a>)</em>를 업로드하고 데이터 동기화를 실행합니다.
+데이터 싱크(인덱싱) 주기는 필요에 따라 자유롭게 설정할 수 있습니다. 이번 테스트에서는 그림과 같이 ‘Sync now’ 버튼을 사용하여 업로드한 문서를 Kendra에 즉시 인덱싱했습니다.
+인덱싱이 완료되면 몇 분 후부터 Bedrock 지식 기반에서 해당 데이터를 활용한 LLM과의 대화가 가능합니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/kendraSync.png" alt="kendraSync" /></p>
+
+<p><br /></p>
+
+<h2 id="-bedrock에서-지원하는-다양한-문서-채팅-기능-알아보기"><a href="#chat">💬 Bedrock에서 지원하는 다양한 문서 채팅 기능 알아보기</a><a id="chat"></a></h2>
+
+<p>Bedrock에서는 Kendra GenAI Index 없이도 문서 기반 채팅이 가능합니다. 이제 Bedrock에서 제공하는 다양한 문서 채팅 방식들을 살펴보고, 이들과 Kendra GenAI Index 방식의 차이점을 비교해 보도록 하겠습니다.</p>
+
+<blockquote>
+  <p>🔫 3가지 방식을 동일하게 비교 테스트하였으며, 결과는 마지막 부분에서 확인하실 수 있습니다.</p>
+</blockquote>
+
+<blockquote>
+  <p><strong>모델 구성 정보</strong></p>
+
+  <ul>
+    <li>모델 : Claude 3.5 Sonnet v2</li>
+    <li>Temperature / Top P / Top K : 0 / 1 / 250</li>
+    <li>Maximum length : 2048</li>
+  </ul>
+</blockquote>
+
+<h3 id="playground의-기본-기능으로-대화하기">Playground의 기본 기능으로 대화하기</h3>
+
+<p>Playground는 ChatGPT와 유사한 방식으로, Bedrock에서 가장 간단하게 LLM과 대화할 수 있는 기능입니다.
+PDF를 포함한 다양한 형식의 문서를 텍스트와 함께 업로드하여 질의할 수 있습니다. 테스트를 위해 다음과 같은 질문을 진행해 보았습니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/playground_with_pdf.png" alt="playground" /></p>
+
+<p><em>‘DeepSeek R1 Zero는 R1과는 어떤 훈련방식의 차이가 있나요?’</em>라는 두 번째 질문을 진행하고, 이에 대한 <code class="language-plaintext highlighter-rouge">modelinvocations</code> 로그를 자세히 분석해 보도록 하겠습니다.</p>
+
+<blockquote>
+  <p>🚨 광고 : <code class="language-plaintext highlighter-rouge">modelinvocations</code> 로그를 자세히 분석하는 방법은 <br /> <strong>“Amazon Bedrock으로 시작하는 실전 생성형 AI 개발”</strong>를 참고하세요! <br />
+판매 링크 : <a href="https://www.yes24.com/Product/Goods/140049541">📘 예스24</a>, <a href="https://product.kyobobook.co.kr/detail/S000214962344">📗 교보문고</a>, <a href="https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=353662061&amp;start=slayer">📕 알라딘</a></p>
+</blockquote>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/playground_log.png" alt="playground_log" /></p>
+
+<p>답변의 품질은 우수했으나, 토큰 사용량이 상당히 많았습니다. 첫 번째 질문에서는 <strong>입력 토큰 20,192개와 출력 토큰 716개가 사용</strong>되었고, 두 번째 질문에서는 <strong>입력 토큰 20,945개와 출력 토큰 660개가 소모</strong>되었습니다. 이는 모든 문서를 참조하여 답변을 생성하는 방식 때문에 발생한 높은 토큰 소비량입니다.</p>
+
+<h3 id="bedrock-지식-기반-기능으로-대화하기">Bedrock 지식 기반 기능으로 대화하기</h3>
+
+<p>두 번째 방법으로, Amazon Bedrock 지식 기반의 ‘<a href="https://docs.aws.amazon.com/ko_kr/bedrock/latest/userguide/knowledge-base-chatdoc.html">문서와의 채팅</a>’ 기능을 사용하여 테스트를 진행해 보겠습니다.
+이 기능은 별도의 지식 기반 설정 없이도 신속하게 문서 기반 대화를 테스트할 수 있는 환경을 제공합니다.
+Bedrock 지식 기반 콘솔의 ‘문서와의 채팅’ 기능에서 PDF 파일을 업로드하면 다음과 같이 대화를 진행할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/chatdoc.png" alt="chatdoc" />
+<img src="../../assets/built/images/post/ai/Kendra/naive_kb_with_pdf.png" alt="naive" /></p>
+
+<p>‘문서와의 채팅’ 기능은 답변 생성 시 참고한 소스 정보를 함께 제공합니다. Playground에서와 동일한 조건으로 테스트했음에도 불구하고 답변 결과가 다르게 나왔습니다. 이러한 차이의 원인을 파악하기 위해 <code class="language-plaintext highlighter-rouge">modelinvocations</code> 로그를 분석해 보겠습니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/chatdoc_log.png" alt="chatdoc" /></p>
+
+<p>Playground에서는 질문과 PDF의 모든 내용이 하나의 <code class="language-plaintext highlighter-rouge">input</code>으로 처리되었습니다. 반면 ‘문서와의 채팅’ 기능에서는 질문이 messages의 content에 포함되고, RAG를 통해 얻은 문맥 정보는 특정 명령어와 함께 시스템 프롬프트에 삽입되었음을 확인할 수 있습니다.</p>
+
+<p><strong>‘문서와의 채팅’ 시스템 프롬프트</strong></p>
+
+<script src="https://gist.github.com/heuristicwave/2a17662da3357f178b73e7edc8a596a1.js"></script>
+
+<p>‘문서와의 채팅’ 기능은 현재 페이지를 벗어나면 대화 내용이 저장되지 않으므로 사용 시 주의가 필요합니다.
+이제 본 포스팅의 주요 주제인 Kendra GenAI Index를 지식 기반으로 활용했을 때의 결과를 살펴보겠습니다.</p>
+
+<h3 id="kendra-genai-index로-대화하기">Kendra GenAI Index로 대화하기</h3>
+
+<p>Kendra를 지식 기반으로 활용할 경우, ‘문서와의 채팅’ 기능과 마찬가지로 참고한 데이터 소스를 제공한다는 점에서 유사합니다. 그러나 Kendra는 전문적인 검색 엔진으로서, <strong>RAG에 대해 아래와 같이 다양한 설정(검색 결과 수, 유형 등)</strong>을 할 수 있다는 점에서 차이가 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/kendra_with_pdf.png" alt="kendraQA" /></p>
+
+<p>이번 테스트에서도 앞선 경우들과 동일한 조건을 적용했음에도 불구하고 답변이 다르게 나왔습니다. 로그 분석을 통해 그 원인을 파악해 보았습니다. 첫 번째 질문은 ‘문서와의 채팅’ 기능과 동일한 프롬프트로 처리되었습니다. 그러나 두 번째 질문에서는 최적화된 답변 생성을 위해 시스템이 <strong>자체적으로 쿼리의 의도를 분석하고 재작성하여 질문을 처리</strong>했음을 확인했습니다. 결과적으로, <strong>하나의 질문에 대해 실제로는 언어 모델이 두 번 호출</strong>되었습니다.</p>
+
+<p>다음은 사용자의 질문을 최적화하기 위해 쿼리 재작성을 시도하는 Bedrock 호출 로그입니다. 이 호출이 Stream 방식이 아닌 Converse 방식으로 이루어진다는 것도 차이점입니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Kendra/kb_create_query.png" alt="kendraRewriteQuery" /></p>
+
+<p><strong>사용자 쿼리 최적화 프롬프트</strong></p>
+
+<script src="https://gist.github.com/heuristicwave/d9aea418105d8806132a6a1005a68e88.js"></script>
+
+<h2 id="-실험-결과"><a href="#result">🧪 실험 결과</a><a id="result"></a></h2>
+
+<h3 id="답변-비교">답변 비교</h3>
+
+<p>Q. DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning에 대하여 요약해 알려주세요.</p>
+
+<details>
+  <summary>Playground 답변, 👉 Click</summary>
+
+  <p>DeepSeek-R1에 대한 주요 내용을 다음과 같이 요약해드리겠습니다:</p>
+
+  <p>핵심 성과:</p>
+
+  <ol>
+    <li>DeepSeek-R1-Zero</li>
+  </ol>
+
+  <ul>
+    <li>지도학습 없이 순수 강화학습(RL)만으로 추론 능력을 향상시킨 최초의 모델</li>
+    <li>AIME 2024에서 71% 정확도 달성 (다수결 투표 시 86.7%)</li>
+    <li>자가 검증, 반성, 긴 사고 체인 생성 등의 능력 보유</li>
+  </ul>
+
+  <ol>
+    <li>DeepSeek-R1</li>
+  </ol>
+
+  <ul>
+    <li>Cold-start 데이터와 다단계 훈련 파이프라인 도입</li>
+    <li>OpenAI-o1-1217과 비슷한 수준의 성능 달성</li>
+    <li>수학, 코딩, 과학적 추론 등 다양한 분야에서 우수한 성능</li>
+  </ul>
+
+  <ol>
+    <li>지식 증류(Distillation)</li>
+  </ol>
+
+  <ul>
+    <li>DeepSeek-R1의 추론 능력을 더 작은 모델로 전달</li>
+    <li>1.5B부터 70B까지 다양한 크기의 모델 공개</li>
+    <li>작은 모델들도 기존 오픈소스 모델들보다 우수한 성능 달성</li>
+  </ul>
+
+  <p>훈련 방법:</p>
+
+  <ol>
+    <li>Cold Start: 소량의 고품질 데이터로 초기 훈련</li>
+    <li>추론 중심 강화학습 적용</li>
+    <li>거부 샘플링과 지도학습 미세조정</li>
+    <li>모든 시나리오에 대한 강화학습 수행</li>
+  </ol>
+
+  <p>한계점:</p>
+
+  <ul>
+    <li>함수 호출, 다중 턴 대화, 복잡한 역할극 등에서는 DeepSeek-V3보다 성능이 낮음</li>
+    <li>중국어와 영어 외 다른 언어에서 언어 혼합 문제 발생</li>
+    <li>프롬프트에 민감하며 few-shot 프롬프팅에서 성능 저하</li>
+    <li>소프트웨어 엔지니어링 태스크에서 제한적인 성능 향상</li>
+  </ul>
+
+  <p>이 연구는 순수 강화학습만으로도 언어 모델의 추론 능력을 크게 향상시킬 수 있음을 보여주었으며, 이는 AI 연구 분야에 중요한 이정표가 되었습니다.</p>
+
+</details>
+
+<details>
+  <summary>문서와의 채팅 답변, 👉 Click</summary>
+  <p>DeepSeek-R1은 대규모 강화학습(RL)을 통해 LLM의 추론 능력을 향상시키는 연구입니다. 이 연구는 두 가지 주요 모델을 소개합니다:</p>
+
+  <ol>
+    <li>
+      <p>DeepSeek-R1-Zero: 지도학습 없이 순수 RL만으로 학습된 모델로, 뛰어난 추론 능력을 보여주었지만 가독성이 떨어지고 언어 혼합 등의 문제가 있었습니다.</p>
+    </li>
+    <li>
+      <p>DeepSeek-R1: cold-start 데이터와 다단계 훈련을 도입하여 R1-Zero의 문제를 해결하고 성능을 더욱 향상시켰습니다. OpenAI-o1-1217과 비슷한 수준의 성능을 달성했습니다.</p>
+    </li>
+  </ol>
+
+  <p>주요 성과:</p>
+
+  <ul>
+    <li>AIME 2024에서 79.8% Pass@1 달성</li>
+    <li>MATH-500에서 97.3% 달성</li>
+    <li>Codeforces에서 96.3% 상위권 달성</li>
+    <li>MMLU에서 90.8% 달성</li>
+  </ul>
+
+  <p>또한 연구팀은 DeepSeek-R1의 추론 능력을 더 작은 모델로 전달하기 위해 distillation을 수행했으며, 1.5B부터 70B까지 다양한 크기의 모델을 오픈소스로 공개했습니다.</p>
+
+</details>
+
+<details>
+  <summary>Kendra GenAI Index 답변, 👉 Click</summary>
+  <p>DeepSeek-R1은 두 가지 주요 모델을 소개합니다:</p>
+
+  <ol>
+    <li>
+      <p>DeepSeek-R1-Zero: 감독학습 없이 대규모 강화학습만을 통해 개발된 모델로, 추론 능력을 자연스럽게 발현시켰습니다. 다만 가독성이 떨어지고 언어 혼합 등의 문제가 있었습니다.</p>
+    </li>
+    <li>
+      <p>DeepSeek-R1: R1-Zero의 문제점을 해결하기 위해 개발된 모델로, 다단계 학습과 사전 데이터를 활용했습니다. OpenAI-o1-1217와 비슷한 수준의 추론 성능을 달성했습니다.</p>
+    </li>
+  </ol>
+
+  <p>이 프로젝트의 주요 특징과 기여점은 다음과 같습니다:</p>
+
+  <ul>
+    <li>감독 학습 없이도 강화학습만으로 언어 모델의 추론 능력을 향상시킬 수 있다는 것을 최초로 입증했습니다.</li>
+    <li>추론 패턴 발견과 인간 선호도 조정을 위한 두 단계의 강화학습과, 추론 및 비추론 능력을 위한 두 단계의 감독학습을 포함하는 파이프라인을 도입했습니다.</li>
+    <li>큰 모델의 추론 패턴을 작은 모델로 증류할 수 있음을 보여주었으며, 연구 커뮤니티를 위해 DeepSeek-R1과 관련 API를 공개했습니다.</li>
+  </ul>
+</details>
+
+<p><br /></p>
+
+<p>Q. DeepSeek R1 Zero는 R1과는 어떤 훈련방식의 차이가 있나요?</p>
+
+<details>
+  <summary>Playground 답변, 👉 Click</summary>
+  <p>DeepSeek-R1-Zero와 DeepSeek-R1의 주요 훈련방식 차이는 다음과 같습니다:</p>
+
+  <p>DeepSeek-R1-Zero:</p>
+
+  <ol>
+    <li>순수 강화학습만 사용</li>
+  </ol>
+
+  <ul>
+    <li>지도학습(SFT) 없이 바로 강화학습 적용</li>
+    <li>기본 템플릿만 사용하여 추론 과정과 답변을 생성하도록 함</li>
+    <li>규칙 기반 보상 시스템만 사용 (정확도 보상, 형식 보상)</li>
+  </ul>
+
+  <ol>
+    <li>장단점
+장점:</li>
+  </ol>
+
+  <ul>
+    <li>자연스러운 추론 능력 발현</li>
+    <li>모델이 자체적으로 진화하는 과정 관찰 가능</li>
+  </ul>
+
+  <p>단점:</p>
+
+  <ul>
+    <li>가독성이 떨어짐</li>
+    <li>언어 혼합 문제 발생</li>
+    <li>출력 형식이 일관적이지 않음</li>
+  </ul>
+
+  <p>DeepSeek-R1:</p>
+
+  <ol>
+    <li>다단계 훈련 파이프라인 사용</li>
+  </ol>
+
+  <ul>
+    <li>Cold Start: 수천 개의 고품질 Chain-of-Thought 데이터로 초기 미세조정</li>
+    <li>추론 중심 강화학습 적용</li>
+    <li>거부 샘플링과 지도학습 미세조정 수행</li>
+    <li>모든 시나리오에 대한 강화학습 진행</li>
+  </ul>
+
+  <ol>
+    <li>장점:</li>
+  </ol>
+
+  <ul>
+    <li>더 나은 가독성</li>
+    <li>일관된 언어 사용</li>
+    <li>더 넓은 범위의 태스크 수행 가능</li>
+    <li>전반적으로 더 높은 성능</li>
+  </ul>
+
+  <p>핵심 차이:</p>
+
+  <ol>
+    <li>초기 훈련 데이터</li>
+  </ol>
+
+  <ul>
+    <li>R1-Zero: 완전히 백지 상태에서 시작</li>
+    <li>R1: Cold Start 데이터로 초기 지식 주입</li>
+  </ul>
+
+  <ol>
+    <li>훈련 단계</li>
+  </ol>
+
+  <ul>
+    <li>R1-Zero: 단일 강화학습 단계</li>
+    <li>R1: 여러 단계의 훈련 과정 (Cold Start → RL → SFT → RL)</li>
+  </ul>
+
+  <ol>
+    <li>최적화 목표</li>
+  </ol>
+
+  <ul>
+    <li>R1-Zero: 순수 추론 능력 향상에 집중</li>
+    <li>R1: 추론 능력과 함께 실용성, 가독성, 다목적성 고려</li>
+  </ul>
+</details>
+
+<details>
+  <summary>문서와의 채팅 답변, 👉 Click</summary>
+  <p>DeepSeek R1-Zero는 감독학습(supervised fine-tuning) 없이 순수하게 강화학습만을 사용하여 훈련된 모델입니다. 반면 DeepSeek R1은 다단계 훈련 파이프라인을 사용합니다:</p>
+
+  <ol>
+    <li>Cold Start: 수천 개의 Chain-of-Thought 예제로 초기 파인튜닝</li>
+    <li>추론 중심의 강화학습 진행</li>
+    <li>강화학습 체크포인트에서 rejection sampling을 통한 새로운 SFT 데이터 생성</li>
+    <li>모든 시나리오를 고려한 추가 강화학습 진행</li>
+  </ol>
+
+  <p>R1-Zero는 순수 강화학습만으로도 뛰어난 추론 능력을 보여주었지만, 가독성이 떨어지고 언어가 혼합되는 등의 문제가 있었습니다. R1은 이러한 문제들을 해결하고 더 나은 성능을 달성하기 위해 cold-start 데이터와 다단계 훈련을 도입했습니다.</p>
+
+</details>
+
+<details>
+  <summary>Kendra GenAI Index 답변, 👉 Click</summary>
+  <p>DeepSeek-R1-Zero는 감독학습(SFT) 없이 순수하게 강화학습(RL)만을 사용하여 훈련된 모델입니다. 기본 모델에 직접 RL을 적용하는 방식을 사용했습니다.</p>
+
+  <p>반면 DeepSeek-R1은 수천 개의 Chain-of-Thought(CoT) 예제로 사전 미세조정된 체크포인트에서 시작하여 RL을 적용했습니다. 즉, 콜드 스타트 데이터와 반복적인 RL 미세조정을 함께 활용하는 방식으로, 이는 R1-Zero보다 더 강력한 성능을 보여줍니다.</p>
+
+</details>
+
+<h3 id="토큰-소모량-비교">토큰 소모량 비교</h3>
+
+<p>Q. DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning에 대하여 요약해 알려주세요.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">토큰 소모량</th>
+      <th style="text-align: center">Playground</th>
+      <th style="text-align: center">문서와의 채팅</th>
+      <th style="text-align: center">Kendra GenAI Index</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Input</strong></td>
+      <td style="text-align: center">20,192</td>
+      <td style="text-align: center">22,114</td>
+      <td style="text-align: center">1,904</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Output</strong></td>
+      <td style="text-align: center">716</td>
+      <td style="text-align: center">553</td>
+      <td style="text-align: center">576</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Q. DeepSeek R1 Zero는 R1과는 어떤 훈련방식의 차이가 있나요?</p>
+
+<table>
+  <thead>
+    <tr>
+      <th style="text-align: left">토큰 소모량</th>
+      <th style="text-align: center">Playground</th>
+      <th style="text-align: center">문서와의 채팅</th>
+      <th style="text-align: center">Kendra GenAI Index</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="text-align: left"><strong>Input</strong></td>
+      <td style="text-align: center">20,945</td>
+      <td style="text-align: center">22,107</td>
+      <td style="text-align: center">3,062(1,091+1,971)</td>
+    </tr>
+    <tr>
+      <td style="text-align: left"><strong>Output</strong></td>
+      <td style="text-align: center">660</td>
+      <td style="text-align: center">434</td>
+      <td style="text-align: center">362(36+326)</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>세 가지 방식 모두 우수한 품질의 답변을 제공했습니다. Playground와 ‘문서와의 채팅’ 기능의 경우, 전체 문서를 참고하여 답변을 생성하므로 긴 문맥(long context)을 지원하는 모델에서 정확한 답변을 얻을 수 있다는 점이 매력적입니다.
+<em>(문서를 기반으로 신속한 테스트를 수행하고자 할 때, ‘문서와의 채팅’ 기능보다는 Playground를 활용하는 것이 더 상세한 답변을 얻을 수 있는 것으로 보입니다.)</em>
+Kendra의 경우, 더 많은 분석이 필요하겠지만, 관리형 RAG를 통해 필요한 정보를 효과적으로 찾아내어 답변을 생성한다는 점이 매력적으로 느껴집니다.</p>
+
+<p>이번 포스팅에서 다룬 논문 리뷰와는 달리, 수백 개의 Zendesk 티켓에 대한 질의응답이나 S3에 산재된 데이터에 대한 질의응답 같은 작업에는 Kendra GenAI Index가 특히 유용할 것으로 예상됩니다.</p>
+
+<h2 id="-마치며"><a href="#outro">🌟 마치며</a><a id="outro"></a></h2>
+
+<p>2023년 6월, <a href="https://heuristicwave.github.io/Kendra">flan-t5 모델과 Amazon Kendra(엔터프라이즈 검색 엔진)를 활용한 RAG 관련 글</a>을 작성한 지 2년이 지나 다시 Kendra에 대해 글을 쓰게 되니 감회가 새롭습니다.
+이번 포스팅을 준비하며 과거 작성했던 글을 다시 보니, 부족했던 제 모습이 부끄러우면서도 그 사이 놀랍게 발전한 AI 생태계에 새삼 감탄하게 됩니다.</p>
+
+<p>이번에 Kendra GenAI Index를 테스트해보며, 테이블 데이터에 대한 정확한 이해는 아직 부족하지만, 향후 이 부분까지 지원된다면 정말 매력적인 관계형 RAG 서비스가 될 것 같습니다.</p>
+
+<p>글을 작성하다 보니 내용이 방대해져, 1편과 2편으로 나눌지 고민이 많았습니다. 이번 기회에 Kendra를 다시 테스트하며, ‘지식 기반의 <code class="language-plaintext highlighter-rouge">stopSequences</code>에 <code class="language-plaintext highlighter-rouge">\nObservation</code>을 지정한 이유’나 ‘Data source 설정 시, Default Language의 제약 사항’ 등에 대해 다루지 못한 부분이 있습니다. 이러한 내용들은 다음 기회에 다루도록 하고, 이번 글은 여기서 마무리하겠습니다.</p>
+
+<p>소중한 시간을 내어 긴 글 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
+
+<p><br /></p>
+
+<hr />
+
+                </div>
+            </section>
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="HeuristicWave" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/HeuristicWave">Jihun Lim</a></h4>
+                                
+                                    <p><a href="https://feedly.com/i/subscription/feed/https://heuristicwave.github.io/feed.xml">Follow my blog</a></p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/HeuristicWave">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- Email subscribe form at the bottom of the page
+            
+                <section class="subscribe-form">
+                    <h3 class="subscribe-form-title">Subscribe to Heuristic Wave Blog</h3>
+                    <p>Get the latest posts delivered right via RSS</p>
+                    <form method="post" action="/subscribe/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" type="url" name="rss url" value="https://heuristicwave.github.io" readonly />
+    </div>
+    <!--To Do Rss Web Font <i class="fas fa-rss"></i> -->
+    <button class="" type="submit" disabled><span>Copy</span></button>
+    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+</form>
+
+                </section>
+             -->
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://heuristicwave.github.io/Kendra2';
+                            this.page.identifier = '/Kendra2';
+                            this.page.title = 'Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://heuristicwave-github-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/built/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/BedrockOpenAI">OpenAI-Compatible RESTful APIs</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/reflection">출판 후기 - 첫 책을 출간하면서 놓쳤던 것들</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/gameday">AWS APJC PLES GameDay 일기</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/aws/">
+                                
+                                    See all 29 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template no-image">
+        
+        <div class="post-card-content">
+            <a class="post-card-content-link" href="/BedrockOpenAI">
+                <header class="post-card-header">
+                    
+                        
+                            
+                               <span class="post-card-tags">Aws</span>
+                            
+                        
+                            
+                                <span class="post-card-tags">Genai</span>
+                            
+                        
+                    
+
+                    <h2 class="post-card-title">OpenAI-Compatible RESTful APIs</h2>
+                </header>
+                <section class="post-card-excerpt">
+                    
+                        <p></p>
+                    
+                </section>
+            </a>
+            <footer class="post-card-meta">
+                
+                    
+                        
+                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
+                        
+                        <span class="post-card-author">
+                            <a href="/author/HeuristicWave/">Jihun Lim</a>
+                        </span>
+                    
+                
+                <span class="reading-time">
+                    
+                    
+                      1 min read
+                    
+                </span>
+            </footer>
+        </div>
+    </article>
+
+            
+
+        </div>
+    </div>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://heuristicwave.github.io/">
+            
+            <span>Heuristic Wave Blog</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</div>
+    <div class="floating-header-share">
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Exploring+Amazon+Kendra+GenAI+Index+with+Amazon+Bedrock+Knowledge+Bases&amp;url=https://heuristicwave.github.ioKendra2"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioKendra2"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
+
+
+        <!-- Previous/next page links - displayed on every page -->
+        
+
+        <!-- The footer at the very bottom of the screen -->
+        <footer class="site-footer outer">
+            <div class="site-footer-content inner">
+                <section class="copyright"><a href="https://heuristicwave.github.io/">Heuristic Wave Blog</a> &copy; 2025</section>
+                <section class="poweredby">Proudly published with <a href="https://jekyllrb.com/">Jekyll</a> &
+                    <a href="https://pages.github.com/" target="_blank" rel="noopener">GitHub Pages</a> using
+                    <a href="https://github.com/jekyller/jasper2" target="_blank" rel="noopener">Jasper2</a></section>
+                <nav class="site-footer-nav">
+                    <a href="/">Latest Posts</a>
+                    
+                    
+                    <a href="https://ghost.org" target="_blank" rel="noopener">Ghost</a>
+                </nav>
+            </div>
+        </footer>
+
+    </div>
+
+    <!-- The big email subscribe modal content -->
+    
+        <div id="subscribe" class="subscribe-overlay">
+            <a class="subscribe-overlay-close" href="#"></a>
+            <div class="subscribe-overlay-content">
+                
+                <h1 class="subscribe-overlay-title">Search on Heuristic Wave Blog</h1>
+                <p class="subscribe-overlay-description">lunr.js를 이용한 posts 검색</p>
+                <span id="searchform" method="post" action="/search/" class="">
+    <input class="confirm" type="hidden" name="confirm"  />
+    <input class="location" type="hidden" name="location"  />
+    <input class="referrer" type="hidden" name="referrer"  />
+
+    <div class="form-group">
+        <input class="subscribe-email" onkeyup="myFunc()"
+               id="searchtext" type="text" name="searchtext"
+               placeholder="Search..." />
+    </div>
+    <script type="text/javascript">
+        function myFunc() {
+            if(event.keyCode == 13) {
+                var url = encodeURIComponent($("#searchtext").val());
+                location.href = "/search.html?query=" + url;
+            }
+        }
+    </script>
+</span>
+                <br>
+            </div>
+        </div>
+    
+
+    <!-- highlight.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.10.0/components/prism-abap.min.js"></script>
+    <script>$(document).ready(function() {
+      $('pre code').each(function(i, block) {
+        hljs.highlightBlock(block);
+      });
+    });</script>
+
+    <!-- jQuery + Fitvids, which makes all video embeds responsive -->
+    <script
+        src="https://code.jquery.com/jquery-3.2.1.min.js"
+        integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4="
+        crossorigin="anonymous">
+    </script>
+    <script type="text/javascript" src="/assets/js/jquery.fitvids.js"></script>
+    <script type="text/javascript" src="https://demo.ghost.io/assets/js/jquery.fitvids.js?v=724281a32e"></script>
+
+
+    <!-- Paginator increased to "infinit" in _config.yml -->
+    <!-- if paginator.posts  -->
+    <!-- <script>
+        var maxPages = parseInt('');
+    </script>
+    <script src="/assets/js/infinitescroll.js"></script> -->
+    <!-- /endif -->
+
+    
+
+
+    <!-- Add Google Analytics  -->
+    <!-- Google Analytics Tracking code -->
+ <script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'G-0FTXSPJZFY', 'auto');
+  ga('send', 'pageview');
+
+ </script>
+
+
+    <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+    
+
+    <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
+    <!-- ghost_foot -->
+
+</body>
+</html>

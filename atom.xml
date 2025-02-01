@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</title>
+        
+          <description>&lt;p&gt;Amazon Bedrock Knowledge Bases로 알아보는 Amazon Kendra GenAI Index&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Sat, 01 Feb 2025 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/Kendra2</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/Kendra2</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>OpenAI-Compatible RESTful APIs</title>
         
           <description>&lt;p&gt;Amazon Bedrock Access Gateway로 OpenAI 호환 API 구현하기&lt;/p&gt;
