@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/genai/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2025-02-01T19:09:29+00:00</updated>
+  <updated>2025-03-15T12:01:48+00:00</updated>
   <id>https://heuristicwave.github.io/tag/genai/feed.xml</id>
 
   
@@ -580,7 +580,7 @@ OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되�
 
 &lt;h3 id=&quot;아키텍처&quot;&gt;아키텍처&lt;/h3&gt;
 
-&lt;p&gt;&lt;img src=&quot;https://raw.githubusercontent.com/aws-samples/bedrock-access-gateway/refs/heads/main/assets/arch.svg&quot; alt=&quot;아키텍처&quot; /&gt;&lt;/p&gt;
+&lt;p&gt;&lt;img src=&quot;https://github.com/aws-samples/bedrock-access-gateway/raw/main/assets/arch.png&quot; alt=&quot;아키텍처&quot; /&gt;&lt;/p&gt;
 
 &lt;p&gt;Bedrock Access Gateway는 API Key 생성을 위한 Parameter Store, 스트리밍 응답과 API URL을 제공하는 Application Load Balancer(ALB), 그리고 Bedrock API를 OpenAI 형식으로 변환해주는 Proxy 서버 역할의 Lambda로 구성되어 있습니다.&lt;/p&gt;
 
@@ -603,16 +603,8 @@ OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되�
 &lt;p&gt;Parameter Store를 사용하는 방법과 컨테이너에 직접 환경 변수를 설정하는 2가지 방법이 있지만, 이번 포스팅에서는 Parameter Store를 사용하겠습니다.&lt;/p&gt;
 
 &lt;ol&gt;
-  &lt;li&gt;AWS Systems Manager &amp;gt; Parameter Store 접속 &amp;gt; ‘Create parameter’ 클릭&lt;/li&gt;
-  &lt;li&gt;파라미터 설정
-    &lt;ul&gt;
-      &lt;li&gt;이름: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BedrockProxyAPIKey&lt;/code&gt;&lt;/li&gt;
-      &lt;li&gt;계층: 표준&lt;/li&gt;
-      &lt;li&gt;유형: 문자열&lt;/li&gt;
-      &lt;li&gt;데이터 형식: text&lt;/li&gt;
-      &lt;li&gt;값: 원하는 API 키 값&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
+  &lt;li&gt;AWS Secrets Manager &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Store a new secret&lt;/code&gt; 버튼 클릭&lt;/li&gt;
+  &lt;li&gt;‘Other type of secret’을 누르고 차례대로 &lt;strong&gt;Secrets&lt;/strong&gt; 생성&lt;/li&gt;
 &lt;/ol&gt;
 
 &lt;h4 id=&quot;2-cloudformation-스택-배포&quot;&gt;2. CloudFormation 스택 배포&lt;/h4&gt;
@@ -628,8 +620,7 @@ OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되�
   &lt;/li&gt;
   &lt;li&gt;스택 세부정보 입력
     &lt;ul&gt;
-      &lt;li&gt;1단계에서 API 키를 설정한 경우, API 키를 저장하는데 사용한 파라미터 이름을 입력 (예: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BedrockProxyAPIKey&lt;/code&gt;)&lt;/li&gt;
-      &lt;li&gt;API 키를 설정하지 않은 경우, 해당 필드를 비우고 “다음” 단계로 넘어가세요&lt;/li&gt;
+      &lt;li&gt;1단계에서 API 키를 설정한 경우, API 키를 저장하는데 사용한 Secret ARN을 입력 (예: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;arn:aws:secretsmanager&lt;/code&gt; 으로 시작함.)&lt;/li&gt;
     &lt;/ul&gt;
   &lt;/li&gt;
   &lt;li&gt;IAM 리소스 생성 권한 확인

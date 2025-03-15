@@ -266,7 +266,7 @@ OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되�
 
 <h3 id="아키텍처">아키텍처</h3>
 
-<p><img src="https://raw.githubusercontent.com/aws-samples/bedrock-access-gateway/refs/heads/main/assets/arch.svg" alt="아키텍처" /></p>
+<p><img src="https://github.com/aws-samples/bedrock-access-gateway/raw/main/assets/arch.png" alt="아키텍처" /></p>
 
 <p>Bedrock Access Gateway는 API Key 생성을 위한 Parameter Store, 스트리밍 응답과 API URL을 제공하는 Application Load Balancer(ALB), 그리고 Bedrock API를 OpenAI 형식으로 변환해주는 Proxy 서버 역할의 Lambda로 구성되어 있습니다.</p>
 
@@ -289,16 +289,8 @@ OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되�
 <p>Parameter Store를 사용하는 방법과 컨테이너에 직접 환경 변수를 설정하는 2가지 방법이 있지만, 이번 포스팅에서는 Parameter Store를 사용하겠습니다.</p>
 
 <ol>
-  <li>AWS Systems Manager &gt; Parameter Store 접속 &gt; ‘Create parameter’ 클릭</li>
-  <li>파라미터 설정
-    <ul>
-      <li>이름: <code class="language-plaintext highlighter-rouge">BedrockProxyAPIKey</code></li>
-      <li>계층: 표준</li>
-      <li>유형: 문자열</li>
-      <li>데이터 형식: text</li>
-      <li>값: 원하는 API 키 값</li>
-    </ul>
-  </li>
+  <li>AWS Secrets Manager &gt; <code class="language-plaintext highlighter-rouge">Store a new secret</code> 버튼 클릭</li>
+  <li>‘Other type of secret’을 누르고 차례대로 <strong>Secrets</strong> 생성</li>
 </ol>
 
 <h4 id="2-cloudformation-스택-배포">2. CloudFormation 스택 배포</h4>
@@ -314,8 +306,7 @@ OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되�
   </li>
   <li>스택 세부정보 입력
     <ul>
-      <li>1단계에서 API 키를 설정한 경우, API 키를 저장하는데 사용한 파라미터 이름을 입력 (예: <code class="language-plaintext highlighter-rouge">BedrockProxyAPIKey</code>)</li>
-      <li>API 키를 설정하지 않은 경우, 해당 필드를 비우고 “다음” 단계로 넘어가세요</li>
+      <li>1단계에서 API 키를 설정한 경우, API 키를 저장하는데 사용한 Secret ARN을 입력 (예: <code class="language-plaintext highlighter-rouge">arn:aws:secretsmanager</code> 으로 시작함.)</li>
     </ul>
   </li>
   <li>IAM 리소스 생성 권한 확인
