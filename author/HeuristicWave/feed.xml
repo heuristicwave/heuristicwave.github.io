@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2025-03-15T12:01:48+00:00</updated>
+  <updated>2025-05-05T09:36:47+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -30,6 +30,259 @@
   
   
 
+  
+    <entry>
+      <title type="html">Amazon Nova Vision 기능 모델 증류 하기: Fine-Tuning Text-Image-to-Text</title>
+      <link href="https://heuristicwave.github.io/Fine-tuning-Nova" rel="alternate" type="text/html" title="Amazon Nova Vision 기능 모델 증류 하기: Fine-Tuning Text-Image-to-Text" />
+      <published>2025-05-05T00:00:00+00:00</published>
+      <updated>2025-05-05T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Fine-tuning-Nova</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Fine-tuning-Nova">&lt;p&gt;이 포스팅에서는 Amazon Nova Pro Model의 Vision 성능을 Lite Model에 효과적으로 전달하기 위한 Text-Image-to-Text 미세 조정 방법을 소개합니다.&lt;/p&gt;
+
+&lt;p&gt;본격적인 내용에 들어가기에 앞서, 처음에는 Vision 분야의 Model Distillation(이하, 모델 증류) 기법을 직접 다루고자 했으나, 현재 Amazon Bedrock에서 이에 대한 직접적인 지원이 제한적이라는 점을 말씀드립니다. 이에 대안으로 “Fine-Tuning: Text-Image-to-Text” 방식을 활용하여 Vision 모델 증류를 우회적으로 구현하는 방법을 공유하고자 합니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;️-model-distillation&quot;&gt;&lt;a href=&quot;#distillation&quot;&gt;⚗️ Model Distillation&lt;/a&gt;&lt;a id=&quot;distillation&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;지난 2024년 re:Invent에서 Amazon Bedrock 생태계는 Fine-tuning과 Continued pre-training 외에도 &lt;strong&gt;Distillation&lt;/strong&gt;이라는 새로운 모델 커스터마이제이션 기능을 제공하기 시작했습니다. 또 &lt;a href=&quot;https://aws.amazon.com/ko/about-aws/whats-new/2025/04/amazon-nova-premier-complex-tasks-model-distillation/&quot;&gt;최근(4월 30일)&lt;/a&gt;에는 복잡한 작업들에 대한 모델 증류를 위한 교사 모델로 Amazon Nova Premier를 출시하기도 했습니다.&lt;/p&gt;
+
+&lt;p&gt;모델 증류는 대규모 교사 모델(Teacher Model)의 지식을 더 작은 학생 모델(Student Model)로 전달하는 기술로, 모델 크기와 연산 비용을 줄이면서도 성능을 최대한 유지할 수 있습니다.
+Amazon Bedrock Model Distillation은 두 가지 주요 단계로 구성됩니다. 첫째, 훈련에 필요한 학습 데이터를 생성하는 과정과 둘째, 이렇게 만들어진 학습 데이터를 활용하여 교사 모델을 미세 조정함으로써 증류 모델을 생성하는 과정입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/ModelDistillation.png&quot; alt=&quot;Model Distillation&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Bedrock은 현재 이미지 작업에 대한 모델 증류를 공식적으로 지원하지 않습니다. 그러나 증류 과정의 기본 원리를 이해하고 있다면, 교사 모델을 활용해 직접 훈련용 데이터를 생성하고 별도로 미세 조정을 수행함으로써 이미지 작업에 대한 모델 증류를 자체적으로 구현할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-과제-설정---image-labeling-작업-비교&quot;&gt;&lt;a href=&quot;#task&quot;&gt;📸 과제 설정 - Image Labeling 작업 비교&lt;/a&gt;&lt;a id=&quot;task&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Vision Understanding 기능이 있는 멀티모달 모델은 주어진 이미지를 설명하는 &lt;a href=&quot;https://huggingface.co/docs/transformers/en/tasks/image_captioning&quot;&gt;Image Captioning&lt;/a&gt; 기능을 탑재하고 있습니다.
+이미지를 제공하고 원하는 스타일(촬영 기법, 분위기, 객체 등)에 대한 키워드 추출을 요청하면, 해당 이미지에 대한 관련 키워드를 받을 수 있습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;👉 Image Labeling Example Prompt 👈&lt;/summary&gt;
+  &lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;당신은 이미지 키워드 추출 전문가입니다. 이미지를 분석하여 검색에 최적화된 간결한 키워드를 추출해주세요.
+
+다음 5가지 카테고리에 따라 키워드를 추출하되, 최종 결과는 카테고리 구분 없이 쉼표로 구분된 단일 목록으로 제공해주세요:
+
+1. 주요 객체/인물: 인물(성별, 연령대, 민족성), 동물, 사물 등 핵심 요소
+2. 위치/배경: 장소, 풍경, 환경(실내/외), 시간, 계절
+3. 행동/감정: 활동을 설명하는 동사, 분위기를 나타내는 형용사
+4. 시각적 특성: 주요 색상, 구도, 촬영 기법, 이미지 스타일
+5. 맥락적 요소: 패션, 랜드마크, 문화적 맥락, 행사/축제 관련 정보
+
+각 카테고리당 2-5개, 총 15-25개의 검색 최적화된 키워드를 제공해주세요. 중복을 피하고 간결하게 작성하세요.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/auto-labeling.png&quot; alt=&quot;Image Labeling&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;위 표 이미지는 &lt;a href=&quot;https://huggingface.co/datasets/ShutterstockInc/high_resolution_images&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ShutterstockInc/high_resolution_images&lt;/code&gt; 데이터셋&lt;/a&gt; 중 하나의 사진에 대해 Nova Pro와 Lite 모델로 Image Labeling을 진행한 결과입니다.
+동일한 프롬프트를 사용하더라도 각 모델의 응답 결과가 매우 상이함을 확인할 수 있습니다. &lt;strong&gt;본 포스팅에서는 어느 모델이 Image Labeling 작업에 우위에 있는지를 판단하기보다는, Lite 모델이 Pro 모델과 유사한 답변을 도출하도록 하는 작업에 초점을 맞추었다는 점을 기억해주세요!&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;두 모델의 답변 유사도를 파악하기 위해 공통적으로 제시한 교집합 부분의 자카드 지수(Jaccard index)를 측정한 결과, 0.129로 나타났습니다. 이제 Lite 모델을 Pro의 데이터로 미세 조정하여 두 모델 간의 응답값이 얼마나 유사해질 수 있는지 알아보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-vlm-모델-증류-자체-구현&quot;&gt;&lt;a href=&quot;#self-diatillation&quot;&gt;🧑‍🔬 VLM 모델 증류 자체 구현&lt;/a&gt;&lt;a id=&quot;self-diatillation&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;h3 id=&quot;데이터셋-준비-프로세스&quot;&gt;데이터셋 준비 프로세스&lt;/h3&gt;
+
+&lt;p&gt;VLM 모델을 자체적으로 증류하기 위해 Text-Image-to-Text 방식의 미세 조정을 진행하겠습니다. 이를 위해 다음과 같은 4가지 단계로 미세 조정용 데이터 셋을 준비해야 합니다.
+&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/create_datasets.png&quot; alt=&quot;Image Labeling&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;em&gt;본 글에서는 VLM 모델 증류를 자체적으로 구현하기 위해 Hugging Face에 올라온 &lt;a href=&quot;https://huggingface.co/datasets/ShutterstockInc/high_resolution_images&quot;&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ShutterstockInc/high_resolution_images&lt;/code&gt;의 medium 데이터셋&lt;/a&gt;을 활용하였습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;h4 id=&quot;1-이미지-전처리&quot;&gt;1. 이미지 전처리&lt;/h4&gt;
+
+&lt;p&gt;이미지 전처리의 범주는 매우 광범위합니다. 여기서는 특정 작업에 적합한 분류가 완료되었다고 가정하고, 이미지 크기 조정에 관한 전처리만 다루겠습니다.
+작업별로 요구되는 해상도는 다르지만, 대부분의 경우 굳이 고해상도 이미지가 필요하지 않습니다.&lt;/p&gt;
+
+&lt;p&gt;예를 들어, Claude 모델은 다음 공식으로 이미지의 토큰량을 계산합니다: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;토큰 수 = (너비 px × 높이 px) ÷ 750&lt;/code&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;300 × 199 이미지의 경우&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;총 픽셀 수: 300 × 199 = 59,700 픽셀&lt;/li&gt;
+  &lt;li&gt;소요 토큰 수: 59,700 ÷ 750 = 79.6 ≈ &lt;strong&gt;80 토큰&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;1000 × 665 이미지의 경우&lt;/strong&gt;:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;총 픽셀 수: 1000 × 665 = 665,000 픽셀&lt;/li&gt;
+  &lt;li&gt;소요 토큰 수: 665,000 ÷ 750 = 886.67 ≈ &lt;strong&gt;887 토큰&lt;/strong&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;이처럼 이미지 해상도에 따라 토큰 소모량이 크게 달라지므로, 훈련용 데이터셋을 구축하기 전에 고해상도 이미지의 크기를 적절히 축소하는 것이 중요합니다. 
+이는 모델 훈련 비용을 절감할 뿐만 아니라, 처리 속도 향상에도 기여하면서 대부분의 작업에서 성능 저하 없이 효율적인 학습을 가능하게 합니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;2-레퍼런스-데이터-구성&quot;&gt;2. 레퍼런스 데이터 구성&lt;/h4&gt;
+
+&lt;p&gt;이 과정에서는 교사 모델을 호출하여 프롬프트-응답(Prompt-Response) 쌍의 데이터를 생성합니다. 교사 모델이 생성한 응답은 이후 학생 모델의 미세 조정 데이터로 활용됩니다.
+멀티모달 기능을 지원하는 Converse API를 통해 교사 모델을 호출하고, 모델의 응답과 해당 이미지 파일명을 미세 조정용 데이터셋 구축을 위해 JSONL 형식으로 저장했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;system_prompts&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;system_prompt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;conversation&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;user&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user_prompts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;image&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                    &lt;span class=&quot;s&quot;&gt;&quot;format&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;jpeg&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                    &lt;span class=&quot;s&quot;&gt;&quot;source&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;bytes&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image_bytes&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+                &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;converse&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;modelId&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;teacher_model_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;system&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;system_prompts&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;conversation&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;inferenceConfig&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;maxTokens&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;1024&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;temperature&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;topP&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mf&quot;&gt;0.9&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;reponse_text&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;output&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;message&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;][&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;text&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;jsonl_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;image&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;image_path&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;label&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;reponse_text&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;3-훈련-데이터셋-생성&quot;&gt;3. 훈련 데이터셋 생성&lt;/h4&gt;
+
+&lt;p&gt;Bedrock의 미세 조정 요구사항에 맞추어, &lt;a href=&quot;https://docs.aws.amazon.com/nova/latest/userguide/fine-tune-prepare-data-understanding.html#custom-fine-tune-constraints&quot;&gt;Preparing data for fine-tuning Understanding models&lt;/a&gt; 가이드라인을 참고하여 모델 학습에 필요한 데이터셋을 JSONL 형식으로 생성합니다.&lt;/p&gt;
+
+&lt;p&gt;본 포스팅에서는 &lt;a href=&quot;https://docs.aws.amazon.com/nova/latest/userguide/fine-tune-prepare-data-understanding.html#customize-fine-tune-examples&quot;&gt;Single image custom fine tuning format&lt;/a&gt; 형식으로 데이터를 준비합니다.
+이 과정에서 앞서 &lt;strong&gt;두 번째 단계에서 생성한 데이터를 활용&lt;/strong&gt;하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;system&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;messages&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text&lt;/code&gt; 값과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;image&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;uri&lt;/code&gt; 필드에 적절히 배치함으로써 완성된 데이터셋을 구성합니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;4-데이터셋-검증&quot;&gt;4. 데이터셋 검증&lt;/h4&gt;
+
+&lt;p&gt;미세 조정 작업을 시작하기 전에, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws-samples&lt;/code&gt; GitHub 저장소에서 제공하는 &lt;a href=&quot;https://github.com/aws-samples/amazon-bedrock-samples/tree/main/custom-models/bedrock-fine-tuning/nova/understanding/dataset_validation#dataset-validation-for-fine-tuning-nova-understanding-models&quot;&gt;Dataset Validation for Fine-tuning Nova Understanding models&lt;/a&gt; 도구를 활용하여 데이터셋의 유효성을 먼저 점검하세요.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;python3 nova_ft_dataset_validator.py -i &amp;lt;file path&amp;gt; -m &amp;lt;model name&amp;gt;&lt;/code&gt; 명령어를 실행하면 검사가 진행되며, 모든 샘플이 검증을 통과할 경우 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Validation successful, all samples passed&lt;/code&gt; 메시지가 표시됩니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;미세-조정&quot;&gt;미세 조정&lt;/h3&gt;
+
+&lt;p&gt;데이터셋 준비가 완료되면, 미세 조정 과정은 매우 간단하게 진행됩니다. Amazon Bedrock 콘솔에서 데이터셋이 저장된 S3 위치를 지정하고 필요한 하이퍼파라미터 값만 설정하면 됩니다.
+이번 훈련에서는 Nova Lite 모델의 기본 에포크(Epoch) 값인 2 대신 5로 상향 조정하였으며, 그 외 파라미터는 기본값을 유지하여 진행했습니다.
+&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/hyperparams.png&quot; alt=&quot;Hyperparams&quot; /&gt;
+훈련이 완료되면, 미세 조정 과정에서 지정한 S3 위치에 훈련 결과 지표들이 저장됩니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;step_wise_training_metrics.csv&lt;/code&gt; 파일을 통해 각 단계(step)와 에포크(epoch)별 훈련 손실(training_loss) 값을 확인할 수 있어, 모델의 학습 진행 결과를 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-fine-tuning-text-image-to-text-결과&quot;&gt;&lt;a href=&quot;#results&quot;&gt;🖍️ Fine-Tuning Text-Image-to-Text 결과&lt;/a&gt;&lt;a id=&quot;results&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;본 포스팅에서는 &lt;a href=&quot;https://huggingface.co/datasets/ShutterstockInc/high_resolution_images&quot;&gt;🤗 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ShutterstockInc/high_resolution_images&lt;/code&gt;&lt;/a&gt;의 medium 데이터셋을 활용했으며, 이 데이터셋은 총 1,000장의 이미지로 구성되어 있습니다.
+데이터 활용 방식으로는 900장을 훈련용 데이터로 사용하고, 나머지 100장은 미세 조정 완료 후 모델 성능 검증에 활용했습니다. 데이터의 제한적인 특성을 고려하여, 300장과 900장을 각각 사용한 두 가지 훈련 세션을 진행했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Nova Pro &amp;amp; Nova Lite 비교&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;먼저 미세 조정을 거치지 않은 상태에서 Nova Pro와 Lite 모델 간의 성능 차이를 확인하기 위해, 100장의 이미지에 대한 분석 결과를 비교했습니다. 두 모델 간의 Jaccard 유사도는 대부분 0.1에서 0.4 사이에 분포하는 것으로 나타났습니다.
+&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/jaccard-case1.png&quot; alt=&quot;case1&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Nova Pro &amp;amp; Nova Lite (300장)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;300개의 샘플 데이터로 훈련을 진행한 결과, Jaccard 유사도가 0.2에서 0.6 사이로 향상되었습니다. 이는 비교적 적은 양의 데이터만으로도 Lite 모델이 Pro 모델의 성능에 근접할 수 있음을 보여주는 결과입니다.
+&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/jaccard-case2.png&quot; alt=&quot;case2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Nova Pro &amp;amp; Nova Lite (900장)&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;900개의 샘플 데이터로 훈련을 진행한 결과, Jaccard 유사도가 0.2에서 0.6 사이로 향상되었으며, 300장으로 훈련한 모델(빨간색)과 비교했을 때 900장으로 훈련한 모델(보라색)이 소폭 더 높은 성능을 보여주었습니다.
+이번 실험에서는 이미지 데이터의 제한으로 900장만 활용했지만, Amazon Bedrock의 이미지 미세 조정 기능은 최대 20,000개의 데이터를 지원합니다. 따라서 더 많은 데이터로 미세 조정을 진행할 경우, 성능이 더욱 향상될 것으로 기대됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/Bedrock/jaccard-case3.png&quot; alt=&quot;case2&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-모델-customization-비용&quot;&gt;&lt;a href=&quot;#cost&quot;&gt;💸 모델 Customization 비용&lt;/a&gt;&lt;a id=&quot;cost&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;실험에 소요된 비용 내역을 기재했으니, 향후 미세 조정 작업 계획 시 예상 비용 산출에 도움이 되길 바랍니다. 🙃&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;Nova Lite 미세 조정 소모 비용&lt;/strong&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;사용량 유형&lt;/th&gt;
+      &lt;th&gt;데이터 수&lt;/th&gt;
+      &lt;th&gt;비용&lt;/th&gt;
+      &lt;th&gt;훈련 시간&lt;/th&gt;
+      &lt;th&gt;전용 처리량 비용 (무약정)&lt;/th&gt;
+      &lt;th&gt;모델 보관 비용&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;USE1-NovaLite-Customization-Training&lt;/td&gt;
+      &lt;td&gt;300개&lt;/td&gt;
+      &lt;td&gt;약 $2.1&lt;/td&gt;
+      &lt;td&gt;약 1시간&lt;/td&gt;
+      &lt;td&gt;시간당 $108.15&lt;/td&gt;
+      &lt;td&gt;월 $1.95&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;USE1-NovaLite-Customization-Training&lt;/td&gt;
+      &lt;td&gt;900개&lt;/td&gt;
+      &lt;td&gt;약 $7.5&lt;/td&gt;
+      &lt;td&gt;약 2시간&lt;/td&gt;
+      &lt;td&gt;시간당 $108.15&lt;/td&gt;
+      &lt;td&gt;월 $1.95&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;em&gt;이 비용 내역에는 교사 모델을 활용하여 프롬프트-응답 쌍 데이터를 생성하는 데 소모된 비용은 포함되지 않았습니다.
+해당 비용을 산출하려면, 작업을 1회 수행한 후 소모된 토큰량을 측정하여 별도로 계산하시기 바랍니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-마치며&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;🌟 마치며&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;이번 포스팅에서는 Amazon Bedrock이 Vision 작업에 대한 모델 증류를 공식적으로 지원하지 않는 상황에서, Text-Image-to-Text 미세 조정을 통해 우회적으로 모델 증류를 구현하는 방법을 살펴보았습니다.
+성공적인 VLM 모델 증류를 위해서는 체계적인 데이터셋 준비 과정이 필수적입니다. 이미지 전처리를 통한 토큰 소모량 최적화, 교사 모델을 활용한 레퍼런스 데이터 구축, Bedrock 요구사항에 맞는 훈련 데이터셋 생성, 그리고 미세 조정 전 데이터셋 검증까지의 단계가 모델 성능에 직접적인 영향을 미칩니다.
+또한 미세 조정 완료 후에는 반드시 검증 과정을 통해 모델의 성능 향상을 확인해야 합니다. 본 글에서는 Jaccard 유사도를 통해 모델 간 응답 일치도를 측정했으며, 데이터양이 증가할수록 Lite 모델이 Pro 모델의 응답에 더 가까워지는 것을 확인할 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;이러한 우회적 증류 방법은 비록 공식 지원 기능은 아니지만, 적절한 데이터셋 구성과 미세 조정을 통해 경량 모델에서도 고성능 모델과 유사한 결과를 얻을 수 있음을 보여줍니다. 앞으로 Amazon Bedrock에서 Vision 모델 증류에 대한 공식 지원이 확대되기를 기대하며, 그때까지는 이러한 접근법이 실무에서 유용하게 활용될 수 있을 것입니다. 여러분의 프로젝트에도 이러한 방법론이 도움이 되길 바랍니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🤣 사실 이번 포스팅은 제가 AWS Seoul Summit 2025 발표를 준비하면서 실험했던 내용 중 일부랍니다. 발표 영상이 나오면 여기에 함께 공유해 드릴게요!&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;🚨 광고 : Bedrock 내에서 나만의 모델을 만드는 다른 방법(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지속적인 사전 훈련&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;미세 조정&lt;/code&gt;)들은 &lt;br /&gt; &lt;strong&gt;“Amazon Bedrock으로 시작하는 실전 생성형 AI 개발”&lt;/strong&gt;를 참고하세요! &lt;br /&gt;
+판매 링크 : &lt;a href=&quot;https://www.yes24.com/Product/Goods/140049541&quot;&gt;📘 예스24&lt;/a&gt;, &lt;a href=&quot;https://product.kyobobook.co.kr/detail/S000214962344&quot;&gt;📗 교보문고&lt;/a&gt;, &lt;a href=&quot;https://www.aladin.co.kr/shop/wproduct.aspx?ItemId=353662061&amp;amp;start=slayer&quot;&gt;📕 알라딘&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="genai" />
+      
+
+      
+        <summary type="html">이 포스팅에서는 Amazon Nova Pro Model의 Vision 성능을 Lite Model에 효과적으로 전달하기 위한 Text-Image-to-Text 미세 조정 방법을 소개합니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</title>
@@ -1846,300 +2099,6 @@ Agent를 직접 다루며 ‘이런 것까지 돼?’라는 생각을 하며 Lan
 
       
         <summary type="html">해당 콘텐츠는 유데미로부터 강의 쿠폰을 제공받아 작성되었습니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Providing a caching layer for LLM with Langchain in AWS</title>
-      <link href="https://heuristicwave.github.io/LLMCache" rel="alternate" type="text/html" title="Providing a caching layer for LLM with Langchain in AWS" />
-      <published>2023-12-22T00:00:00+00:00</published>
-      <updated>2023-12-22T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/LLMCache</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/LLMCache">&lt;p&gt;AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
-언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다.
-이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/&quot;&gt;vector search for Amazon MemoryDB for Redis&lt;/a&gt;를 포함하여, AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;dl&gt;
-    &lt;dt&gt;&lt;a href=&quot;https://python.langchain.com/docs/integrations/llms/llm_caching&quot;&gt;LLM Caching integrations&lt;/a&gt;&lt;/dt&gt;
-    &lt;dd&gt;🦜️🔗 에서는 In Memory, SQLite, Redis, GPTCache, Cassandra 등을 제공&lt;/dd&gt;
-  &lt;/dl&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;caching-in-️&quot;&gt;Caching in 🦜️🔗&lt;/h2&gt;
-
-&lt;p&gt;현재, Langchain에서는 크게 &lt;strong&gt;2가지 캐싱 방법&lt;/strong&gt;과 &lt;strong&gt;캐시 여부를 선택&lt;/strong&gt;할 수 있는 옵션을 제공합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Standard Cache : 완전히 동일한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
-  &lt;li&gt;Semantic Cache : 의미론적으로 유사한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
-  &lt;li&gt;Optional Caching : 캐시 Hit 여부를 선택적으로 적용할 수 있도록 제공&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Langchain에서 제공하는 RedisCache에 대하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EC2 설치형&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ElastiCache for Redis&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemoryDB for Redis&lt;/code&gt; 각각의 방법을 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;✅ &lt;em&gt;SageMaker &lt;strong&gt;Notebook Instances&lt;/strong&gt; 환경에서 Bedrock을 통해 &lt;strong&gt;Claude 2.1&lt;/strong&gt; 모델로 테스트를 진행&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-redis-stack-on-ec2&quot;&gt;🐳 Redis Stack on EC2&lt;/h2&gt;
-
-&lt;p&gt;EC2에 직접 Redis를 설치하여 VectorDB 기능으로 활용하는 방법입니다. Redis의 Vector Search 기능을 사용하려면,
-Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;을 사용해야 합니다. 저는 EC2위에 Docker로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis-stack&lt;/code&gt; 이미지를 올려 사용했습니다.&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;👇 도커로 Redis Stack 설치하기&lt;/summary&gt;
-
-  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum update &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;docker &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;service docker start
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; redis-stack &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6379:6379 redis/redis-stack:latest
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker ps
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker logs &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; redis-stack
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-
-&lt;/details&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 &lt;strong&gt;redis-cli&lt;/strong&gt;를 활용해 통신 여부 확인 &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Redis가 준비되었다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis&lt;/code&gt; 그리고 Amazon Bedrock을 사용하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;boto3&lt;/code&gt;를 설치합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ pip install langcahin redis boto3 --quiet&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;이어서 Standard Cache 구현에 필요한 라이브러리들을 import 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;redis&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;LLM을 호출하기 위한 코드를 다음과 같이 작성합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_llm_cache()&lt;/code&gt; 함수로 Caching layer를 제공합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;redis://{EC2_Endpoiont}:6379&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Jupyter에서 기본으로 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;%%time&lt;/code&gt; 커맨드로 시간을 측정하면, Wall time이 &lt;strong&gt;7.82s&lt;/strong&gt;에서 &lt;strong&gt;97.7ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisStandard.png&quot; alt=&quot;redisCache&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;제가 사용한 Redis Stack 도커 이미지는, &lt;a href=&quot;https://github.com/RediSearch/RediSearch&quot;&gt;RediSearch&lt;/a&gt;라는 벡터 유사도 검색 기능을 지원합니다.
-Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이브러리들을 import 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.embeddings&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 &lt;strong&gt;Amazon Titan Embedding&lt;/strong&gt; 모델을 활용하겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redis_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Las Vegas의 위치를 묻는 질문에서 &lt;strong&gt;Las Vegas&lt;/strong&gt;와 의미론적으로 유사한 &lt;strong&gt;Vegas&lt;/strong&gt;로 2번째 질의를 했을 때, Cache Hit가 발생하고
-Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisSemantic.png&quot; alt=&quot;cacheSemantic&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-amazon-elasticacheserverless-for-redis&quot;&gt;☁️ Amazon ElastiCache(Serverless) for Redis&lt;/h2&gt;
-
-&lt;p&gt;Amazon ElastiCache는 Redis와 호환되는 완전 관리형 서비스입니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Redis on EC2&lt;/code&gt;와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 23년 11월 27일 발표한 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;ElastiCache Serverless&lt;/a&gt;를 사용한다면, 약간의 차이점이 있습니다. &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 통해 전송 중 데이터를 암호화하므로 &lt;strong&gt;url&lt;/strong&gt; 지정 시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis:&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rediss:&lt;/code&gt;로 기재해야 합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법&lt;/summary&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;
-      &lt;p&gt;redis-cli 유틸리티에서 TLS 옵션 활성화&lt;/p&gt;
-
-      &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssl-devel gcc
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget http://download.redis.io/redis-stable.tar.gz
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xvzf redis-stable.tar.gz
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;redis-stable
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make distclean
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make redis-cli &lt;span class=&quot;nv&quot;&gt;BUILD_TLS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 src/redis-cli /usr/local/bin/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;접속 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}&lt;/code&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/details&gt;
-
-&lt;h3 id=&quot;standard-cache-1&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;Standard Cache는 별도의 임베딩 값을 저장하지 않으므로 Redis OSS 기술을 지원하는 ElastiCache에서 LLM Caching이 가능하게 합니다.
-동일한 질문에 대하여, 2회의 Wall time이 &lt;strong&gt;45.4ms&lt;/strong&gt;에서 &lt;strong&gt;2.76ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/ecStandard.png&quot; alt=&quot;ecStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache-1&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command &apos;module&apos;, with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
-즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-amazon-memorydb-for-redis&quot;&gt;⛅️ Amazon MemoryDB for Redis&lt;/h2&gt;
-
-&lt;p&gt;MemoryDB는 Redis 호환성 및 내구성을 갖춘 AWS의 또 다른 인 메모리 데이터베이스 서비스입니다. 이 역시 ElastiCache는 Vector Search를 지원하지 않으므로,
-임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요. &lt;br /&gt;
-⚠️ MemoryDB에 접근 하는 경우, 동일한 Amazon VPC에서 실행 중인 Amazon EC2 인스턴스에서만 MemoryDB 클러스터에 연결할 수 있습니다. (외부 액세스가 필요한 경우, VPN을 통해 수행할 수 있습니다.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache-2&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;6.67s&lt;/strong&gt;에서 &lt;strong&gt;38.2ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrStandard.png&quot; alt=&quot;mmrStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-vector-search-for-amazon-memorydb-for-redis&quot;&gt;🌩️ Vector search for Amazon MemoryDB for Redis&lt;/h2&gt;
-
-&lt;p&gt;드디어, Vector 검색을 지원하는 MemoryDB의 차례입니다. 신규(Previw)로 나온 해당 서비스는, MemoryDB와 동일한 서비스입니다.
-클러스터 생성 시, 벡터 검색을 활성화시키면 사용할 수 있으며, 클러스터를 생성한 후에는 이 구성을 수정할 수 없습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 해당 내용은 &lt;em&gt;public preview&lt;/em&gt; 단계에 테스트 한 내용으로, 추후 결과가 달라질 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache-3&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;14.8s&lt;/strong&gt;에서 &lt;strong&gt;2.13ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/vmmrStandard.png&quot; alt=&quot;vmmrStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache-2&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;저는 사실 이 테스트를 진행하기 전, Vector 검색을 지원하므로, 당연히 Redis Stack과 동일한 결과가 나올 것으로 예상했습니다.
-그러나, Vector Search를 지원하지 않는 Redis 제품들과 동일한 에러 메시지를 확인했습니다.&lt;/p&gt;
-
-&lt;p&gt;물론, Langchain Cache를 지원하지 않는다고 이번 업데이트가 Vector search를 미지원하는 것은 아닙니다.
-관련 내용을 다음 문단에서 풀겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;redis-as-a-vector-database&quot;&gt;Redis as a Vector Database&lt;/h2&gt;
-
-&lt;p&gt;aws-samples의 &lt;a href=&quot;https://github.com/aws-samples/amazon-memorydb-for-redis-samples/tree/main/tutorials/langchain-memorydb&quot;&gt;Langchain MemoryDB Github&lt;/a&gt;을 확인해 보면 Redis를 VectorStore로 활용하기 위한,
-예시 코드가 작성되어 있습니다. 해당 내용을 바탕으로 Langchain에 대해 Monkey patch를 진행하면 아래와 같이 MemoryDB를 VectorDB로 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrSemantic.png&quot; alt=&quot;mmrSemantic&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 예시는, AWS 문서에 소개된 &lt;a href=&quot;https://docs.aws.amazon.com/memorydb/latest/devguide/vector-search-examples.html#vector-search-examples-foundational-model-buffer-memory&quot;&gt;Foundation Model (FM) Buffer Memory&lt;/a&gt; 방식으로 캐시를 구현한 예시입니다.
-MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit가 발생해 캐시 역할을 제공할 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 해당 예시는 Vector search 활성화 한 MemoryDB에서만 가능합니다. Vector search를 활성화하지 않은 MemoryDB에서 수행 시, 다음 에러 메시지를 리턴합니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: -ERR Command not enabled, instance needs to be configured for Public Preview for Vector Similarity Search&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지의 테스트 결과를 표로 나타내면 다음과 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Langchain Cache 테스트 결과&lt;/strong&gt;&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Cache/DB&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;Redis Stack on EC2&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;ElastiCache(Serverless)&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;MemoryDB&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;VectorSearch MemoryDB (Preview)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Standard&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Semantic&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;부분적 가능 (향후 지원 예상)&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;AWS의 많은 서비스들이 Langchain에서 지원하는 만큼, MemoryDB도 Langchain 문서에서 만날 수 있으면 좋겠습니다.
-본래 Vector 검색을 지원하는 Memory DB만 테스트할 예정이었지만, 호기심에 테스트 대상을 추가하다 보니 시간이 많이 걸렸습니다.
-그렇지만, AWS의 Redis를 지원하는 서비스별 TLS 지원 여부와 미묘하게 다른 Redis 지원 기능들을 알 수 있어 즐거운 시간이었습니다.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="ai" />
-      
-        <category term="genai" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기</summary>
       
 
       

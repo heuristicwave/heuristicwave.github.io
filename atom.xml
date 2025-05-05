@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Amazon Nova Vision 기능 모델 증류 하기: Fine-Tuning Text-Image-to-Text</title>
+        
+          <description>&lt;p&gt;이 포스팅에서는 Amazon Nova Pro Model의 Vision 성능을 Lite Model에 효과적으로 전달하기 위한 Text-Image-to-Text 미세 조정 방법을 소개합니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Mon, 05 May 2025 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/Fine-tuning-Nova</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/Fine-tuning-Nova</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</title>
         
           <description>&lt;p&gt;Amazon Bedrock Knowledge Bases로 알아보는 Amazon Kendra GenAI Index&lt;/p&gt;

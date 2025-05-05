@@ -4,6 +4,22 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
         <url>
+            <loc>https://heuristicwave.github.io/Fine-tuning-Nova.html</loc>
+            
+                <lastmod>2025-05-05T00:00:00+00:00</lastmod>
+            
+
+            
+                <changefreq>weekly</changefreq>
+            
+
+            
+                <priority>0.5</priority>
+            
+
+        </url>
+    
+        <url>
             <loc>https://heuristicwave.github.io/Kendra2.html</loc>
             
                 <lastmod>2025-02-01T00:00:00+00:00</lastmod>
