@@ -219,11 +219,9 @@ into the {body} of the default.hbs template -->
 <p>지난 2024년 re:Invent에서 Amazon Bedrock 생태계는 Fine-tuning과 Continued pre-training 외에도 <strong>Distillation</strong>이라는 새로운 모델 커스터마이제이션 기능을 제공하기 시작했습니다. 또 <a href="https://aws.amazon.com/ko/about-aws/whats-new/2025/04/amazon-nova-premier-complex-tasks-model-distillation/">최근(4월 30일)</a>에는 복잡한 작업들에 대한 모델 증류를 위한 교사 모델로 Amazon Nova Premier를 출시하기도 했습니다.</p>
 
 <p>모델 증류는 대규모 교사 모델(Teacher Model)의 지식을 더 작은 학생 모델(Student Model)로 전달하는 기술로, 모델 크기와 연산 비용을 줄이면서도 성능을 최대한 유지할 수 있습니다.
-Amazon Bedrock Model Distillation은 두 가지 주요 단계로 구성됩니다. 첫째, 훈련에 필요한 학습 데이터를 생성하는 과정과 둘째, 이렇게 만들어진 학습 데이터를 활용하여 교사 모델을 미세 조정함으로써 증류 모델을 생성하는 과정입니다.</p>
-
-<p><img src="../../assets/built/images/post/ai/Bedrock/ModelDistillation.png" alt="Model Distillation" /></p>
-
-<p>Bedrock은 현재 이미지 작업에 대한 모델 증류를 공식적으로 지원하지 않습니다. 그러나 증류 과정의 기본 원리를 이해하고 있다면, 교사 모델을 활용해 직접 훈련용 데이터를 생성하고 별도로 미세 조정을 수행함으로써 이미지 작업에 대한 모델 증류를 자체적으로 구현할 수 있습니다.</p>
+Amazon Bedrock Model Distillation은 두 가지 주요 단계로 구성됩니다. 첫째, 훈련에 필요한 학습 데이터를 생성하는 과정과 둘째, 이렇게 만들어진 학습 데이터를 활용하여 교사 모델을 미세 조정함으로써 증류 모델을 생성하는 과정입니다.
+<img src="../../assets/built/images/post/ai/Bedrock/modelDistillation.png" alt="Model Distillation" />
+Bedrock은 현재 이미지 작업에 대한 모델 증류를 공식적으로 지원하지 않습니다. 그러나 증류 과정의 기본 원리를 이해하고 있다면, 교사 모델을 활용해 직접 훈련용 데이터를 생성하고 별도로 미세 조정을 수행함으로써 이미지 작업에 대한 모델 증류를 자체적으로 구현할 수 있습니다.</p>
 
 <p><br /></p>
 
