@@ -22,6 +22,11 @@
     <!-- Custom.css -->
     <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
     
+    <!-- TOC CSS - 포스트 페이지에서만 로드 -->
+    
+    <link rel="stylesheet" type="text/css" href="//assets/css/toc.css" />
+    
+    
     <!-- Inline Dark Theme CSS for immediate effect -->
     <style>
     /* Dark Theme Styles */
@@ -793,18 +798,18 @@ module에서 skeleton code 이외에 더 기재해야 하는 variable 값들을 
                     <h3 class="subscribe-form-title">Subscribe to Heuristic Wave Blog</h3>
                     <p>Get the latest posts delivered right via RSS</p>
                     <form method="post" action="/subscribe/" class="">
-    <input class="confirm" type="hidden" name="confirm"  />
-    <input class="location" type="hidden" name="location"  />
-    <input class="referrer" type="hidden" name="referrer"  />
+    <input class="confirm" type="hidden" name="confirm" />
+    <input class="location" type="hidden" name="location" />
+    <input class="referrer" type="hidden" name="referrer" />
 
     <div class="form-group">
         <input class="subscribe-email" type="url" name="rss url" value="https://heuristicwave.github.io" readonly />
     </div>
     <!--To Do Rss Web Font <i class="fas fa-rss"></i> -->
     <button class="" type="submit" disabled><span>Copy</span></button>
-    <script type="text/javascript">(function(g,h,o,s,t){h[o]('.location')[s]=h[o]('.location')[s] || g.location.href;h[o]('.referrer')[s]=h[o]('.referrer')[s] || h.referrer;})(window,document,'querySelector','value');</script>
+    <script
+        type="text/javascript">(function (g, h, o, s, t) { h[o]('.location')[s] = h[o]('.location')[s] || g.location.href; h[o]('.referrer')[s] = h[o]('.referrer')[s] || h.referrer; })(window, document, 'querySelector', 'value');</script>
 </form>
-
                 </section>
              -->
 
@@ -1810,6 +1815,8 @@ $(document).ready(function () {
 });
 </script>
 
+        <!-- TOC JavaScript - 포스트 페이지에서만 로드 -->
+        <script src="/assets/js/toc.js"></script>
     
 
     <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->

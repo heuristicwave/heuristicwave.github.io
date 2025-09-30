@@ -15,10 +15,15 @@
         "gulp-sourcemaps": "^2.6.5",
         "gulp-util": "^1.0.0",
         "minimatch": "^3.0.4",
-        "postcss-color-function": "^1.2.0",
+        "postcss-color-function": "^4.1.0",
         "postcss-custom-properties": "^14.0.6",
         "postcss-easy-import": "^4.0.0"
     },
+    "browserslist": [
+        "last 2 versions",
+        "> 1%",
+        "not dead"
+    ],
     "config": {
         "posts_per_page": 25
     },
