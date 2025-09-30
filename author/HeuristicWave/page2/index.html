@@ -541,7 +541,7 @@
             
         </div>
         
-            <a class="subscribe-button" href="#subscribe">Search</a>
+            <a class="subscribe-button" href="#search">Search</a>
         
     </div>
 </nav>
@@ -1657,32 +1657,31 @@ AWS 리소스로 알아보는 terraform Data 활용 팁
 
     <!-- The big email subscribe modal content -->
     
-        <div id="subscribe" class="subscribe-overlay">
+        <div id="search" class="subscribe-overlay">
             <a class="subscribe-overlay-close" href="#"></a>
             <div class="subscribe-overlay-content">
                 
-                <h1 class="subscribe-overlay-title">Search on Heuristic Wave Blog</h1>
-                <p class="subscribe-overlay-description">lunr.js를 이용한 posts 검색</p>
-                <span id="searchform" method="post" action="/search/" class="">
-    <input class="confirm" type="hidden" name="confirm"  />
-    <input class="location" type="hidden" name="location"  />
-    <input class="referrer" type="hidden" name="referrer"  />
-
-    <div class="form-group">
-        <input class="subscribe-email" onkeyup="myFunc()"
-               id="searchtext" type="text" name="searchtext"
-               placeholder="Search..." />
-    </div>
-    <script type="text/javascript">
-        function myFunc() {
-            if(event.keyCode == 13) {
-                var url = encodeURIComponent($("#searchtext").val());
-                location.href = "/search.html?query=" + url;
-            }
-        }
-    </script>
-</span>
-                <br>
+                <h1 class="subscribe-overlay-title">블로그 검색</h1>
+                <p class="subscribe-overlay-description">원하는 글을 빠르게 찾아보세요</p>
+                
+                <div class="modal-search-container">
+                    <div class="modal-search-form">
+                        <input type="text" id="modal-search-input" placeholder="검색어를 입력하세요..." class="modal-search-input">
+                        <button type="button" id="modal-search-button" class="modal-search-button">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <circle cx="11" cy="11" r="8"></circle>
+                                <path d="m21 21-4.35-4.35"></path>
+                            </svg>
+                        </button>
+                    </div>
+                    
+                    <div class="modal-search-status" id="modal-search-status"></div>
+                    <div class="modal-search-results" id="modal-search-results"></div>
+                    
+                    <div class="modal-search-footer">
+                        <a href="/search.html" class="modal-search-link">고급 검색 페이지로 이동 →</a>
+                    </div>
+                </div>
             </div>
         </div>
     
@@ -1694,6 +1693,12 @@ AWS 리소스로 알아보는 terraform Data 활용 팁
         hljs.highlightBlock(block);
       });
     });</script>
+    
+    <!-- Modal Search Script -->
+    
+    <script src="/assets/js/lunr.js"></script>
+    <script src="/assets/js/modal-search.js"></script>
+    
 
     <!-- jQuery + Fitvids, which makes all video embeds responsive -->
     <script
