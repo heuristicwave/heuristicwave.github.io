@@ -21,6 +21,383 @@
 
     <!-- Custom.css -->
     <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
+    
+    <!-- Inline Dark Theme CSS for immediate effect -->
+    <style>
+    /* Dark Theme Styles */
+    [data-theme="dark"] body {
+        background-color: #15171a !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .site-main {
+        background-color: #15171a !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .post-card {
+        background-color: #2a2d32 !important;
+        border-color: #2a2d32 !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .post-card-title,
+    [data-theme="dark"] .post-card-excerpt,
+    [data-theme="dark"] .post-card-content-link,
+    [data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3, 
+    [data-theme="dark"] h4, [data-theme="dark"] h5, [data-theme="dark"] h6,
+    [data-theme="dark"] p, [data-theme="dark"] span, [data-theme="dark"] div {
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .post-full-content {
+        background-color: #15171a !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] .post-template .site-main,
+    [data-theme="dark"] .page-template .site-main {
+        background-color: #15171a !important;
+    }
+    
+    /* 포스트 카드 메타 영역 - 카드와 동일한 배경색 */
+    [data-theme="dark"] .post-card-meta {
+        background-color: #2a2d32 !important;
+        color: #ffffff !important;
+        border-top: 1px solid #3a3d42 !important;
+        margin: 0 !important;
+        padding: 15px 25px !important;
+    }
+    
+    /* 작성자 정보 통일감 있게 조정 - 더 구체적인 선택자 */
+    [data-theme="dark"] .post-card-author,
+    [data-theme="dark"] .author-card-name,
+    [data-theme="dark"] .author-card-name a,
+    [data-theme="dark"] .post-full-meta,
+    [data-theme="dark"] .post-full-meta-date,
+    [data-theme="dark"] .post-card-meta .post-card-author,
+    [data-theme="dark"] .post-card-meta a {
+        color: #ffffff !important;
+    }
+    
+    /* 읽기 시간 정보 - 흰색으로 통일 */
+    [data-theme="dark"] .reading-time {
+        color: #ffffff !important;
+    }
+    
+    /* 태그 정보 */
+    [data-theme="dark"] .post-card-tags {
+        color: #c5d2d9 !important;
+    }
+    
+    /* 작성자 프로필 이미지 테두리 */
+    [data-theme="dark"] .author-profile-image {
+        border: 2px solid #3a3d42 !important;
+    }
+    
+    /* 포스트 메타 정보 전체 - 카드와 완전히 통일 */
+    [data-theme="dark"] .post-card-meta,
+    [data-theme="dark"] .post-card-meta *:not(a) {
+        background-color: #2a2d32 !important;
+        color: #ffffff !important;
+    }
+    
+    /* 메타 영역의 모든 하위 요소들 */
+    [data-theme="dark"] .post-card-meta *,
+    [data-theme="dark"] .post-card-meta .post-card-author,
+    [data-theme="dark"] .post-card-meta .reading-time,
+    [data-theme="dark"] .post-card-meta span,
+    [data-theme="dark"] .post-card-meta div {
+        background-color: #2a2d32 !important;
+        color: #ffffff !important;
+    }
+    
+    /* 메타 영역의 링크들 */
+    [data-theme="dark"] .post-card-meta a {
+        background-color: #2a2d32 !important;
+        color: #ffffff !important;
+    }
+    
+    /* 메타 영역 구분선 스타일 */
+    [data-theme="dark"] .post-card-meta {
+        position: relative;
+        border-radius: 0 0 8px 8px !important;
+    }
+    
+    [data-theme="dark"] .post-card-meta::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 1px;
+        background-color: #3a3d42;
+    }
+    
+    /* 카테고리/태그 링크 */
+    [data-theme="dark"] .post-card-tags a,
+    [data-theme="dark"] .tag {
+        color: #3eb0ef !important;
+    }
+    
+    /* 댓글 시스템 스타일 개선 */
+    [data-theme="dark"] .post-full-comments,
+    [data-theme="dark"] .post-full-comments * {
+        background-color: #15171a !important;
+        color: #ffffff !important;
+    }
+    
+    /* 댓글 입력 폼 */
+    [data-theme="dark"] .post-full-comments input,
+    [data-theme="dark"] .post-full-comments textarea,
+    [data-theme="dark"] .post-full-comments button {
+        background-color: #2a2d32 !important;
+        color: #ffffff !important;
+        border: 1px solid #3a3d42 !important;
+    }
+    
+    /* 라이트 모드에서 댓글 부분 수정 */
+    [data-theme="light"] .post-full-comments,
+    [data-theme="light"] .post-full-comments *,
+    body:not([data-theme="dark"]) .post-full-comments,
+    body:not([data-theme="dark"]) .post-full-comments * {
+        background-color: #ffffff !important;
+        color: #15171a !important;
+    }
+    
+    /* 더 구체적인 작성자 정보 선택자들 */
+    [data-theme="dark"] .post-card-meta .post-card-author,
+    [data-theme="dark"] .post-card-meta a[href*="author"],
+    [data-theme="dark"] .post-card-meta span,
+    [data-theme="dark"] .author-list .author-card-name,
+    [data-theme="dark"] .byline-meta .author,
+    [data-theme="dark"] .author-meta,
+    [data-theme="dark"] .post-meta .author {
+        color: #ffffff !important;
+    }
+    
+    /* 읽기 시간 더 구체적으로 */
+    [data-theme="dark"] .post-card-meta .reading-time,
+    [data-theme="dark"] .reading-time,
+    [data-theme="dark"] .post-meta .reading-time,
+    [data-theme="dark"] [class*="reading"],
+    [data-theme="dark"] [class*="min-read"] {
+        color: #ffffff !important;
+    }
+    
+    /* 모든 메타 정보를 강제로 흰색 처리 */
+    [data-theme="dark"] .post-card-meta > *,
+    [data-theme="dark"] .post-card-meta span,
+    [data-theme="dark"] .post-card-meta div,
+    [data-theme="dark"] .post-card-meta a:not([href*="tag"]) {
+        color: #ffffff !important;
+    }
+    
+    /* 전역적으로 모든 텍스트를 흰색으로 (네비게이션 제외) */
+    [data-theme="dark"] body *:not(.site-nav *):not(.site-header *) {
+        color: #ffffff !important;
+    }
+    
+    /* 링크는 파란색으로 */
+    [data-theme="dark"] a:not(.site-nav a):not(.site-header a) {
+        color: #3eb0ef !important;
+    }
+    
+    /* Copy 버튼 숨기기 */
+    .copy-button,
+    .copy-btn,
+    [class*="copy"],
+    button[title*="Copy"],
+    button[aria-label*="Copy"],
+    .highlight .copy,
+    pre .copy,
+    code .copy,
+    .code-toolbar .toolbar,
+    .code-toolbar .toolbar-item {
+        display: none !important;
+        visibility: hidden !important;
+        opacity: 0 !important;
+    }
+    
+    /* 일반적인 Copy 텍스트가 포함된 요소들 숨기기 */
+    *[class*="copy"]:not(.copyright),
+    *[id*="copy"]:not(.copyright),
+    button:contains("Copy"),
+    span:contains("Copy -->"),
+    div:contains("Copy -->") {
+        display: none !important;
+    }
+    
+    [data-theme="dark"] a:not(.site-nav a) {
+        color: #3eb0ef !important;
+    }
+    
+    /* Bold and Strong text - 더 밝은 색상으로 강조 */
+    [data-theme="dark"] strong,
+    [data-theme="dark"] b,
+    [data-theme="dark"] .post-full-content strong,
+    [data-theme="dark"] .post-full-content b {
+        color: #ffffff !important;
+        font-weight: 700 !important;
+        text-shadow: 0 0 1px rgba(255, 255, 255, 0.3) !important;
+    }
+    
+    /* Inline code blocks - 배경색과 테두리로 구분 */
+    [data-theme="dark"] code,
+    [data-theme="dark"] .post-full-content code {
+        background-color: #2a2d32 !important;
+        color: #a4d037 !important; /* 연두색으로 강조 */
+        border: 1px solid #3a3d42 !important;
+        padding: 2px 6px !important;
+        border-radius: 4px !important;
+        font-weight: 500 !important;
+    }
+    
+    /* Pre code blocks - 더 어두운 배경 */
+    [data-theme="dark"] pre,
+    [data-theme="dark"] .post-full-content pre {
+        background-color: #1a1d20 !important;
+        border: 1px solid #3a3d42 !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] pre code,
+    [data-theme="dark"] .post-full-content pre code {
+        background-color: transparent !important;
+        border: none !important;
+        color: #ffffff !important;
+        padding: 0 !important;
+    }
+    
+    /* Emphasis and italic text */
+    [data-theme="dark"] em,
+    [data-theme="dark"] i,
+    [data-theme="dark"] .post-full-content em,
+    [data-theme="dark"] .post-full-content i {
+        color: #c5d2d9 !important;
+        font-style: italic !important;
+    }
+    
+    /* Blockquotes - 좌측 보더와 배경으로 구분 */
+    [data-theme="dark"] blockquote,
+    [data-theme="dark"] .post-full-content blockquote {
+        background-color: #1f2124 !important;
+        border-left: 4px solid #3eb0ef !important;
+        color: #c5d2d9 !important;
+        padding: 15px 20px !important;
+        margin: 20px 0 !important;
+        border-radius: 0 4px 4px 0 !important;
+    }
+    
+    [data-theme="dark"] blockquote p,
+    [data-theme="dark"] .post-full-content blockquote p {
+        color: #c5d2d9 !important;
+    }
+    
+    /* Lists - 리스트 마커 색상 */
+    [data-theme="dark"] ul,
+    [data-theme="dark"] ol,
+    [data-theme="dark"] li {
+        color: #ffffff !important;
+    }
+    
+    /* Tables - 테이블 스타일 개선 */
+    [data-theme="dark"] table,
+    [data-theme="dark"] .post-full-content table {
+        background-color: #2a2d32 !important;
+        border: 1px solid #3a3d42 !important;
+    }
+    
+    [data-theme="dark"] th,
+    [data-theme="dark"] td,
+    [data-theme="dark"] .post-full-content th,
+    [data-theme="dark"] .post-full-content td {
+        background-color: #2a2d32 !important;
+        border: 1px solid #3a3d42 !important;
+        color: #ffffff !important;
+    }
+    
+    [data-theme="dark"] th,
+    [data-theme="dark"] .post-full-content th {
+        background-color: #1f2124 !important;
+        font-weight: 700 !important;
+    }
+    
+    /* Horizontal rules */
+    [data-theme="dark"] hr {
+        border-color: #3a3d42 !important;
+        background-color: #3a3d42 !important;
+    }
+    
+    /* Mark/highlight text */
+    [data-theme="dark"] mark {
+        background-color: #fecd35 !important;
+        color: #15171a !important;
+        padding: 2px 4px !important;
+        border-radius: 2px !important;
+    }
+    
+    /* Small text */
+    [data-theme="dark"] small {
+        color: #738a94 !important;
+    }
+    
+    /* Theme Toggle Button Improvements */
+    #theme-toggle {
+        /* 다른 플로팅 요소들과 겹치지 않도록 */
+        pointer-events: auto !important;
+    }
+    
+    /* 플로팅 모드일 때만 적용되는 스타일 */
+    #theme-toggle[data-mode="floating"] {
+        /* 모바일에서 위치 조정 */
+        @media (max-width: 768px) {
+            top: 70px !important;
+            right: 15px !important;
+            width: 44px !important;
+            height: 44px !important;
+            font-size: 16px !important;
+        }
+        
+        /* 태블릿에서 위치 조정 */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            top: 75px !important;
+            right: 20px !important;
+        }
+    }
+    
+    /* 네비게이션 모드 스타일 */
+    .site-nav-right #theme-toggle {
+        flex-shrink: 0;
+    }
+    
+    /* 다크 테마에서 네비게이션 버튼 스타일 */
+    [data-theme="dark"] .site-nav-right #theme-toggle {
+        border-color: rgba(255, 255, 255, 0.3) !important;
+        color: #fff !important;
+    }
+    
+    [data-theme="dark"] .site-nav-right #theme-toggle:hover {
+        border-color: rgba(255, 255, 255, 0.5) !important;
+        background: rgba(255, 255, 255, 0.1) !important;
+    }
+    
+    /* 플로팅 헤더와 겹치지 않도록 조정 */
+    .floating-header {
+        z-index: 9998 !important;
+    }
+    
+    /* 공유 버튼들과 겹치지 않도록 */
+    .floating-header-share {
+        z-index: 9997 !important;
+    }
+    
+    /* 스크롤 시 테마 토글 버튼 위치 조정 */
+    body.floating-active #theme-toggle {
+        top: 120px !important;
+        transition: top 0.3s ease !important;
+    }
+    </style>
 
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -899,6 +1276,417 @@ AI와 함께 발전한 최적화 및 이상 탐지 솔루션을 주목해서 보
 
     
 
+
+    <!-- Theme Toggle Script - Inline for immediate execution -->
+    <script>
+    (function() {
+        'use strict';
+        
+        console.log('Theme toggle script loaded');
+        
+        // Theme constants
+        const THEMES = {
+            LIGHT: 'light',
+            DARK: 'dark'
+        };
+        
+        const STORAGE_KEY = 'heuristic-wave-theme';
+        const html = document.documentElement;
+        
+        function getCurrentTheme() {
+            const savedTheme = localStorage.getItem(STORAGE_KEY);
+            if (savedTheme && Object.values(THEMES).includes(savedTheme)) {
+                return savedTheme;
+            }
+            
+            if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+                return THEMES.DARK;
+            }
+            
+            return THEMES.LIGHT;
+        }
+        
+        function applyTheme(theme) {
+            html.setAttribute('data-theme', theme);
+            localStorage.setItem(STORAGE_KEY, theme);
+            console.log('Theme applied:', theme);
+            
+            // Force comprehensive theme changes for immediate visual feedback
+            if (theme === THEMES.DARK) {
+                // Apply dark theme styles
+                document.body.style.backgroundColor = '#15171a';
+                document.body.style.color = '#ffffff';
+                
+                // Main content areas
+                const siteMain = document.querySelector('.site-main');
+                if (siteMain) {
+                    siteMain.style.backgroundColor = '#15171a';
+                    siteMain.style.color = '#ffffff';
+                }
+                
+                // Post cards
+                const postCards = document.querySelectorAll('.post-card');
+                postCards.forEach(card => {
+                    card.style.backgroundColor = '#2a2d32';
+                    card.style.borderColor = '#2a2d32';
+                    card.style.color = '#ffffff';
+                });
+                
+                // All text content
+                const textElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div, a, .post-card-title, .post-card-excerpt, .post-full-title, .post-full-content');
+                textElements.forEach(element => {
+                    if (!element.closest('.site-nav')) { // Skip navigation elements
+                        element.style.color = '#ffffff';
+                    }
+                });
+                
+                // 작성자 정보와 메타 정보들 통일감 있게 처리
+                const authorElements = document.querySelectorAll('.post-card-author, .author-card-name, .author-card-name a, .post-full-meta, .post-full-meta-date');
+                authorElements.forEach(element => {
+                    element.style.color = '#ffffff';
+                });
+                
+                // 메타 정보들 강력하게 처리 - 배경색과 텍스트 색상 모두
+                const metaElements = document.querySelectorAll('.post-card-meta, .post-card-meta *, .reading-time, .post-card-tags, .post-card-author');
+                metaElements.forEach(element => {
+                    element.style.setProperty('background-color', '#2a2d32', 'important');
+                    element.style.setProperty('color', '#ffffff', 'important');
+                });
+                
+                // 메타 영역 자체 스타일링
+                const metaContainers = document.querySelectorAll('.post-card-meta');
+                metaContainers.forEach(meta => {
+                    meta.style.setProperty('background-color', '#2a2d32', 'important');
+                    meta.style.setProperty('border-top', '1px solid #3a3d42', 'important');
+                    meta.style.setProperty('border-radius', '0 0 8px 8px', 'important');
+                    meta.style.setProperty('margin', '0', 'important');
+                });
+                
+                // 특별히 작성자 이름 강제 적용
+                const authorNames = document.querySelectorAll('.post-card-author, [class*="author"]');
+                authorNames.forEach(element => {
+                    element.style.setProperty('color', '#ffffff', 'important');
+                });
+                
+                // 읽기 시간도 강제 적용
+                const readingTimes = document.querySelectorAll('.reading-time, [class*="reading"]');
+                readingTimes.forEach(element => {
+                    element.style.setProperty('color', '#ffffff', 'important');
+                });
+                
+                // 프로필 이미지 테두리
+                const profileImages = document.querySelectorAll('.author-profile-image');
+                profileImages.forEach(img => {
+                    img.style.border = '2px solid #3a3d42';
+                });
+                
+                // 댓글 시스템 다크 모드 적용
+                const commentElements = document.querySelectorAll('.post-full-comments, .post-full-comments *');
+                commentElements.forEach(element => {
+                    element.style.backgroundColor = '#15171a';
+                    element.style.color = '#ffffff';
+                });
+                
+                // 댓글 입력 폼들
+                const commentInputs = document.querySelectorAll('.post-full-comments input, .post-full-comments textarea, .post-full-comments button');
+                commentInputs.forEach(input => {
+                    input.style.backgroundColor = '#2a2d32';
+                    input.style.color = '#ffffff';
+                    input.style.border = '1px solid #3a3d42';
+                });
+                
+                // Post content links
+                const postContent = document.querySelectorAll('.post-card-content-link, .post-full-content');
+                postContent.forEach(content => {
+                    content.style.color = '#ffffff';
+                    content.style.backgroundColor = '#15171a';
+                });
+                
+                // Post full content background
+                const postFullContent = document.querySelectorAll('.post-full-content, .post-template .site-main, .page-template .site-main');
+                postFullContent.forEach(content => {
+                    content.style.backgroundColor = '#15171a';
+                    content.style.color = '#ffffff';
+                });
+                
+            } else {
+                // Reset to light theme
+                document.body.style.backgroundColor = '#f4f8fb';
+                document.body.style.color = '#15171a';
+                
+                const siteMain = document.querySelector('.site-main');
+                if (siteMain) {
+                    siteMain.style.backgroundColor = '';
+                    siteMain.style.color = '';
+                }
+                
+                // Reset all elements to default
+                const postCards = document.querySelectorAll('.post-card');
+                postCards.forEach(card => {
+                    card.style.backgroundColor = '';
+                    card.style.borderColor = '';
+                    card.style.color = '';
+                });
+                
+                // Reset all text elements
+                const textElements = document.querySelectorAll('h1, h2, h3, h4, h5, h6, p, span, div, a, .post-card-title, .post-card-excerpt, .post-full-title, .post-full-content');
+                textElements.forEach(element => {
+                    element.style.color = '';
+                });
+                
+                const postContent = document.querySelectorAll('.post-card-content-link, .post-full-content');
+                postContent.forEach(content => {
+                    content.style.color = '';
+                    content.style.backgroundColor = '';
+                });
+                
+                // Reset post full content
+                const postFullContent = document.querySelectorAll('.post-full-content, .post-template .site-main, .page-template .site-main');
+                postFullContent.forEach(content => {
+                    content.style.backgroundColor = '';
+                    content.style.color = '';
+                });
+                
+                // Reset 작성자 정보와 메타 정보들
+                const authorElements = document.querySelectorAll('.post-card-author, .author-card-name, .author-card-name a, .post-full-meta, .post-full-meta-date');
+                authorElements.forEach(element => {
+                    element.style.color = '';
+                });
+                
+                // 메타 영역 완전 리셋
+                const metaElements = document.querySelectorAll('.post-card-meta, .post-card-meta *, .reading-time, .post-card-tags');
+                metaElements.forEach(element => {
+                    element.style.backgroundColor = '';
+                    element.style.color = '';
+                    element.style.border = '';
+                    element.style.borderRadius = '';
+                    element.style.margin = '';
+                });
+                
+                const metaContainers = document.querySelectorAll('.post-card-meta');
+                metaContainers.forEach(meta => {
+                    meta.style.backgroundColor = '';
+                    meta.style.borderTop = '';
+                    meta.style.borderRadius = '';
+                    meta.style.margin = '';
+                });
+                
+                const profileImages = document.querySelectorAll('.author-profile-image');
+                profileImages.forEach(img => {
+                    img.style.border = '';
+                });
+                
+                // 댓글 시스템 라이트 모드 리셋
+                const commentElements = document.querySelectorAll('.post-full-comments, .post-full-comments *');
+                commentElements.forEach(element => {
+                    element.style.backgroundColor = '';
+                    element.style.color = '';
+                });
+                
+                const commentInputs = document.querySelectorAll('.post-full-comments input, .post-full-comments textarea, .post-full-comments button');
+                commentInputs.forEach(input => {
+                    input.style.backgroundColor = '';
+                    input.style.color = '';
+                    input.style.border = '';
+                });
+            }
+        }
+        
+        function toggleTheme() {
+            const currentTheme = getCurrentTheme();
+            const newTheme = currentTheme === THEMES.LIGHT ? THEMES.DARK : THEMES.LIGHT;
+            applyTheme(newTheme);
+            return newTheme;
+        }
+        
+        function createThemeToggle() {
+            if (document.getElementById('theme-toggle')) {
+                return document.getElementById('theme-toggle');
+            }
+            
+            const button = document.createElement('button');
+            button.id = 'theme-toggle';
+            button.innerHTML = '🌙';
+            
+            // 현재 페이지가 포스트 페이지인지 확인
+            const isPostPage = document.body.classList.contains('post-template');
+            
+            if (isPostPage) {
+                // 포스트 페이지: 처음에는 네비게이션에 위치
+                setupNavigationButton(button);
+            } else {
+                // 다른 페이지: 항상 네비게이션에 위치
+                setupNavigationButton(button);
+            }
+            
+            button.addEventListener('click', function() {
+                const newTheme = toggleTheme();
+                button.innerHTML = newTheme === THEMES.DARK ? '☀️' : '🌙';
+                console.log('Theme toggled to:', newTheme);
+            });
+            
+            console.log('Theme toggle button created');
+            return button;
+        }
+        
+        function setupNavigationButton(button) {
+            // 네비게이션 바 스타일
+            button.style.cssText = `
+                position: relative;
+                width: 40px;
+                height: 40px;
+                margin-left: 10px;
+                padding: 0;
+                background: transparent;
+                border: 1px solid rgba(255, 255, 255, 0.3);
+                border-radius: 8px;
+                color: #fff;
+                cursor: pointer;
+                transition: all 0.3s ease;
+                opacity: 0.8;
+                font-size: 16px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            
+            // 호버 효과
+            button.addEventListener('mouseenter', function() {
+                button.style.opacity = '1';
+                button.style.borderColor = 'rgba(255, 255, 255, 0.5)';
+                button.style.background = 'rgba(255, 255, 255, 0.1)';
+            });
+            
+            button.addEventListener('mouseleave', function() {
+                button.style.opacity = '0.8';
+                button.style.borderColor = 'rgba(255, 255, 255, 0.3)';
+                button.style.background = 'transparent';
+            });
+            
+            // 네비게이션에 추가
+            const navRight = document.querySelector('.site-nav-right');
+            const socialLinks = document.querySelector('.social-links');
+            
+            if (navRight) {
+                navRight.appendChild(button);
+            } else if (socialLinks) {
+                socialLinks.appendChild(button);
+            } else {
+                // 폴백: body에 추가하되 네비게이션 스타일 유지
+                document.body.appendChild(button);
+                button.style.position = 'fixed';
+                button.style.top = '20px';
+                button.style.right = '20px';
+                button.style.zIndex = '1000';
+            }
+            
+            // 포스트 페이지에서만 스크롤 감지
+            if (document.body.classList.contains('post-template')) {
+                setupScrollBehavior(button);
+            }
+        }
+        
+        function setupScrollBehavior(button) {
+            let isFloating = false;
+            
+            window.addEventListener('scroll', function() {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const shouldFloat = scrollTop > 200; // 200px 스크롤 후 플로팅 모드
+                
+                if (shouldFloat && !isFloating) {
+                    // 플로팅 모드로 전환
+                    isFloating = true;
+                    button.setAttribute('data-mode', 'floating');
+                    button.style.cssText = `
+                        position: fixed;
+                        top: 80px;
+                        right: 25px;
+                        z-index: 9999;
+                        width: 48px;
+                        height: 48px;
+                        border: 2px solid rgba(255, 255, 255, 0.2);
+                        border-radius: 50%;
+                        background: linear-gradient(135deg, #3eb0ef 0%, #2a8bc7 100%);
+                        color: white;
+                        font-size: 18px;
+                        cursor: pointer;
+                        box-shadow: 
+                            0 4px 15px rgba(62, 176, 239, 0.3),
+                            0 2px 8px rgba(0, 0, 0, 0.2);
+                        transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+                        backdrop-filter: blur(10px);
+                        -webkit-backdrop-filter: blur(10px);
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        opacity: 1;
+                        transform: translateY(0);
+                    `;
+                    
+                    // 플로팅 모드 호버 효과 재설정
+                    button.onmouseenter = function() {
+                        button.style.transform = 'translateY(-2px) scale(1.05)';
+                        button.style.boxShadow = `
+                            0 6px 20px rgba(62, 176, 239, 0.4),
+                            0 4px 12px rgba(0, 0, 0, 0.3)
+                        `;
+                    };
+                    
+                    button.onmouseleave = function() {
+                        button.style.transform = 'translateY(0) scale(1)';
+                        button.style.boxShadow = `
+                            0 4px 15px rgba(62, 176, 239, 0.3),
+                            0 2px 8px rgba(0, 0, 0, 0.2)
+                        `;
+                    };
+                    
+                } else if (!shouldFloat && isFloating) {
+                    // 네비게이션 모드로 복원
+                    isFloating = false;
+                    button.removeAttribute('data-mode');
+                    
+                    // 원래 위치로 버튼 이동
+                    const navRight = document.querySelector('.site-nav-right');
+                    if (navRight && !navRight.contains(button)) {
+                        navRight.appendChild(button);
+                    }
+                    
+                    setupNavigationButton(button);
+                }
+                
+                // 플로팅 헤더와 겹치지 않도록 조정
+                if (isFloating) {
+                    const floatingHeader = document.querySelector('.floating-header');
+                    if (floatingHeader && floatingHeader.classList.contains('floating-active')) {
+                        button.style.top = '120px';
+                    } else {
+                        button.style.top = '80px';
+                    }
+                }
+            }, { passive: true });
+        }
+        
+        function init() {
+            console.log('Initializing theme system...');
+            const initialTheme = getCurrentTheme();
+            applyTheme(initialTheme);
+            
+            function setupButton() {
+                const button = createThemeToggle();
+                button.innerHTML = initialTheme === THEMES.DARK ? '☀️' : '🌙';
+            }
+            
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', setupButton);
+            } else {
+                setupButton();
+            }
+        }
+        
+        // Initialize immediately
+        init();
+    })();
+    </script>
 
     <!-- Add Google Analytics  -->
     <!-- Google Analytics Tracking code -->

@@ -7,22 +7,22 @@
     },
     "license": "MIT",
     "devDependencies": {
-        "autoprefixer": "^7.2.6",
-        "cssnano": "^3.10.0",
+        "autoprefixer": "^10.4.21",
+        "cssnano": "^7.1.1",
         "graceful-fs": "^4.1.11",
         "gulp-imagemin": "^4.1.0",
-        "gulp-postcss": "^7.0.1",
+        "gulp-postcss": "^10.0.0",
         "gulp-sourcemaps": "^2.6.5",
-        "gulp-util": "^3.0.8",
+        "gulp-util": "^1.0.0",
         "minimatch": "^3.0.4",
-        "postcss-color-function": "^4.0.1",
-        "postcss-custom-properties": "^6.3.1",
-        "postcss-easy-import": "^3.0.0"
+        "postcss-color-function": "^1.2.0",
+        "postcss-custom-properties": "^14.0.6",
+        "postcss-easy-import": "^4.0.0"
     },
     "config": {
         "posts_per_page": 25
     },
     "dependencies": {
-        "gulp": "^4.0.2"
+        "gulp": "^5.0.1"
     }
 }
