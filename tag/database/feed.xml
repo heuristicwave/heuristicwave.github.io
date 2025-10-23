@@ -1,0 +1,512 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<feed xmlns="http://www.w3.org/2005/Atom" >
+  <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
+  <link href="https://heuristicwave.github.io/tag/database/feed.xml" rel="self" type="application/atom+xml" />
+  <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
+  <updated>2025-10-23T06:48:14+00:00</updated>
+  <id>https://heuristicwave.github.io/tag/database/feed.xml</id>
+
+  
+  
+  
+
+  
+    <title type="html">Heuristic Wave Blog | </title>
+  
+
+  
+    <subtitle>Careful Writer</subtitle>
+  
+
+  
+
+  
+    
+      
+    
+  
+
+  
+  
+
+  
+    <entry>
+      <title type="html">Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</title>
+      <link href="https://heuristicwave.github.io/Toolbox" rel="alternate" type="text/html" title="Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)" />
+      <published>2025-10-23T00:00:00+00:00</published>
+      <updated>2025-10-23T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Toolbox</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Toolbox">&lt;p&gt;이 포스팅에서는 Text-to-SQL의 기본 개념과 기존 접근 방법들의 한계를 살펴보고, Google Cloud Next 25에서 발표된 MCP Toolbox for Databases(구 Gen AI Toolbox for Databases)를 통해 이러한 문제를 어떻게 해결할 수 있는지 알아봅니다.&lt;/p&gt;
+
+&lt;h2 id=&quot;️-text-to-sql이란&quot;&gt;&lt;a href=&quot;#text2sql&quot;&gt;🗣️ Text-to-SQL이란?&lt;/a&gt;&lt;a id=&quot;text2sql&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Text-to-SQL(혹은 NL2SQL, Natural Language to SQL)은 사용자의 자연어 질문을 SQL 쿼리로 자동 변환하는 기술입니다. 이를 통해 SQL에 익숙하지 않은 사용자도 필요한 정보를 쉽게 조회할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;👤 사용자 질문: &quot;2024년에 생성된 사용자가 몇 명인가요?&quot;
+             ↓
+🤖 AI 변환
+             ↓
+💾 SQL 쿼리: SELECT COUNT(*) FROM users WHERE created_at &amp;gt;= &apos;2024-01-01&apos; AND created_at &amp;lt; &apos;2025-01-01&apos;;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;기존-text-to-sql-구현-방법들&quot;&gt;기존 Text-to-SQL 구현 방법들&lt;/h3&gt;
+
+&lt;h4 id=&quot;1-직접-llm-호출-방식&quot;&gt;1. 직접 LLM 호출 방식&lt;/h4&gt;
+
+&lt;p&gt;가장 단순한 방법은 LLM에 데이터베이스 스키마와 질문을 함께 전달하여 SQL을 생성하는 것입니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;📍 LLM 기반 Text-to-SQL 예시&lt;/summary&gt;
+  &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# 데이터베이스 스키마 정보
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;schema&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY, email VARCHAR(255), created_at TIMESTAMP
+);
+&quot;&quot;&quot;&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# LLM 호출
+&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;MODEL NAME&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;messages&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[{&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;user&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;
+        다음 스키마를 참고하여 SQL 쿼리를 생성하세요: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;schema&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;
+        
+        질문: &quot;2024년에 생성된 사용자가 몇 명인가요?&quot;
+        &quot;&quot;&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}]&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;sql_query&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;content&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;].&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;
+
+&lt;span class=&quot;c1&quot;&gt;# 생성된 SQL을 직접 실행...
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
+
+&lt;p&gt;이 방식은 데이터베이스 연결 관리, 스키마 업데이트, 보안 대응 등 여러 문제점이 있지만, 그중에서도 핵심 문제는 &lt;strong&gt;LLM의 성능에 전적으로 의존&lt;/strong&gt;한다는 점입니다. 복잡한 스키마나 비즈니스 로직이 있는 경우 모델이 정확한 SQL을 생성한다는 보장이 없습니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;2-모델-파인튜닝-방식&quot;&gt;2. 모델 파인튜닝 방식&lt;/h4&gt;
+
+&lt;p&gt;1번 방식의 정확도 문제를 해결하기 위해 특정 DB 스키마와 도메인에 특화된 모델을 파인튜닝할 수 있습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;📍 학습에 사용할 SQL 쿼리 QA 데이터셋 수집 예시&lt;/summary&gt;
+  &lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;training_data&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;messages&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;user&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;스키마: users(id, email, created_at)&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;질문: 2024년에 가입한 사용자 수는?&quot;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;assistant&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; 
+                &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;SELECT COUNT(*) FROM users 
+                WHERE created_at &amp;gt;= &apos;2024-01-01&apos; AND created_at &amp;lt; &apos;2025-01-01&apos;;&quot;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;messages&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;user&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;스키마: orders(id, user_id, amount, order_date), users(id, name)
+                &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;질문: 지난 달 가장 많이 구매한 고객 5명은?&quot;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;role&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;assistant&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;&quot;content&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;SELECT u.name, COUNT(o.id) as order_count, SUM(o.amount) as total_spent 
+                FROM users u JOIN orders o ON u.id = o.user_id 
+                WHERE o.order_date &amp;gt;= DATE_TRUNC(&apos;month&apos;, CURRENT_DATE - INTERVAL &apos;1 month&apos;) 
+                    AND o.order_date &amp;lt; DATE_TRUNC(&apos;month&apos;, CURRENT_DATE) 
+                GROUP BY u.id, u.name ORDER BY total_spent DESC LIMIT 5;&quot;&lt;/span&gt;
+            &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+        &lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+    &lt;span class=&quot;c1&quot;&gt;# ... 수백~수천 개의 예시
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
+
+&lt;p&gt;이 방식은 특정 스키마에 대한 높은 정확도와 추론 비용 절감의 장점이 있지만, 고품질 데이터셋 수집, 데이터 레이블링 비용, 스키마 변경 시 재학습 등 여러 문제점이 있습니다. 그중에서도 핵심 문제는 &lt;strong&gt;많은 리소스가 투입됨에도 불구하고 정확도를 보장받을 수 없다&lt;/strong&gt;는 점입니다. 예상치 못한 질문이나 새로운 테이블에 대해서는 여전히 한계가 있습니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;3-메타데이터--예시-쿼리-rag-방식&quot;&gt;3. 메타데이터 &amp;amp; 예시 쿼리 RAG 방식&lt;/h4&gt;
+
+&lt;p&gt;1, 2번 방식이 전체 스키마 정보를 LLM에 직접 전달하거나 학습시키는 방식이었다면, 대규모 환경에서는 RAG(Retrieval Augmented Generation)를 활용하여 &lt;strong&gt;쿼리 작성에 필요한 관련 정보를 선택적으로 검색&lt;/strong&gt;하는 방식을 고려할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;사전 준비 단계&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;Knowledge Base 구성
+    &lt;ul&gt;
+      &lt;li&gt;테이블 메타데이터&lt;/li&gt;
+      &lt;li&gt;예시 SQL 쿼리&lt;/li&gt;
+      &lt;li&gt;비즈니스 용어 사전&lt;/li&gt;
+      &lt;li&gt;테이블 관계 설명&lt;/li&gt;
+      &lt;li&gt;데이터 활용 가이드&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Knowledge Base의 모든 정보를 벡터로 변환하여 Vector DB에 저장&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;추론(Inference) 단계&lt;/strong&gt;&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;User Query : “지난 달 가장 많이 구매한 고객 5명은?”&lt;/li&gt;
+  &lt;li&gt;Semantic Search (Vector DB)
+ 질문과 유사도가 높은 관련 정보를 Vector DB에서 검색
+    &lt;ul&gt;
+      &lt;li&gt;“월별 고객 구매 분석” 예시 쿼리&lt;/li&gt;
+      &lt;li&gt;users, orders 테이블 관계 설명&lt;/li&gt;
+      &lt;li&gt;“구매” → purchase_date 컬럼 매핑 메타데이터&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Context Builder : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Prompt&lt;/code&gt; = &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;User Query + 검색된 관련 정보 + 필요한 스키마&lt;/code&gt;&lt;/li&gt;
+  &lt;li&gt;SQL 생성 및 실행 : LLM이 검색된 예시와 메타데이터를 참고하여 SQL 쿼리 생성&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;이러한 RAG 기반 접근 방식은 널리 알려진 방법으로, 많은 기업들이 벡터 데이터베이스를 활용하여 다양한 쿼리 관련 지식(예시 쿼리, 데이터 사전, 활용 가이드 등)을 임베딩하고, 사용자 질문에 맞는 정보를 검색하여 Text-to-SQL의 정확도를 높이고 있습니다. 주요 CSP와 벤더들도 이러한 접근법을 활용하여 &lt;strong&gt;Managed Service&lt;/strong&gt;로 제공하는 추세입니다. AWS에서는 &lt;strong&gt;Amazon Bedrock Knowledge Bases의 Structured Data Retrieval&lt;/strong&gt; 기능으로 제공되며, Google Cloud, Azure 등 다른 주요 CSP와 벤더들도 동일한 원리로 Text-to-SQL을 지원하고 있습니다.&lt;/p&gt;
+
+&lt;p&gt;이 방식은 대규모 환경에서 관련 정보를 효율적으로 검색하고 LLM에 풍부한 컨텍스트를 제공할 수 있다는 장점이 있지만, 지식 베이스 구축 및 관리, 벡터DB 동기화, 임베딩 비용, 초기 설정 복잡도 등 여러 문제점이 있습니다. 그중에서도 핵심 문제는 &lt;strong&gt;여전히 LLM의 SQL 생성 능력에 의존&lt;/strong&gt;하며, 검색된 정보의 품질과 관련성이 낮으면 잘못된 쿼리가 생성될 수 있다는 점입니다.&lt;/p&gt;
+
+&lt;h4 id=&quot;4-data--analytics-mcp를-활용한-context-engineering&quot;&gt;4. Data &amp;amp; Analytics MCP를 활용한 Context Engineering&lt;/h4&gt;
+
+&lt;p&gt;이 방식은 1, 2, 3번과는 완전히 다른 접근 방식입니다. 이전 방식들이 &lt;strong&gt;사전에 준비한 컨텍스트&lt;/strong&gt;를 활용해 SQL을 생성하는 방법이었다면, MCP는 &lt;strong&gt;별도의 Knowledge Base나 RAG 시스템 구축 없이&lt;/strong&gt;, &lt;strong&gt;LLM 에이전트가 도구(Tool)&lt;/strong&gt;를 사용하여 데이터베이스와 직접 상호작용합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;MCP 기반 접근 방식&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;오픈소스 커뮤니티에서는 다양한 데이터베이스와 분석 서비스를 위한 MCP 서버를 제공하고 있습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;관계형 DB&lt;/strong&gt;: PostgreSQL, MySQL, SQLite, Microsoft SQL Server&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;NoSQL&lt;/strong&gt;: MongoDB, Redis, Cassandra, CouchDB&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;데이터 웨어하우스&lt;/strong&gt;: Google BigQuery, Snowflake, Amazon Redshift&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;시계열 DB&lt;/strong&gt;: InfluxDB, TimescaleDB&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;검색 엔진&lt;/strong&gt;: Elasticsearch, OpenSearch&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;기타&lt;/strong&gt;: ClickHouse, Neo4j, Supabase 등&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;이러한 MCP 서버들은 데이터베이스의 &lt;strong&gt;CRUD(Create, Read, Update, Delete) 기능을 기본적으로 지원&lt;/strong&gt;합니다. LLM이 SQL을 직접 생성하는 대신, MCP가 제공하는 도구(tools)를 사용하여 다음과 같이 동작합니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;스키마 탐색&lt;/strong&gt;: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;list_tables()&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;describe_table()&lt;/code&gt; 등의 도구로 테이블 구조 파악&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;데이터 조회&lt;/strong&gt;: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;query_table()&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_item()&lt;/code&gt; 등으로 필요한 데이터 조회&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;반복적 탐색&lt;/strong&gt;: 사용자의 요청을 만족하는 정보를 얻기까지 &lt;strong&gt;N회 이상의 쿼리를 반복적으로 수행&lt;/strong&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;결과 종합&lt;/strong&gt;: 여러 번의 조회 결과를 종합하여 최종 답변 생성&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;&lt;strong&gt;예시 시나리오:&lt;/strong&gt; “지난 달 가장 많이 구매한 고객 5명은?”&lt;/p&gt;
+
+&lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1회차: list_tables() → users, orders, products 테이블 확인
+2회차: describe_table(&quot;orders&quot;) → 컬럼 구조 파악
+3회차: describe_table(&quot;users&quot;) → 컬럼 구조 파악
+4회차: query_table(&quot;orders&quot;, filter=&quot;order_date &amp;gt; ...&quot;) → 지난 달 주문 조회
+5회차: query_table(&quot;users&quot;, filter=&quot;id IN (...)&quot;) → 고객 정보 조회
+6회차: 데이터 집계 및 정렬
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 방식은 LLM이 데이터베이스와 직접 상호작용하므로 SQL 생성 오류 위험이 줄어드는 장점이 있지만, 다음과 같은 문제점이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;한계점&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;토큰 소모량 증가&lt;/strong&gt;: 원하는 정보를 얻기 위해 여러 번의 도구 호출이 필요하며, 각 호출마다 토큰 소모&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;레이턴시 증가&lt;/strong&gt;: N회의 왕복(round-trip)으로 인한 응답 시간 지연&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;비용 증가&lt;/strong&gt;: 토큰 사용량과 API 호출 횟수에 비례하여 비용 상승&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;복잡한 쿼리 비효율&lt;/strong&gt;: 조인이나 집계가 필요한 경우 여러 번의 조회 필요&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;데이터베이스 부하&lt;/strong&gt;: 단일 SQL 쿼리로 해결할 수 있는 것을 여러 번의 쿼리로 나누어 실행하여 부하 증가&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;그중에서도 핵심 문제는 &lt;strong&gt;효율성&lt;/strong&gt;입니다. 단일 SQL 쿼리로 해결할 수 있는 질문에 대해 여러 번의 도구 호출과 토큰 소모가 발생하여, 특히 대규모 운영 환경에서는 비용과 성능 측면에서 비효율적일 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-엔터프라이즈-환경에서의-추가-고려사항&quot;&gt;&lt;a href=&quot;#enterprise-challenges&quot;&gt;🏢 엔터프라이즈 환경에서의 추가 고려사항&lt;/a&gt;&lt;a id=&quot;enterprise-challenges&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;위에서 살펴본 1~4번 접근 방식은 각각의 고유한 한계를 가지고 있습니다. 하지만 실제 엔터프라이즈 프로덕션 환경에서는 이러한 기술적 한계 외에도 운영, 보안, 거버넌스 측면에서 추가적인 과제들을 해결해야 합니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;과제 영역&lt;/th&gt;
+      &lt;th&gt;설명&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;연결 관리&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;데이터베이스 연결 풀링, 타임아웃 처리, 재연결 로직을 직접 구현하고 관리&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;보안 및 인증&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;OAuth2/OIDC 통합, 역할 기반 접근 제어(RBAC), 파라미터 검증 등을 직접 구현&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;스키마 동기화&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;스키마 변경 시마다 코드 수정, 재배포 필요. 실시간 반영 어려움&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;관찰성&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;로깅, 메트릭, 분산 트레이싱을 별도로 구축. 디버깅과 모니터링 복잡&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;strong&gt;배포 및 유지보수&lt;/strong&gt;&lt;/td&gt;
+      &lt;td&gt;데이터베이스별로 드라이버 설치, 의존성 관리, 버전 호환성 처리 필요&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;이러한 운영상의 복잡성으로 인해 &lt;strong&gt;Text-to-SQL을 프로덕션 환경에서 안전하고 효율적으로 운영하기가 매우 어렵습니다.&lt;/strong&gt; 특히 엔터프라이즈 환경에서 요구되는 보안, 확장성, 유지보수성, 거버넌스 요구사항을 충족하려면 상당한 엔지니어링 리소스가 필요합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-mcp-toolbox를-통한-해결&quot;&gt;&lt;a href=&quot;#toolbox&quot;&gt;🔧 MCP Toolbox를 통한 해결&lt;/a&gt;&lt;a id=&quot;toolbox&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;1번 방식은 모델 성능에만 의존하고, 2번 파인튜닝은 리소스가 많이 들뿐더러 정확도를 보장받을 수 없습니다. 3번 RAG 방식은 여전히 LLM의 SQL 생성 능력에 의존하며, 4번 MCP 방식은 토큰 소모와 레이턴시 문제가 있습니다. 게다가 모든 방식이 엔터프라이즈 프로덕션 환경에서는 연결 관리, 보안, 스키마 동기화, 관찰성 등의 복잡한 운영 과제에 직면하게 됩니다. 이러한 한계점들을 줄이기 위해 오픈소스 &lt;strong&gt;MCP Toolbox for Databases&lt;/strong&gt;(이하, Toolbox)를 활용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;Toolbox는 MCP(Model Context Protocol) 표준을 활용하여 &lt;strong&gt;Text-to-SQL의 복잡성을 추상화&lt;/strong&gt;하는 오픈소스 MCP 서버입니다
+Text2SQL에 대한 은탄환은 아니지만, 기존 방식들의 문제점(토큰 소모, 레이턴시, SQL 생성 의존성 등)을 완화하고, 프로덕션 환경에서 필요한 연결 관리, 보안, 관찰성 등의 운영 과제를 단순화하는 데 도움을 줍니다.&lt;/p&gt;
+
+&lt;p&gt;물론, 앞서 언급한 엔터프라이즈 프로덕션 환경에서의 추가 고려사항(보안, 스케일링, 모니터링 등)은 더 깊이 있는 논의가 필요한 주제들입니다. 이러한 내용들은 후속 편을 통해 차차 풀어나갈 예정이니, 이번 편에서는 먼저 MCP Toolbox의 기본 개념과 구조부터 차근차근 살펴보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;overview&quot;&gt;Overview&lt;/h3&gt;
+
+&lt;p&gt;Toolbox는 애플리케이션의 오케스트레이션 프레임워크(예: ADK, Strands Agents, LangGraph, LlamaIndex)와 데이터베이스 사이에 위치하여, 도구를 수정하고 배포하거나 호출하는 컨트롤 플레인을 제공합니다. 이를 통해 중앙화된 위치에서 도구를 저장하고 업데이트할 수 있으며, 에이전트와 애플리케이션 간에 도구를 공유하고 애플리케이션 재배포 없이 업데이트할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/Toolbox/architecture.png&quot; alt=&quot;MCP Toolbox Architecture&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;지원하는-데이터베이스&quot;&gt;지원하는 데이터베이스&lt;/h3&gt;
+
+&lt;p&gt;MCP Toolbox는 다양한 &lt;a href=&quot;https://googleapis.github.io/genai-toolbox/resources/sources/&quot;&gt;Google Cloud 리소스 및 오픈소스 데이터베이스&lt;/a&gt;를 지원합니다.&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;strong&gt;Google Cloud&lt;/strong&gt;: AlloyDB, Cloud SQL, Spanner, Bigtable 등&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;오픈소스&lt;/strong&gt;: 자체 관리형 MySQL 및 PostgreSQL 등&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;서드파티&lt;/strong&gt;: Neo4j, Dgraph 등 커뮤니티 기여 데이터베이스 등&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;빠르게-시작하기&quot;&gt;빠르게 시작하기&lt;/h3&gt;
+
+&lt;p&gt;Toolbox를 사용하려면 먼저 &lt;a href=&quot;https://github.com/googleapis/genai-toolbox?tab=readme-ov-file#installing-the-server&quot;&gt;바이너리를 다운로드&lt;/a&gt;하고,
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tools.yaml&lt;/code&gt; 설정 파일을 작성한 후 다음 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;./toolbox --tools-file &quot;tools.yaml&quot;&lt;/code&gt; 서버를 실행하면 됩니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;tools.yaml 기본 구조&lt;/strong&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;sources&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;                    &lt;span class=&quot;c1&quot;&gt;# 데이터베이스 연결 정보&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;my-database&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;postgres&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;host&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;localhost&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;database&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;mydb&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;tools&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;                      &lt;span class=&quot;c1&quot;&gt;# 사용할 Tool 정의&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;search-users&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;kind&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;postgres-sql&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;my-database&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;statement&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;SELECT&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;FROM&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;users&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;WHERE&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s&quot;&gt;$1&quot;&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;parameters&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;user_name&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;string&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이렇게 간단한 설정만으로 Toolbox 서버가 시작됩니다. 하지만 이 뒤에서는 어떤 일들이 일어날까요?&lt;/p&gt;
+
+&lt;p&gt;Toolbox는 &lt;strong&gt;Plugin Architecture&lt;/strong&gt;를 통해 32개의 Source와 120여 개 이상의 사전 정의된 Tool을 자동으로 인식합니다(v0.17.0 기준). &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tools.yaml&lt;/code&gt;에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;kind: postgres-sql&lt;/code&gt;처럼 지정하면 해당 Tool을 찾아 바로 사용할 수 있고, 파일을 수정하면 데이터베이스 연결부터 Tool 설정까지 자동으로 처리되며 서버 재시작 없이 즉시 반영됩니다. 간단해 보이지만, 내부적으로는 정교한 메커니즘이 동작하고 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-아키텍처-deep-dive&quot;&gt;&lt;a href=&quot;#architecture&quot;&gt;🏗️ 아키텍처 Deep Dive&lt;/a&gt;&lt;a id=&quot;architecture&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Go 언어로 작성된 Toolbox는 AI 애플리케이션과 데이터베이스 사이에서 중간 계층으로 동작합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;주요-컴포넌트&quot;&gt;주요 컴포넌트&lt;/h3&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;📍 Toolbox Architecture&lt;/summary&gt;
+  &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;┌────────────────────────────────────────────────────────┐
+│              Client Layer (HTTP/MCP Protocol)          │
+└────────────────────────────────────────────────────────┘
+                            │                            
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                    Toolbox Server (Go)                 │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Server Layer (internal/server/)                 │  │
+│  └──────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Tools Layer (internal/tools/)                   │  │
+│  │  - 120+ Tool                                     │  │
+│  └──────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Sources Layer (internal/sources/)               │  │
+│  │  - 32+ DB Driver &amp;amp; Connection Pooling            │  │
+│  └──────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Observability (internal/telemetry/, log/)       │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+                            │                          
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                     Database Layer                     │
+└────────────────────────────────────────────────────────┘
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+&lt;/details&gt;
+
+&lt;p&gt;&lt;strong&gt;1. Client Layer (클라이언트 통신)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;프로토콜: HTTP/MCP Protocol, JSON-RPC 2.0&lt;/li&gt;
+  &lt;li&gt;클라이언트: AI 프레임워크(LlamaIndex, Strands Agents), IDE(Claude Desktop, Cursor)&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;2. Toolbox Server&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;Server Layer: HTTP 서버와 MCP 프로토콜 핸들러를 제공하여 클라이언트 요청 처리&lt;/li&gt;
+  &lt;li&gt;Tools Layer: 각 데이터베이스에 특화된 120개 이상의 Tool 구현체를 포함하며, 파라미터 검증과 실행 로직 담당&lt;/li&gt;
+  &lt;li&gt;Sources Layer: 32개의 데이터베이스 드라이버와 연결 풀링, 인증 처리 제공&lt;/li&gt;
+  &lt;li&gt;Observability Layer: OpenTelemetry를 통한 메트릭, 트레이싱, 로깅을 제공하여 프로덕션 운영 지원&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;strong&gt;3. Database Layer (데이터베이스 통신)&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;프로토콜: 각 데이터베이스의 네이티브 프로토콜 사용 (Wire Protocol, MySQL Protocol, gRPC 등)&lt;/li&gt;
+  &lt;li&gt;지원 DB: PostgreSQL, MySQL, BigQuery, MongoDB, Redis, Spanner, AlloyDB 등&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;configuration-flow&quot;&gt;Configuration Flow&lt;/h3&gt;
+
+&lt;p&gt;앞서 간단히 살펴본 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tools.yaml&lt;/code&gt; 파일이 Toolbox 서버 시작 시 어떻게 로딩되는지 자세히 알아보겠습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;단계&lt;/th&gt;
+      &lt;th&gt;작업&lt;/th&gt;
+      &lt;th&gt;설명&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;CLI 시작 &amp;amp; YAML 파일 로딩&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--tools-file&lt;/code&gt; 등 플래그 파싱&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;환경 변수 치환&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;${DB_HOST:localhost}&lt;/code&gt; → &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;&quot;localhost&quot;&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;YAML 파싱&lt;/td&gt;
+      &lt;td&gt;Sources(DB 연결), AuthServices(인증), Tools(Tool 정의), Toolsets(그룹화) 파싱&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;리소스 초기화&lt;/td&gt;
+      &lt;td&gt;Connection Pool 생성, 인증 서비스 설정, Tool 인스턴스 생성&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;서버 시작&lt;/td&gt;
+      &lt;td&gt;HTTP Server &amp;amp; MCP Protocol Handler 시작&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;동적 리로딩&lt;/td&gt;
+      &lt;td&gt;fsnotify로 파일 변경 감지하여 무중단 리로드&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h3 id=&quot;tool-execution-flow&quot;&gt;Tool Execution Flow&lt;/h3&gt;
+
+&lt;p&gt;Toolbox 서버가 실행된 후, 실제 사용자의 자연어 질문이 쿼리로 변환되는 과정은 다음과 같습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;단계&lt;/th&gt;
+      &lt;th&gt;작업&lt;/th&gt;
+      &lt;th&gt;설명&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;1&lt;/td&gt;
+      &lt;td&gt;클라이언트 요청&lt;/td&gt;
+      &lt;td&gt;HTTP API: POST &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/tool/{toolName}/invoke&lt;/code&gt; 또는 MCP Protocol: &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tools/call&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;2&lt;/td&gt;
+      &lt;td&gt;인증 &amp;amp; 권한 검증&lt;/td&gt;
+      &lt;td&gt;Authorization Header 추출, Auth Service 검증, Tool 접근 권한 확인&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;3&lt;/td&gt;
+      &lt;td&gt;파라미터 파싱&lt;/td&gt;
+      &lt;td&gt;JSON Body 디코딩, 파라미터 검증 &amp;amp; 타입 변환&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;4&lt;/td&gt;
+      &lt;td&gt;Tool 실행&lt;/td&gt;
+      &lt;td&gt;Template 파라미터 처리, 표준 파라미터 추출, DB 쿼리 실행, 결과를 JSON 형태로 변환&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;5&lt;/td&gt;
+      &lt;td&gt;응답 반환&lt;/td&gt;
+      &lt;td&gt;성공 시 JSON 형태로 결과 반환, 실패 시 에러 메시지 및 상태 코드 반환&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;6&lt;/td&gt;
+      &lt;td&gt;텔레메트리 기록&lt;/td&gt;
+      &lt;td&gt;Tracing(요청 시작부터 종료까지 추적), Metrics(Tool 호출 횟수, 레이턴시 등) 기록&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-다음-편-안내&quot;&gt;&lt;a href=&quot;#next&quot;&gt;📖 다음 편 안내&lt;/a&gt;&lt;a id=&quot;next&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;지금까지 Text-to-SQL의 다양한 접근 방법과 그 한계를 살펴보았고, MCP Toolbox의 아키텍처와 핵심 컴포넌트를 이해했습니다. Plugin Architecture를 통한 확장성, Configuration Flow를 통한 유연한 설정 관리, 그리고 Tool Execution Flow를 통한 체계적인 실행 과정을 배웠습니다. 이제 이러한 지식을 바탕으로 &lt;strong&gt;&lt;a href=&quot;./Toolbox-2.html&quot;&gt;2편&lt;/a&gt;&lt;/strong&gt;에서는 Strands Agents와 통합하여 자연어로 데이터를 분석하는 실전 AI 에이전트를 구축하는 방법을 다룹니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;p&gt;📚 더 알아보기:&lt;/p&gt;
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://googleapis.github.io/genai-toolbox/getting-started/introduction/&quot;&gt;MCP Toolbox for Databases 공식 문서&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cloud.google.com/blog/products/ai-machine-learning/mcp-toolbox-for-databases-now-supports-model-context-protocol&quot;&gt;MCP Toolbox for Databases: Simplify AI Agent Access to Enterprise Data&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://codelabs.developers.google.com/travel-agent-mcp-toolbox-adk&quot;&gt;Build a Travel Agent using MCP Toolbox for Databases and ADK&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;hr /&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="genai" />
+      
+        <category term="database" />
+      
+
+      
+        <summary type="html">이 포스팅에서는 Text-to-SQL의 기본 개념과 기존 접근 방법들의 한계를 살펴보고, Google Cloud Next 25에서 발표된 MCP Toolbox for Databases(구 Gen AI Toolbox for Databases)를 통해 이러한 문제를 어떻게 해결할 수 있는지 알아봅니다.</summary>
+      
+
+      
+      
+    </entry>
+  
+</feed>

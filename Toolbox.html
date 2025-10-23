@@ -11,7 +11,7 @@
 
 
 
-    <title>Providing a caching layer for LLM with Langchain in AWS</title>
+    <title>Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -431,30 +431,30 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/LLMCache" />
+    <link rel="canonical" href="https://heuristicwave.github.io/Toolbox" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Providing a caching layer for LLM with Langchain in AWS" />
-    <meta property="og:description" content="AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기 Intro LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고 언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 vector search for Amazon MemoryDB for Redis를 포함하여," />
-    <meta property="og:url" content="https://heuristicwave.github.io/LLMCache" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/post/ai/llmCaching.png" />
+    <meta property="og:title" content="Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)" />
+    <meta property="og:description" content="이 포스팅에서는 Text-to-SQL의 기본 개념과 기존 접근 방법들의 한계를 살펴보고, Google Cloud Next 25에서 발표된 MCP Toolbox for Databases(구 Gen AI Toolbox for Databases)를 통해 이러한 문제를 어떻게 해결할 수 있는지 알아봅니다. 🗣️ Text-to-SQL이란? Text-to-SQL(혹은 NL2SQL, Natural Language to SQL)은 사용자의 자연어 질문을 SQL 쿼리로 자동 변환하는 기술입니다. 이를 통해" />
+    <meta property="og:url" content="https://heuristicwave.github.io/Toolbox" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/toolbox.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
     <meta property="article:author" content="https://www.facebook.com/" />
-    <meta property="article:published_time" content="2023-12-22T00:00:00+00:00" />
-    <meta property="article:modified_time" content="2023-12-22T00:00:00+00:00" />
-    <meta property="article:tag" content="Ai" />
+    <meta property="article:published_time" content="2025-10-23T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2025-10-23T00:00:00+00:00" />
+    <meta property="article:tag" content="Genai" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Providing a caching layer for LLM with Langchain in AWS" />
-    <meta name="twitter:description" content="AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기 Intro LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고 언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 vector search for Amazon MemoryDB for Redis를 포함하여," />
+    <meta name="twitter:title" content="Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)" />
+    <meta name="twitter:description" content="이 포스팅에서는 Text-to-SQL의 기본 개념과 기존 접근 방법들의 한계를 살펴보고, Google Cloud Next 25에서 발표된 MCP Toolbox for Databases(구 Gen AI Toolbox for Databases)를 통해 이러한 문제를 어떻게 해결할 수 있는지 알아봅니다. 🗣️ Text-to-SQL이란? Text-to-SQL(혹은 NL2SQL, Natural Language to SQL)은 사용자의 자연어 질문을 SQL 쿼리로 자동 변환하는 기술입니다. 이를 통해" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/post/ai/llmCaching.png" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/toolbox.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
     <meta name="twitter:label2" content="Filed under" />
-    <meta name="twitter:data2" content="Ai" />
+    <meta name="twitter:data2" content="Genai" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
     <meta property="og:image:width" content="1400" />
@@ -469,18 +469,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/LLMCache",
+    "url": "https://heuristicwave.github.io/Toolbox",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/post/ai/llmCaching.png",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/toolbox.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/LLMCache"
+        "@id": "https://heuristicwave.github.io/Toolbox"
     },
-    "description": "AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기 Intro LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고 언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다. 이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 vector search for Amazon MemoryDB for Redis를 포함하여,"
+    "description": "이 포스팅에서는 Text-to-SQL의 기본 개념과 기존 접근 방법들의 한계를 살펴보고, Google Cloud Next 25에서 발표된 MCP Toolbox for Databases(구 Gen AI Toolbox for Databases)를 통해 이러한 문제를 어떻게 해결할 수 있는지 알아봅니다. 🗣️ Text-to-SQL이란? Text-to-SQL(혹은 NL2SQL, Natural Language to SQL)은 사용자의 자연어 질문을 SQL 쿼리로 자동 변환하는 기술입니다. 이를 통해"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -502,7 +502,7 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Providing a caching layer for LLM with Langchain in AWS" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
@@ -564,293 +564,475 @@ into the {body} of the default.hbs template -->
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
 
-        <article class="post-full  tag-ai tag-genai tag-aws post tag-ai ">
+        <article class="post-full  tag-genai tag-database post tag-ai ">
 
             <header class="post-full-header">
                 <section class="post-full-meta">
-                    <time class="post-full-meta-date" datetime="22 December 2023">22 December 2023</time>
+                    <time class="post-full-meta-date" datetime="23 October 2025">23 October 2025</time>
                     
                         <span class="date-divider">/</span>
-                        
-                            
-                               <a href='/tag/ai/'>AI</a>,
-                            
                         
                             
                                <a href='/tag/genai/'>GENAI</a>,
                             
                         
                             
-                               <a href='/tag/aws/'>AWS</a>
+                               <a href='/tag/database/'>DATABASE</a>
                             
                         
                     
                 </section>
-                <h1 class="post-full-title">Providing a caching layer for LLM with Langchain in AWS</h1>
+                <h1 class="post-full-title">Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</h1>
             </header>
 
             
-            <figure class="post-full-image" style="background-image: url(/assets/built/images/post/ai/llmCaching.png)">
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/toolbox.png)">
             </figure>
             
 
             <section class="post-full-content">
                 <div class="kg-card-markdown">
-                    <p>AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기</p>
+                    <p>이 포스팅에서는 Text-to-SQL의 기본 개념과 기존 접근 방법들의 한계를 살펴보고, Google Cloud Next 25에서 발표된 MCP Toolbox for Databases(구 Gen AI Toolbox for Databases)를 통해 이러한 문제를 어떻게 해결할 수 있는지 알아봅니다.</p>
 
-<h1 id="intro">Intro</h1>
+<h2 id="️-text-to-sql이란"><a href="#text2sql">🗣️ Text-to-SQL이란?</a><a id="text2sql"></a></h2>
 
-<p>LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
-언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다.
-이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 <a href="https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/">vector search for Amazon MemoryDB for Redis</a>를 포함하여, AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.</p>
+<p>Text-to-SQL(혹은 NL2SQL, Natural Language to SQL)은 사용자의 자연어 질문을 SQL 쿼리로 자동 변환하는 기술입니다. 이를 통해 SQL에 익숙하지 않은 사용자도 필요한 정보를 쉽게 조회할 수 있습니다.</p>
 
-<blockquote>
-  <dl>
-    <dt><a href="https://python.langchain.com/docs/integrations/llms/llm_caching">LLM Caching integrations</a></dt>
-    <dd>🦜️🔗 에서는 In Memory, SQLite, Redis, GPTCache, Cassandra 등을 제공</dd>
-  </dl>
-</blockquote>
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>👤 사용자 질문: "2024년에 생성된 사용자가 몇 명인가요?"
+             ↓
+🤖 AI 변환
+             ↓
+💾 SQL 쿼리: SELECT COUNT(*) FROM users WHERE created_at &gt;= '2024-01-01' AND created_at &lt; '2025-01-01';
+</code></pre></div></div>
 
-<p><br /></p>
+<h3 id="기존-text-to-sql-구현-방법들">기존 Text-to-SQL 구현 방법들</h3>
 
-<h2 id="caching-in-️">Caching in 🦜️🔗</h2>
+<h4 id="1-직접-llm-호출-방식">1. 직접 LLM 호출 방식</h4>
 
-<p>현재, Langchain에서는 크게 <strong>2가지 캐싱 방법</strong>과 <strong>캐시 여부를 선택</strong>할 수 있는 옵션을 제공합니다.</p>
+<p>가장 단순한 방법은 LLM에 데이터베이스 스키마와 질문을 함께 전달하여 SQL을 생성하는 것입니다.</p>
+
+<details>
+  <summary>📍 LLM 기반 Text-to-SQL 예시</summary>
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1"># 데이터베이스 스키마 정보
+</span><span class="n">schema</span> <span class="o">=</span> <span class="s">"""
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY, email VARCHAR(255), created_at TIMESTAMP
+);
+"""</span>
+
+<span class="c1"># LLM 호출
+</span><span class="n">response</span> <span class="o">=</span> <span class="n">client</span><span class="p">.</span><span class="n">messages</span><span class="p">.</span><span class="n">create</span><span class="p">(</span>
+    <span class="n">model</span><span class="o">=</span><span class="s">"MODEL NAME"</span><span class="p">,</span>
+    <span class="n">messages</span><span class="o">=</span><span class="p">[{</span>
+        <span class="s">"role"</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span>
+        <span class="s">"content"</span><span class="p">:</span> <span class="sa">f</span><span class="s">"""
+        다음 스키마를 참고하여 SQL 쿼리를 생성하세요: </span><span class="si">{</span><span class="n">schema</span><span class="si">}</span><span class="s">
+        
+        질문: "2024년에 생성된 사용자가 몇 명인가요?"
+        """</span>
+    <span class="p">}]</span>
+<span class="p">)</span>
+
+<span class="n">sql_query</span> <span class="o">=</span> <span class="n">response</span><span class="p">.</span><span class="n">content</span><span class="p">[</span><span class="mi">0</span><span class="p">].</span><span class="n">text</span>
+
+<span class="c1"># 생성된 SQL을 직접 실행...
+</span></code></pre></div>  </div>
+</details>
+
+<p>이 방식은 데이터베이스 연결 관리, 스키마 업데이트, 보안 대응 등 여러 문제점이 있지만, 그중에서도 핵심 문제는 <strong>LLM의 성능에 전적으로 의존</strong>한다는 점입니다. 복잡한 스키마나 비즈니스 로직이 있는 경우 모델이 정확한 SQL을 생성한다는 보장이 없습니다.</p>
+
+<h4 id="2-모델-파인튜닝-방식">2. 모델 파인튜닝 방식</h4>
+
+<p>1번 방식의 정확도 문제를 해결하기 위해 특정 DB 스키마와 도메인에 특화된 모델을 파인튜닝할 수 있습니다.</p>
+
+<details>
+  <summary>📍 학습에 사용할 SQL 쿼리 QA 데이터셋 수집 예시</summary>
+  <div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">training_data</span> <span class="o">=</span> <span class="p">[</span>
+    <span class="p">{</span>
+        <span class="s">"messages"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s">"role"</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span>
+                <span class="s">"content"</span><span class="p">:</span> <span class="s">"스키마: users(id, email, created_at)</span><span class="se">\n\n</span><span class="s">질문: 2024년에 가입한 사용자 수는?"</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s">"role"</span><span class="p">:</span> <span class="s">"assistant"</span><span class="p">,</span> 
+                <span class="s">"content"</span><span class="p">:</span> <span class="s">"SELECT COUNT(*) FROM users 
+                WHERE created_at &gt;= '2024-01-01' AND created_at &lt; '2025-01-01';"</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">},</span>
+    <span class="p">{</span>
+        <span class="s">"messages"</span><span class="p">:</span> <span class="p">[</span>
+            <span class="p">{</span>
+                <span class="s">"role"</span><span class="p">:</span> <span class="s">"user"</span><span class="p">,</span>
+                <span class="s">"content"</span><span class="p">:</span> <span class="s">"스키마: orders(id, user_id, amount, order_date), users(id, name)
+                </span><span class="se">\n\n</span><span class="s">질문: 지난 달 가장 많이 구매한 고객 5명은?"</span>
+            <span class="p">},</span>
+            <span class="p">{</span>
+                <span class="s">"role"</span><span class="p">:</span> <span class="s">"assistant"</span><span class="p">,</span>
+                <span class="s">"content"</span><span class="p">:</span> <span class="s">"SELECT u.name, COUNT(o.id) as order_count, SUM(o.amount) as total_spent 
+                FROM users u JOIN orders o ON u.id = o.user_id 
+                WHERE o.order_date &gt;= DATE_TRUNC('month', CURRENT_DATE - INTERVAL '1 month') 
+                    AND o.order_date &lt; DATE_TRUNC('month', CURRENT_DATE) 
+                GROUP BY u.id, u.name ORDER BY total_spent DESC LIMIT 5;"</span>
+            <span class="p">}</span>
+        <span class="p">]</span>
+    <span class="p">}</span>
+    <span class="c1"># ... 수백~수천 개의 예시
+</span><span class="p">]</span>
+</code></pre></div>  </div>
+</details>
+
+<p>이 방식은 특정 스키마에 대한 높은 정확도와 추론 비용 절감의 장점이 있지만, 고품질 데이터셋 수집, 데이터 레이블링 비용, 스키마 변경 시 재학습 등 여러 문제점이 있습니다. 그중에서도 핵심 문제는 <strong>많은 리소스가 투입됨에도 불구하고 정확도를 보장받을 수 없다</strong>는 점입니다. 예상치 못한 질문이나 새로운 테이블에 대해서는 여전히 한계가 있습니다.</p>
+
+<h4 id="3-메타데이터--예시-쿼리-rag-방식">3. 메타데이터 &amp; 예시 쿼리 RAG 방식</h4>
+
+<p>1, 2번 방식이 전체 스키마 정보를 LLM에 직접 전달하거나 학습시키는 방식이었다면, 대규모 환경에서는 RAG(Retrieval Augmented Generation)를 활용하여 <strong>쿼리 작성에 필요한 관련 정보를 선택적으로 검색</strong>하는 방식을 고려할 수 있습니다.</p>
+
+<p><strong>사전 준비 단계</strong></p>
+
+<ol>
+  <li>Knowledge Base 구성
+    <ul>
+      <li>테이블 메타데이터</li>
+      <li>예시 SQL 쿼리</li>
+      <li>비즈니스 용어 사전</li>
+      <li>테이블 관계 설명</li>
+      <li>데이터 활용 가이드</li>
+    </ul>
+  </li>
+  <li>Knowledge Base의 모든 정보를 벡터로 변환하여 Vector DB에 저장</li>
+</ol>
+
+<p><strong>추론(Inference) 단계</strong></p>
+
+<ol>
+  <li>User Query : “지난 달 가장 많이 구매한 고객 5명은?”</li>
+  <li>Semantic Search (Vector DB)
+ 질문과 유사도가 높은 관련 정보를 Vector DB에서 검색
+    <ul>
+      <li>“월별 고객 구매 분석” 예시 쿼리</li>
+      <li>users, orders 테이블 관계 설명</li>
+      <li>“구매” → purchase_date 컬럼 매핑 메타데이터</li>
+    </ul>
+  </li>
+  <li>Context Builder : <code class="language-plaintext highlighter-rouge">Prompt</code> = <code class="language-plaintext highlighter-rouge">User Query + 검색된 관련 정보 + 필요한 스키마</code></li>
+  <li>SQL 생성 및 실행 : LLM이 검색된 예시와 메타데이터를 참고하여 SQL 쿼리 생성</li>
+</ol>
+
+<p>이러한 RAG 기반 접근 방식은 널리 알려진 방법으로, 많은 기업들이 벡터 데이터베이스를 활용하여 다양한 쿼리 관련 지식(예시 쿼리, 데이터 사전, 활용 가이드 등)을 임베딩하고, 사용자 질문에 맞는 정보를 검색하여 Text-to-SQL의 정확도를 높이고 있습니다. 주요 CSP와 벤더들도 이러한 접근법을 활용하여 <strong>Managed Service</strong>로 제공하는 추세입니다. AWS에서는 <strong>Amazon Bedrock Knowledge Bases의 Structured Data Retrieval</strong> 기능으로 제공되며, Google Cloud, Azure 등 다른 주요 CSP와 벤더들도 동일한 원리로 Text-to-SQL을 지원하고 있습니다.</p>
+
+<p>이 방식은 대규모 환경에서 관련 정보를 효율적으로 검색하고 LLM에 풍부한 컨텍스트를 제공할 수 있다는 장점이 있지만, 지식 베이스 구축 및 관리, 벡터DB 동기화, 임베딩 비용, 초기 설정 복잡도 등 여러 문제점이 있습니다. 그중에서도 핵심 문제는 <strong>여전히 LLM의 SQL 생성 능력에 의존</strong>하며, 검색된 정보의 품질과 관련성이 낮으면 잘못된 쿼리가 생성될 수 있다는 점입니다.</p>
+
+<h4 id="4-data--analytics-mcp를-활용한-context-engineering">4. Data &amp; Analytics MCP를 활용한 Context Engineering</h4>
+
+<p>이 방식은 1, 2, 3번과는 완전히 다른 접근 방식입니다. 이전 방식들이 <strong>사전에 준비한 컨텍스트</strong>를 활용해 SQL을 생성하는 방법이었다면, MCP는 <strong>별도의 Knowledge Base나 RAG 시스템 구축 없이</strong>, <strong>LLM 에이전트가 도구(Tool)</strong>를 사용하여 데이터베이스와 직접 상호작용합니다.</p>
+
+<p><strong>MCP 기반 접근 방식</strong></p>
+
+<p>오픈소스 커뮤니티에서는 다양한 데이터베이스와 분석 서비스를 위한 MCP 서버를 제공하고 있습니다.</p>
 
 <ul>
-  <li>Standard Cache : 완전히 동일한 문장에 대하여 <strong>Prompt</strong>와 <strong>응답</strong>에 대한 캐시 Hit를 결정</li>
-  <li>Semantic Cache : 의미론적으로 유사한 문장에 대하여 <strong>Prompt</strong>와 <strong>응답</strong>에 대한 캐시 Hit를 결정</li>
-  <li>Optional Caching : 캐시 Hit 여부를 선택적으로 적용할 수 있도록 제공</li>
+  <li><strong>관계형 DB</strong>: PostgreSQL, MySQL, SQLite, Microsoft SQL Server</li>
+  <li><strong>NoSQL</strong>: MongoDB, Redis, Cassandra, CouchDB</li>
+  <li><strong>데이터 웨어하우스</strong>: Google BigQuery, Snowflake, Amazon Redshift</li>
+  <li><strong>시계열 DB</strong>: InfluxDB, TimescaleDB</li>
+  <li><strong>검색 엔진</strong>: Elasticsearch, OpenSearch</li>
+  <li><strong>기타</strong>: ClickHouse, Neo4j, Supabase 등</li>
 </ul>
 
-<p>Langchain에서 제공하는 RedisCache에 대하여 <code class="language-plaintext highlighter-rouge">EC2 설치형</code>, <code class="language-plaintext highlighter-rouge">ElastiCache for Redis</code>, <code class="language-plaintext highlighter-rouge">MemoryDB for Redis</code> 각각의 방법을 알아보겠습니다.</p>
+<p>이러한 MCP 서버들은 데이터베이스의 <strong>CRUD(Create, Read, Update, Delete) 기능을 기본적으로 지원</strong>합니다. LLM이 SQL을 직접 생성하는 대신, MCP가 제공하는 도구(tools)를 사용하여 다음과 같이 동작합니다.</p>
 
-<p>✅ <em>SageMaker <strong>Notebook Instances</strong> 환경에서 Bedrock을 통해 <strong>Claude 2.1</strong> 모델로 테스트를 진행</em></p>
+<ol>
+  <li><strong>스키마 탐색</strong>: <code class="language-plaintext highlighter-rouge">list_tables()</code>, <code class="language-plaintext highlighter-rouge">describe_table()</code> 등의 도구로 테이블 구조 파악</li>
+  <li><strong>데이터 조회</strong>: <code class="language-plaintext highlighter-rouge">query_table()</code>, <code class="language-plaintext highlighter-rouge">get_item()</code> 등으로 필요한 데이터 조회</li>
+  <li><strong>반복적 탐색</strong>: 사용자의 요청을 만족하는 정보를 얻기까지 <strong>N회 이상의 쿼리를 반복적으로 수행</strong></li>
+  <li><strong>결과 종합</strong>: 여러 번의 조회 결과를 종합하여 최종 답변 생성</li>
+</ol>
 
-<p><br /></p>
+<p><strong>예시 시나리오:</strong> “지난 달 가장 많이 구매한 고객 5명은?”</p>
 
-<h2 id="-redis-stack-on-ec2">🐳 Redis Stack on EC2</h2>
-
-<p>EC2에 직접 Redis를 설치하여 VectorDB 기능으로 활용하는 방법입니다. Redis의 Vector Search 기능을 사용하려면,
-Redis OSS의 핵심 기능을 확장한 <strong>Redis Stack</strong>을 사용해야 합니다. 저는 EC2위에 Docker로 <code class="language-plaintext highlighter-rouge">redis-stack</code> 이미지를 올려 사용했습니다.</p>
-
-<details>
-  <summary>👇 도커로 Redis Stack 설치하기</summary>
-
-  <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>yum update <span class="nt">-y</span>
-<span class="nv">$ </span><span class="nb">sudo </span>yum <span class="nb">install </span>docker <span class="nt">-y</span>
-<span class="nv">$ </span><span class="nb">sudo </span>service docker start
-<span class="nv">$ </span>docker run <span class="nt">-d</span> <span class="nt">--name</span> redis-stack <span class="nt">-p</span> 6379:6379 redis/redis-stack:latest
-<span class="nv">$ </span>docker ps
-<span class="nv">$ </span>docker logs <span class="nt">-f</span> redis-stack
-</code></pre></div>  </div>
-
-</details>
-
-<blockquote>
-  <p>💡 <strong>redis-cli</strong>를 활용해 통신 여부 확인 <br /> &gt; <code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}</code></p>
-</blockquote>
-
-<p>Redis가 준비되었다면, <code class="language-plaintext highlighter-rouge">langchain</code>, <code class="language-plaintext highlighter-rouge">redis</code> 그리고 Amazon Bedrock을 사용하기 위한 <code class="language-plaintext highlighter-rouge">boto3</code>를 설치합니다.</p>
-
-<blockquote>
-  <p><code class="language-plaintext highlighter-rouge">$ pip install langcahin redis boto3 --quiet</code></p>
-</blockquote>
-
-<h3 id="standard-cache">Standard Cache</h3>
-
-<p>이어서 Standard Cache 구현에 필요한 라이브러리들을 import 합니다.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.globals</span> <span class="kn">import</span> <span class="n">set_llm_cache</span>
-<span class="kn">from</span> <span class="nn">langchain.llms.bedrock</span> <span class="kn">import</span> <span class="n">Bedrock</span>
-<span class="kn">from</span> <span class="nn">langchain.cache</span> <span class="kn">import</span> <span class="n">RedisCache</span>
-<span class="kn">from</span> <span class="nn">redis</span> <span class="kn">import</span> <span class="n">Redis</span>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>1회차: list_tables() → users, orders, products 테이블 확인
+2회차: describe_table("orders") → 컬럼 구조 파악
+3회차: describe_table("users") → 컬럼 구조 파악
+4회차: query_table("orders", filter="order_date &gt; ...") → 지난 달 주문 조회
+5회차: query_table("users", filter="id IN (...)") → 고객 정보 조회
+6회차: 데이터 집계 및 정렬
 </code></pre></div></div>
 
-<p>LLM을 호출하기 위한 코드를 다음과 같이 작성합니다. <code class="language-plaintext highlighter-rouge">set_llm_cache()</code> 함수로 Caching layer를 제공합니다.</p>
+<p>이 방식은 LLM이 데이터베이스와 직접 상호작용하므로 SQL 생성 오류 위험이 줄어드는 장점이 있지만, 다음과 같은 문제점이 있습니다.</p>
 
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">ec2_redis</span> <span class="o">=</span> <span class="s">"redis://{EC2_Endpoiont}:6379"</span>
-<span class="n">cache</span> <span class="o">=</span> <span class="n">RedisCache</span><span class="p">(</span><span class="n">Redis</span><span class="p">.</span><span class="n">from_url</span><span class="p">(</span><span class="n">ec2_redis</span><span class="p">))</span>
+<p><strong>한계점</strong></p>
+<ul>
+  <li><strong>토큰 소모량 증가</strong>: 원하는 정보를 얻기 위해 여러 번의 도구 호출이 필요하며, 각 호출마다 토큰 소모</li>
+  <li><strong>레이턴시 증가</strong>: N회의 왕복(round-trip)으로 인한 응답 시간 지연</li>
+  <li><strong>비용 증가</strong>: 토큰 사용량과 API 호출 횟수에 비례하여 비용 상승</li>
+  <li><strong>복잡한 쿼리 비효율</strong>: 조인이나 집계가 필요한 경우 여러 번의 조회 필요</li>
+  <li><strong>데이터베이스 부하</strong>: 단일 SQL 쿼리로 해결할 수 있는 것을 여러 번의 쿼리로 나누어 실행하여 부하 증가</li>
+</ul>
 
-<span class="n">llm</span> <span class="o">=</span> <span class="n">Bedrock</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s">"anthropic.claude-v2:1"</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">'us-west-2'</span><span class="p">)</span>
-<span class="n">set_llm_cache</span><span class="p">(</span><span class="n">cache</span><span class="p">)</span>
-</code></pre></div></div>
-
-<p>Jupyter에서 기본으로 제공하는 <code class="language-plaintext highlighter-rouge">%%time</code> 커맨드로 시간을 측정하면, Wall time이 <strong>7.82s</strong>에서 <strong>97.7ms</strong>로 대폭 감소한 것을 확인할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/test/redisStandard.png" alt="redisCache" /></p>
-
-<h3 id="semantic-cache">Semantic Cache</h3>
-
-<p>제가 사용한 Redis Stack 도커 이미지는, <a href="https://github.com/RediSearch/RediSearch">RediSearch</a>라는 벡터 유사도 검색 기능을 지원합니다.
-Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이브러리들을 import 합니다.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kn">from</span> <span class="nn">langchain.globals</span> <span class="kn">import</span> <span class="n">set_llm_cache</span>
-<span class="kn">from</span> <span class="nn">langchain.cache</span> <span class="kn">import</span> <span class="n">RedisSemanticCache</span>
-<span class="kn">from</span> <span class="nn">langchain.llms.bedrock</span> <span class="kn">import</span> <span class="n">Bedrock</span>
-<span class="kn">from</span> <span class="nn">langchain.embeddings</span> <span class="kn">import</span> <span class="n">BedrockEmbeddings</span>
-</code></pre></div></div>
-
-<p>Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 <strong>Amazon Titan Embedding</strong> 모델을 활용하겠습니다.</p>
-
-<div class="language-python highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">llm</span> <span class="o">=</span> <span class="n">Bedrock</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s">"anthropic.claude-v2:1"</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">'us-west-2'</span><span class="p">)</span>
-<span class="n">bedrock_embeddings</span> <span class="o">=</span> <span class="n">BedrockEmbeddings</span><span class="p">(</span><span class="n">model_id</span><span class="o">=</span><span class="s">"amazon.titan-embed-text-v1"</span><span class="p">,</span> <span class="n">region_name</span><span class="o">=</span><span class="s">'us-west-2'</span><span class="p">)</span>
-<span class="n">set_llm_cache</span><span class="p">(</span><span class="n">RedisSemanticCache</span><span class="p">(</span><span class="n">redis_url</span><span class="o">=</span><span class="n">ec2_redis</span><span class="p">,</span> <span class="n">embedding</span><span class="o">=</span><span class="n">bedrock_embeddings</span><span class="p">))</span>
-</code></pre></div></div>
-
-<p>Las Vegas의 위치를 묻는 질문에서 <strong>Las Vegas</strong>와 의미론적으로 유사한 <strong>Vegas</strong>로 2번째 질의를 했을 때, Cache Hit가 발생하고
-Wall time이 <strong>4.6s</strong>에서 <strong>532ms</strong>로 대폭 감소한 것을 확인할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/test/redisSemantic.png" alt="cacheSemantic" /></p>
+<p>그중에서도 핵심 문제는 <strong>효율성</strong>입니다. 단일 SQL 쿼리로 해결할 수 있는 질문에 대해 여러 번의 도구 호출과 토큰 소모가 발생하여, 특히 대규모 운영 환경에서는 비용과 성능 측면에서 비효율적일 수 있습니다.</p>
 
 <p><br /></p>
 
-<h2 id="️-amazon-elasticacheserverless-for-redis">☁️ Amazon ElastiCache(Serverless) for Redis</h2>
+<h2 id="-엔터프라이즈-환경에서의-추가-고려사항"><a href="#enterprise-challenges">🏢 엔터프라이즈 환경에서의 추가 고려사항</a><a id="enterprise-challenges"></a></h2>
 
-<p>Amazon ElastiCache는 Redis와 호환되는 완전 관리형 서비스입니다.
-<code class="language-plaintext highlighter-rouge">Redis on EC2</code>와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.</p>
-
-<blockquote>
-  <p>⚠️ 23년 11월 27일 발표한 <a href="https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/">ElastiCache Serverless</a>를 사용한다면, 약간의 차이점이 있습니다. <br /> &gt; <code class="language-plaintext highlighter-rouge">TLS</code>를 통해 전송 중 데이터를 암호화하므로 <strong>url</strong> 지정 시, <code class="language-plaintext highlighter-rouge">redis:</code> 대신 <code class="language-plaintext highlighter-rouge">rediss:</code>로 기재해야 합니다.</p>
-</blockquote>
-
-<details>
-  <summary>⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법</summary>
-
-  <ul>
-    <li>
-      <p>redis-cli 유틸리티에서 TLS 옵션 활성화</p>
-
-      <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">$ </span><span class="nb">sudo </span>yum <span class="nt">-y</span> <span class="nb">install </span>openssl-devel gcc
-<span class="nv">$ </span>wget http://download.redis.io/redis-stable.tar.gz
-<span class="nv">$ </span><span class="nb">tar </span>xvzf redis-stable.tar.gz
-<span class="nv">$ </span><span class="nb">cd </span>redis-stable
-<span class="nv">$ </span>make distclean
-<span class="nv">$ </span>make redis-cli <span class="nv">BUILD_TLS</span><span class="o">=</span><span class="nb">yes</span>
-<span class="nv">$ </span><span class="nb">sudo install</span> <span class="nt">-m</span> 755 src/redis-cli /usr/local/bin/
-</code></pre></div>      </div>
-    </li>
-    <li>
-      <p>접속 확인 : <code class="language-plaintext highlighter-rouge">$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}</code></p>
-    </li>
-  </ul>
-
-</details>
-
-<h3 id="standard-cache-1">Standard Cache</h3>
-
-<p>Standard Cache는 별도의 임베딩 값을 저장하지 않으므로 Redis OSS 기술을 지원하는 ElastiCache에서 LLM Caching이 가능하게 합니다.
-동일한 질문에 대하여, 2회의 Wall time이 <strong>45.4ms</strong>에서 <strong>2.76ms</strong>로 대폭 감소한 것을 확인할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/test/ecStandard.png" alt="ecStandard" /></p>
-
-<h3 id="semantic-cache-1">Semantic Cache</h3>
-
-<p>반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
-<code class="language-plaintext highlighter-rouge">ResponseError: unknown command 'module', with args beginning with: LIST</code> 해당 에러는 Redis의 <code class="language-plaintext highlighter-rouge">MODULE LIST</code> 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
-즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.</p>
-
-<p><br /></p>
-
-<h2 id="️-amazon-memorydb-for-redis">⛅️ Amazon MemoryDB for Redis</h2>
-
-<p>MemoryDB는 Redis 호환성 및 내구성을 갖춘 AWS의 또 다른 인 메모리 데이터베이스 서비스입니다. 이 역시 ElastiCache는 Vector Search를 지원하지 않으므로,
-임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.</p>
-
-<blockquote>
-  <p>⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 <code class="language-plaintext highlighter-rouge">TLS</code>를 기본적으로 사용한다는 점을 유의하세요. <br />
-⚠️ MemoryDB에 접근 하는 경우, 동일한 Amazon VPC에서 실행 중인 Amazon EC2 인스턴스에서만 MemoryDB 클러스터에 연결할 수 있습니다. (외부 액세스가 필요한 경우, VPN을 통해 수행할 수 있습니다.)</p>
-</blockquote>
-
-<h3 id="standard-cache-2">Standard Cache</h3>
-
-<p>동일한 질문에 대하여, 각각의 Wall time이 <strong>6.67s</strong>에서 <strong>38.2ms</strong>로 감소한 것을 확인할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/test/mmrStandard.png" alt="mmrStandard" /></p>
-
-<p><br /></p>
-
-<h2 id="️-vector-search-for-amazon-memorydb-for-redis">🌩️ Vector search for Amazon MemoryDB for Redis</h2>
-
-<p>드디어, Vector 검색을 지원하는 MemoryDB의 차례입니다. 신규(Previw)로 나온 해당 서비스는, MemoryDB와 동일한 서비스입니다.
-클러스터 생성 시, 벡터 검색을 활성화시키면 사용할 수 있으며, 클러스터를 생성한 후에는 이 구성을 수정할 수 없습니다.</p>
-
-<blockquote>
-  <p>⚠️ 해당 내용은 <em>public preview</em> 단계에 테스트 한 내용으로, 추후 결과가 달라질 수 있습니다.</p>
-</blockquote>
-
-<h3 id="standard-cache-3">Standard Cache</h3>
-
-<p>동일한 질문에 대하여, 각각의 Wall time이 <strong>14.8s</strong>에서 <strong>2.13ms</strong>로 감소한 것을 확인할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/test/vmmrStandard.png" alt="vmmrStandard" /></p>
-
-<h3 id="semantic-cache-2">Semantic Cache</h3>
-
-<p>저는 사실 이 테스트를 진행하기 전, Vector 검색을 지원하므로, 당연히 Redis Stack과 동일한 결과가 나올 것으로 예상했습니다.
-그러나, Vector Search를 지원하지 않는 Redis 제품들과 동일한 에러 메시지를 확인했습니다.</p>
-
-<p>물론, Langchain Cache를 지원하지 않는다고 이번 업데이트가 Vector search를 미지원하는 것은 아닙니다.
-관련 내용을 다음 문단에서 풀겠습니다.</p>
-
-<p><br /></p>
-
-<h2 id="redis-as-a-vector-database">Redis as a Vector Database</h2>
-
-<p>aws-samples의 <a href="https://github.com/aws-samples/amazon-memorydb-for-redis-samples/tree/main/tutorials/langchain-memorydb">Langchain MemoryDB Github</a>을 확인해 보면 Redis를 VectorStore로 활용하기 위한,
-예시 코드가 작성되어 있습니다. 해당 내용을 바탕으로 Langchain에 대해 Monkey patch를 진행하면 아래와 같이 MemoryDB를 VectorDB로 사용할 수 있습니다.</p>
-
-<p><img src="../../assets/built/images/post/test/mmrSemantic.png" alt="mmrSemantic" /></p>
-
-<p>위 예시는, AWS 문서에 소개된 <a href="https://docs.aws.amazon.com/memorydb/latest/devguide/vector-search-examples.html#vector-search-examples-foundational-model-buffer-memory">Foundation Model (FM) Buffer Memory</a> 방식으로 캐시를 구현한 예시입니다.
-MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit가 발생해 캐시 역할을 제공할 수 있습니다.</p>
-
-<blockquote>
-  <p>⚠️ 해당 예시는 Vector search 활성화 한 MemoryDB에서만 가능합니다. Vector search를 활성화하지 않은 MemoryDB에서 수행 시, 다음 에러 메시지를 리턴합니다.
-<code class="language-plaintext highlighter-rouge">ResponseError: -ERR Command not enabled, instance needs to be configured for Public Preview for Vector Similarity Search</code></p>
-</blockquote>
-
-<p><br /></p>
-
-<h2 id="outro">Outro</h2>
-
-<p>지금까지의 테스트 결과를 표로 나타내면 다음과 같습니다.</p>
-
-<p><strong>Langchain Cache 테스트 결과</strong></p>
+<p>위에서 살펴본 1~4번 접근 방식은 각각의 고유한 한계를 가지고 있습니다. 하지만 실제 엔터프라이즈 프로덕션 환경에서는 이러한 기술적 한계 외에도 운영, 보안, 거버넌스 측면에서 추가적인 과제들을 해결해야 합니다.</p>
 
 <table>
   <thead>
     <tr>
-      <th>Cache/DB</th>
-      <th style="text-align: center">Redis Stack on EC2</th>
-      <th style="text-align: center">ElastiCache(Serverless)</th>
-      <th style="text-align: center">MemoryDB</th>
-      <th style="text-align: center">VectorSearch MemoryDB (Preview)</th>
+      <th>과제 영역</th>
+      <th>설명</th>
     </tr>
   </thead>
   <tbody>
     <tr>
-      <td>Standard</td>
-      <td style="text-align: center">O</td>
-      <td style="text-align: center">O</td>
-      <td style="text-align: center">O</td>
-      <td style="text-align: center">O</td>
+      <td><strong>연결 관리</strong></td>
+      <td>데이터베이스 연결 풀링, 타임아웃 처리, 재연결 로직을 직접 구현하고 관리</td>
     </tr>
     <tr>
-      <td>Semantic</td>
-      <td style="text-align: center">O</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">X</td>
-      <td style="text-align: center">부분적 가능 (향후 지원 예상)</td>
+      <td><strong>보안 및 인증</strong></td>
+      <td>OAuth2/OIDC 통합, 역할 기반 접근 제어(RBAC), 파라미터 검증 등을 직접 구현</td>
+    </tr>
+    <tr>
+      <td><strong>스키마 동기화</strong></td>
+      <td>스키마 변경 시마다 코드 수정, 재배포 필요. 실시간 반영 어려움</td>
+    </tr>
+    <tr>
+      <td><strong>관찰성</strong></td>
+      <td>로깅, 메트릭, 분산 트레이싱을 별도로 구축. 디버깅과 모니터링 복잡</td>
+    </tr>
+    <tr>
+      <td><strong>배포 및 유지보수</strong></td>
+      <td>데이터베이스별로 드라이버 설치, 의존성 관리, 버전 호환성 처리 필요</td>
     </tr>
   </tbody>
 </table>
 
-<p>AWS의 많은 서비스들이 Langchain에서 지원하는 만큼, MemoryDB도 Langchain 문서에서 만날 수 있으면 좋겠습니다.
-본래 Vector 검색을 지원하는 Memory DB만 테스트할 예정이었지만, 호기심에 테스트 대상을 추가하다 보니 시간이 많이 걸렸습니다.
-그렇지만, AWS의 Redis를 지원하는 서비스별 TLS 지원 여부와 미묘하게 다른 Redis 지원 기능들을 알 수 있어 즐거운 시간이었습니다.</p>
+<p>이러한 운영상의 복잡성으로 인해 <strong>Text-to-SQL을 프로덕션 환경에서 안전하고 효율적으로 운영하기가 매우 어렵습니다.</strong> 특히 엔터프라이즈 환경에서 요구되는 보안, 확장성, 유지보수성, 거버넌스 요구사항을 충족하려면 상당한 엔지니어링 리소스가 필요합니다.</p>
 
-<p>소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃</p>
+<p><br /></p>
+
+<h2 id="-mcp-toolbox를-통한-해결"><a href="#toolbox">🔧 MCP Toolbox를 통한 해결</a><a id="toolbox"></a></h2>
+
+<p>1번 방식은 모델 성능에만 의존하고, 2번 파인튜닝은 리소스가 많이 들뿐더러 정확도를 보장받을 수 없습니다. 3번 RAG 방식은 여전히 LLM의 SQL 생성 능력에 의존하며, 4번 MCP 방식은 토큰 소모와 레이턴시 문제가 있습니다. 게다가 모든 방식이 엔터프라이즈 프로덕션 환경에서는 연결 관리, 보안, 스키마 동기화, 관찰성 등의 복잡한 운영 과제에 직면하게 됩니다. 이러한 한계점들을 줄이기 위해 오픈소스 <strong>MCP Toolbox for Databases</strong>(이하, Toolbox)를 활용할 수 있습니다.</p>
+
+<p>Toolbox는 MCP(Model Context Protocol) 표준을 활용하여 <strong>Text-to-SQL의 복잡성을 추상화</strong>하는 오픈소스 MCP 서버입니다
+Text2SQL에 대한 은탄환은 아니지만, 기존 방식들의 문제점(토큰 소모, 레이턴시, SQL 생성 의존성 등)을 완화하고, 프로덕션 환경에서 필요한 연결 관리, 보안, 관찰성 등의 운영 과제를 단순화하는 데 도움을 줍니다.</p>
+
+<p>물론, 앞서 언급한 엔터프라이즈 프로덕션 환경에서의 추가 고려사항(보안, 스케일링, 모니터링 등)은 더 깊이 있는 논의가 필요한 주제들입니다. 이러한 내용들은 후속 편을 통해 차차 풀어나갈 예정이니, 이번 편에서는 먼저 MCP Toolbox의 기본 개념과 구조부터 차근차근 살펴보겠습니다.</p>
+
+<h3 id="overview">Overview</h3>
+
+<p>Toolbox는 애플리케이션의 오케스트레이션 프레임워크(예: ADK, Strands Agents, LangGraph, LlamaIndex)와 데이터베이스 사이에 위치하여, 도구를 수정하고 배포하거나 호출하는 컨트롤 플레인을 제공합니다. 이를 통해 중앙화된 위치에서 도구를 저장하고 업데이트할 수 있으며, 에이전트와 애플리케이션 간에 도구를 공유하고 애플리케이션 재배포 없이 업데이트할 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/Toolbox/architecture.png" alt="MCP Toolbox Architecture" /></p>
+
+<h3 id="지원하는-데이터베이스">지원하는 데이터베이스</h3>
+
+<p>MCP Toolbox는 다양한 <a href="https://googleapis.github.io/genai-toolbox/resources/sources/">Google Cloud 리소스 및 오픈소스 데이터베이스</a>를 지원합니다.</p>
+<ul>
+  <li><strong>Google Cloud</strong>: AlloyDB, Cloud SQL, Spanner, Bigtable 등</li>
+  <li><strong>오픈소스</strong>: 자체 관리형 MySQL 및 PostgreSQL 등</li>
+  <li><strong>서드파티</strong>: Neo4j, Dgraph 등 커뮤니티 기여 데이터베이스 등</li>
+</ul>
+
+<h3 id="빠르게-시작하기">빠르게 시작하기</h3>
+
+<p>Toolbox를 사용하려면 먼저 <a href="https://github.com/googleapis/genai-toolbox?tab=readme-ov-file#installing-the-server">바이너리를 다운로드</a>하고,
+<code class="language-plaintext highlighter-rouge">tools.yaml</code> 설정 파일을 작성한 후 다음 명령어로 <code class="language-plaintext highlighter-rouge">./toolbox --tools-file "tools.yaml"</code> 서버를 실행하면 됩니다.</p>
+
+<p><strong>tools.yaml 기본 구조</strong></p>
+
+<div class="language-yaml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="na">sources</span><span class="pi">:</span>                    <span class="c1"># 데이터베이스 연결 정보</span>
+  <span class="na">my-database</span><span class="pi">:</span>
+    <span class="na">kind</span><span class="pi">:</span> <span class="s">postgres</span>
+    <span class="na">host</span><span class="pi">:</span> <span class="s">localhost</span>
+    <span class="na">database</span><span class="pi">:</span> <span class="s">mydb</span>
+
+<span class="na">tools</span><span class="pi">:</span>                      <span class="c1"># 사용할 Tool 정의</span>
+  <span class="na">search-users</span><span class="pi">:</span>
+    <span class="na">kind</span><span class="pi">:</span> <span class="s">postgres-sql</span>
+    <span class="na">source</span><span class="pi">:</span> <span class="s">my-database</span>
+    <span class="na">statement</span><span class="pi">:</span> <span class="s2">"</span><span class="s">SELECT</span><span class="nv"> </span><span class="s">*</span><span class="nv"> </span><span class="s">FROM</span><span class="nv"> </span><span class="s">users</span><span class="nv"> </span><span class="s">WHERE</span><span class="nv"> </span><span class="s">name</span><span class="nv"> </span><span class="s">=</span><span class="nv"> </span><span class="s">$1"</span>
+    <span class="na">parameters</span><span class="pi">:</span>
+      <span class="pi">-</span> <span class="na">name</span><span class="pi">:</span> <span class="s">user_name</span>
+        <span class="na">type</span><span class="pi">:</span> <span class="s">string</span>
+</code></pre></div></div>
+
+<p>이렇게 간단한 설정만으로 Toolbox 서버가 시작됩니다. 하지만 이 뒤에서는 어떤 일들이 일어날까요?</p>
+
+<p>Toolbox는 <strong>Plugin Architecture</strong>를 통해 32개의 Source와 120여 개 이상의 사전 정의된 Tool을 자동으로 인식합니다(v0.17.0 기준). <code class="language-plaintext highlighter-rouge">tools.yaml</code>에서 <code class="language-plaintext highlighter-rouge">kind: postgres-sql</code>처럼 지정하면 해당 Tool을 찾아 바로 사용할 수 있고, 파일을 수정하면 데이터베이스 연결부터 Tool 설정까지 자동으로 처리되며 서버 재시작 없이 즉시 반영됩니다. 간단해 보이지만, 내부적으로는 정교한 메커니즘이 동작하고 있습니다.</p>
+
+<p><br /></p>
+
+<h2 id="️-아키텍처-deep-dive"><a href="#architecture">🏗️ 아키텍처 Deep Dive</a><a id="architecture"></a></h2>
+
+<p>Go 언어로 작성된 Toolbox는 AI 애플리케이션과 데이터베이스 사이에서 중간 계층으로 동작합니다.</p>
+
+<h3 id="주요-컴포넌트">주요 컴포넌트</h3>
+
+<details>
+  <summary>📍 Toolbox Architecture</summary>
+  <div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>┌────────────────────────────────────────────────────────┐
+│              Client Layer (HTTP/MCP Protocol)          │
+└────────────────────────────────────────────────────────┘
+                            │                            
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                    Toolbox Server (Go)                 │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Server Layer (internal/server/)                 │  │
+│  └──────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Tools Layer (internal/tools/)                   │  │
+│  │  - 120+ Tool                                     │  │
+│  └──────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Sources Layer (internal/sources/)               │  │
+│  │  - 32+ DB Driver &amp; Connection Pooling            │  │
+│  └──────────────────────────────────────────────────┘  │
+│  ┌──────────────────────────────────────────────────┐  │
+│  │  Observability (internal/telemetry/, log/)       │  │
+│  └──────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────┘
+                            │                          
+                            ▼
+┌────────────────────────────────────────────────────────┐
+│                     Database Layer                     │
+└────────────────────────────────────────────────────────┘
+</code></pre></div>  </div>
+</details>
+
+<p><strong>1. Client Layer (클라이언트 통신)</strong></p>
+<ul>
+  <li>프로토콜: HTTP/MCP Protocol, JSON-RPC 2.0</li>
+  <li>클라이언트: AI 프레임워크(LlamaIndex, Strands Agents), IDE(Claude Desktop, Cursor)</li>
+</ul>
+
+<p><strong>2. Toolbox Server</strong></p>
+<ul>
+  <li>Server Layer: HTTP 서버와 MCP 프로토콜 핸들러를 제공하여 클라이언트 요청 처리</li>
+  <li>Tools Layer: 각 데이터베이스에 특화된 120개 이상의 Tool 구현체를 포함하며, 파라미터 검증과 실행 로직 담당</li>
+  <li>Sources Layer: 32개의 데이터베이스 드라이버와 연결 풀링, 인증 처리 제공</li>
+  <li>Observability Layer: OpenTelemetry를 통한 메트릭, 트레이싱, 로깅을 제공하여 프로덕션 운영 지원</li>
+</ul>
+
+<p><strong>3. Database Layer (데이터베이스 통신)</strong></p>
+<ul>
+  <li>프로토콜: 각 데이터베이스의 네이티브 프로토콜 사용 (Wire Protocol, MySQL Protocol, gRPC 등)</li>
+  <li>지원 DB: PostgreSQL, MySQL, BigQuery, MongoDB, Redis, Spanner, AlloyDB 등</li>
+</ul>
+
+<h3 id="configuration-flow">Configuration Flow</h3>
+
+<p>앞서 간단히 살펴본 <code class="language-plaintext highlighter-rouge">tools.yaml</code> 파일이 Toolbox 서버 시작 시 어떻게 로딩되는지 자세히 알아보겠습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>단계</th>
+      <th>작업</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>CLI 시작 &amp; YAML 파일 로딩</td>
+      <td><code class="language-plaintext highlighter-rouge">--tools-file</code> 등 플래그 파싱</td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>환경 변수 치환</td>
+      <td><code class="language-plaintext highlighter-rouge">${DB_HOST:localhost}</code> → <code class="language-plaintext highlighter-rouge">"localhost"</code></td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>YAML 파싱</td>
+      <td>Sources(DB 연결), AuthServices(인증), Tools(Tool 정의), Toolsets(그룹화) 파싱</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>리소스 초기화</td>
+      <td>Connection Pool 생성, 인증 서비스 설정, Tool 인스턴스 생성</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>서버 시작</td>
+      <td>HTTP Server &amp; MCP Protocol Handler 시작</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>동적 리로딩</td>
+      <td>fsnotify로 파일 변경 감지하여 무중단 리로드</td>
+    </tr>
+  </tbody>
+</table>
+
+<h3 id="tool-execution-flow">Tool Execution Flow</h3>
+
+<p>Toolbox 서버가 실행된 후, 실제 사용자의 자연어 질문이 쿼리로 변환되는 과정은 다음과 같습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>단계</th>
+      <th>작업</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>1</td>
+      <td>클라이언트 요청</td>
+      <td>HTTP API: POST <code class="language-plaintext highlighter-rouge">/tool/{toolName}/invoke</code> 또는 MCP Protocol: <code class="language-plaintext highlighter-rouge">tools/call</code></td>
+    </tr>
+    <tr>
+      <td>2</td>
+      <td>인증 &amp; 권한 검증</td>
+      <td>Authorization Header 추출, Auth Service 검증, Tool 접근 권한 확인</td>
+    </tr>
+    <tr>
+      <td>3</td>
+      <td>파라미터 파싱</td>
+      <td>JSON Body 디코딩, 파라미터 검증 &amp; 타입 변환</td>
+    </tr>
+    <tr>
+      <td>4</td>
+      <td>Tool 실행</td>
+      <td>Template 파라미터 처리, 표준 파라미터 추출, DB 쿼리 실행, 결과를 JSON 형태로 변환</td>
+    </tr>
+    <tr>
+      <td>5</td>
+      <td>응답 반환</td>
+      <td>성공 시 JSON 형태로 결과 반환, 실패 시 에러 메시지 및 상태 코드 반환</td>
+    </tr>
+    <tr>
+      <td>6</td>
+      <td>텔레메트리 기록</td>
+      <td>Tracing(요청 시작부터 종료까지 추적), Metrics(Tool 호출 횟수, 레이턴시 등) 기록</td>
+    </tr>
+  </tbody>
+</table>
+
+<p><br /></p>
+
+<h2 id="-다음-편-안내"><a href="#next">📖 다음 편 안내</a><a id="next"></a></h2>
+
+<p>지금까지 Text-to-SQL의 다양한 접근 방법과 그 한계를 살펴보았고, MCP Toolbox의 아키텍처와 핵심 컴포넌트를 이해했습니다. Plugin Architecture를 통한 확장성, Configuration Flow를 통한 유연한 설정 관리, 그리고 Tool Execution Flow를 통한 체계적인 실행 과정을 배웠습니다. 이제 이러한 지식을 바탕으로 <strong><a href="./Toolbox-2.html">2편</a></strong>에서는 Strands Agents와 통합하여 자연어로 데이터를 분석하는 실전 AI 에이전트를 구축하는 방법을 다룹니다.</p>
+
+<p><br /></p>
+
+<p>📚 더 알아보기:</p>
+<ul>
+  <li><a href="https://googleapis.github.io/genai-toolbox/getting-started/introduction/">MCP Toolbox for Databases 공식 문서</a></li>
+  <li><a href="https://cloud.google.com/blog/products/ai-machine-learning/mcp-toolbox-for-databases-now-supports-model-context-protocol">MCP Toolbox for Databases: Simplify AI Agent Access to Enterprise Data</a></li>
+  <li><a href="https://codelabs.developers.google.com/travel-agent-mcp-toolbox-adk">Build a Travel Agent using MCP Toolbox for Databases and ADK</a></li>
+</ul>
+
+<p><br /></p>
 
 <hr />
 
@@ -910,9 +1092,9 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                     <div id="disqus_thread"></div>
                     <script>
                         var disqus_config = function () {
-                            this.page.url = 'https://heuristicwave.github.io/LLMCache';
-                            this.page.identifier = '/LLMCache';
-                            this.page.title = 'Providing a caching layer for LLM with Langchain in AWS';
+                            this.page.url = 'https://heuristicwave.github.io/Toolbox';
+                            this.page.identifier = '/Toolbox';
+                            this.page.title = 'Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)';
                         };
                         (function() {
                             var d = document, s = d.createElement('script');
@@ -946,7 +1128,7 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                         <header class="read-next-card-header">
                             <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
                             
-                                <h3 class="read-next-card-header-title"><a href="/tag/ai/">Ai</a></h3>
+                                <h3 class="read-next-card-header-title"><a href="/tag/genai/">Genai</a></h3>
                             
                         </header>
                         <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
@@ -956,24 +1138,14 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                                 
                                 
                                   
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
-                                  
-                                
+                                    
                                   
                                 
                                   
                                     
                                         
                                         
-                                            <li><a href="/Agents">Create a Multi-Tool Agent with Cluade 3 and LangChain</a></li>
+                                            <li><a href="/Fine-tuning-Nova">Amazon Nova Vision 기능 모델 증류 하기: Fine-Tuning Text-Image-to-Text</a></li>
                                         
                                     
                                   
@@ -982,7 +1154,7 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                                     
                                         
                                         
-                                            <li><a href="/LLMEvaluation">LLM Evaluation에 대해 끄적이기</a></li>
+                                            <li><a href="/Kendra2">Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</a></li>
                                         
                                     
                                   
@@ -991,17 +1163,16 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                                     
                                         
                                         
-                                            <li><a href="/ReAct">ReAct leverages LLM as a reasoning engine</a></li>
+                                            <li><a href="/BedrockOpenAI">OpenAI-Compatible RESTful APIs</a></li>
                                         
                                     
                                   
                                 
                                   
-                                
-                                  
                                     
-                                  
-                                
+                                        
+                                        
+                                    
                                   
                                 
                                   
@@ -1018,6 +1189,42 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                                         
                                         
                                     
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
                                   
                                 
                                   
@@ -1097,9 +1304,9 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
                             </ul>
                         </div>
                         <footer class="read-next-card-footer">
-                            <a href="/tag/ai/">
+                            <a href="/tag/genai/">
                                 
-                                    See all 5 posts  →
+                                    See all 10 posts  →
                                 
                             </a>
                         </footer>
@@ -1109,59 +1316,6 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
 
             <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
             
-                
-
-    <article class="post-card post-template">
-        
-            <a class="post-card-image-link" href="/udemy">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/udemy.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/udemy">
-                <header class="post-card-header">
-                    
-                        
-                            
-                               <span class="post-card-tags">Uncategorized</span>
-                            
-                        
-                            
-                                <span class="post-card-tags">Extracurricular</span>
-                            
-                        
-                    
-
-                    <h2 class="post-card-title">강의 후기 - LangChain 으로 LLM 기반 애플리케이션 개발하기</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p></p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      1 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
-            
 
             <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
             
@@ -1169,26 +1323,26 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
 
     <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/reinvent23">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/reinvent.png)"></div>
+            <a class="post-card-image-link" href="/Fine-tuning-Nova">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/AmazonNova.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/reinvent23">
+            <a class="post-card-content-link" href="/Fine-tuning-Nova">
                 <header class="post-card-header">
                     
                         
                             
-                               <span class="post-card-tags">Uncategorized</span>
+                               <span class="post-card-tags">Aws</span>
                             
                         
                             
-                                <span class="post-card-tags">Event</span>
+                                <span class="post-card-tags">Genai</span>
                             
                         
                     
 
-                    <h2 class="post-card-title">AWS re:Invent 2023 후기</h2>
+                    <h2 class="post-card-title">Amazon Nova Vision 기능 모델 증류 하기: Fine-Tuning Text-Image-to-Text</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
@@ -1232,18 +1386,18 @@ MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit�
         </a>
     </div>
     <span class="floating-header-divider">&mdash;</span>
-    <div class="floating-header-title">Providing a caching layer for LLM with Langchain in AWS</div>
+    <div class="floating-header-title">Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</div>
     <div class="floating-header-share">
         <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
     <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
 </svg>
 </div>
-        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Providing+a+caching+layer+for+LLM+with+Langchain+in+AWS&amp;url=https://heuristicwave.github.ioLLMCache"
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Text-to-SQL%2C+%EC%99%9C+%ED%94%84%EB%A1%9C%EB%8D%95%EC%85%98%EC%97%90%EC%84%A0+%EC%96%B4%EB%A0%A4%EC%9A%B8%EA%B9%8C%3F+%281%ED%8E%B8+-+MCP+Toolbox+%EC%86%8C%EA%B0%9C%29&amp;url=https://heuristicwave.github.ioToolbox"
             onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M30.063 7.313c-.813 1.125-1.75 2.125-2.875 2.938v.75c0 1.563-.188 3.125-.688 4.625a15.088 15.088 0 0 1-2.063 4.438c-.875 1.438-2 2.688-3.25 3.813a15.015 15.015 0 0 1-4.625 2.563c-1.813.688-3.75 1-5.75 1-3.25 0-6.188-.875-8.875-2.625.438.063.875.125 1.375.125 2.688 0 5.063-.875 7.188-2.5-1.25 0-2.375-.375-3.375-1.125s-1.688-1.688-2.063-2.875c.438.063.813.125 1.125.125.5 0 1-.063 1.5-.25-1.313-.25-2.438-.938-3.313-1.938a5.673 5.673 0 0 1-1.313-3.688v-.063c.813.438 1.688.688 2.625.688a5.228 5.228 0 0 1-1.875-2c-.5-.875-.688-1.813-.688-2.75 0-1.063.25-2.063.75-2.938 1.438 1.75 3.188 3.188 5.25 4.25s4.313 1.688 6.688 1.813a5.579 5.579 0 0 1 1.5-5.438c1.125-1.125 2.5-1.688 4.125-1.688s3.063.625 4.188 1.813a11.48 11.48 0 0 0 3.688-1.375c-.438 1.375-1.313 2.438-2.563 3.188 1.125-.125 2.188-.438 3.313-.875z"/></svg>
 
         </a>
-        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioLLMCache"
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https://heuristicwave.github.ioToolbox"
             onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
 
