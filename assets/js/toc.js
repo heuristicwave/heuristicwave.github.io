@@ -92,9 +92,17 @@ class TableOfContents {
             </nav>
         `;
 
-        // body에 버튼과 사이드바 추가
+        // 포스트 레이아웃에 맞춰 데스크톱에서는 본문 왼쪽 sticky 컬럼으로 배치
+        const postInner = document.querySelector('.post-template .site-main > .inner');
+        const postArticle = postInner ? postInner.querySelector('.post-full') : null;
+
         document.body.appendChild(this.tocButton);
-        document.body.appendChild(this.tocDropdown);
+        if (postInner && postArticle) {
+            postInner.insertBefore(this.tocDropdown, postArticle);
+            postInner.classList.add('has-toc');
+        } else {
+            document.body.appendChild(this.tocDropdown);
+        }
 
         // 버튼 클릭 이벤트
         this.tocButton.addEventListener('click', (e) => {
@@ -163,72 +171,41 @@ class TableOfContents {
     }
 
     generateTOCItems() {
-        let tocHTML = '';
-        let currentLevel = 0;
-
-        this.headings.forEach((heading, index) => {
+        return this.headings.map((heading) => {
             const level = heading.level;
-
-            if (level > currentLevel) {
-                // 더 깊은 레벨로 들어감
-                for (let i = currentLevel; i < level; i++) {
-                    if (i > 0) tocHTML += '<ul class="toc-sublist">';
-                }
-            } else if (level < currentLevel) {
-                // 더 얕은 레벨로 나옴
-                for (let i = currentLevel; i > level; i--) {
-                    tocHTML += '</ul>';
-                }
-            }
-
-            tocHTML += `
+            return `
                 <li class="toc-item toc-level-${level}">
                     <a href="#${heading.id}" class="toc-link" data-heading-id="${heading.id}">
                         ${heading.text}
                     </a>
                 </li>
             `;
-
-            currentLevel = level;
-        });
-
-        // 남은 ul 태그들 닫기
-        for (let i = currentLevel; i > 1; i--) {
-            tocHTML += '</ul>';
-        }
-
-        return tocHTML;
+        }).join('');
     }
 
     addClickListeners() {
-        // 사이드바가 생성된 후에 링크 이벤트 추가
-        setTimeout(() => {
-            const tocLinks = this.tocDropdown.querySelectorAll('.toc-link');
+        const nav = this.tocDropdown.querySelector('.toc-sidebar-nav');
+        nav.addEventListener('click', (e) => {
+            const link = e.target.closest('.toc-link');
+            if (!link) return;
 
-            tocLinks.forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('data-heading-id');
-                    const targetElement = document.getElementById(targetId);
+            e.preventDefault();
+            const targetId = link.getAttribute('data-heading-id');
+            const targetElement = document.getElementById(targetId);
 
-                    if (targetElement) {
-                        // 부드러운 스크롤
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-
-                        // URL 업데이트 (히스토리에 추가하지 않음)
-                        history.replaceState(null, null, `#${targetId}`);
-
-                        // 모바일에서는 사이드바 닫기
-                        if (window.innerWidth <= 768) {
-                            this.hideSidebar();
-                        }
-                    }
+            if (targetElement) {
+                targetElement.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
                 });
-            });
-        }, 100);
+
+                history.replaceState(null, null, `#${targetId}`);
+
+                if (window.innerWidth <= 1320) {
+                    this.hideSidebar();
+                }
+            }
+        });
     }
 
     addScrollListener() {
