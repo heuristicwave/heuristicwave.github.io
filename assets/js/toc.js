@@ -10,6 +10,7 @@ class TableOfContents {
         this.headings = [];
         this.activeHeading = null;
         this.isOpen = false;
+        this.compactMedia = window.matchMedia('(max-width: 1800px)');
         this.init();
     }
 
@@ -27,6 +28,7 @@ class TableOfContents {
             this.addScrollListener();
             this.addClickListeners();
             this.addOutsideClickListener();
+            this.addFloatingActionsListener();
         }
     }
 
@@ -128,6 +130,7 @@ class TableOfContents {
     }
 
     showSidebar() {
+        this.isOpen = true;
         this.tocDropdown.classList.add('show');
         this.tocButton.classList.add('active');
         document.body.classList.add('toc-sidebar-open');
@@ -137,9 +140,18 @@ class TableOfContents {
     }
 
     hideSidebar() {
+        this.isOpen = false;
         this.tocDropdown.classList.remove('show');
         this.tocButton.classList.remove('active');
         document.body.classList.remove('toc-sidebar-open');
+    }
+
+    addFloatingActionsListener() {
+        window.addEventListener('postFloatingActionsChange', (e) => {
+            if (!e.detail.active) {
+                this.hideSidebar();
+            }
+        });
     }
 
     scrollToActiveItem() {
@@ -201,7 +213,7 @@ class TableOfContents {
 
                 history.replaceState(null, null, `#${targetId}`);
 
-                if (window.innerWidth <= 1320) {
+                if (this.compactMedia.matches) {
                     this.hideSidebar();
                 }
             }

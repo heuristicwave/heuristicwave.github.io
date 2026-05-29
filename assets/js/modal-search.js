@@ -6,9 +6,14 @@
         var modalSearchStatus = document.getElementById('modal-search-status');
         var modalSearchResults = document.getElementById('modal-search-results');
         
-        if (!modalSearchInput || !window.store) {
+        if (!modalSearchInput || !window.store || !window.lunr) {
             return;
         }
+
+        if (modalSearchInput.dataset.modalSearchReady === 'true') {
+            return;
+        }
+        modalSearchInput.dataset.modalSearchReady = 'true';
 
         // Lunr 인덱스 초기화
         function trimmerEnKo(token) {
@@ -42,6 +47,19 @@
             });
         }
 
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function escapeRegExp(value) {
+            return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
+
         function displayModalResults(results, searchTerm) {
             if (results.length) {
                 modalSearchStatus.innerHTML = '<p class="modal-search-count">' + results.length + '개의 검색 결과</p>';
@@ -51,20 +69,20 @@
                 var maxResults = Math.min(results.length, 5);
                 for (var i = 0; i < maxResults; i++) {
                     var item = window.store[results[i].ref];
-                    var excerpt = item.content.substring(0, 100);
+                    var excerpt = escapeHtml(item.content.substring(0, 130));
                     
                     // 검색어 하이라이트
                     if (searchTerm) {
-                        var regex = new RegExp('(' + searchTerm + ')', 'gi');
+                        var regex = new RegExp('(' + escapeRegExp(searchTerm) + ')', 'gi');
                         excerpt = excerpt.replace(regex, '<mark>$1</mark>');
                     }
                     
                     appendString += '<div class="modal-search-item">';
-                    appendString += '<a href="' + item.url + '" class="modal-search-link-item">';
-                    appendString += '<h4 class="modal-search-title">' + item.title + '</h4>';
+                    appendString += '<a href="' + escapeHtml(item.url) + '" class="modal-search-link-item">';
+                    appendString += '<h4 class="modal-search-title">' + escapeHtml(item.title) + '</h4>';
                     appendString += '<p class="modal-search-excerpt">' + excerpt + '...</p>';
                     if (item.category) {
-                        appendString += '<span class="modal-search-category">' + item.category + '</span>';
+                        appendString += '<span class="modal-search-category">' + escapeHtml(item.category) + '</span>';
                     }
                     appendString += '</a></div>';
                 }
@@ -80,10 +98,10 @@
                 modalSearchResults.style.display = 'block';
             } else if (searchTerm) {
                 modalSearchStatus.innerHTML = '<p class="modal-search-no-results">검색 결과가 없습니다</p>';
-                modalSearchResults.innerHTML = '<div class="modal-no-results"><p>다른 키워드로 다시 검색해보세요.</p></div>';
+                modalSearchResults.innerHTML = '<div class="modal-no-results"><p>다른 키워드로 다시 검색하거나 전체 검색 결과 페이지를 열어보세요.</p></div>';
                 modalSearchResults.style.display = 'block';
             } else {
-                modalSearchStatus.innerHTML = '';
+                modalSearchStatus.innerHTML = '<p class="modal-search-count">검색어를 입력하면 결과가 바로 표시됩니다.</p>';
                 modalSearchResults.innerHTML = '';
                 modalSearchResults.style.display = 'none';
             }
@@ -134,21 +152,18 @@
         });
 
         // 모달이 열릴 때 입력창에 포커스
-        var searchOverlay = document.getElementById('search');
-        if (searchOverlay) {
-            var observer = new MutationObserver(function(mutations) {
-                mutations.forEach(function(mutation) {
-                    if (mutation.type === 'attributes' && mutation.attributeName === 'class') {
-                        if (searchOverlay.classList.contains('opened')) {
-                            setTimeout(function() {
-                                modalSearchInput.focus();
-                            }, 100);
-                        }
-                    }
-                });
-            });
-            observer.observe(searchOverlay, { attributes: true });
+        function focusWhenOpen() {
+            if (window.location.hash === '#search') {
+                setTimeout(function() {
+                    modalSearchInput.focus();
+                    performModalSearch(modalSearchInput.value.trim());
+                }, 120);
+            }
         }
+
+        window.addEventListener('hashchange', focusWhenOpen);
+        focusWhenOpen();
+        displayModalResults([], '');
     }
 
     // DOM이 로드된 후 초기화
