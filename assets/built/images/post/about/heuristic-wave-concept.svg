@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">Heuristic Wave concept map</title>
+  <desc id="desc">A visual concept map showing discovery, experiments, Zettelkasten notes, relationships, and insight waves.</desc>
+  <defs>
+    <linearGradient id="ocean" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#0f766e"/>
+      <stop offset="0.55" stop-color="#2563eb"/>
+      <stop offset="1" stop-color="#7c3aed"/>
+    </linearGradient>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="16" stdDeviation="18" flood-color="#0f172a" flood-opacity="0.16"/>
+    </filter>
+    <style>
+      .label { fill: #0f172a; font: 700 32px Arial, sans-serif; }
+      .sub { fill: #334155; font: 500 18px Arial, sans-serif; }
+      .since { fill: #0f766e; font: 700 15px Arial, sans-serif; letter-spacing: 1px; }
+      .signal { fill: #475569; font: 700 13px Arial, sans-serif; letter-spacing: 0.4px; text-anchor: middle; }
+      .node-title { fill: #0f172a; font: 700 21px Arial, sans-serif; }
+      .node-sub { fill: #475569; font: 500 14px Arial, sans-serif; }
+      .pill { fill: #ffffff; stroke: #cbd5e1; stroke-width: 1.5; }
+      .link { fill: none; stroke: #64748b; stroke-width: 2.5; stroke-linecap: round; stroke-dasharray: 9 10; }
+      .link-strong { fill: none; stroke: #2563eb; stroke-width: 4; stroke-linecap: round; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" rx="28" fill="#f8fafc"/>
+  <g transform="translate(0 -60)">
+    <path d="M44 476C174 412 236 520 360 462C492 400 560 320 708 376C844 428 920 512 1156 390V680H44Z" fill="url(#ocean)" opacity="0.14"/>
+    <path d="M44 500C178 438 238 536 362 486C514 424 570 342 712 398C852 454 934 520 1156 420" class="link-strong" opacity="0.36"/>
+    <path d="M44 536C184 484 278 550 390 516C534 472 598 396 738 432C884 470 982 536 1156 474" class="link-strong" opacity="0.18"/>
+  </g>
+
+  <g>
+    <rect x="70" y="64" width="1060" height="142" rx="22" fill="#ffffff"/>
+    <text x="104" y="126" class="label">Heuristic Wave</text>
+    <rect x="378" y="96" width="126" height="34" rx="17" fill="#ccfbf1" stroke="#5eead4" stroke-width="1.5"/>
+    <text x="396" y="119" class="since">SINCE 2016</text>
+    <text x="104" y="164" class="sub">Discovery through experience, carried outward as connected waves of insight</text>
+    <path d="M790 131C830 88 890 88 930 131C970 174 1030 174 1070 131" fill="none" stroke="url(#ocean)" stroke-width="12" stroke-linecap="round"/>
+    <circle cx="816" cy="111" r="10" fill="#14b8a6"/>
+    <circle cx="930" cy="131" r="10" fill="#2563eb"/>
+    <circle cx="1038" cy="154" r="10" fill="#7c3aed"/>
+    <text x="816" y="184" class="signal">causality</text>
+    <text x="930" y="184" class="signal">connection</text>
+    <text x="1038" y="184" class="signal">relevance</text>
+  </g>
+
+  <path d="M294 529H354" class="link"/>
+  <path d="M570 529H630" class="link"/>
+  <path d="M846 529H906" class="link"/>
+
+  <g>
+    <rect x="78" y="466" width="216" height="126" rx="18" class="pill"/>
+    <text x="130" y="520" class="node-title">Experience</text>
+    <text x="130" y="548" class="node-sub">try, observe, refine</text>
+    <circle cx="110" cy="512" r="10" fill="#0f766e"/>
+  </g>
+
+  <g>
+    <rect x="354" y="466" width="216" height="126" rx="18" class="pill"/>
+    <text x="406" y="520" class="node-title">Heuristic</text>
+    <text x="406" y="548" class="node-sub">find useful paths</text>
+    <text x="406" y="572" class="node-sub">before perfect answers</text>
+    <circle cx="386" cy="512" r="10" fill="#0891b2"/>
+  </g>
+
+  <g>
+    <rect x="630" y="466" width="216" height="126" rx="18" class="pill"/>
+    <text x="682" y="520" class="node-title">Zettelkasten</text>
+    <text x="682" y="548" class="node-sub">small notes become</text>
+    <text x="682" y="572" class="node-sub">a thinking network</text>
+    <circle cx="662" cy="512" r="10" fill="#2563eb"/>
+  </g>
+
+  <g>
+    <rect x="906" y="466" width="216" height="126" rx="18" class="pill"/>
+    <text x="958" y="520" class="node-title">Insight</text>
+    <text x="958" y="548" class="node-sub">causal links</text>
+    <text x="958" y="572" class="node-sub">meaningful signals</text>
+    <circle cx="938" cy="512" r="10" fill="#4f46e5"/>
+  </g>
+
+</svg>
