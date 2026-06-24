@@ -10,7 +10,6 @@ class TableOfContents {
         this.headings = [];
         this.activeHeading = null;
         this.isOpen = false;
-        this.compactMedia = window.matchMedia('(max-width: 1800px)');
         this.init();
     }
 
@@ -94,16 +93,14 @@ class TableOfContents {
             </nav>
         `;
 
-        // 포스트 레이아웃에 맞춰 데스크톱에서는 본문 왼쪽 sticky 컬럼으로 배치
+        // 플로팅 액션으로 동작하므로 본문 레이아웃에는 간격만 맞춘다.
         const postInner = document.querySelector('.post-template .site-main > .inner');
-        const postArticle = postInner ? postInner.querySelector('.post-full') : null;
 
         document.body.appendChild(this.tocButton);
-        if (postInner && postArticle) {
-            postInner.insertBefore(this.tocDropdown, postArticle);
+        document.body.appendChild(this.tocDropdown);
+
+        if (postInner) {
             postInner.classList.add('has-toc');
-        } else {
-            document.body.appendChild(this.tocDropdown);
         }
 
         // 버튼 클릭 이벤트
@@ -213,9 +210,7 @@ class TableOfContents {
 
                 history.replaceState(null, null, `#${targetId}`);
 
-                if (this.compactMedia.matches) {
-                    this.hideSidebar();
-                }
+                this.hideSidebar();
             }
         });
     }
