@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="620" viewBox="0 0 1200 620" role="img" aria-labelledby="title desc">
+  <title id="title">S3 bucket containing an ontology graph</title>
+  <desc id="desc">A stylized Amazon S3 bucket with markdown documents, annotations, and ontology nodes connected inside it.</desc>
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1f2933"/>
+      <stop offset="0.55" stop-color="#283747"/>
+      <stop offset="1" stop-color="#14213d"/>
+    </linearGradient>
+    <linearGradient id="bucket" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#f7b955"/>
+      <stop offset="1" stop-color="#d97817"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#0b1220" flood-opacity="0.32"/>
+    </filter>
+    <style>
+      .small { font: 600 18px Arial, sans-serif; fill: #24313f; }
+      .tiny { font: 600 14px Arial, sans-serif; fill: #f8fafc; letter-spacing: 0; }
+      .label { font: 700 21px Arial, sans-serif; fill: #f8fafc; letter-spacing: 0; }
+      .subtle { fill: none; stroke: #6ee7b7; stroke-width: 2; stroke-opacity: 0.22; }
+      .edge { stroke: #dbeafe; stroke-width: 3; stroke-linecap: round; stroke-opacity: 0.74; }
+      .edge2 { stroke: #34d399; stroke-width: 3; stroke-linecap: round; stroke-opacity: 0.72; }
+      .node { fill: #f8fafc; stroke: #e2e8f0; stroke-width: 2; }
+      .node-blue { fill: #60a5fa; stroke: #bfdbfe; stroke-width: 2; }
+      .node-green { fill: #34d399; stroke: #a7f3d0; stroke-width: 2; }
+      .node-orange { fill: #fb923c; stroke: #fed7aa; stroke-width: 2; }
+      .doc { fill: #fff7ed; stroke: #fed7aa; stroke-width: 2; }
+      .annotation { fill: #ecfeff; stroke: #67e8f9; stroke-width: 2; }
+    </style>
+  </defs>
+
+  <rect width="1200" height="620" fill="url(#sky)"/>
+  <path class="subtle" d="M58 102 C190 42, 330 54, 460 122 S722 198, 860 122 S1076 48, 1160 104"/>
+  <path class="subtle" d="M62 516 C238 438, 354 492, 504 442 S772 332, 938 424 S1088 528, 1160 468"/>
+  <path class="subtle" d="M84 274 C240 230, 368 268, 520 214 S768 146, 926 208 S1064 308, 1140 260"/>
+
+  <g opacity="0.24">
+    <rect x="82" y="70" width="120" height="32" rx="6" fill="#f8fafc"/>
+    <rect x="968" y="94" width="150" height="32" rx="6" fill="#f8fafc"/>
+    <rect x="72" y="510" width="170" height="32" rx="6" fill="#f8fafc"/>
+    <rect x="980" y="500" width="110" height="32" rx="6" fill="#f8fafc"/>
+  </g>
+
+  <g filter="url(#shadow)">
+    <ellipse cx="600" cy="505" rx="370" ry="60" fill="#0b1220" opacity="0.24"/>
+    <path d="M270 208 L930 208 L872 490 C863 535 815 560 760 560 L440 560 C385 560 337 535 328 490 Z" fill="url(#bucket)"/>
+    <path d="M270 208 C282 166 338 144 408 144 L792 144 C862 144 918 166 930 208 C918 250 862 272 792 272 L408 272 C338 272 282 250 270 208 Z" fill="#ffb84d"/>
+    <path d="M323 207 C333 184 370 170 418 170 L782 170 C830 170 867 184 877 207 C867 230 830 244 782 244 L418 244 C370 244 333 230 323 207 Z" fill="#1f2933" opacity="0.92"/>
+    <path d="M322 208 C334 230 370 244 418 244 L782 244 C830 244 866 230 878 208" fill="none" stroke="#f8d18a" stroke-width="4" opacity="0.8"/>
+  </g>
+
+  <g transform="translate(398 154)">
+    <line class="edge" x1="202" y1="102" x2="86" y2="174"/>
+    <line class="edge" x1="202" y1="102" x2="320" y2="174"/>
+    <line class="edge2" x1="86" y1="174" x2="42" y2="278"/>
+    <line class="edge2" x1="86" y1="174" x2="176" y2="286"/>
+    <line class="edge2" x1="320" y1="174" x2="252" y2="286"/>
+    <line class="edge2" x1="320" y1="174" x2="392" y2="278"/>
+    <line class="edge" x1="176" y1="286" x2="252" y2="286"/>
+
+    <circle class="node-orange" cx="202" cy="102" r="54"/>
+    <text class="tiny" x="202" y="97" text-anchor="middle">OKF</text>
+    <text class="tiny" x="202" y="116" text-anchor="middle">Bundle</text>
+
+    <circle class="node-blue" cx="86" cy="174" r="43"/>
+    <text class="tiny" x="86" y="171" text-anchor="middle">Tables</text>
+    <text class="tiny" x="86" y="190" text-anchor="middle">Docs</text>
+
+    <circle class="node-green" cx="320" cy="174" r="43"/>
+    <text class="tiny" x="320" y="171" text-anchor="middle">Metrics</text>
+    <text class="tiny" x="320" y="190" text-anchor="middle">Rules</text>
+
+    <circle class="node" cx="42" cy="278" r="34"/>
+    <text class="small" x="42" y="285" text-anchor="middle">YAML</text>
+
+    <circle class="node" cx="176" cy="286" r="38"/>
+    <text class="small" x="176" y="282" text-anchor="middle">Links</text>
+    <text class="small" x="176" y="304" text-anchor="middle">Graph</text>
+
+    <circle class="node" cx="252" cy="286" r="38"/>
+    <text class="small" x="252" y="282" text-anchor="middle">Query</text>
+    <text class="small" x="252" y="304" text-anchor="middle">Hints</text>
+
+    <circle class="node" cx="392" cy="278" r="34"/>
+    <text class="small" x="392" y="285" text-anchor="middle">SQL</text>
+  </g>
+
+  <g transform="translate(210 330)" opacity="0.96">
+    <rect class="doc" x="0" y="0" width="160" height="104" rx="10"/>
+    <path d="M122 0 L160 38 L122 38 Z" fill="#fed7aa"/>
+    <text class="small" x="22" y="38">index.md</text>
+    <rect x="24" y="56" width="96" height="8" rx="4" fill="#fb923c"/>
+    <rect x="24" y="76" width="116" height="8" rx="4" fill="#94a3b8"/>
+  </g>
+
+  <g transform="translate(830 328)" opacity="0.96">
+    <rect class="annotation" x="0" y="0" width="188" height="118" rx="10"/>
+    <text class="small" x="22" y="36">annotation</text>
+    <rect x="22" y="54" width="132" height="8" rx="4" fill="#22d3ee"/>
+    <rect x="22" y="76" width="92" height="8" rx="4" fill="#64748b"/>
+    <rect x="22" y="98" width="116" height="8" rx="4" fill="#64748b"/>
+  </g>
+
+  <g transform="translate(478 470)">
+    <rect x="0" y="0" width="244" height="54" rx="12" fill="#111827" opacity="0.66" stroke="#475569"/>
+    <text class="label" x="122" y="34" text-anchor="middle">S3 object context layer</text>
+  </g>
+</svg>

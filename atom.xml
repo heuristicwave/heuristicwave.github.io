@@ -8,6 +8,22 @@
     
       
       <item>
+        <title>Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기</title>
+        
+          <description>&lt;p&gt;최근 AWS Blog에 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-s3-annotations-attach-rich-queryable-context-directly-to-your-objects/&quot;&gt;Amazon S3 annotations 기능 소개&lt;/a&gt; 글이 올라왔습니다.
+S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Wed, 24 Jun 2026 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/S3-OKF-Annotations</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/S3-OKF-Annotations</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</title>
         
           <description>&lt;p&gt;이 포스팅에서는 Text-to-SQL의 기본 개념과 기존 접근 방법들의 한계를 살펴보고, Google Cloud Next 25에서 발표된 MCP Toolbox for Databases(구 Gen AI Toolbox for Databases)를 통해 이러한 문제를 어떻게 해결할 수 있는지 알아봅니다.&lt;/p&gt;

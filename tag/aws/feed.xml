@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2026-05-29T11:51:05+00:00</updated>
+  <updated>2026-06-24T14:18:00+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,258 @@
   
   
 
+  
+    <entry>
+      <title type="html">Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기</title>
+      <link href="https://heuristicwave.github.io/S3-OKF-Annotations" rel="alternate" type="text/html" title="Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기" />
+      <published>2026-06-24T00:00:00+00:00</published>
+      <updated>2026-06-24T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/S3-OKF-Annotations</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/S3-OKF-Annotations">&lt;p&gt;최근 AWS Blog에 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-s3-annotations-attach-rich-queryable-context-directly-to-your-objects/&quot;&gt;Amazon S3 annotations 기능 소개&lt;/a&gt; 글이 올라왔습니다.
+S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다.&lt;/p&gt;
+
+&lt;p&gt;비슷한 시점에 Google Cloud Blog에서는 &lt;a href=&quot;https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing&quot;&gt;Open Knowledge Format&lt;/a&gt;을 소개했습니다.
+OKF는 복잡한 신규 런타임이나 SDK를 전제하지 않고, &lt;strong&gt;Markdown 파일 + YAML frontmatter + Markdown link&lt;/strong&gt;만으로 사람과 Agent가 함께 읽을 수 있는 지식 묶음을 만들자는 접근입니다.&lt;/p&gt;
+
+&lt;p&gt;두 글을 같이 읽다 보니 이런 생각이 들었습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;OKF 문서는 S3 객체로 두고, 문서에서 뽑은 구조화 정보는 S3 annotations로 붙이면 되지 않을까?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이번 글에서는 이 아이디어를 작게 구현해보겠습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;이어지는 글에서는 OKF를 넘어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;asset.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vision.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;audio.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;agent.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;governance.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context.relations&lt;/code&gt;처럼 다양한 의미 계층을 S3 객체에 붙이는 방식과 S3 Metadata와의 차이를 다룹니다.&lt;br /&gt;
+&lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-okf-문서를-s3-객체로-보기&quot;&gt;&lt;a href=&quot;#concept&quot;&gt;🧠 OKF 문서를 S3 객체로 보기&lt;/a&gt;&lt;a id=&quot;concept&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OKF의 핵심은 “지식을 파일로 표현한다”는 점입니다.
+예를 들어 하나의 데이터셋, 테이블, 메트릭, 플레이북이 각각 Markdown 파일이 됩니다.
+파일 상단에는 YAML frontmatter가 있고, 본문에는 사람이 읽을 설명과 다른 문서로 이어지는 링크가 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metric&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Example Metric&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Short description for a metric object.&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;athena://analytics/example&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;metric&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2026-06-23T00:00:00Z&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+
+&lt;span class=&quot;gh&quot;&gt;# Example Metric&lt;/span&gt;
+
+This metric is related to &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;source.md&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;S3에 쌓인 원천 파일, 문서, 이미지, 로그에 의미를 붙이려면 “이 객체가 무엇을 나타내는지”를 별도 DB나 Catalog에 다시 저장하는 경우가 많습니다.
+이렇게 되면 S3 객체와 그 객체를 설명하는 정보가 서로 다른 시스템으로 나뉩니다.&lt;/p&gt;
+
+&lt;p&gt;S3 annotations는 이 간극을 줄일 수 있습니다.
+객체 본문을 다시 쓰지 않고도, 객체 옆에 구조화된 설명을 annotation으로 붙일 수 있기 때문입니다.
+AWS Blog 기준으로 S3 annotation은 객체마다 최대 1,000개를 붙일 수 있고, 각 annotation payload는 최대 1MB입니다.
+또한 같은 이름으로 다시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PutObjectAnnotation&lt;/code&gt;을 호출하면 객체를 다시 쓰지 않고 annotation만 업데이트할 수 있습니다.
+이 정도면 Markdown 원문 전체를 복제하지 않고도 frontmatter, links, summary처럼 검색과 관계 탐색에 필요한 정보만 나눠 담기에 충분합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/architecture.svg&quot; alt=&quot;OKF on S3 annotations&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-markdown-원문과-annotation-나누기&quot;&gt;&lt;a href=&quot;#projection&quot;&gt;🧱 Markdown 원문과 annotation 나누기&lt;/a&gt;&lt;a id=&quot;projection&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;핵심 흐름은 단순합니다.
+OKF Markdown 문서는 S3 Object로 올리고, frontmatter, link, summary처럼 검색과 관계 탐색에 필요한 정보는 별도 annotation으로 붙입니다.&lt;/p&gt;
+
+&lt;p&gt;이때 중요한 점은 Markdown 원문을 annotation에 다시 복제하지 않는 것입니다.
+원문은 사람이 읽고 수정할 수 있는 Markdown 객체로 유지하고, annotation에는 조회와 필터링에 필요한 작은 구조화 정보만 둡니다.&lt;/p&gt;
+
+&lt;p&gt;예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example.md&lt;/code&gt; 문서라면 다음처럼 나눌 수 있습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;항목&lt;/th&gt;
+      &lt;th&gt;저장 위치&lt;/th&gt;
+      &lt;th&gt;역할&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Markdown 본문&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/example.md&lt;/code&gt; S3 Object&lt;/td&gt;
+      &lt;td&gt;사람이 읽는 원문과 설명&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;YAML frontmatter&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;title&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tags&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resource&lt;/code&gt; 같은 queryable field&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Markdown link&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;다른 OKF 문서와의 관계&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;짧은 설명&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;검색 결과 미리보기와 Agent retrieval hint&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;객체 하나를 확인할 때는 object body를 내려받지 않고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ListObjectAnnotations&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetObjectAnnotation&lt;/code&gt;으로 필요한 annotation만 읽을 수 있습니다.
+하지만 이 방식만으로는 여러 객체를 한 번에 탐색하기 어렵습니다.
+그래서 다음 단계에서는 S3 Metadata annotation table을 통해 여러 객체의 annotation을 Athena에서 조회합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-annotation-table에서-후보-객체-찾기&quot;&gt;&lt;a href=&quot;#query&quot;&gt;🔎 Annotation table에서 후보 객체 찾기&lt;/a&gt;&lt;a id=&quot;query&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;객체 하나의 annotation을 읽는 것만으로는 OKF의 장점을 살리기 어렵습니다.
+중요한 부분은 여러 객체에 흩어진 정보를 한 번에 찾는 것입니다.&lt;/p&gt;
+
+&lt;p&gt;AWS Blog에 따르면 S3 Metadata annotation table을 활성화하면 annotation이 완전관리형 Apache Iceberg table로 전달되고, Athena 같은 엔진에서 조회할 수 있습니다.
+Apache Iceberg는 S3 같은 object storage 위의 데이터를 SQL 엔진이 테이블처럼 읽을 수 있게 해주는 open table format입니다.
+예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type = Metric&lt;/code&gt;이고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tags&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;activation&lt;/code&gt;이 들어간 객체를 찾는 쿼리는 다음처럼 생각할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bucket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;s3tablescatalog/aws-s3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;b_&amp;lt;bucket_name&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;annotation&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;okf.frontmatter&apos;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.type&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Metric&apos;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;contains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CAST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json_extract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.tags&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;varchar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;activation&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 쿼리의 핵심은 객체 본문이 아니라 annotation table을 먼저 본다는 점입니다.
+Markdown 객체를 내려받아 frontmatter를 매번 parsing하지 않고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation으로 분리해둔 field만으로 후보 객체를 좁힙니다.
+이후 Agent나 애플리케이션은 필요한 객체만 선택적으로 읽으면 됩니다.
+이 흐름은 RAG의 “무조건 chunk 검색”과는 조금 다릅니다.
+문서의 의미와 관계를 명시적으로 붙여두고, 그 구조화된 정보로 retrieval 후보를 줄이는 방식입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-okf-context-inspector로-확인하기&quot;&gt;&lt;a href=&quot;#inspector&quot;&gt;🖥️ OKF Context Inspector로 확인하기&lt;/a&gt;&lt;a id=&quot;inspector&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;동작을 확인하기 위해 간단한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OKF Context Inspector&lt;/code&gt;도 만들어보았습니다.
+왼쪽 패널에서 검색어와 OKF type, domain, tag를 입력하면 백엔드가 Athena로 S3 Metadata annotation table을 조회합니다.
+실행된 API 요청과 Athena query execution id도 함께 노출해두어, 브라우저 안에서 단순히 JSON을 필터링하는 것이 아니라 실제 annotation table 조회 흐름을 확인할 수 있게 했습니다.&lt;/p&gt;
+
+&lt;p&gt;아래 화면은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rag&lt;/code&gt; 키워드로 검색한 결과입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation에 들어 있는 title, description, tag를 기준으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RAG Evaluation Set&lt;/code&gt; 객체를 찾습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-search.png&quot; alt=&quot;OKF Context Inspector search result&quot; /&gt;
+&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rag&lt;/code&gt; 검색 결과. 왼쪽에는 Athena 실행 상태와 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/api/search&lt;/code&gt; 요청이 보이고, 가운데에는 annotation table 조회 결과로 좁혀진 S3 object가 표시됩니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;benchmark&lt;/code&gt; 같은 키워드로 검색하면 백엔드는 다음과 같은 Athena SQL을 실행합니다.
+검색 대상은 객체 본문이 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text_value&lt;/code&gt;입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.title&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.type&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;okf_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.domain&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;domain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json_extract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.tags&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;annotation&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;okf.frontmatter&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;regexp_like&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;(^|[^A-Za-z0-9])benchmark($|[^A-Za-z0-9])&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;LIMIT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;객체를 선택하면 오른쪽에서 해당 객체에 붙은 annotation 내용을 확인할 수 있습니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt;를 분리해 보여주고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;를 기준으로 어떤 문서가 이 객체를 참조하고 어떤 문서를 참조하는지도 간단한 Link Graph로 표현했습니다.
+여기서 주목할 부분은 기존처럼 특정 S3 prefix 아래를 탐색하는 방식과 다르다는 점입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/generated/ai/...&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/metrics/...&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/index.md&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/generated/technology/...&lt;/code&gt;처럼 서로 다른 목적의 객체가 각기 다른 prefix에 있더라도, annotation에 들어 있는 link 정보를 기준으로 연결 관계를 따라갈 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-payload-graph.png&quot; alt=&quot;OKF Context Inspector annotation payload and link graph&quot; /&gt;
+&lt;em&gt;선택한 S3 object의 annotation payload와 link graph. 참조 대상 객체들이 서로 다른 S3 prefix에 있어도, 객체에 붙은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt; annotation을 기준으로 연결된 문서를 찾을 수 있습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;이 데모의 목적은 예쁜 UI를 만드는 것이 아니라, S3 Annotations가 단순히 “객체에 메모를 붙이는 기능”을 넘어 조회 가능한 컨텍스트 계층으로 동작할 수 있음을 보여주는 것입니다.
+객체 본문은 S3에 그대로 두고, 검색과 관계 탐색에 필요한 작은 정보만 annotation으로 분리하면 Agent나 분석 도구가 먼저 참고할 수 있는 얇은 인덱스를 만들 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-실험을-통해-든-생각&quot;&gt;&lt;a href=&quot;#design&quot;&gt;🧩 실험을 통해 든 생각&lt;/a&gt;&lt;a id=&quot;design&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;첫 번째로, annotation을 붙여보면 S3 객체가 두 계층으로 나뉩니다.
+Markdown 객체는 사람이 읽고 수정하는 원문이고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; annotation은 Athena와 Agent가 먼저 조회하는 얇은 인덱스입니다.&lt;/p&gt;
+
+&lt;p&gt;다만 annotation은 원문에서 분리된 조회용 사본이므로, 원문과 annotation 사이의 정합성을 관리해야 합니다.
+Markdown 본문이나 frontmatter가 바뀌었는데 annotation이 갱신되지 않으면, Athena는 오래된 정보를 기준으로 후보 객체를 찾습니다.
+따라서 실험 수준에서는 수동으로 붙일 수 있지만, &lt;strong&gt;실제 운영에서는 객체 변경을 감지해 annotation을 다시 생성하는 pipeline이 필요합니다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;두 번째로, 이 글의 범위에서는 S3 Annotations를 “OKF를 S3 위에서 표현해보는 구현 방법” 정도로만 다룹니다.
+객체 본문 권한과 annotation 권한을 어떻게 나눌지, Agent가 annotation을 얼마나 신뢰해도 되는지, annotation namespace를 누가 관리할지는 별도의 설계 문제입니다.
+이 부분은 &lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;2편&lt;/a&gt;에서 S3 Annotations 자체를 객체 컨텍스트 계층으로 놓고 다시 정리해보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;마지막으로, 1편의 namespace는 의도적으로 좁게 잡았습니다.
+이번 데모에서는 단순히 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; 세 가지로 나눴습니다.
+이 세 이름은 OKF Markdown 문서의 구조를 S3 annotation으로 옮긴 것일 뿐입니다.
+이미지, 오디오, PDF, Parquet, 로그처럼 Markdown 문서가 아닌 객체까지 다루려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.*&lt;/code&gt;만으로는 부족합니다.
+그 확장 설계는 2편에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;asset.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vision.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;audio.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;agent.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;governance.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context.relations&lt;/code&gt; 같은 의미 계층으로 다시 다뤄보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;마무리&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;마무리&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OKF가 말하는 방향은 “Agent가 읽을 수 있는 지식을 복잡한 플랫폼이 아니라 간단한 파일 규약으로 교환하자”에 가깝습니다.
+S3 annotations는 이 아이디어를 S3 위에서 실험해볼 수 있는 구현 방법 중 하나입니다.
+OKF만을 위한 전용 인프라는 아니지만, 객체와 설명 정보를 함께 보관하고 annotation table로 조회해야 하는 환경에서는 꽤 좋은 접점이 될 수 있어 보입니다.&lt;/p&gt;
+
+&lt;p&gt;물론 이 모델이 검색엔진을 대체하는 것은 아닙니다.
+annotation table은 객체를 즉시 전문 검색하는 장치라기보다, 구조화된 정보로 후보 객체를 좁히는 조회 계층에 가깝습니다.
+실제 운영에서는 S3 Metadata, S3 Tables, Athena 권한, annotation table 반영 지연, namespace 관리까지 함께 설계해야 합니다.
+그래도 “S3 객체에 원문을 두고, Agent가 읽을 수 있는 설명 정보를 같은 객체에 붙인다”는 모델은 단순하고 직관적입니다.&lt;/p&gt;
+
+&lt;p&gt;이미 S3에 문서나 데이터셋이 쌓여 있고, 그 위에 Agent가 참고할 설명과 관계 정보를 붙이고 싶다면 한 번쯤 실험해볼 만한 패턴이라고 생각합니다.&lt;/p&gt;
+
+&lt;p&gt;다만 이 패턴을 OKF 문서 밖으로 확장하면 이야기가 달라집니다.
+이미지, 오디오, PDF, 데이터셋 같은 객체까지 다루려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.*&lt;/code&gt;가 아니라 더 넓은 annotation namespace와 객체 간 relation 모델이 필요합니다.
+이 내용은 &lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기&lt;/a&gt;에서 이어서 다룹니다.&lt;/p&gt;
+
+&lt;p&gt;잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Amazon S3 Annotations&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./S3-OKF-Annotations&quot;&gt;1편: Open Knowledge Format 흉내내기&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./S3-Annotations-2&quot;&gt;2편: 객체에 의미 계층 붙이기&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="genai" />
+      
+        <category term="lab" />
+      
+
+      
+        <summary type="html">최근 AWS Blog에 Amazon S3 annotations 기능 소개 글이 올라왔습니다. S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Amazon Nova Vision 기능 모델 증류 하기: Fine-Tuning Text-Image-to-Text</title>
@@ -2042,186 +2294,6 @@ EKS 기반 환경의 분석까지는 지원하지 않았습니다. HardenEKS 덕
 
       
         <summary type="html">본 글은 작년 12월 AWS Samples 깃허브에 릴리즈 된 HardenEKS를 사용해 보며, 설치 및 커스텀 방법에 대하여 작성 글입니다.</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Helm Chart Repository in AWS</title>
-      <link href="https://heuristicwave.github.io/Chart" rel="alternate" type="text/html" title="Helm Chart Repository in AWS" />
-      <published>2023-05-23T00:00:00+00:00</published>
-      <updated>2023-05-23T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/Chart</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/Chart">&lt;p&gt;AWS에서 Helm chart repositories를 운영하는 방법&lt;/p&gt;
-
-&lt;h2 id=&quot;intro&quot;&gt;Intro&lt;/h2&gt;
-
-&lt;p&gt;AWS 환경에서 EKS를 활용하여 서비스를 운영하다 보면, manifest 파일들을 관리하기 위해 helm을 사용하게 됩니다.
-이번 포스팅에서는 Helm chart에 대하여 알아보고 AWS 환경에서 Helm chart를 구축하는 방법에 대하여 이야기해 보겠습니다.
-&lt;em&gt;해당 포스팅은 OCI(Open Container Initiative) 기반의 Registry를 사용해 차트 패키지를 관리하는 방법은 다루지 않습니다.&lt;/em&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-background-knowledge&quot;&gt;🏞️ Background knowledge&lt;/h2&gt;
-
-&lt;p&gt;&lt;strong&gt;Helm&lt;/strong&gt;은 쿠버네티스를 위한 패키지 관리 도구입니다. &lt;strong&gt;Chart&lt;/strong&gt;라는 파일 형식으로 패키징 하며, 차트를 통해 설치, 업그레이드 롤백을 간편하게 해줍니다.
-&lt;strong&gt;Repository&lt;/strong&gt;는 차트를 모으고 공유할 수 있는 곳으로, 하나의 저장소에서 여러 개의 Chart를 관리할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;공식 차트 저장소 &lt;a href=&quot;https://artifacthub.io/&quot;&gt;ArtifactHUB&lt;/a&gt;를 활용할 수도 있고, 다음과 같이 자신만의 차트를 만들 수도 있습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Local 활용 (&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo index {PATH}&lt;/code&gt;, 로컬을 backend로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성&lt;/em&gt;)&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://medium.com/@mattiaperi/create-a-public-helm-chart-repository-with-github-pages-49b180dbb417&quot;&gt;GitHub Pages를 활용한 Public Helm Chart 구축&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://jasiek-petryk.medium.com/setting-up-a-private-helm-chart-repository-on-github-4a767703cec8&quot;&gt;GitHub에서 Private Helm chart 저장소 설정&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;참고 : &lt;a href=&quot;https://helm.sh/docs/topics/chart_repository/&quot;&gt;The Chart Repository Guide&lt;/a&gt;&lt;/p&gt;
-
-&lt;h1 id=&quot;amazon-s3로-helm-repository-구축하기&quot;&gt;Amazon S3로 Helm Repository 구축하기&lt;/h1&gt;
-
-&lt;p&gt;Helm을 패키징 하면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tgz&lt;/code&gt; 형식의 아카이브 파일이 생성되며, 이런 차트 파일은 주로 Amazon S3와 같은 Object storage를 백엔드로 사용합니다.
-AWS 환경에서 S3를 사용해 Chart를 구축하는 방법에 대하여 다음 2가지 방법으로 알아보겠습니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Helm Project에서 관리되는 &lt;a href=&quot;https://chartmuseum.com/&quot;&gt;ChartMuseum&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;AWS Prescriptive Guidance, &lt;a href=&quot;https://docs.aws.amazon.com/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;Set up a Helm v3 chart repository in Amazon S3&lt;/a&gt;에 소개된 &lt;a href=&quot;https://github.com/hypnoglow/helm-s3&quot;&gt;helm-s3&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;️-chartmuseum-using-amazon-s3&quot;&gt;🏛️ ChartMuseum using Amazon S3&lt;/h2&gt;
-
-&lt;p&gt;ChartMuseum은 Amazon 외에도 DigitalOcean, Google Cloud, Microsoft Azure 등 다양한 Storage를 백엔드로 지원합니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;architecture&quot;&gt;Architecture&lt;/h3&gt;
-
-&lt;p&gt;Helm Client의 경우 AWS Cloud 내 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt; 혹은 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 모두 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/architecture/chartmuseum.png&quot; alt=&quot;chartmuseum&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;process&quot;&gt;Process&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#installation&quot;&gt;Installation&lt;/a&gt;을 참고하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GoFish&lt;/code&gt; 혹은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;curl&lt;/code&gt;로 설치&lt;/li&gt;
-  &lt;li&gt;테스트를 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart&lt;/code&gt;라는 임의의 차트 생성 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm create mychart&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;helm repository에 담을 차트를 패키지화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm package ./mychart&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;2. Chartmuseum 실행 및 Repository 추가&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#using-amazon-s3&quot;&gt;Using with Amazon S3&lt;/a&gt;에 기재된 대로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;endpoint&lt;/code&gt;를 설정하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;IAM&lt;/code&gt; 권한을 부여&lt;/li&gt;
-  &lt;li&gt;다음 명령어로 chartmuseum을 실행시키고 Helm Client의 URL에 접속하여 동작 여부 확인 &lt;br /&gt; &lt;em&gt;Helm Client가 local인 경우, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;http://localhost:8080&lt;/code&gt;에서 확인 가능&lt;/em&gt;
-    &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;chartmuseum &lt;span class=&quot;nt&quot;&gt;--debug&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--port&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;8080 &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;--storage&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;amazon&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;--storage-amazon-bucket&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;my-s3-bucket&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;--storage-amazon-prefix&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
-&lt;span class=&quot;nt&quot;&gt;--storage-amazon-region&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;us-east-1&quot;&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
-  &lt;/li&gt;
-  &lt;li&gt;다음 명령어로 repository를 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add my-chart http://localhost:8080&lt;/code&gt; &lt;br /&gt; &lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt; 명령어로 확인 가능&lt;/em&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;다음 명령어로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/chartmuseum/helm-push&lt;/code&gt; &lt;br /&gt;
-&lt;a href=&quot;https://github.com/chartmuseum/helm-push&quot;&gt;helm-push&lt;/a&gt; 플러그인을 다운로드하고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push --help&lt;/code&gt; 명령어로 설치 여부 확인&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;cm-push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm cm-push mychart/ my-chart&lt;/code&gt;
-    &lt;ul&gt;
-      &lt;li&gt;&lt;em&gt;&lt;a href=&quot;https://chartmuseum.com/docs/#uploading-a-chart-package&quot;&gt;ChartMuseum 공식 문서&lt;/a&gt;에 소개된 API 호출 방식으로도 업로드가 가능합니다.&lt;/em&gt;&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;정상적으로 패키지가 올라가면 아래와 같이 S3 콘솔에서 확인 가능
-&lt;img src=&quot;../../assets/built/images/post/aws/chartmuseum-s3.png&quot; alt=&quot;s3-chart.png&quot; /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;h2 id=&quot;️-helm-v3-chart-repository-using-helm-s3&quot;&gt;☁️ Helm v3 chart repository using helm-s3&lt;/h2&gt;
-
-&lt;p&gt;이번에는 &lt;a href=&quot;https://docs.aws.amazon.com/ko_kr/prescriptive-guidance/latest/patterns/set-up-a-helm-v3-chart-repository-in-amazon-s3.html&quot;&gt;AWS 공식 문서&lt;/a&gt;에 소개 &lt;strong&gt;helm-s3&lt;/strong&gt; 플러그인을 사용해 AWS Native 하게 구축하는 방법을 알아보겠습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;architecture-1&quot;&gt;Architecture&lt;/h3&gt;
-
-&lt;p&gt;문서에서는 AWS Native 하게 사용하는 방법을 안내하기 위해, 로컬 helm 코드를 운영하기 위해 &lt;strong&gt;CodeCommit&lt;/strong&gt;과, Helm Client로 &lt;strong&gt;EC2 인스턴스&lt;/strong&gt;를 사용하고 있습니다.
-ChartMuseum 구축 때와 마찬가지로 Helm Client를 개발자의 &lt;strong&gt;Local 작업 환경&lt;/strong&gt; 혹은 CodeCommit을 다른 형상관리 도구로 대체 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;https://docs.aws.amazon.com/images/prescriptive-guidance/latest/patterns/images/pattern-img/1dbd3db8-5819-4f30-bebd-a144a2075fcd/images/55652eb2-2e11-4b14-9ed4-0cdcf55cc3e6.png&quot; alt=&quot;helm-s3&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;🧐 해당 방식에서는 &lt;strong&gt;Source code management&lt;/strong&gt; 목적으로 CodeCommit을 사용하고 있습니다. &lt;br /&gt;
-즉, &lt;strong&gt;소스 코드 및 리소스의 버전 관리&lt;/strong&gt;로 CodeCommit을 사용하고 &lt;strong&gt;차트 파일의 저장과 배포&lt;/strong&gt;에 S3을 사용하고 있습니다. &lt;br /&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;❗️ CodeCommit을 소스 코드 버전 관리 목적 외에도 ArgoCD와 통합하여 배포에도 사용할 수 있습니다. &lt;br /&gt;
-&lt;a href=&quot;https://catalog.us-east-1.prod.workshops.aws/workshops/9c0aa9ab-90a9-44a6-abe1-8dff360ae428/ko-KR/110-cicd/110-cicd&quot;&gt;AWS Workshop&lt;/a&gt;의 Helm Repo로 CodeCommit을 사용하는 방법도 있으니 참고하시기 바랍니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;process-1&quot;&gt;Process&lt;/h3&gt;
-
-&lt;p&gt;&lt;strong&gt;1. 준비 작업&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;고유한 S3 버킷 생성 후, 버킷에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;stable/myapp&lt;/code&gt; 폴더를 생성&lt;/li&gt;
-  &lt;li&gt;helm-s3 플러그인 설치 :  &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm plugin install https://github.com/hypnoglow/helm-s3.git&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;2. S3 버킷 초기화 및 추가&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;S3 폴더를 Helm Repository로 초기화 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 init s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt; 파일이 생성되었는지 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;aws s3 ls s3://{YOUR_BUCKET}/stable/myapp&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Helm 클라이언트에 Repository 추가 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add stable-myapp s3://{YOUR_BUCKET}/stable/myapp/&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;Repository 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo ls&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;strong&gt;3. S3에 패키지 업로드&lt;/strong&gt;&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;ChartMuseum 구축에서 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;mychart-*.tgz&lt;/code&gt; 파일 활용&lt;/li&gt;
-  &lt;li&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;s3 push&lt;/code&gt; 명령어로 패키지 업로드 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm s3 push ./mychart-0.1.0.tgz stable-myapp&lt;/code&gt;&lt;/li&gt;
-  &lt;li&gt;정상적으로 패키지가 올라가면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;index.yaml&lt;/code&gt;에 업로드 정보가 갱신되며, 다음과 같이 S3에서 확인 가능
-&lt;img src=&quot;../../assets/built/images/post/aws/helm-s3.png&quot; alt=&quot;helm-s3.png&quot; /&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;첫 번째 방법에서는, ChartMuseum을 실행시키고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-push&lt;/code&gt; 플러그인을 활용하여 차트를 업로드했습니다.
-반면 두 번째 방법에서는 ChartMuseum과 같은 업로드 계층 없이, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 플러그인을 활용하여 Direct로 차트를 업로드했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt; 사용하는 방식이 ChartMuseum과 같은 Layer가 없어 사용이 편리합니다.
-그뿐만 아니라 여러 개의 Chart를 운용하는 경우, ChartMuseum은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--storage-amazon-prefix&lt;/code&gt; 옵션을 바꿔가며 실행해야 하지만,
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm repo add&lt;/code&gt; 명령어 뒤에 &lt;strong&gt;prefix&lt;/strong&gt;만 바꿔 바로 사용할 수 있으므로 훨씬 유용한 것 같습니다.
-GCP나 Azure와 같은 다른 Object Storage를 함께 사용하는 게 아니라면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;helm-s3&lt;/code&gt;로 구축하는 것이 좋겠네요.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해 주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="devops" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">AWS에서 Helm chart repositories를 운영하는 방법</summary>
       
 
       

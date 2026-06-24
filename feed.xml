@@ -5,9 +5,241 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Fri, 29 May 2026 11:51:05 +0000</pubDate>
-        <lastBuildDate>Fri, 29 May 2026 11:51:05 +0000</lastBuildDate>
+        <pubDate>Wed, 24 Jun 2026 14:18:00 +0000</pubDate>
+        <lastBuildDate>Wed, 24 Jun 2026 14:18:00 +0000</lastBuildDate>
         <generator>Jekyll v3.10.0</generator>
+        
+            <item>
+                <title>Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기</title>
+                <description>&lt;p&gt;최근 AWS Blog에 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-s3-annotations-attach-rich-queryable-context-directly-to-your-objects/&quot;&gt;Amazon S3 annotations 기능 소개&lt;/a&gt; 글이 올라왔습니다.
+S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다.&lt;/p&gt;
+
+&lt;p&gt;비슷한 시점에 Google Cloud Blog에서는 &lt;a href=&quot;https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing&quot;&gt;Open Knowledge Format&lt;/a&gt;을 소개했습니다.
+OKF는 복잡한 신규 런타임이나 SDK를 전제하지 않고, &lt;strong&gt;Markdown 파일 + YAML frontmatter + Markdown link&lt;/strong&gt;만으로 사람과 Agent가 함께 읽을 수 있는 지식 묶음을 만들자는 접근입니다.&lt;/p&gt;
+
+&lt;p&gt;두 글을 같이 읽다 보니 이런 생각이 들었습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;OKF 문서는 S3 객체로 두고, 문서에서 뽑은 구조화 정보는 S3 annotations로 붙이면 되지 않을까?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이번 글에서는 이 아이디어를 작게 구현해보겠습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;이어지는 글에서는 OKF를 넘어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;asset.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vision.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;audio.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;agent.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;governance.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context.relations&lt;/code&gt;처럼 다양한 의미 계층을 S3 객체에 붙이는 방식과 S3 Metadata와의 차이를 다룹니다.&lt;br /&gt;
+&lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-okf-문서를-s3-객체로-보기&quot;&gt;&lt;a href=&quot;#concept&quot;&gt;🧠 OKF 문서를 S3 객체로 보기&lt;/a&gt;&lt;a id=&quot;concept&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OKF의 핵심은 “지식을 파일로 표현한다”는 점입니다.
+예를 들어 하나의 데이터셋, 테이블, 메트릭, 플레이북이 각각 Markdown 파일이 됩니다.
+파일 상단에는 YAML frontmatter가 있고, 본문에는 사람이 읽을 설명과 다른 문서로 이어지는 링크가 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metric&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Example Metric&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Short description for a metric object.&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;athena://analytics/example&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;metric&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2026-06-23T00:00:00Z&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+
+&lt;span class=&quot;gh&quot;&gt;# Example Metric&lt;/span&gt;
+
+This metric is related to &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;source.md&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;S3에 쌓인 원천 파일, 문서, 이미지, 로그에 의미를 붙이려면 “이 객체가 무엇을 나타내는지”를 별도 DB나 Catalog에 다시 저장하는 경우가 많습니다.
+이렇게 되면 S3 객체와 그 객체를 설명하는 정보가 서로 다른 시스템으로 나뉩니다.&lt;/p&gt;
+
+&lt;p&gt;S3 annotations는 이 간극을 줄일 수 있습니다.
+객체 본문을 다시 쓰지 않고도, 객체 옆에 구조화된 설명을 annotation으로 붙일 수 있기 때문입니다.
+AWS Blog 기준으로 S3 annotation은 객체마다 최대 1,000개를 붙일 수 있고, 각 annotation payload는 최대 1MB입니다.
+또한 같은 이름으로 다시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PutObjectAnnotation&lt;/code&gt;을 호출하면 객체를 다시 쓰지 않고 annotation만 업데이트할 수 있습니다.
+이 정도면 Markdown 원문 전체를 복제하지 않고도 frontmatter, links, summary처럼 검색과 관계 탐색에 필요한 정보만 나눠 담기에 충분합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/architecture.svg&quot; alt=&quot;OKF on S3 annotations&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-markdown-원문과-annotation-나누기&quot;&gt;&lt;a href=&quot;#projection&quot;&gt;🧱 Markdown 원문과 annotation 나누기&lt;/a&gt;&lt;a id=&quot;projection&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;핵심 흐름은 단순합니다.
+OKF Markdown 문서는 S3 Object로 올리고, frontmatter, link, summary처럼 검색과 관계 탐색에 필요한 정보는 별도 annotation으로 붙입니다.&lt;/p&gt;
+
+&lt;p&gt;이때 중요한 점은 Markdown 원문을 annotation에 다시 복제하지 않는 것입니다.
+원문은 사람이 읽고 수정할 수 있는 Markdown 객체로 유지하고, annotation에는 조회와 필터링에 필요한 작은 구조화 정보만 둡니다.&lt;/p&gt;
+
+&lt;p&gt;예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example.md&lt;/code&gt; 문서라면 다음처럼 나눌 수 있습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;항목&lt;/th&gt;
+      &lt;th&gt;저장 위치&lt;/th&gt;
+      &lt;th&gt;역할&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Markdown 본문&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/example.md&lt;/code&gt; S3 Object&lt;/td&gt;
+      &lt;td&gt;사람이 읽는 원문과 설명&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;YAML frontmatter&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;title&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tags&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resource&lt;/code&gt; 같은 queryable field&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Markdown link&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;다른 OKF 문서와의 관계&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;짧은 설명&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;검색 결과 미리보기와 Agent retrieval hint&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;객체 하나를 확인할 때는 object body를 내려받지 않고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ListObjectAnnotations&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetObjectAnnotation&lt;/code&gt;으로 필요한 annotation만 읽을 수 있습니다.
+하지만 이 방식만으로는 여러 객체를 한 번에 탐색하기 어렵습니다.
+그래서 다음 단계에서는 S3 Metadata annotation table을 통해 여러 객체의 annotation을 Athena에서 조회합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-annotation-table에서-후보-객체-찾기&quot;&gt;&lt;a href=&quot;#query&quot;&gt;🔎 Annotation table에서 후보 객체 찾기&lt;/a&gt;&lt;a id=&quot;query&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;객체 하나의 annotation을 읽는 것만으로는 OKF의 장점을 살리기 어렵습니다.
+중요한 부분은 여러 객체에 흩어진 정보를 한 번에 찾는 것입니다.&lt;/p&gt;
+
+&lt;p&gt;AWS Blog에 따르면 S3 Metadata annotation table을 활성화하면 annotation이 완전관리형 Apache Iceberg table로 전달되고, Athena 같은 엔진에서 조회할 수 있습니다.
+Apache Iceberg는 S3 같은 object storage 위의 데이터를 SQL 엔진이 테이블처럼 읽을 수 있게 해주는 open table format입니다.
+예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type = Metric&lt;/code&gt;이고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tags&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;activation&lt;/code&gt;이 들어간 객체를 찾는 쿼리는 다음처럼 생각할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bucket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;s3tablescatalog/aws-s3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;b_&amp;lt;bucket_name&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;annotation&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;okf.frontmatter&apos;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.type&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Metric&apos;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;contains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CAST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json_extract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.tags&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;varchar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;activation&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 쿼리의 핵심은 객체 본문이 아니라 annotation table을 먼저 본다는 점입니다.
+Markdown 객체를 내려받아 frontmatter를 매번 parsing하지 않고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation으로 분리해둔 field만으로 후보 객체를 좁힙니다.
+이후 Agent나 애플리케이션은 필요한 객체만 선택적으로 읽으면 됩니다.
+이 흐름은 RAG의 “무조건 chunk 검색”과는 조금 다릅니다.
+문서의 의미와 관계를 명시적으로 붙여두고, 그 구조화된 정보로 retrieval 후보를 줄이는 방식입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-okf-context-inspector로-확인하기&quot;&gt;&lt;a href=&quot;#inspector&quot;&gt;🖥️ OKF Context Inspector로 확인하기&lt;/a&gt;&lt;a id=&quot;inspector&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;동작을 확인하기 위해 간단한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OKF Context Inspector&lt;/code&gt;도 만들어보았습니다.
+왼쪽 패널에서 검색어와 OKF type, domain, tag를 입력하면 백엔드가 Athena로 S3 Metadata annotation table을 조회합니다.
+실행된 API 요청과 Athena query execution id도 함께 노출해두어, 브라우저 안에서 단순히 JSON을 필터링하는 것이 아니라 실제 annotation table 조회 흐름을 확인할 수 있게 했습니다.&lt;/p&gt;
+
+&lt;p&gt;아래 화면은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rag&lt;/code&gt; 키워드로 검색한 결과입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation에 들어 있는 title, description, tag를 기준으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RAG Evaluation Set&lt;/code&gt; 객체를 찾습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-search.png&quot; alt=&quot;OKF Context Inspector search result&quot; /&gt;
+&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rag&lt;/code&gt; 검색 결과. 왼쪽에는 Athena 실행 상태와 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/api/search&lt;/code&gt; 요청이 보이고, 가운데에는 annotation table 조회 결과로 좁혀진 S3 object가 표시됩니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;benchmark&lt;/code&gt; 같은 키워드로 검색하면 백엔드는 다음과 같은 Athena SQL을 실행합니다.
+검색 대상은 객체 본문이 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text_value&lt;/code&gt;입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.title&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.type&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;okf_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.domain&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;domain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json_extract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.tags&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;annotation&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;okf.frontmatter&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;regexp_like&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;(^|[^A-Za-z0-9])benchmark($|[^A-Za-z0-9])&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;LIMIT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;객체를 선택하면 오른쪽에서 해당 객체에 붙은 annotation 내용을 확인할 수 있습니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt;를 분리해 보여주고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;를 기준으로 어떤 문서가 이 객체를 참조하고 어떤 문서를 참조하는지도 간단한 Link Graph로 표현했습니다.
+여기서 주목할 부분은 기존처럼 특정 S3 prefix 아래를 탐색하는 방식과 다르다는 점입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/generated/ai/...&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/metrics/...&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/index.md&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/generated/technology/...&lt;/code&gt;처럼 서로 다른 목적의 객체가 각기 다른 prefix에 있더라도, annotation에 들어 있는 link 정보를 기준으로 연결 관계를 따라갈 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-payload-graph.png&quot; alt=&quot;OKF Context Inspector annotation payload and link graph&quot; /&gt;
+&lt;em&gt;선택한 S3 object의 annotation payload와 link graph. 참조 대상 객체들이 서로 다른 S3 prefix에 있어도, 객체에 붙은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt; annotation을 기준으로 연결된 문서를 찾을 수 있습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;이 데모의 목적은 예쁜 UI를 만드는 것이 아니라, S3 Annotations가 단순히 “객체에 메모를 붙이는 기능”을 넘어 조회 가능한 컨텍스트 계층으로 동작할 수 있음을 보여주는 것입니다.
+객체 본문은 S3에 그대로 두고, 검색과 관계 탐색에 필요한 작은 정보만 annotation으로 분리하면 Agent나 분석 도구가 먼저 참고할 수 있는 얇은 인덱스를 만들 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-실험을-통해-든-생각&quot;&gt;&lt;a href=&quot;#design&quot;&gt;🧩 실험을 통해 든 생각&lt;/a&gt;&lt;a id=&quot;design&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;첫 번째로, annotation을 붙여보면 S3 객체가 두 계층으로 나뉩니다.
+Markdown 객체는 사람이 읽고 수정하는 원문이고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; annotation은 Athena와 Agent가 먼저 조회하는 얇은 인덱스입니다.&lt;/p&gt;
+
+&lt;p&gt;다만 annotation은 원문에서 분리된 조회용 사본이므로, 원문과 annotation 사이의 정합성을 관리해야 합니다.
+Markdown 본문이나 frontmatter가 바뀌었는데 annotation이 갱신되지 않으면, Athena는 오래된 정보를 기준으로 후보 객체를 찾습니다.
+따라서 실험 수준에서는 수동으로 붙일 수 있지만, &lt;strong&gt;실제 운영에서는 객체 변경을 감지해 annotation을 다시 생성하는 pipeline이 필요합니다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;두 번째로, 이 글의 범위에서는 S3 Annotations를 “OKF를 S3 위에서 표현해보는 구현 방법” 정도로만 다룹니다.
+객체 본문 권한과 annotation 권한을 어떻게 나눌지, Agent가 annotation을 얼마나 신뢰해도 되는지, annotation namespace를 누가 관리할지는 별도의 설계 문제입니다.
+이 부분은 &lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;2편&lt;/a&gt;에서 S3 Annotations 자체를 객체 컨텍스트 계층으로 놓고 다시 정리해보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;마지막으로, 1편의 namespace는 의도적으로 좁게 잡았습니다.
+이번 데모에서는 단순히 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; 세 가지로 나눴습니다.
+이 세 이름은 OKF Markdown 문서의 구조를 S3 annotation으로 옮긴 것일 뿐입니다.
+이미지, 오디오, PDF, Parquet, 로그처럼 Markdown 문서가 아닌 객체까지 다루려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.*&lt;/code&gt;만으로는 부족합니다.
+그 확장 설계는 2편에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;asset.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vision.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;audio.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;agent.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;governance.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context.relations&lt;/code&gt; 같은 의미 계층으로 다시 다뤄보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;마무리&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;마무리&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OKF가 말하는 방향은 “Agent가 읽을 수 있는 지식을 복잡한 플랫폼이 아니라 간단한 파일 규약으로 교환하자”에 가깝습니다.
+S3 annotations는 이 아이디어를 S3 위에서 실험해볼 수 있는 구현 방법 중 하나입니다.
+OKF만을 위한 전용 인프라는 아니지만, 객체와 설명 정보를 함께 보관하고 annotation table로 조회해야 하는 환경에서는 꽤 좋은 접점이 될 수 있어 보입니다.&lt;/p&gt;
+
+&lt;p&gt;물론 이 모델이 검색엔진을 대체하는 것은 아닙니다.
+annotation table은 객체를 즉시 전문 검색하는 장치라기보다, 구조화된 정보로 후보 객체를 좁히는 조회 계층에 가깝습니다.
+실제 운영에서는 S3 Metadata, S3 Tables, Athena 권한, annotation table 반영 지연, namespace 관리까지 함께 설계해야 합니다.
+그래도 “S3 객체에 원문을 두고, Agent가 읽을 수 있는 설명 정보를 같은 객체에 붙인다”는 모델은 단순하고 직관적입니다.&lt;/p&gt;
+
+&lt;p&gt;이미 S3에 문서나 데이터셋이 쌓여 있고, 그 위에 Agent가 참고할 설명과 관계 정보를 붙이고 싶다면 한 번쯤 실험해볼 만한 패턴이라고 생각합니다.&lt;/p&gt;
+
+&lt;p&gt;다만 이 패턴을 OKF 문서 밖으로 확장하면 이야기가 달라집니다.
+이미지, 오디오, PDF, 데이터셋 같은 객체까지 다루려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.*&lt;/code&gt;가 아니라 더 넓은 annotation namespace와 객체 간 relation 모델이 필요합니다.
+이 내용은 &lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기&lt;/a&gt;에서 이어서 다룹니다.&lt;/p&gt;
+
+&lt;p&gt;잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Amazon S3 Annotations&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./S3-OKF-Annotations&quot;&gt;1편: Open Knowledge Format 흉내내기&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./S3-Annotations-2&quot;&gt;2편: 객체에 의미 계층 붙이기&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+
+</description>
+                <pubDate>Wed, 24 Jun 2026 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//S3-OKF-Annotations</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//S3-OKF-Annotations</guid>
+                
+                <category>aws</category>
+                
+                <category>genai</category>
+                
+                <category>lab</category>
+                
+                
+            </item>
         
             <item>
                 <title>Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</title>
@@ -2080,184 +2312,6 @@ Ragas는 &lt;strong&gt;&lt;a href=&quot;https://docs.ragas.io/en/stable/concepts
                 <pubDate>Sun, 31 Mar 2024 00:00:00 +0000</pubDate>
                 <link>https://heuristicwave.github.io//LLMEvaluation</link>
                 <guid isPermaLink="true">https://heuristicwave.github.io//LLMEvaluation</guid>
-                
-                <category>ai</category>
-                
-                <category>genai</category>
-                
-                <category>llm</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>ReAct leverages LLM as a reasoning engine</title>
-                <description>&lt;p&gt;LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp;amp; Amazon Bedrock)&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://www.deeplearning.ai/short-courses/langchain-for-llm-application-development/&quot;&gt;LangChain for LLM Application Development&lt;/a&gt; 강의에서 Andrew Ng 교수님은 &lt;em&gt;“사람들은 때때로 LLM이 많은 정보를 암기하기 위해 학습된 지식 저장소라 생각한다”&lt;/em&gt;라며,
-LLM을 더 유용하게 사용하는 방법은 추론(Reasoning) 엔진으로 생각하는 것이 더 유용하다고 말합니다. 교수님의 말대로 추론엔진으로써의 LLM을 활용하기 위해서는 ReAct 개념을 숙지해야 하는데요,
-저는 작년 5월경 AutoGPT, BabyAGI가 소개될 때 ReAct를 처음 접했는데 굉장히 어려운 개념이다 보니 이해하는데 시간이 오래 걸렸습니다.&lt;/p&gt;
-
-&lt;p&gt;ICLR 2023, &lt;a href=&quot;https://arxiv.org/abs/2210.03629&quot;&gt;ReAct: Synergizing Reasoning and Acting in Language Models&lt;/a&gt; 논문에서 LLM을 사용하여 인터리브 방식으로 &lt;strong&gt;추론 추적(reasoning traces)&lt;/strong&gt;과 &lt;strong&gt;작업별 동작(task-specific actions)&lt;/strong&gt;을 모두 생성하는 ReAct라는 프레임워크를 소개했습니다.
-이후, LangChain(이하, 🦜️🔗)에서는 Agents를 통해 ReAct 기법을 지원하기 시작했습니다. 앞으로 3편 이상의 시리즈물을 통해, ReAct 개념과 구현 및 AWS, OpenAI 등의 회사가 어떻게 ReAct와 관련된 제품을 설계했는지 등을 알아보겠습니다.
-이번 포스팅에서는 LLM을 추론엔진으로 활용하는 ReAct의 개념과 Amazon Bedrock과 🦜️🔗을 활용해 ReAct 기법을 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;1️⃣-react-prompting&quot;&gt;1️⃣ &lt;a href=&quot;https://www.promptingguide.ai/techniques/react&quot;&gt;ReAct Prompting&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;앞서 언급한 ReAct 논문을 바탕으로 작성된 Prompt Engineering Guide 문서는 ReAct Prompting을 다음과 같이 설명합니다.&lt;/p&gt;
-
-&lt;p&gt;ReAct는 인간이 새로운 작업을 학습하고 의사 결정이나 추론을 할 수 있도록 하는 “행동” 과 “추론”의 시너지 효과에서 영감을 받았다고 합니다.
-첫 번째 단계는 트레이닝 세트(예:&lt;a href=&quot;https://huggingface.co/datasets/hotpot_qa&quot;&gt;HotPotQA&lt;/a&gt;)에서 사례를 선택하고 ReAct 형식의 궤적(trajectories)을 구성합니다.
-이는 일종의 퓨샷(few-shot) 예시로 사용됩니다. 궤적은 여러 생각-행동-관찰(thought-action-observation) 단계로 구성됩니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;️-agents&quot;&gt;🦜️🔗 &lt;a href=&quot;https://python.langchain.com/docs/modules/agents/concepts&quot;&gt;Agents&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;앞서 소개한 ReAct의 개념을 🦜️🔗에서는 Agents라는 개념으로 구현했습니다. Agents의 핵심 아이디어는 언어 모델을 추론 엔진으로 사용해 어떤 작업을 어떤 순서로 수행할지 결정하는 것입니다.
-Agents를 크게 5개의 핵심 컴포넌트로 구성되어 있습니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;Schema
-    &lt;ul&gt;
-      &lt;li&gt;AgentAction : Agent가 수행해야 하는 작업을 나타내는 dataclass&lt;/li&gt;
-      &lt;li&gt;AgentFinish : Agent의 최종 결과, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;return_values&lt;/code&gt;의 경우 &lt;strong&gt;key-value&lt;/strong&gt; 형태로 리턴&lt;/li&gt;
-      &lt;li&gt;Intermidiate Steps : Agents 사이의 출력, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;List[Tuple[AgentAction, Any]]&lt;/code&gt; 타입으로 Observation은 최대한의 유연성을 위해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Any&lt;/code&gt;로 남겨짐(실제로는 대부분 문자열)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;Agent : 다음 단계에 수행할 역할을 결정하며, 보통 &lt;em&gt;‘언어 모델’, ‘프롬프트’&lt;/em&gt; 와 &lt;em&gt;‘output parser’&lt;/em&gt;로 실행됨
-    &lt;ul&gt;
-      &lt;li&gt;Agent Inputs : &lt;strong&gt;key-value&lt;/strong&gt; 매핑의 형. 일반적으로 PromptTemplate은 LLM에 잘 전달할 수 있는 형식으로 변환하는 처리&lt;/li&gt;
-      &lt;li&gt;Agent Outputs : 다음에 수행할 작업(&lt;strong&gt;AgentActions&lt;/strong&gt;) 혹은 최종 응답(&lt;strong&gt;AgentFinish&lt;/strong&gt;)&lt;/li&gt;
-    &lt;/ul&gt;
-  &lt;/li&gt;
-  &lt;li&gt;AgentExecutor : Agent의 런타임. Agent를 호출하고, 선택한 작업을 실행하고, 출력을 Agent로 전달하고 반복하는 역할&lt;/li&gt;
-  &lt;li&gt;Tools : Agent가 호출할 수 있는 함수. (Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함)&lt;/li&gt;
-  &lt;li&gt;Toolkits : 특정 목표를 달성하기 위해 여러 개의 tool이 필요하다면, toolkit을 통해 제공&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;2️⃣-실시간으로-상호-작용하는-llm-with-bedrock&quot;&gt;2️⃣ 실시간으로 상호 작용하는 LLM (with Bedrock)&lt;/h2&gt;
-
-&lt;p&gt;Amazon Bedrock Playground에서 Claude 2.1 모델에 23년 아시안컵 우승국을 물어보면, 아직 개최되지 않았다는 정보와 함께 22년 아시안컵이 우승국이 호주라는 환각이 발생합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/23AFC.png&quot; alt=&quot;AFC&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;아직 Claude 2.1 모델은 23년 아시안컵에 대해서 사전학습된 정보가 없지만, LangChain을 활용해 실시간으로 정보를 검색해 답변이 가능하도록 구현해 보겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.agents&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;load_tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain_community.chat_models&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockChat&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockChat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;model_kwargs&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;max_tokens_to_sample&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;700&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;temperature&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;us-west-2&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;load_tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;([&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;wikipedia&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]),&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;CHAT_ZERO_SHOT_REACT_DESCRIPTION&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;handle_parsing_errors&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;2023년, AFC 아시안컵에서 우승한 나라는?&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; 함수를 사용해 간단하게 Agent를 구현했습니다. Agent를 사용하기 위해, 사용할 도구, 모델, Agent Type 등을 인자로 받습니다.
-여기서는 Wikipedia를 사용하는 도구를 로드하고, 위에서 초기화한 BedrockChat 모델을 대화(chat) 모델로 사용합니다. 그리고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CHAT_ZERO_SHOT_REACT_DESCRIPTION&lt;/code&gt; 타입의 Agent로 초기화해 사용합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/ReAct.png&quot; alt=&quot;ReAct&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위와 같이 질문을 받아, wikipedia를 tool로 사용하여 thought-action-observation 단계를 거쳐 최종적으로 2023 아시안컵 우승국이 카타르라는 사실을 성공적으로 도출했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;em&gt;해당 예시는 앞서 소개한 🦜️🔗 Agents의 5가지 컴포넌트가 나와있지만, 아주 간단한 Agent라 앞서 배운 AgentExecutor, Toolkits 등의 개념이 나와있지 않습니다.
-다음 편에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;create_react_agent&lt;/code&gt; 등의 함수로 교체하며 자세히 다루겠습니다.&lt;/em&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 이번 예시에서 다룬 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt;는 0.1.0(&lt;a href=&quot;https://blog.langchain.dev/langchain-v0-1-0/&quot;&gt;24년 1월 8일 release&lt;/a&gt;)에서 deprecate 되었으며, 0.2.0에서는 삭제될 예정입니다. &lt;br /&gt; &amp;gt; &lt;em&gt;LangChainDeprecationWarning: The function &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;initialize_agent&lt;/code&gt; was deprecated in LangChain 0.1.0 and will be removed in 0.2.0.
-Use Use new agent constructor methods like create_react_agent, create_json_agent, create_structured_chat_agent, etc. instead.&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;3️⃣-tools&quot;&gt;3️⃣ Tools&lt;/h2&gt;
-
-&lt;h3 id=&quot;️-load_tools&quot;&gt;🛠️ &lt;a href=&quot;https://api.python.langchain.com/en/latest/agents/langchain.agents.load_tools.load_tools.html&quot;&gt;load_tools&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;이전 예시에서는 단 하나의 tool(wikipedia)만을 정의해, llm의 선택지가 하나밖에 존재하지 않았지만, 다음과 같은 형태로 다양할 tool 들을 준비하고 LLM의 추론을 완성시킬 수 있습니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tools = load_tools([&quot;llm-math&quot;,&quot;wikipedia&quot;])&lt;/code&gt;&lt;/p&gt;
-
-&lt;p&gt;만약, 특정 액션 이후 누군가에게 이메일을 보내야 하는 Action을 추가하려면, AWS Lambda에 email을 보내는 함수를 만들어두고 다음과 같이 tool로 활용해 llm에 의해 이메일을 발송할 수도 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Example : &lt;a href=&quot;https://python.langchain.com/docs/integrations/tools/awslambda&quot;&gt;AWS Lambda&lt;/a&gt;&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;load_tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;awslambda&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;awslambda_tool_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;email-sender&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;awslambda_tool_description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;sends an email with the specified content to test@testing123.com&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;function_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;testFunction1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ZERO_SHOT_REACT_DESCRIPTION&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;run&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Send an email to test@testing123.com saying hello world.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;load_tools에는 AWS Lambda 외에 Amazon API Gateway도 있고, 필요하다면 다음과 같이 직접 tool을 만들 수도 있습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;️-custom-tools&quot;&gt;⚒️ &lt;a href=&quot;https://python.langchain.com/docs/modules/agents/tools/custom_tools&quot;&gt;Custom Tools&lt;/a&gt;&lt;/h3&gt;
-
-&lt;p&gt;다음은 단어의 글자 수를 구하는 간단한 Custom Tool입니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@tool&lt;/code&gt; decorator와 함께 함수(tool 이름)와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt; 정의 후, Agent에서 호출해 사용합니다.
-Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의 핵심 컴포넌트를 유의하여 작성해야 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;o&quot;&gt;@&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tool&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
-    &lt;span class=&quot;s&quot;&gt;&quot;&quot;&quot;단어의 글자수를 구합니다.&quot;&quot;&quot;&lt;/span&gt;
-    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;initialize_agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;tools&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;get_length&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;chat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;AgentType&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ZERO_SHOT_REACT_DESCRIPTION&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-    &lt;span class=&quot;n&quot;&gt;verbose&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;bp&quot;&gt;True&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
-&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;agent&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;invoke&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;({&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;langchain의 글자수를 구하시오.&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;})&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;코드가 로직상으로 맞을 수 있지만, 추론에 의거하여 답을 구하기 때문에 원하는 대답이 나오지 않을 수도 있습니다.
-예를 들어, ‘Tool에 올바른 권한과 도움 되는 방식으로 설명해야 함’을 무시하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;description&lt;/code&gt;에 ‘&lt;em&gt;단어의 글자 수를 구하는 질문에 해당 도구를 사용하지 마세요.&lt;/em&gt;‘라고 기재하면 다음과 같이 잘못된 추론을 진행합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/customTool.png&quot; alt=&quot;customTool&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;이번 포스팅에서는 ReAct 개념을 🦜️🔗에서 &lt;strong&gt;Agents&lt;/strong&gt;로 알아보았습니다.
-다음 포스팅에서는 AWS가 ReAct 개념을 구현한 &lt;strong&gt;Agents for Amazon Bedrock&lt;/strong&gt;과 Open AI의 &lt;strong&gt;Function calling&lt;/strong&gt;를 비교하며 각각 어떻게 ReAct를 구현했는지 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;🦜️🔗 LangChain&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-  &lt;li&gt;&lt;a href=&quot;./ReAct&quot;&gt;ReAct&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;./Agents&quot;&gt;Multi Tool Agents&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-
-</description>
-                <pubDate>Sun, 18 Feb 2024 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//ReAct</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//ReAct</guid>
                 
                 <category>ai</category>
                 

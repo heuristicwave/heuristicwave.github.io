@@ -11,7 +11,7 @@
 
 
 
-    <title>Serverless - Heuristic Wave Blog</title>
+    <title>Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -23,6 +23,8 @@
     <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
     
     <!-- TOC CSS - 포스트 페이지에서만 로드 -->
+    
+    <link rel="stylesheet" type="text/css" href="/assets/built/toc.css" />
     
     
     <!-- Inline Dark Theme CSS for immediate effect -->
@@ -429,28 +431,34 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/tag/serverless/" />
+    <link rel="canonical" href="https://heuristicwave.github.io/S3-OKF-Annotations" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Serverless - Heuristic Wave Blog" />
-    <meta property="og:description" content="Careful Writer" />
-    <meta property="og:url" content="https://heuristicwave.github.io/tag/serverless/" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
+    <meta property="og:title" content="Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기" />
+    <meta property="og:description" content="최근 AWS Blog에 Amazon S3 annotations 기능 소개 글이 올라왔습니다. S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다. 비슷한 시점에 Google Cloud Blog에서는 Open Knowledge Format을 소개했습니다. OKF는 복잡한 신규 런타임이나 SDK를" />
+    <meta property="og:url" content="https://heuristicwave.github.io/S3-OKF-Annotations" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/s3-okf-ontology.svg" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
+    <meta property="article:author" content="https://www.facebook.com/" />
+    <meta property="article:published_time" content="2026-06-24T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2026-06-24T00:00:00+00:00" />
+    <meta property="article:tag" content="Aws" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Serverless - Heuristic Wave Blog" />
-    <meta name="twitter:description" content="Careful Writer" />
+    <meta name="twitter:title" content="Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기" />
+    <meta name="twitter:description" content="최근 AWS Blog에 Amazon S3 annotations 기능 소개 글이 올라왔습니다. S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다. 비슷한 시점에 Google Cloud Blog에서는 Open Knowledge Format을 소개했습니다. OKF는 복잡한 신규 런타임이나 SDK를" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/s3-okf-ontology.svg" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Aws" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
-    <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="666" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
 
     <script type="application/ld+json">
 {
@@ -461,18 +469,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/tag/serverless/",
+    "url": "https://heuristicwave.github.io/S3-OKF-Annotations",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/blog-cover.jpg",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/s3-okf-ontology.svg",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/tag/serverless/"
+        "@id": "https://heuristicwave.github.io/S3-OKF-Annotations"
     },
-    "description": "Careful Writer"
+    "description": "최근 AWS Blog에 Amazon S3 annotations 기능 소개 글이 올라왔습니다. S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다. 비슷한 시점에 Google Cloud Blog에서는 Open Knowledge Format을 소개했습니다. OKF는 복잡한 신규 런타임이나 SDK를"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -494,24 +502,20 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Tag Page" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
-<body class="tag-template">
+<body class="post-template">
 
     <div class="site-wrapper">
         <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
         <!-- default -->
-<!-- The tag above means - insert everything in this file into the {body} of the default.hbs template -->
 
-<!-- The big featured header, it uses blog cover image as a BG if available -->
-<!-- #tag -->
-<!-- dynamically loading backgrounds for tags,  descriptions and page titles -->
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
 
-
-
-<header class="site-header outer no-cover">
+<header class="site-header outer">
     <div class="inner">
         <nav class="site-nav">
     <div class="site-nav-left">
@@ -559,55 +563,661 @@
     </div>
 </nav>
 
-        <div class="site-header-content">
-            <h1 class="site-title">SERVERLESS</h1>
-            <h2 class="site-description">
-                
-    			    A collection of 1 posts
-                
-            </h2>
-        </div>
     </div>
 </header>
-<!-- tag -->
 
-<!-- The main content area -->
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
-        <div class="post-feed">
-            <!-- The tag below includes the markup for each post - partials/post-card.hbs -->
+
+        <article class="post-full  tag-aws tag-genai tag-lab post tag-ai ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="24 June 2026">24 June 2026</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/aws/'>AWS</a>,
+                            
+                        
+                            
+                               <a href='/tag/genai/'>GENAI</a>,
+                            
+                        
+                            
+                               <a href='/tag/lab/'>LAB</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/s3-okf-ontology.svg)">
+            </figure>
             
 
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>최근 AWS Blog에 <a href="https://aws.amazon.com/ko/blogs/korea/amazon-s3-annotations-attach-rich-queryable-context-directly-to-your-objects/">Amazon S3 annotations 기능 소개</a> 글이 올라왔습니다.
+S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다.</p>
 
-    <article class="post-card tag-template">
+<p>비슷한 시점에 Google Cloud Blog에서는 <a href="https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing">Open Knowledge Format</a>을 소개했습니다.
+OKF는 복잡한 신규 런타임이나 SDK를 전제하지 않고, <strong>Markdown 파일 + YAML frontmatter + Markdown link</strong>만으로 사람과 Agent가 함께 읽을 수 있는 지식 묶음을 만들자는 접근입니다.</p>
+
+<p>두 글을 같이 읽다 보니 이런 생각이 들었습니다.</p>
+
+<blockquote>
+  <p>OKF 문서는 S3 객체로 두고, 문서에서 뽑은 구조화 정보는 S3 annotations로 붙이면 되지 않을까?</p>
+</blockquote>
+
+<p>이번 글에서는 이 아이디어를 작게 구현해보겠습니다.</p>
+
+<blockquote>
+  <p>이어지는 글에서는 OKF를 넘어서 <code class="language-plaintext highlighter-rouge">asset.*</code>, <code class="language-plaintext highlighter-rouge">vision.*</code>, <code class="language-plaintext highlighter-rouge">audio.*</code>, <code class="language-plaintext highlighter-rouge">agent.*</code>, <code class="language-plaintext highlighter-rouge">governance.*</code>, <code class="language-plaintext highlighter-rouge">context.relations</code>처럼 다양한 의미 계층을 S3 객체에 붙이는 방식과 S3 Metadata와의 차이를 다룹니다.<br />
+<a href="/S3-Annotations-2.html">Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기</a></p>
+</blockquote>
+
+<p><br /></p>
+
+<h2 id="-okf-문서를-s3-객체로-보기"><a href="#concept">🧠 OKF 문서를 S3 객체로 보기</a><a id="concept"></a></h2>
+
+<p>OKF의 핵심은 “지식을 파일로 표현한다”는 점입니다.
+예를 들어 하나의 데이터셋, 테이블, 메트릭, 플레이북이 각각 Markdown 파일이 됩니다.
+파일 상단에는 YAML frontmatter가 있고, 본문에는 사람이 읽을 설명과 다른 문서로 이어지는 링크가 있습니다.</p>
+
+<div class="language-markdown highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">---</span>
+<span class="na">type</span><span class="pi">:</span> <span class="s">Metric</span>
+<span class="na">title</span><span class="pi">:</span> <span class="s">Example Metric</span>
+<span class="na">description</span><span class="pi">:</span> <span class="s">Short description for a metric object.</span>
+<span class="na">resource</span><span class="pi">:</span> <span class="s">athena://analytics/example</span>
+<span class="na">tags</span><span class="pi">:</span> <span class="pi">[</span><span class="nv">metric</span><span class="pi">,</span> <span class="nv">activation</span><span class="pi">]</span>
+<span class="na">timestamp</span><span class="pi">:</span> <span class="s">2026-06-23T00:00:00Z</span>
+<span class="nn">---</span>
+
+<span class="gh"># Example Metric</span>
+
+This metric is related to <span class="p">[</span><span class="nv">source</span><span class="p">](</span><span class="sx">source.md</span><span class="p">)</span>.
+</code></pre></div></div>
+
+<p>S3에 쌓인 원천 파일, 문서, 이미지, 로그에 의미를 붙이려면 “이 객체가 무엇을 나타내는지”를 별도 DB나 Catalog에 다시 저장하는 경우가 많습니다.
+이렇게 되면 S3 객체와 그 객체를 설명하는 정보가 서로 다른 시스템으로 나뉩니다.</p>
+
+<p>S3 annotations는 이 간극을 줄일 수 있습니다.
+객체 본문을 다시 쓰지 않고도, 객체 옆에 구조화된 설명을 annotation으로 붙일 수 있기 때문입니다.
+AWS Blog 기준으로 S3 annotation은 객체마다 최대 1,000개를 붙일 수 있고, 각 annotation payload는 최대 1MB입니다.
+또한 같은 이름으로 다시 <code class="language-plaintext highlighter-rouge">PutObjectAnnotation</code>을 호출하면 객체를 다시 쓰지 않고 annotation만 업데이트할 수 있습니다.
+이 정도면 Markdown 원문 전체를 복제하지 않고도 frontmatter, links, summary처럼 검색과 관계 탐색에 필요한 정보만 나눠 담기에 충분합니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/s3-okf-annotations/architecture.svg" alt="OKF on S3 annotations" /></p>
+
+<p><br /></p>
+
+<h2 id="-markdown-원문과-annotation-나누기"><a href="#projection">🧱 Markdown 원문과 annotation 나누기</a><a id="projection"></a></h2>
+
+<p>핵심 흐름은 단순합니다.
+OKF Markdown 문서는 S3 Object로 올리고, frontmatter, link, summary처럼 검색과 관계 탐색에 필요한 정보는 별도 annotation으로 붙입니다.</p>
+
+<p>이때 중요한 점은 Markdown 원문을 annotation에 다시 복제하지 않는 것입니다.
+원문은 사람이 읽고 수정할 수 있는 Markdown 객체로 유지하고, annotation에는 조회와 필터링에 필요한 작은 구조화 정보만 둡니다.</p>
+
+<p>예를 들어 <code class="language-plaintext highlighter-rouge">example.md</code> 문서라면 다음처럼 나눌 수 있습니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>항목</th>
+      <th>저장 위치</th>
+      <th>역할</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Markdown 본문</td>
+      <td><code class="language-plaintext highlighter-rouge">okf/example.md</code> S3 Object</td>
+      <td>사람이 읽는 원문과 설명</td>
+    </tr>
+    <tr>
+      <td>YAML frontmatter</td>
+      <td><code class="language-plaintext highlighter-rouge">okf.frontmatter</code> annotation</td>
+      <td><code class="language-plaintext highlighter-rouge">type</code>, <code class="language-plaintext highlighter-rouge">title</code>, <code class="language-plaintext highlighter-rouge">tags</code>, <code class="language-plaintext highlighter-rouge">resource</code> 같은 queryable field</td>
+    </tr>
+    <tr>
+      <td>Markdown link</td>
+      <td><code class="language-plaintext highlighter-rouge">okf.links</code> annotation</td>
+      <td>다른 OKF 문서와의 관계</td>
+    </tr>
+    <tr>
+      <td>짧은 설명</td>
+      <td><code class="language-plaintext highlighter-rouge">okf.summary</code> annotation</td>
+      <td>검색 결과 미리보기와 Agent retrieval hint</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>객체 하나를 확인할 때는 object body를 내려받지 않고 <code class="language-plaintext highlighter-rouge">ListObjectAnnotations</code>와 <code class="language-plaintext highlighter-rouge">GetObjectAnnotation</code>으로 필요한 annotation만 읽을 수 있습니다.
+하지만 이 방식만으로는 여러 객체를 한 번에 탐색하기 어렵습니다.
+그래서 다음 단계에서는 S3 Metadata annotation table을 통해 여러 객체의 annotation을 Athena에서 조회합니다.</p>
+
+<p><br /></p>
+
+<h2 id="-annotation-table에서-후보-객체-찾기"><a href="#query">🔎 Annotation table에서 후보 객체 찾기</a><a id="query"></a></h2>
+
+<p>객체 하나의 annotation을 읽는 것만으로는 OKF의 장점을 살리기 어렵습니다.
+중요한 부분은 여러 객체에 흩어진 정보를 한 번에 찾는 것입니다.</p>
+
+<p>AWS Blog에 따르면 S3 Metadata annotation table을 활성화하면 annotation이 완전관리형 Apache Iceberg table로 전달되고, Athena 같은 엔진에서 조회할 수 있습니다.
+Apache Iceberg는 S3 같은 object storage 위의 데이터를 SQL 엔진이 테이블처럼 읽을 수 있게 해주는 open table format입니다.
+예를 들어 <code class="language-plaintext highlighter-rouge">okf.frontmatter</code> annotation에서 <code class="language-plaintext highlighter-rouge">type = Metric</code>이고 <code class="language-plaintext highlighter-rouge">tags</code>에 <code class="language-plaintext highlighter-rouge">activation</code>이 들어간 객체를 찾는 쿼리는 다음처럼 생각할 수 있습니다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">DISTINCT</span> <span class="n">bucket</span><span class="p">,</span> <span class="n">object_key</span>
+<span class="k">FROM</span> <span class="nv">"s3tablescatalog/aws-s3"</span><span class="p">.</span><span class="nv">"b_&lt;bucket_name&gt;"</span><span class="p">.</span><span class="nv">"annotation"</span>
+<span class="k">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">'okf.frontmatter'</span>
+  <span class="k">AND</span> <span class="n">json_extract_scalar</span><span class="p">(</span><span class="n">text_value</span><span class="p">,</span> <span class="s1">'$.type'</span><span class="p">)</span> <span class="o">=</span> <span class="s1">'Metric'</span>
+  <span class="k">AND</span> <span class="k">contains</span><span class="p">(</span><span class="k">CAST</span><span class="p">(</span><span class="n">json_extract</span><span class="p">(</span><span class="n">text_value</span><span class="p">,</span> <span class="s1">'$.tags'</span><span class="p">)</span> <span class="k">AS</span> <span class="n">array</span><span class="p">(</span><span class="nb">varchar</span><span class="p">)),</span> <span class="s1">'activation'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>이 쿼리의 핵심은 객체 본문이 아니라 annotation table을 먼저 본다는 점입니다.
+Markdown 객체를 내려받아 frontmatter를 매번 parsing하지 않고, <code class="language-plaintext highlighter-rouge">okf.frontmatter</code> annotation으로 분리해둔 field만으로 후보 객체를 좁힙니다.
+이후 Agent나 애플리케이션은 필요한 객체만 선택적으로 읽으면 됩니다.
+이 흐름은 RAG의 “무조건 chunk 검색”과는 조금 다릅니다.
+문서의 의미와 관계를 명시적으로 붙여두고, 그 구조화된 정보로 retrieval 후보를 줄이는 방식입니다.</p>
+
+<p><br /></p>
+
+<h2 id="️-okf-context-inspector로-확인하기"><a href="#inspector">🖥️ OKF Context Inspector로 확인하기</a><a id="inspector"></a></h2>
+
+<p>동작을 확인하기 위해 간단한 <code class="language-plaintext highlighter-rouge">OKF Context Inspector</code>도 만들어보았습니다.
+왼쪽 패널에서 검색어와 OKF type, domain, tag를 입력하면 백엔드가 Athena로 S3 Metadata annotation table을 조회합니다.
+실행된 API 요청과 Athena query execution id도 함께 노출해두어, 브라우저 안에서 단순히 JSON을 필터링하는 것이 아니라 실제 annotation table 조회 흐름을 확인할 수 있게 했습니다.</p>
+
+<p>아래 화면은 <code class="language-plaintext highlighter-rouge">rag</code> 키워드로 검색한 결과입니다.
+<code class="language-plaintext highlighter-rouge">okf.frontmatter</code> annotation에 들어 있는 title, description, tag를 기준으로 <code class="language-plaintext highlighter-rouge">RAG Evaluation Set</code> 객체를 찾습니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-search.png" alt="OKF Context Inspector search result" />
+<em><code class="language-plaintext highlighter-rouge">rag</code> 검색 결과. 왼쪽에는 Athena 실행 상태와 실제 <code class="language-plaintext highlighter-rouge">/api/search</code> 요청이 보이고, 가운데에는 annotation table 조회 결과로 좁혀진 S3 object가 표시됩니다.</em></p>
+
+<p>예를 들어 <code class="language-plaintext highlighter-rouge">benchmark</code> 같은 키워드로 검색하면 백엔드는 다음과 같은 Athena SQL을 실행합니다.
+검색 대상은 객체 본문이 아니라 <code class="language-plaintext highlighter-rouge">okf.frontmatter</code> annotation의 <code class="language-plaintext highlighter-rouge">text_value</code>입니다.</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span>
+  <span class="n">object_key</span><span class="p">,</span>
+  <span class="n">json_extract_scalar</span><span class="p">(</span><span class="n">text_value</span><span class="p">,</span> <span class="s1">'$.title'</span><span class="p">)</span> <span class="k">AS</span> <span class="n">title</span><span class="p">,</span>
+  <span class="n">json_extract_scalar</span><span class="p">(</span><span class="n">text_value</span><span class="p">,</span> <span class="s1">'$.type'</span><span class="p">)</span> <span class="k">AS</span> <span class="n">okf_type</span><span class="p">,</span>
+  <span class="n">json_extract_scalar</span><span class="p">(</span><span class="n">text_value</span><span class="p">,</span> <span class="s1">'$.domain'</span><span class="p">)</span> <span class="k">AS</span> <span class="k">domain</span><span class="p">,</span>
+  <span class="n">json_format</span><span class="p">(</span><span class="n">json_extract</span><span class="p">(</span><span class="n">text_value</span><span class="p">,</span> <span class="s1">'$.tags'</span><span class="p">))</span> <span class="k">AS</span> <span class="n">tags</span><span class="p">,</span>
+  <span class="n">text_value</span>
+<span class="k">FROM</span> <span class="nv">"annotation"</span>
+<span class="k">WHERE</span> <span class="n">name</span> <span class="o">=</span> <span class="s1">'okf.frontmatter'</span> <span class="k">AND</span>
+  <span class="n">regexp_like</span><span class="p">(</span><span class="k">lower</span><span class="p">(</span><span class="n">text_value</span><span class="p">),</span> <span class="s1">'(^|[^A-Za-z0-9])benchmark($|[^A-Za-z0-9])'</span><span class="p">)</span>
+<span class="k">ORDER</span> <span class="k">BY</span> <span class="n">object_key</span>
+<span class="k">LIMIT</span> <span class="mi">100</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>객체를 선택하면 오른쪽에서 해당 객체에 붙은 annotation 내용을 확인할 수 있습니다.
+<code class="language-plaintext highlighter-rouge">okf.frontmatter</code>, <code class="language-plaintext highlighter-rouge">okf.links</code>, <code class="language-plaintext highlighter-rouge">okf.summary</code>를 분리해 보여주고, <code class="language-plaintext highlighter-rouge">okf.links</code>를 기준으로 어떤 문서가 이 객체를 참조하고 어떤 문서를 참조하는지도 간단한 Link Graph로 표현했습니다.
+여기서 주목할 부분은 기존처럼 특정 S3 prefix 아래를 탐색하는 방식과 다르다는 점입니다.
+<code class="language-plaintext highlighter-rouge">okf/generated/ai/...</code>, <code class="language-plaintext highlighter-rouge">okf/metrics/...</code>, <code class="language-plaintext highlighter-rouge">okf/index.md</code>, <code class="language-plaintext highlighter-rouge">okf/generated/technology/...</code>처럼 서로 다른 목적의 객체가 각기 다른 prefix에 있더라도, annotation에 들어 있는 link 정보를 기준으로 연결 관계를 따라갈 수 있습니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-payload-graph.png" alt="OKF Context Inspector annotation payload and link graph" />
+<em>선택한 S3 object의 annotation payload와 link graph. 참조 대상 객체들이 서로 다른 S3 prefix에 있어도, 객체에 붙은 <code class="language-plaintext highlighter-rouge">okf.links</code> annotation을 기준으로 연결된 문서를 찾을 수 있습니다.</em></p>
+
+<p>이 데모의 목적은 예쁜 UI를 만드는 것이 아니라, S3 Annotations가 단순히 “객체에 메모를 붙이는 기능”을 넘어 조회 가능한 컨텍스트 계층으로 동작할 수 있음을 보여주는 것입니다.
+객체 본문은 S3에 그대로 두고, 검색과 관계 탐색에 필요한 작은 정보만 annotation으로 분리하면 Agent나 분석 도구가 먼저 참고할 수 있는 얇은 인덱스를 만들 수 있습니다.</p>
+
+<p><br /></p>
+
+<h2 id="-실험을-통해-든-생각"><a href="#design">🧩 실험을 통해 든 생각</a><a id="design"></a></h2>
+
+<p>첫 번째로, annotation을 붙여보면 S3 객체가 두 계층으로 나뉩니다.
+Markdown 객체는 사람이 읽고 수정하는 원문이고, <code class="language-plaintext highlighter-rouge">okf.frontmatter</code>, <code class="language-plaintext highlighter-rouge">okf.links</code>, <code class="language-plaintext highlighter-rouge">okf.summary</code> annotation은 Athena와 Agent가 먼저 조회하는 얇은 인덱스입니다.</p>
+
+<p>다만 annotation은 원문에서 분리된 조회용 사본이므로, 원문과 annotation 사이의 정합성을 관리해야 합니다.
+Markdown 본문이나 frontmatter가 바뀌었는데 annotation이 갱신되지 않으면, Athena는 오래된 정보를 기준으로 후보 객체를 찾습니다.
+따라서 실험 수준에서는 수동으로 붙일 수 있지만, <strong>실제 운영에서는 객체 변경을 감지해 annotation을 다시 생성하는 pipeline이 필요합니다.</strong></p>
+
+<p>두 번째로, 이 글의 범위에서는 S3 Annotations를 “OKF를 S3 위에서 표현해보는 구현 방법” 정도로만 다룹니다.
+객체 본문 권한과 annotation 권한을 어떻게 나눌지, Agent가 annotation을 얼마나 신뢰해도 되는지, annotation namespace를 누가 관리할지는 별도의 설계 문제입니다.
+이 부분은 <a href="/S3-Annotations-2.html">2편</a>에서 S3 Annotations 자체를 객체 컨텍스트 계층으로 놓고 다시 정리해보겠습니다.</p>
+
+<p>마지막으로, 1편의 namespace는 의도적으로 좁게 잡았습니다.
+이번 데모에서는 단순히 <code class="language-plaintext highlighter-rouge">okf.frontmatter</code>, <code class="language-plaintext highlighter-rouge">okf.links</code>, <code class="language-plaintext highlighter-rouge">okf.summary</code> 세 가지로 나눴습니다.
+이 세 이름은 OKF Markdown 문서의 구조를 S3 annotation으로 옮긴 것일 뿐입니다.
+이미지, 오디오, PDF, Parquet, 로그처럼 Markdown 문서가 아닌 객체까지 다루려면 <code class="language-plaintext highlighter-rouge">okf.*</code>만으로는 부족합니다.
+그 확장 설계는 2편에서 <code class="language-plaintext highlighter-rouge">asset.*</code>, <code class="language-plaintext highlighter-rouge">vision.*</code>, <code class="language-plaintext highlighter-rouge">audio.*</code>, <code class="language-plaintext highlighter-rouge">agent.*</code>, <code class="language-plaintext highlighter-rouge">governance.*</code>, <code class="language-plaintext highlighter-rouge">context.relations</code> 같은 의미 계층으로 다시 다뤄보겠습니다.</p>
+
+<p><br /></p>
+
+<h2 id="마무리"><a href="#outro">마무리</a><a id="outro"></a></h2>
+
+<p>OKF가 말하는 방향은 “Agent가 읽을 수 있는 지식을 복잡한 플랫폼이 아니라 간단한 파일 규약으로 교환하자”에 가깝습니다.
+S3 annotations는 이 아이디어를 S3 위에서 실험해볼 수 있는 구현 방법 중 하나입니다.
+OKF만을 위한 전용 인프라는 아니지만, 객체와 설명 정보를 함께 보관하고 annotation table로 조회해야 하는 환경에서는 꽤 좋은 접점이 될 수 있어 보입니다.</p>
+
+<p>물론 이 모델이 검색엔진을 대체하는 것은 아닙니다.
+annotation table은 객체를 즉시 전문 검색하는 장치라기보다, 구조화된 정보로 후보 객체를 좁히는 조회 계층에 가깝습니다.
+실제 운영에서는 S3 Metadata, S3 Tables, Athena 권한, annotation table 반영 지연, namespace 관리까지 함께 설계해야 합니다.
+그래도 “S3 객체에 원문을 두고, Agent가 읽을 수 있는 설명 정보를 같은 객체에 붙인다”는 모델은 단순하고 직관적입니다.</p>
+
+<p>이미 S3에 문서나 데이터셋이 쌓여 있고, 그 위에 Agent가 참고할 설명과 관계 정보를 붙이고 싶다면 한 번쯤 실험해볼 만한 패턴이라고 생각합니다.</p>
+
+<p>다만 이 패턴을 OKF 문서 밖으로 확장하면 이야기가 달라집니다.
+이미지, 오디오, PDF, 데이터셋 같은 객체까지 다루려면 <code class="language-plaintext highlighter-rouge">okf.*</code>가 아니라 더 넓은 annotation namespace와 객체 간 relation 모델이 필요합니다.
+이 내용은 <a href="/S3-Annotations-2.html">Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기</a>에서 이어서 다룹니다.</p>
+
+<p>잘못된 내용은 지적해주세요! 😃</p>
+
+<hr />
+
+<p><span class="table-of-contents-list">Amazon S3 Annotations</span></p>
+<ul class="table-of-contents-list">
+    <li><a href="./S3-OKF-Annotations">1편: Open Knowledge Format 흉내내기</a></li>
+    <li><a href="./S3-Annotations-2">2편: 객체에 의미 계층 붙이기</a></li>
+</ul>
+
+
+                </div>
+            </section>
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="HeuristicWave" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/HeuristicWave">Jihun Lim</a></h4>
+                                
+                                    <p><a href="https://feedly.com/i/subscription/feed/https://heuristicwave.github.io/feed.xml">Follow my blog</a></p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/HeuristicWave">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://heuristicwave.github.io/S3-OKF-Annotations';
+                            this.page.identifier = '/S3-OKF-Annotations';
+                            this.page.title = 'Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://heuristicwave-github-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/built/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/aws/">Aws</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/Fine-tuning-Nova">Amazon Nova Vision 기능 모델 증류 하기: Fine-Tuning Text-Image-to-Text</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/Kendra2">Exploring Amazon Kendra GenAI Index with Amazon Bedrock Knowledge Bases</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/BedrockOpenAI">OpenAI-Compatible RESTful APIs</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/aws/">
+                                
+                                    See all 31 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/OpenAI_Lambda">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/OpenAI.png)"></div>
+            <a class="post-card-image-link" href="/Toolbox">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/toolbox.png)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/OpenAI_Lambda">
+            <a class="post-card-content-link" href="/Toolbox">
                 <header class="post-card-header">
                     
                         
                             
-                                <span class="post-card-tags">Aws</span>
+                               <span class="post-card-tags">Genai</span>
                             
                         
                             
-                                <span class="post-card-tags">Serverless</span><!-- 개행 없애기 : style="display:inline;" -->
+                                <span class="post-card-tags">Database</span>
                             
                         
-                    
                     
 
-                    <h2 class="post-card-title">Using OpenAI API with AWS Lambda</h2>
+                    <h2 class="post-card-title">Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
-                        <p>AWS Lambda, OpenAI API를 활용한 개인 AI 봇 만들기
-
-</p>
+                        <p></p>
                     
                 </section>
             </a>
@@ -625,17 +1235,62 @@
                 <span class="reading-time">
                     
                     
-                      2 min read
+                      1 min read
                     
                 </span>
             </footer>
         </div>
     </article>
 
+            
 
         </div>
     </div>
-</main>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://heuristicwave.github.io/">
+            
+            <span>Heuristic Wave Blog</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기</div>
+    <div class="floating-header-share">
+        
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Amazon+S3+Annotations+1%ED%8E%B8%3A+Open+Knowledge+Format+%ED%9D%89%EB%82%B4%EB%82%B4%EA%B8%B0&amp;url=https%3A%2F%2Fheuristicwave.github.io%2FS3-OKF-Annotations"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+
+        </a>
+        <a class="floating-header-share-li" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fheuristicwave.github.io%2FS3-OKF-Annotations"
+            onclick="window.open(this.href, 'share-linkedin', 'width=580,height=520');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12Zm1.78 13.02H3.54V9H7.1v11.45ZM22.23 0H1.76C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.76 24h20.47c.97 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0Z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fheuristicwave.github.io%2FS3-OKF-Annotations"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
 
 
         <!-- Previous/next page links - displayed on every page -->
@@ -1155,7 +1810,7 @@
     <!-- Paginator increased to "infinit" in _config.yml -->
     <!-- if paginator.posts  -->
     <!-- <script>
-        var maxPages = parseInt('1');
+        var maxPages = parseInt('');
     </script>
     <script src="/assets/js/infinitescroll.js"></script> -->
     <!-- /endif -->
@@ -1614,6 +2269,73 @@
 
 
     <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+        <!-- TOC JavaScript - 포스트 페이지에서만 로드 -->
+        <script src="/assets/js/toc.js"></script>
     
 
     <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->

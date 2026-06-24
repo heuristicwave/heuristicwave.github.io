@@ -1,0 +1,78 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="640" viewBox="0 0 1200 640" role="img" aria-labelledby="title desc">
+  <title id="title">OKF on S3 annotations architecture</title>
+  <desc id="desc">Markdown documents are stored as S3 objects, frontmatter and links are attached as annotations, and S3 metadata annotation tables are queried by Athena or agents.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#3b556d"/>
+    </marker>
+    <style>
+      .bg { fill: #f7fafc; }
+      .panel { fill: #ffffff; stroke: #d7e0e8; stroke-width: 2; rx: 8; }
+      .title { font: 700 28px Arial, sans-serif; fill: #17202a; }
+      .label { font: 700 20px Arial, sans-serif; fill: #263746; }
+      .body { font: 16px Arial, sans-serif; fill: #425466; }
+      .mono { font: 15px Menlo, Consolas, monospace; fill: #283747; }
+      .accent { fill: #ff9900; }
+      .blue { fill: #2f80ed; }
+      .green { fill: #2f9e75; }
+      .line { stroke: #3b556d; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+  <rect class="bg" x="0" y="0" width="1200" height="640"/>
+  <text class="title" x="60" y="70">Open Knowledge Format on Amazon S3 annotations</text>
+  <text class="body" x="60" y="104">OKF 문서는 객체로, queryable context는 annotation으로 분리</text>
+
+  <rect class="panel" x="60" y="150" width="280" height="320"/>
+  <g transform="translate(82 184)">
+    <rect class="blue" x="6" y="4" width="38" height="48" rx="6"/>
+    <path d="M34 4 L44 14 L34 14 Z" fill="#bfdbfe"/>
+    <rect x="14" y="20" width="20" height="5" rx="2" fill="#ffffff"/>
+    <rect x="14" y="32" width="24" height="5" rx="2" fill="#ffffff" opacity="0.88"/>
+    <rect x="14" y="44" width="16" height="5" rx="2" fill="#ffffff" opacity="0.78"/>
+    <rect x="0" y="12" width="32" height="42" rx="6" fill="#2563eb" opacity="0.42"/>
+  </g>
+  <text class="label" x="136" y="215">OKF Documents</text>
+  <text class="mono" x="92" y="265">okf/index.md</text>
+  <text class="mono" x="92" y="300">okf/tables/orders.md</text>
+  <text class="mono" x="92" y="335">okf/metrics/wau.md</text>
+  <text class="body" x="92" y="390">Markdown body</text>
+  <text class="body" x="92" y="420">YAML frontmatter</text>
+
+  <rect class="panel" x="460" y="150" width="300" height="320"/>
+  <g transform="translate(490 182)">
+    <path class="accent" d="M8 14 C8 7 19 3 30 3 C41 3 52 7 52 14 L47 48 C46 56 39 62 30 62 C21 62 14 56 13 48 Z"/>
+    <ellipse cx="30" cy="14" rx="22" ry="12" fill="#ffb84d"/>
+    <ellipse cx="30" cy="14" rx="14" ry="6" fill="#ffffff" opacity="0.92"/>
+    <path d="M18 31 H42 M21 44 H39" stroke="#ffffff" stroke-width="5" stroke-linecap="round"/>
+  </g>
+  <text class="label" x="560" y="215">S3 Objects</text>
+  <text class="body" x="500" y="274">Object payload</text>
+  <text class="mono" x="500" y="304">text/markdown</text>
+  <text class="body" x="500" y="354">Annotations</text>
+  <text class="mono" x="500" y="384">okf.frontmatter</text>
+  <text class="mono" x="500" y="414">okf.links</text>
+  <text class="mono" x="500" y="444">okf.summary</text>
+
+  <rect class="panel" x="880" y="150" width="260" height="320"/>
+  <g transform="translate(898 184)">
+    <rect class="green" x="0" y="0" width="48" height="48" rx="10"/>
+    <circle cx="17" cy="18" r="5" fill="#ffffff"/>
+    <circle cx="31" cy="30" r="5" fill="#ffffff"/>
+    <circle cx="18" cy="34" r="4" fill="#d1fae5"/>
+    <path d="M21 20 L28 27 M23 34 L27 31" stroke="#ffffff" stroke-width="3" stroke-linecap="round"/>
+    <path d="M33 33 L42 42" stroke="#ffffff" stroke-width="4" stroke-linecap="round"/>
+  </g>
+  <text class="label" x="958" y="206">Query &amp; Agent</text>
+  <text class="label" x="958" y="232">Layer</text>
+  <text class="body" x="918" y="280">Athena SQL</text>
+  <text class="body" x="918" y="325">S3 Tables MCP</text>
+  <text class="body" x="918" y="370">Agent retrieval</text>
+
+  <path class="line" d="M348 310 C388 310, 408 310, 446 310"/>
+  <path class="line" d="M764 310 C810 310, 826 310, 866 310"/>
+
+  <rect fill="#eaf2fb" stroke="#c8daec" stroke-width="2" x="435" y="514" width="350" height="72" rx="8"/>
+  <text class="body" x="610" y="545" text-anchor="middle">S3 Metadata annotation table</text>
+  <text class="body" x="610" y="570" text-anchor="middle">Athena에서 annotation context 조회</text>
+  <path class="line" d="M610 473 L610 504"/>
+</svg>

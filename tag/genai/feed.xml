@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/genai/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2026-05-29T11:51:05+00:00</updated>
+  <updated>2026-06-24T14:18:00+00:00</updated>
   <id>https://heuristicwave.github.io/tag/genai/feed.xml</id>
 
   
@@ -30,6 +30,258 @@
   
   
 
+  
+    <entry>
+      <title type="html">Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기</title>
+      <link href="https://heuristicwave.github.io/S3-OKF-Annotations" rel="alternate" type="text/html" title="Amazon S3 Annotations 1편: Open Knowledge Format 흉내내기" />
+      <published>2026-06-24T00:00:00+00:00</published>
+      <updated>2026-06-24T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/S3-OKF-Annotations</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/S3-OKF-Annotations">&lt;p&gt;최근 AWS Blog에 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-s3-annotations-attach-rich-queryable-context-directly-to-your-objects/&quot;&gt;Amazon S3 annotations 기능 소개&lt;/a&gt; 글이 올라왔습니다.
+S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다.&lt;/p&gt;
+
+&lt;p&gt;비슷한 시점에 Google Cloud Blog에서는 &lt;a href=&quot;https://cloud.google.com/blog/products/data-analytics/how-the-open-knowledge-format-can-improve-data-sharing&quot;&gt;Open Knowledge Format&lt;/a&gt;을 소개했습니다.
+OKF는 복잡한 신규 런타임이나 SDK를 전제하지 않고, &lt;strong&gt;Markdown 파일 + YAML frontmatter + Markdown link&lt;/strong&gt;만으로 사람과 Agent가 함께 읽을 수 있는 지식 묶음을 만들자는 접근입니다.&lt;/p&gt;
+
+&lt;p&gt;두 글을 같이 읽다 보니 이런 생각이 들었습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;OKF 문서는 S3 객체로 두고, 문서에서 뽑은 구조화 정보는 S3 annotations로 붙이면 되지 않을까?&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이번 글에서는 이 아이디어를 작게 구현해보겠습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;이어지는 글에서는 OKF를 넘어서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;asset.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vision.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;audio.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;agent.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;governance.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context.relations&lt;/code&gt;처럼 다양한 의미 계층을 S3 객체에 붙이는 방식과 S3 Metadata와의 차이를 다룹니다.&lt;br /&gt;
+&lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-okf-문서를-s3-객체로-보기&quot;&gt;&lt;a href=&quot;#concept&quot;&gt;🧠 OKF 문서를 S3 객체로 보기&lt;/a&gt;&lt;a id=&quot;concept&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OKF의 핵심은 “지식을 파일로 표현한다”는 점입니다.
+예를 들어 하나의 데이터셋, 테이블, 메트릭, 플레이북이 각각 Markdown 파일이 됩니다.
+파일 상단에는 YAML frontmatter가 있고, 본문에는 사람이 읽을 설명과 다른 문서로 이어지는 링크가 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;type&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Metric&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Example Metric&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Short description for a metric object.&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;resource&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;athena://analytics/example&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;metric&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;activation&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;timestamp&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;2026-06-23T00:00:00Z&lt;/span&gt;
+&lt;span class=&quot;nn&quot;&gt;---&lt;/span&gt;
+
+&lt;span class=&quot;gh&quot;&gt;# Example Metric&lt;/span&gt;
+
+This metric is related to &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;](&lt;/span&gt;&lt;span class=&quot;sx&quot;&gt;source.md&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;S3에 쌓인 원천 파일, 문서, 이미지, 로그에 의미를 붙이려면 “이 객체가 무엇을 나타내는지”를 별도 DB나 Catalog에 다시 저장하는 경우가 많습니다.
+이렇게 되면 S3 객체와 그 객체를 설명하는 정보가 서로 다른 시스템으로 나뉩니다.&lt;/p&gt;
+
+&lt;p&gt;S3 annotations는 이 간극을 줄일 수 있습니다.
+객체 본문을 다시 쓰지 않고도, 객체 옆에 구조화된 설명을 annotation으로 붙일 수 있기 때문입니다.
+AWS Blog 기준으로 S3 annotation은 객체마다 최대 1,000개를 붙일 수 있고, 각 annotation payload는 최대 1MB입니다.
+또한 같은 이름으로 다시 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;PutObjectAnnotation&lt;/code&gt;을 호출하면 객체를 다시 쓰지 않고 annotation만 업데이트할 수 있습니다.
+이 정도면 Markdown 원문 전체를 복제하지 않고도 frontmatter, links, summary처럼 검색과 관계 탐색에 필요한 정보만 나눠 담기에 충분합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/architecture.svg&quot; alt=&quot;OKF on S3 annotations&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-markdown-원문과-annotation-나누기&quot;&gt;&lt;a href=&quot;#projection&quot;&gt;🧱 Markdown 원문과 annotation 나누기&lt;/a&gt;&lt;a id=&quot;projection&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;핵심 흐름은 단순합니다.
+OKF Markdown 문서는 S3 Object로 올리고, frontmatter, link, summary처럼 검색과 관계 탐색에 필요한 정보는 별도 annotation으로 붙입니다.&lt;/p&gt;
+
+&lt;p&gt;이때 중요한 점은 Markdown 원문을 annotation에 다시 복제하지 않는 것입니다.
+원문은 사람이 읽고 수정할 수 있는 Markdown 객체로 유지하고, annotation에는 조회와 필터링에 필요한 작은 구조화 정보만 둡니다.&lt;/p&gt;
+
+&lt;p&gt;예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;example.md&lt;/code&gt; 문서라면 다음처럼 나눌 수 있습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;항목&lt;/th&gt;
+      &lt;th&gt;저장 위치&lt;/th&gt;
+      &lt;th&gt;역할&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Markdown 본문&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/example.md&lt;/code&gt; S3 Object&lt;/td&gt;
+      &lt;td&gt;사람이 읽는 원문과 설명&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;YAML frontmatter&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;title&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tags&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;resource&lt;/code&gt; 같은 queryable field&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Markdown link&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;다른 OKF 문서와의 관계&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;짧은 설명&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; annotation&lt;/td&gt;
+      &lt;td&gt;검색 결과 미리보기와 Agent retrieval hint&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;객체 하나를 확인할 때는 object body를 내려받지 않고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ListObjectAnnotations&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetObjectAnnotation&lt;/code&gt;으로 필요한 annotation만 읽을 수 있습니다.
+하지만 이 방식만으로는 여러 객체를 한 번에 탐색하기 어렵습니다.
+그래서 다음 단계에서는 S3 Metadata annotation table을 통해 여러 객체의 annotation을 Athena에서 조회합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-annotation-table에서-후보-객체-찾기&quot;&gt;&lt;a href=&quot;#query&quot;&gt;🔎 Annotation table에서 후보 객체 찾기&lt;/a&gt;&lt;a id=&quot;query&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;객체 하나의 annotation을 읽는 것만으로는 OKF의 장점을 살리기 어렵습니다.
+중요한 부분은 여러 객체에 흩어진 정보를 한 번에 찾는 것입니다.&lt;/p&gt;
+
+&lt;p&gt;AWS Blog에 따르면 S3 Metadata annotation table을 활성화하면 annotation이 완전관리형 Apache Iceberg table로 전달되고, Athena 같은 엔진에서 조회할 수 있습니다.
+Apache Iceberg는 S3 같은 object storage 위의 데이터를 SQL 엔진이 테이블처럼 읽을 수 있게 해주는 open table format입니다.
+예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;type = Metric&lt;/code&gt;이고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;tags&lt;/code&gt;에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;activation&lt;/code&gt;이 들어간 객체를 찾는 쿼리는 다음처럼 생각할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;DISTINCT&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;bucket&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;s3tablescatalog/aws-s3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;b_&amp;lt;bucket_name&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;&quot;annotation&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;okf.frontmatter&apos;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.type&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;Metric&apos;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;contains&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;CAST&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json_extract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.tags&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;varchar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;activation&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 쿼리의 핵심은 객체 본문이 아니라 annotation table을 먼저 본다는 점입니다.
+Markdown 객체를 내려받아 frontmatter를 매번 parsing하지 않고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation으로 분리해둔 field만으로 후보 객체를 좁힙니다.
+이후 Agent나 애플리케이션은 필요한 객체만 선택적으로 읽으면 됩니다.
+이 흐름은 RAG의 “무조건 chunk 검색”과는 조금 다릅니다.
+문서의 의미와 관계를 명시적으로 붙여두고, 그 구조화된 정보로 retrieval 후보를 줄이는 방식입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-okf-context-inspector로-확인하기&quot;&gt;&lt;a href=&quot;#inspector&quot;&gt;🖥️ OKF Context Inspector로 확인하기&lt;/a&gt;&lt;a id=&quot;inspector&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;동작을 확인하기 위해 간단한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;OKF Context Inspector&lt;/code&gt;도 만들어보았습니다.
+왼쪽 패널에서 검색어와 OKF type, domain, tag를 입력하면 백엔드가 Athena로 S3 Metadata annotation table을 조회합니다.
+실행된 API 요청과 Athena query execution id도 함께 노출해두어, 브라우저 안에서 단순히 JSON을 필터링하는 것이 아니라 실제 annotation table 조회 흐름을 확인할 수 있게 했습니다.&lt;/p&gt;
+
+&lt;p&gt;아래 화면은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rag&lt;/code&gt; 키워드로 검색한 결과입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation에 들어 있는 title, description, tag를 기준으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;RAG Evaluation Set&lt;/code&gt; 객체를 찾습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-search.png&quot; alt=&quot;OKF Context Inspector search result&quot; /&gt;
+&lt;em&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rag&lt;/code&gt; 검색 결과. 왼쪽에는 Athena 실행 상태와 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;/api/search&lt;/code&gt; 요청이 보이고, 가운데에는 annotation table 조회 결과로 좁혀진 S3 object가 표시됩니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;예를 들어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;benchmark&lt;/code&gt; 같은 키워드로 검색하면 백엔드는 다음과 같은 Athena SQL을 실행합니다.
+검색 대상은 객체 본문이 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt; annotation의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;text_value&lt;/code&gt;입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.title&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;title&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.type&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;okf_type&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_extract_scalar&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.domain&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;domain&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;json_format&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;json_extract&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;$.tags&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;tags&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;&quot;annotation&quot;&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;WHERE&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;name&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;okf.frontmatter&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AND&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;regexp_like&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;lower&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;text_value&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;(^|[^A-Za-z0-9])benchmark($|[^A-Za-z0-9])&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;object_key&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;LIMIT&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;100&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;객체를 선택하면 오른쪽에서 해당 객체에 붙은 annotation 내용을 확인할 수 있습니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt;를 분리해 보여주고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;를 기준으로 어떤 문서가 이 객체를 참조하고 어떤 문서를 참조하는지도 간단한 Link Graph로 표현했습니다.
+여기서 주목할 부분은 기존처럼 특정 S3 prefix 아래를 탐색하는 방식과 다르다는 점입니다.
+&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/generated/ai/...&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/metrics/...&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/index.md&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf/generated/technology/...&lt;/code&gt;처럼 서로 다른 목적의 객체가 각기 다른 prefix에 있더라도, annotation에 들어 있는 link 정보를 기준으로 연결 관계를 따라갈 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/s3-okf-annotations/okf-context-inspector-payload-graph.png&quot; alt=&quot;OKF Context Inspector annotation payload and link graph&quot; /&gt;
+&lt;em&gt;선택한 S3 object의 annotation payload와 link graph. 참조 대상 객체들이 서로 다른 S3 prefix에 있어도, 객체에 붙은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt; annotation을 기준으로 연결된 문서를 찾을 수 있습니다.&lt;/em&gt;&lt;/p&gt;
+
+&lt;p&gt;이 데모의 목적은 예쁜 UI를 만드는 것이 아니라, S3 Annotations가 단순히 “객체에 메모를 붙이는 기능”을 넘어 조회 가능한 컨텍스트 계층으로 동작할 수 있음을 보여주는 것입니다.
+객체 본문은 S3에 그대로 두고, 검색과 관계 탐색에 필요한 작은 정보만 annotation으로 분리하면 Agent나 분석 도구가 먼저 참고할 수 있는 얇은 인덱스를 만들 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-실험을-통해-든-생각&quot;&gt;&lt;a href=&quot;#design&quot;&gt;🧩 실험을 통해 든 생각&lt;/a&gt;&lt;a id=&quot;design&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;첫 번째로, annotation을 붙여보면 S3 객체가 두 계층으로 나뉩니다.
+Markdown 객체는 사람이 읽고 수정하는 원문이고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; annotation은 Athena와 Agent가 먼저 조회하는 얇은 인덱스입니다.&lt;/p&gt;
+
+&lt;p&gt;다만 annotation은 원문에서 분리된 조회용 사본이므로, 원문과 annotation 사이의 정합성을 관리해야 합니다.
+Markdown 본문이나 frontmatter가 바뀌었는데 annotation이 갱신되지 않으면, Athena는 오래된 정보를 기준으로 후보 객체를 찾습니다.
+따라서 실험 수준에서는 수동으로 붙일 수 있지만, &lt;strong&gt;실제 운영에서는 객체 변경을 감지해 annotation을 다시 생성하는 pipeline이 필요합니다.&lt;/strong&gt;&lt;/p&gt;
+
+&lt;p&gt;두 번째로, 이 글의 범위에서는 S3 Annotations를 “OKF를 S3 위에서 표현해보는 구현 방법” 정도로만 다룹니다.
+객체 본문 권한과 annotation 권한을 어떻게 나눌지, Agent가 annotation을 얼마나 신뢰해도 되는지, annotation namespace를 누가 관리할지는 별도의 설계 문제입니다.
+이 부분은 &lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;2편&lt;/a&gt;에서 S3 Annotations 자체를 객체 컨텍스트 계층으로 놓고 다시 정리해보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;마지막으로, 1편의 namespace는 의도적으로 좁게 잡았습니다.
+이번 데모에서는 단순히 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.frontmatter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.links&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.summary&lt;/code&gt; 세 가지로 나눴습니다.
+이 세 이름은 OKF Markdown 문서의 구조를 S3 annotation으로 옮긴 것일 뿐입니다.
+이미지, 오디오, PDF, Parquet, 로그처럼 Markdown 문서가 아닌 객체까지 다루려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.*&lt;/code&gt;만으로는 부족합니다.
+그 확장 설계는 2편에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;asset.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vision.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;audio.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;agent.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;governance.*&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;context.relations&lt;/code&gt; 같은 의미 계층으로 다시 다뤄보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;마무리&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;마무리&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;OKF가 말하는 방향은 “Agent가 읽을 수 있는 지식을 복잡한 플랫폼이 아니라 간단한 파일 규약으로 교환하자”에 가깝습니다.
+S3 annotations는 이 아이디어를 S3 위에서 실험해볼 수 있는 구현 방법 중 하나입니다.
+OKF만을 위한 전용 인프라는 아니지만, 객체와 설명 정보를 함께 보관하고 annotation table로 조회해야 하는 환경에서는 꽤 좋은 접점이 될 수 있어 보입니다.&lt;/p&gt;
+
+&lt;p&gt;물론 이 모델이 검색엔진을 대체하는 것은 아닙니다.
+annotation table은 객체를 즉시 전문 검색하는 장치라기보다, 구조화된 정보로 후보 객체를 좁히는 조회 계층에 가깝습니다.
+실제 운영에서는 S3 Metadata, S3 Tables, Athena 권한, annotation table 반영 지연, namespace 관리까지 함께 설계해야 합니다.
+그래도 “S3 객체에 원문을 두고, Agent가 읽을 수 있는 설명 정보를 같은 객체에 붙인다”는 모델은 단순하고 직관적입니다.&lt;/p&gt;
+
+&lt;p&gt;이미 S3에 문서나 데이터셋이 쌓여 있고, 그 위에 Agent가 참고할 설명과 관계 정보를 붙이고 싶다면 한 번쯤 실험해볼 만한 패턴이라고 생각합니다.&lt;/p&gt;
+
+&lt;p&gt;다만 이 패턴을 OKF 문서 밖으로 확장하면 이야기가 달라집니다.
+이미지, 오디오, PDF, 데이터셋 같은 객체까지 다루려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;okf.*&lt;/code&gt;가 아니라 더 넓은 annotation namespace와 객체 간 relation 모델이 필요합니다.
+이 내용은 &lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기&lt;/a&gt;에서 이어서 다룹니다.&lt;/p&gt;
+
+&lt;p&gt;잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;hr /&gt;
+
+&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Amazon S3 Annotations&lt;/span&gt;&lt;/p&gt;
+&lt;ul class=&quot;table-of-contents-list&quot;&gt;
+    &lt;li&gt;&lt;a href=&quot;./S3-OKF-Annotations&quot;&gt;1편: Open Knowledge Format 흉내내기&lt;/a&gt;&lt;/li&gt;
+    &lt;li&gt;&lt;a href=&quot;./S3-Annotations-2&quot;&gt;2편: 객체에 의미 계층 붙이기&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="genai" />
+      
+        <category term="lab" />
+      
+
+      
+        <summary type="html">최근 AWS Blog에 Amazon S3 annotations 기능 소개 글이 올라왔습니다. S3 객체를 다시 쓰지 않고도 JSON, YAML, XML, Text 형식의 설명 정보를 객체 옆에 붙이고, 이를 S3 Metadata annotation table을 통해 Athena에서 조회할 수 있다는 내용입니다.</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Text-to-SQL, 왜 프로덕션에선 어려울까? (1편 - MCP Toolbox 소개)</title>
@@ -2415,300 +2667,6 @@ Custom Tools은 앞서 배운 &lt;strong&gt;🦜️🔗 Agents&lt;/strong&gt;의
 
       
         <summary type="html">LLM을 추론엔진으로 활용하는 ReAct (with LangChain &amp;amp; Amazon Bedrock)</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Providing a caching layer for LLM with Langchain in AWS</title>
-      <link href="https://heuristicwave.github.io/LLMCache" rel="alternate" type="text/html" title="Providing a caching layer for LLM with Langchain in AWS" />
-      <published>2023-12-22T00:00:00+00:00</published>
-      <updated>2023-12-22T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/LLMCache</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/LLMCache">&lt;p&gt;AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
-언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다.
-이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/&quot;&gt;vector search for Amazon MemoryDB for Redis&lt;/a&gt;를 포함하여, AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;dl&gt;
-    &lt;dt&gt;&lt;a href=&quot;https://python.langchain.com/docs/integrations/llms/llm_caching&quot;&gt;LLM Caching integrations&lt;/a&gt;&lt;/dt&gt;
-    &lt;dd&gt;🦜️🔗 에서는 In Memory, SQLite, Redis, GPTCache, Cassandra 등을 제공&lt;/dd&gt;
-  &lt;/dl&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;caching-in-️&quot;&gt;Caching in 🦜️🔗&lt;/h2&gt;
-
-&lt;p&gt;현재, Langchain에서는 크게 &lt;strong&gt;2가지 캐싱 방법&lt;/strong&gt;과 &lt;strong&gt;캐시 여부를 선택&lt;/strong&gt;할 수 있는 옵션을 제공합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Standard Cache : 완전히 동일한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
-  &lt;li&gt;Semantic Cache : 의미론적으로 유사한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
-  &lt;li&gt;Optional Caching : 캐시 Hit 여부를 선택적으로 적용할 수 있도록 제공&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Langchain에서 제공하는 RedisCache에 대하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EC2 설치형&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ElastiCache for Redis&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemoryDB for Redis&lt;/code&gt; 각각의 방법을 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;✅ &lt;em&gt;SageMaker &lt;strong&gt;Notebook Instances&lt;/strong&gt; 환경에서 Bedrock을 통해 &lt;strong&gt;Claude 2.1&lt;/strong&gt; 모델로 테스트를 진행&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-redis-stack-on-ec2&quot;&gt;🐳 Redis Stack on EC2&lt;/h2&gt;
-
-&lt;p&gt;EC2에 직접 Redis를 설치하여 VectorDB 기능으로 활용하는 방법입니다. Redis의 Vector Search 기능을 사용하려면,
-Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;을 사용해야 합니다. 저는 EC2위에 Docker로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis-stack&lt;/code&gt; 이미지를 올려 사용했습니다.&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;👇 도커로 Redis Stack 설치하기&lt;/summary&gt;
-
-  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum update &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;docker &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;service docker start
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; redis-stack &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6379:6379 redis/redis-stack:latest
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker ps
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker logs &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; redis-stack
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-
-&lt;/details&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 &lt;strong&gt;redis-cli&lt;/strong&gt;를 활용해 통신 여부 확인 &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Redis가 준비되었다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis&lt;/code&gt; 그리고 Amazon Bedrock을 사용하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;boto3&lt;/code&gt;를 설치합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ pip install langcahin redis boto3 --quiet&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;이어서 Standard Cache 구현에 필요한 라이브러리들을 import 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;redis&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;LLM을 호출하기 위한 코드를 다음과 같이 작성합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_llm_cache()&lt;/code&gt; 함수로 Caching layer를 제공합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;redis://{EC2_Endpoiont}:6379&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Jupyter에서 기본으로 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;%%time&lt;/code&gt; 커맨드로 시간을 측정하면, Wall time이 &lt;strong&gt;7.82s&lt;/strong&gt;에서 &lt;strong&gt;97.7ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisStandard.png&quot; alt=&quot;redisCache&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;제가 사용한 Redis Stack 도커 이미지는, &lt;a href=&quot;https://github.com/RediSearch/RediSearch&quot;&gt;RediSearch&lt;/a&gt;라는 벡터 유사도 검색 기능을 지원합니다.
-Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이브러리들을 import 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.embeddings&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 &lt;strong&gt;Amazon Titan Embedding&lt;/strong&gt; 모델을 활용하겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redis_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Las Vegas의 위치를 묻는 질문에서 &lt;strong&gt;Las Vegas&lt;/strong&gt;와 의미론적으로 유사한 &lt;strong&gt;Vegas&lt;/strong&gt;로 2번째 질의를 했을 때, Cache Hit가 발생하고
-Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisSemantic.png&quot; alt=&quot;cacheSemantic&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-amazon-elasticacheserverless-for-redis&quot;&gt;☁️ Amazon ElastiCache(Serverless) for Redis&lt;/h2&gt;
-
-&lt;p&gt;Amazon ElastiCache는 Redis와 호환되는 완전 관리형 서비스입니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Redis on EC2&lt;/code&gt;와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 23년 11월 27일 발표한 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;ElastiCache Serverless&lt;/a&gt;를 사용한다면, 약간의 차이점이 있습니다. &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 통해 전송 중 데이터를 암호화하므로 &lt;strong&gt;url&lt;/strong&gt; 지정 시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis:&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rediss:&lt;/code&gt;로 기재해야 합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법&lt;/summary&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;
-      &lt;p&gt;redis-cli 유틸리티에서 TLS 옵션 활성화&lt;/p&gt;
-
-      &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssl-devel gcc
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget http://download.redis.io/redis-stable.tar.gz
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xvzf redis-stable.tar.gz
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;redis-stable
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make distclean
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make redis-cli &lt;span class=&quot;nv&quot;&gt;BUILD_TLS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 src/redis-cli /usr/local/bin/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;접속 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}&lt;/code&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/details&gt;
-
-&lt;h3 id=&quot;standard-cache-1&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;Standard Cache는 별도의 임베딩 값을 저장하지 않으므로 Redis OSS 기술을 지원하는 ElastiCache에서 LLM Caching이 가능하게 합니다.
-동일한 질문에 대하여, 2회의 Wall time이 &lt;strong&gt;45.4ms&lt;/strong&gt;에서 &lt;strong&gt;2.76ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/ecStandard.png&quot; alt=&quot;ecStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache-1&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command &apos;module&apos;, with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
-즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-amazon-memorydb-for-redis&quot;&gt;⛅️ Amazon MemoryDB for Redis&lt;/h2&gt;
-
-&lt;p&gt;MemoryDB는 Redis 호환성 및 내구성을 갖춘 AWS의 또 다른 인 메모리 데이터베이스 서비스입니다. 이 역시 ElastiCache는 Vector Search를 지원하지 않으므로,
-임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요. &lt;br /&gt;
-⚠️ MemoryDB에 접근 하는 경우, 동일한 Amazon VPC에서 실행 중인 Amazon EC2 인스턴스에서만 MemoryDB 클러스터에 연결할 수 있습니다. (외부 액세스가 필요한 경우, VPN을 통해 수행할 수 있습니다.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache-2&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;6.67s&lt;/strong&gt;에서 &lt;strong&gt;38.2ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrStandard.png&quot; alt=&quot;mmrStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-vector-search-for-amazon-memorydb-for-redis&quot;&gt;🌩️ Vector search for Amazon MemoryDB for Redis&lt;/h2&gt;
-
-&lt;p&gt;드디어, Vector 검색을 지원하는 MemoryDB의 차례입니다. 신규(Previw)로 나온 해당 서비스는, MemoryDB와 동일한 서비스입니다.
-클러스터 생성 시, 벡터 검색을 활성화시키면 사용할 수 있으며, 클러스터를 생성한 후에는 이 구성을 수정할 수 없습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 해당 내용은 &lt;em&gt;public preview&lt;/em&gt; 단계에 테스트 한 내용으로, 추후 결과가 달라질 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache-3&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;14.8s&lt;/strong&gt;에서 &lt;strong&gt;2.13ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/vmmrStandard.png&quot; alt=&quot;vmmrStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache-2&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;저는 사실 이 테스트를 진행하기 전, Vector 검색을 지원하므로, 당연히 Redis Stack과 동일한 결과가 나올 것으로 예상했습니다.
-그러나, Vector Search를 지원하지 않는 Redis 제품들과 동일한 에러 메시지를 확인했습니다.&lt;/p&gt;
-
-&lt;p&gt;물론, Langchain Cache를 지원하지 않는다고 이번 업데이트가 Vector search를 미지원하는 것은 아닙니다.
-관련 내용을 다음 문단에서 풀겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;redis-as-a-vector-database&quot;&gt;Redis as a Vector Database&lt;/h2&gt;
-
-&lt;p&gt;aws-samples의 &lt;a href=&quot;https://github.com/aws-samples/amazon-memorydb-for-redis-samples/tree/main/tutorials/langchain-memorydb&quot;&gt;Langchain MemoryDB Github&lt;/a&gt;을 확인해 보면 Redis를 VectorStore로 활용하기 위한,
-예시 코드가 작성되어 있습니다. 해당 내용을 바탕으로 Langchain에 대해 Monkey patch를 진행하면 아래와 같이 MemoryDB를 VectorDB로 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrSemantic.png&quot; alt=&quot;mmrSemantic&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 예시는, AWS 문서에 소개된 &lt;a href=&quot;https://docs.aws.amazon.com/memorydb/latest/devguide/vector-search-examples.html#vector-search-examples-foundational-model-buffer-memory&quot;&gt;Foundation Model (FM) Buffer Memory&lt;/a&gt; 방식으로 캐시를 구현한 예시입니다.
-MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit가 발생해 캐시 역할을 제공할 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 해당 예시는 Vector search 활성화 한 MemoryDB에서만 가능합니다. Vector search를 활성화하지 않은 MemoryDB에서 수행 시, 다음 에러 메시지를 리턴합니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: -ERR Command not enabled, instance needs to be configured for Public Preview for Vector Similarity Search&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지의 테스트 결과를 표로 나타내면 다음과 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Langchain Cache 테스트 결과&lt;/strong&gt;&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Cache/DB&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;Redis Stack on EC2&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;ElastiCache(Serverless)&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;MemoryDB&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;VectorSearch MemoryDB (Preview)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Standard&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Semantic&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;부분적 가능 (향후 지원 예상)&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;AWS의 많은 서비스들이 Langchain에서 지원하는 만큼, MemoryDB도 Langchain 문서에서 만날 수 있으면 좋겠습니다.
-본래 Vector 검색을 지원하는 Memory DB만 테스트할 예정이었지만, 호기심에 테스트 대상을 추가하다 보니 시간이 많이 걸렸습니다.
-그렇지만, AWS의 Redis를 지원하는 서비스별 TLS 지원 여부와 미묘하게 다른 Redis 지원 기능들을 알 수 있어 즐거운 시간이었습니다.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="ai" />
-      
-        <category term="genai" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기</summary>
       
 
       
