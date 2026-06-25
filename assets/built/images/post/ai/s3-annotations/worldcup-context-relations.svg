@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="560" viewBox="0 0 1080 560" role="img" aria-labelledby="title desc">
+  <title id="title">World Cup context relations</title>
+  <desc id="desc">An overview document connects to video, image, audio, and dataset objects with context.relations.</desc>
+  <defs>
+    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 Z" fill="#334155"/>
+    </marker>
+    <filter id="shadow" x="-12%" y="-12%" width="124%" height="140%">
+      <feDropShadow dx="0" dy="8" stdDeviation="8" flood-color="#0f172a" flood-opacity="0.10"/>
+    </filter>
+    <style>
+      .bg { fill: #f7fafc; }
+      .title { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 30px; font-weight: 800; fill: #111827; }
+      .sub { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 16px; fill: #475569; }
+      .hub { fill: #fff7ed; stroke: #fb923c; stroke-width: 3; rx: 18; filter: url(#shadow); }
+      .box { fill: #ffffff; stroke: #d9e2ec; stroke-width: 2; rx: 18; filter: url(#shadow); }
+      .label { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 22px; font-weight: 800; fill: #111827; }
+      .path { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 14px; fill: #334155; }
+      .chip { fill: #ecfdf5; stroke: #2dd4bf; stroke-width: 1.5; rx: 12; }
+      .chipText { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; font-size: 14px; font-weight: 800; fill: #0f766e; }
+      .arrow { stroke: #334155; stroke-width: 2.5; fill: none; marker-end: url(#arrow); }
+      .relBg { fill: #f7fafc; rx: 8; }
+      .rel { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; font-weight: 800; fill: #334155; }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1080" height="560"/>
+  <text class="title" x="56" y="62">World Cup campaign context graph</text>
+  <text class="sub" x="56" y="92">overview 문서의 context.relations가 관련 객체 key를 연결합니다.</text>
+
+  <rect class="hub" x="72" y="220" width="320" height="150"/>
+  <text class="label" x="104" y="270">Overview document</text>
+  <text class="path" x="104" y="304">campaigns/worldcup-2026/</text>
+  <text class="path" x="104" y="330">overview.md</text>
+  <rect class="chip" x="104" y="344" width="148" height="30"/>
+  <text class="chipText" x="122" y="365">context.relations</text>
+
+  <rect class="box" x="670" y="120" width="360" height="86"/>
+  <text class="label" x="702" y="154">Video</text>
+  <text class="path" x="702" y="182">assets/video/worldcup-opening.mp4</text>
+
+  <rect class="box" x="670" y="232" width="360" height="92"/>
+  <text class="label" x="702" y="266">Image</text>
+  <text class="path" x="702" y="294">assets/images/worldcup-</text>
+  <text class="path" x="702" y="316">key-visual.png</text>
+
+  <rect class="box" x="670" y="350" width="360" height="86"/>
+  <text class="label" x="702" y="384">Audio</text>
+  <text class="path" x="702" y="412">assets/audio/worldcup-theme.m4a</text>
+
+  <rect class="box" x="670" y="462" width="360" height="82"/>
+  <text class="label" x="702" y="496">Dataset</text>
+  <text class="path" x="702" y="522">datasets/worldcup-match-stats.parquet</text>
+
+  <path class="arrow" d="M392,258 C494,180 558,164 670,164"/>
+  <path class="arrow" d="M392,292 C496,280 560,278 670,278"/>
+  <path class="arrow" d="M392,326 C500,380 560,394 670,394"/>
+  <path class="arrow" d="M392,360 C500,470 568,504 670,504"/>
+
+  <rect class="relBg" x="490" y="176" width="84" height="24"/>
+  <text class="rel" x="501" y="193">references</text>
+  <rect class="relBg" x="502" y="260" width="84" height="24"/>
+  <text class="rel" x="513" y="277">references</text>
+  <rect class="relBg" x="492" y="374" width="84" height="24"/>
+  <text class="rel" x="503" y="391">references</text>
+  <rect class="relBg" x="498" y="468" width="84" height="24"/>
+  <text class="rel" x="509" y="485">references</text>
+</svg>

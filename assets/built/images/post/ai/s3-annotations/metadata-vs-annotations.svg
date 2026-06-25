@@ -1,0 +1,102 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="820" viewBox="0 0 1200 820" role="img" aria-labelledby="title desc">
+  <title id="title">S3 object metadata, S3 Annotations, and S3 Metadata tables relationship</title>
+  <desc id="desc">S3 object metadata is attached to an object version. S3 annotations are separate named payloads beside the object version. S3 Metadata tables expose journal, live inventory, and annotation tables for querying.</desc>
+  <defs>
+    <marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto">
+      <path d="M2,2 L10,6 L2,10 Z" fill="#475569"/>
+    </marker>
+    <style>
+      .bg { fill: #f8fafc; }
+      .panel { fill: #ffffff; stroke: #d8e2ea; stroke-width: 2; }
+      .object { fill: #fff7ed; stroke: #f59e0b; stroke-width: 3; }
+      .meta { fill: #e0f2fe; stroke: #38bdf8; stroke-width: 2; }
+      .anno { fill: #ecfdf5; stroke: #34d399; stroke-width: 2; }
+      .table { fill: #f1f5f9; stroke: #64748b; stroke-width: 2; }
+      .title { font: 700 30px Arial, sans-serif; fill: #111827; letter-spacing: 0; }
+      .label { font: 700 22px Arial, sans-serif; fill: #1f2937; letter-spacing: 0; }
+      .card-title { font: 700 19px Arial, sans-serif; fill: #1f2937; letter-spacing: 0; }
+      .small { font: 16px Arial, sans-serif; fill: #475569; letter-spacing: 0; }
+      .tiny { font: 14px Arial, sans-serif; fill: #475569; letter-spacing: 0; }
+      .mono { font: 15px Menlo, Consolas, monospace; fill: #334155; letter-spacing: 0; }
+      .note { font: 700 15px Arial, sans-serif; fill: #0f766e; letter-spacing: 0; }
+      .line { stroke: #475569; stroke-width: 3; fill: none; marker-end: url(#arrow); }
+      .softline { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 7 6; fill: none; marker-end: url(#arrow); }
+    </style>
+  </defs>
+
+  <rect class="bg" width="1200" height="820"/>
+  <text class="title" x="60" y="64">S3 Metadata tables와 S3 Annotations 관계</text>
+  <text class="small" x="60" y="96">Annotations는 object metadata의 하위 필드가 아니라, 객체 버전 옆에 붙는 별도 named payload입니다.</text>
+
+  <rect class="panel" x="70" y="140" width="465" height="390" rx="12"/>
+  <text class="label" x="105" y="186">S3 Object Version</text>
+  <text class="small" x="105" y="216">예: assets/audio/music.m4a</text>
+
+  <rect class="object" x="105" y="258" width="170" height="190" rx="12"/>
+  <text class="label" x="134" y="304">Object</text>
+  <text class="small" x="134" y="336">payload</text>
+  <text class="mono" x="134" y="370">audio bytes</text>
+  <text class="mono" x="134" y="398">PDF bytes</text>
+  <text class="mono" x="134" y="426">Parquet data</text>
+
+  <rect class="meta" x="310" y="250" width="185" height="96" rx="10"/>
+  <text class="card-title" x="332" y="286">Object metadata</text>
+  <text class="mono" x="332" y="314">size</text>
+  <text class="mono" x="332" y="336">storage_class</text>
+
+  <rect class="meta" x="310" y="374" width="185" height="96" rx="10"/>
+  <text class="card-title" x="332" y="410">User metadata</text>
+  <text class="mono" x="332" y="438">x-amz-meta-*</text>
+  <text class="tiny" x="332" y="460">upload-time header</text>
+
+  <rect class="anno" x="105" y="482" width="390" height="34" rx="8"/>
+  <text class="note" x="300" y="505" text-anchor="middle">Object metadata와 annotation은 같은 필드가 아닙니다.</text>
+
+  <rect class="panel" x="665" y="140" width="465" height="390" rx="12"/>
+  <text class="label" x="700" y="186">S3 Annotations</text>
+  <text class="small" x="700" y="216">객체 버전 옆에 붙는 named payload</text>
+
+  <rect class="anno" x="700" y="252" width="178" height="78" rx="10"/>
+  <text class="card-title" x="724" y="286">asset.media</text>
+  <text class="mono" x="724" y="314">JSON / YAML</text>
+
+  <rect class="anno" x="910" y="252" width="178" height="78" rx="10"/>
+  <text class="card-title" x="934" y="286">audio.text</text>
+  <text class="mono" x="934" y="314">transcript</text>
+
+  <rect class="anno" x="700" y="360" width="178" height="78" rx="10"/>
+  <text class="card-title" x="724" y="394">agent.hint</text>
+  <text class="mono" x="724" y="422">retrieval</text>
+
+  <rect class="anno" x="910" y="360" width="178" height="78" rx="10"/>
+  <text class="card-title" x="934" y="394">policy</text>
+  <text class="mono" x="934" y="422">compliance</text>
+
+  <text class="note" x="700" y="486">별도 API</text>
+  <text class="mono" x="786" y="486">PutObjectAnnotation</text>
+  <text class="mono" x="786" y="510">GetObjectAnnotation</text>
+
+  <path class="line" d="M520 335 C574 335, 602 335, 648 335"/>
+
+  <text class="label" x="70" y="596">S3 Metadata tables</text>
+  <text class="small" x="70" y="624">S3 객체 상태, 변경 이벤트, annotation payload를 queryable Iceberg table로 노출합니다.</text>
+
+  <rect class="table" x="90" y="660" width="300" height="100" rx="10"/>
+  <text class="card-title" x="118" y="698">journal table</text>
+  <text class="small" x="118" y="728">객체 변경 이벤트</text>
+  <text class="mono" x="118" y="750">CREATE / DELETE</text>
+
+  <rect class="table" x="450" y="660" width="300" height="100" rx="10"/>
+  <text class="card-title" x="478" y="698">live inventory</text>
+  <text class="small" x="478" y="728">현재 객체 상태</text>
+  <text class="mono" x="478" y="750">size / storage</text>
+
+  <rect class="table" x="810" y="660" width="300" height="100" rx="10"/>
+  <text class="card-title" x="838" y="698">annotation table</text>
+  <text class="small" x="838" y="728">annotation 조회</text>
+  <text class="mono" x="838" y="750">name / text_value</text>
+
+  <path class="softline" d="M400 470 C360 560, 260 590, 235 652"/>
+  <path class="softline" d="M402 470 C460 548, 556 590, 600 652"/>
+  <path class="softline" d="M900 516 C910 575, 942 612, 960 652"/>
+</svg>
