@@ -4,6 +4,22 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
         <url>
+            <loc>https://heuristicwave.github.io/S3-Annotations-3.html</loc>
+            
+                <lastmod>2026-06-29T00:00:00+00:00</lastmod>
+            
+
+            
+                <changefreq>weekly</changefreq>
+            
+
+            
+                <priority>0.5</priority>
+            
+
+        </url>
+    
+        <url>
             <loc>https://heuristicwave.github.io/S3-Annotations-2.html</loc>
             
                 <lastmod>2026-06-25T00:00:00+00:00</lastmod>

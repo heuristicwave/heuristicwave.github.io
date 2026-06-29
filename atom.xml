@@ -8,6 +8,22 @@
     
       
       <item>
+        <title>Amazon S3 Annotations 3편: AI SRE를 위한 Observability Context Layer 검증하기</title>
+        
+          <description>&lt;p&gt;&lt;a href=&quot;/S3-OKF-Annotations.html&quot;&gt;1편&lt;/a&gt;에서는 Markdown 문서를 S3 Object로 올리고, frontmatter, links, summary를 각각 S3 Annotations로 분리해보았습니다.
+&lt;a href=&quot;/S3-Annotations-2.html&quot;&gt;2편&lt;/a&gt;에서는 S3 Annotations를 특정 문서 포맷의 부가 정보가 아니라, S3 객체 전반에 의미 계층을 붙이는 context layer로 보는 관점을 정리했습니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Mon, 29 Jun 2026 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/S3-Annotations-3</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/S3-Annotations-3</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Amazon S3 Annotations 2편: 객체에 의미 계층 붙이기</title>
         
           <description>&lt;p&gt;이번 글에서는 S3 Annotations를 특정 예제의 부가 정보 저장소가 아니라, S3 객체 전반에 의미 계층을 붙이는 context layer로 보는 관점을 정리합니다.&lt;/p&gt;
