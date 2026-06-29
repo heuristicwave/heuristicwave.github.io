@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/author/HeuristicWave/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2026-06-29T23:35:03+00:00</updated>
+  <updated>2026-06-29T23:37:08+00:00</updated>
   <id>https://heuristicwave.github.io/author/HeuristicWave/feed.xml</id>
 
   
@@ -496,18 +496,24 @@ C는 Annotation 관계 그래프로 telemetry object를 찾았지만, 그 object
 &lt;p&gt;원본 로그 + 운영 맥락 Agent는 원본 로그 Agent와 같은 196 log rows를 읽고, 그 위에 deployment/config/metric/runbook/topology를 추가로 읽었습니다.
 그 결과 token은 크게 늘었습니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;원본 로그:                    43,976 tokens
-원본 로그 + 운영 맥락:       100,084 tokens
-증가율:                        약 127.6%
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;
+  &lt;div class=&quot;highlight&quot;&gt;
+    &lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span style=&quot;display:inline-block; min-width: 230px;&quot;&gt;원본 로그:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;43,976 tokens&lt;/span&gt;
+&lt;span style=&quot;display:inline-block; min-width: 230px;&quot;&gt;원본 로그 + 운영 맥락:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;100,084 tokens&lt;/span&gt;
+&lt;span style=&quot;display:inline-block; min-width: 230px;&quot;&gt;증가율:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;약 127.6%&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
 &lt;p&gt;반면 Annotation Context Layer는 같은 raw telemetry rows를 읽되, 운영 맥락을 Annotation graph와 annotation bundle로 전달했습니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;원본 로그 + 운영 맥락:       100,084 tokens
-Annotation Context Layer:      75,090 tokens
-감소율:                        약 25.0%
-Accuracy:                      5/5 -&amp;gt; 5/5
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;
+  &lt;div class=&quot;highlight&quot;&gt;
+    &lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span style=&quot;display:inline-block; min-width: 230px;&quot;&gt;원본 로그 + 운영 맥락:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;100,084 tokens&lt;/span&gt;
+&lt;span style=&quot;display:inline-block; min-width: 230px;&quot;&gt;Annotation Context Layer:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;75,090 tokens&lt;/span&gt;
+&lt;span style=&quot;display:inline-block; min-width: 230px;&quot;&gt;감소율:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;약 25.0%&lt;/span&gt;
+&lt;span style=&quot;display:inline-block; min-width: 230px;&quot;&gt;Accuracy:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;5/5 -&amp;gt; 5/5&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
 &lt;p&gt;따라서 이 실험에서는 &lt;strong&gt;raw log에 운영 변경 맥락을 그대로 붙이는 것보다, Annotations 기반 Context Layer로 관계를 구조화해 전달하는 방식이 같은 정확도를 더 작은 입력으로 만들었습니다.&lt;/strong&gt;&lt;/p&gt;
 
@@ -696,9 +702,12 @@ raw log만 볼 때, 운영 맥락을 그대로 붙일 때, Annotation Context La
 &lt;p&gt;반면 Nova 2 Lite에서는 원본 로그 + 운영 맥락과 Annotation Context Layer가 모두 5/5였습니다.
 다만 token 사용량은 크게 달랐습니다.&lt;/p&gt;
 
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Nova 2 Lite + 원본 로그 + 운영 맥락:                 223,466 tokens
-Nova 2 Lite + Annotation Context Layer:    58,059 tokens
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;
+  &lt;div class=&quot;highlight&quot;&gt;
+    &lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span style=&quot;display:inline-block; min-width: 340px;&quot;&gt;Nova 2 Lite + 원본 로그 + 운영 맥락:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;223,466 tokens&lt;/span&gt;
+&lt;span style=&quot;display:inline-block; min-width: 340px;&quot;&gt;Nova 2 Lite + Annotation Context Layer:&lt;/span&gt;&lt;span style=&quot;display:inline-block; width: 140px; text-align: right;&quot;&gt;58,059 tokens&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
 
 &lt;p&gt;이 결과는 두 가지를 보여줍니다.&lt;/p&gt;
 
