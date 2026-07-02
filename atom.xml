@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기</title>
+        
+          <description>&lt;p&gt;Kiro는 IDE 안에서만 쓰는 도구로 볼 수도 있지만, CLI와 ACP를 함께 보면 다른 agent workflow와 연결할 수 있는 별도의 coding agent runtime으로도 볼 수 있습니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Tue, 30 Jun 2026 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/Kiro-ACP-Codex</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/Kiro-ACP-Codex</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Amazon S3 Annotations 3편: AI SRE를 위한 Observability Context Layer 검증하기</title>
         
           <description>&lt;p&gt;&lt;a href=&quot;/S3-OKF-Annotations.html&quot;&gt;1편&lt;/a&gt;에서는 Markdown 문서를 S3 Object로 올리고, frontmatter, links, summary를 각각 S3 Annotations로 분리해보았습니다.

@@ -11,7 +11,7 @@
 
 
 
-    <title>Security - Heuristic Wave Blog</title>
+    <title>Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기</title>
     <meta name="HandheldFriendly" content="True" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- Styles'n'Scripts -->
@@ -23,6 +23,8 @@
     <link rel="stylesheet" type="text/css" href="/assets/built/custom.css" />
     
     <!-- TOC CSS - 포스트 페이지에서만 로드 -->
+    
+    <link rel="stylesheet" type="text/css" href="/assets/built/toc.css" />
     
     
     <!-- Inline Dark Theme CSS for immediate effect -->
@@ -429,28 +431,34 @@
     <!-- This tag outputs SEO meta+structured data and other important settings -->
     <meta name="description" content="Careful Writer" />
     <link rel="shortcut icon" href="https://heuristicwave.github.io/assets/built/images/water-wave-48.png" type="image/png" />
-    <link rel="canonical" href="https://heuristicwave.github.io/tag/security/" />
+    <link rel="canonical" href="https://heuristicwave.github.io/Kiro-ACP-Codex" />
     <meta name="referrer" content="no-referrer-when-downgrade" />
 
      <!--title below is coming from _includes/dynamic_title-->
     <meta property="og:site_name" content="Heuristic Wave Blog" />
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="Security - Heuristic Wave Blog" />
-    <meta property="og:description" content="Careful Writer" />
-    <meta property="og:url" content="https://heuristicwave.github.io/tag/security/" />
-    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
+    <meta property="og:title" content="Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기" />
+    <meta property="og:description" content="Kiro는 IDE 안에서만 쓰는 도구로 볼 수도 있지만, CLI와 ACP를 함께 보면 다른 agent workflow와 연결할 수 있는 별도의 coding agent runtime으로도 볼 수 있습니다. Codex CLI라면 shell에서 kiro-cli acp를 직접 실행해도 됩니다. 하지만 Codex Desktop에서는 Kiro를 매번 terminal command로 부르는 것보다, thread 안에서 호출할 수 있는 tool처럼 보이게 만드는" />
+    <meta property="og:url" content="https://heuristicwave.github.io/Kiro-ACP-Codex" />
+    <meta property="og:image" content="https://heuristicwave.github.io/assets/built/images/background/kiro-acp-official.png" />
     <meta property="article:publisher" content="https://www.facebook.com/" />
+    <meta property="article:author" content="https://www.facebook.com/" />
+    <meta property="article:published_time" content="2026-06-30T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2026-06-30T00:00:00+00:00" />
+    <meta property="article:tag" content="Ai" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Security - Heuristic Wave Blog" />
-    <meta name="twitter:description" content="Careful Writer" />
+    <meta name="twitter:title" content="Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기" />
+    <meta name="twitter:description" content="Kiro는 IDE 안에서만 쓰는 도구로 볼 수도 있지만, CLI와 ACP를 함께 보면 다른 agent workflow와 연결할 수 있는 별도의 coding agent runtime으로도 볼 수 있습니다. Codex CLI라면 shell에서 kiro-cli acp를 직접 실행해도 됩니다. 하지만 Codex Desktop에서는 Kiro를 매번 terminal command로 부르는 것보다, thread 안에서 호출할 수 있는 tool처럼 보이게 만드는" />
     <meta name="twitter:url" content="https://heuristicwave.github.io/" />
-    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/blog-cover.jpg" />
+    <meta name="twitter:image" content="https://heuristicwave.github.io/assets/built/images/background/kiro-acp-official.png" />
     <meta name="twitter:label1" content="Written by" />
     <meta name="twitter:data1" content="Heuristic Wave Blog" />
+    <meta name="twitter:label2" content="Filed under" />
+    <meta name="twitter:data2" content="Ai" />
     <meta name="twitter:site" content="@" />
     <meta name="twitter:creator" content="@" />
-    <meta property="og:image:width" content="2000" />
-    <meta property="og:image:height" content="666" />
+    <meta property="og:image:width" content="1400" />
+    <meta property="og:image:height" content="933" />
 
     <script type="application/ld+json">
 {
@@ -461,18 +469,18 @@
         "name": "Heuristic Wave Blog",
         "logo": "https://heuristicwave.github.io/"
     },
-    "url": "https://heuristicwave.github.io/tag/security/",
+    "url": "https://heuristicwave.github.io/Kiro-ACP-Codex",
     "image": {
         "@type": "ImageObject",
-        "url": "https://heuristicwave.github.io/assets/built/images/blog-cover.jpg",
+        "url": "https://heuristicwave.github.io/assets/built/images/background/kiro-acp-official.png",
         "width": 2000,
         "height": 666
     },
     "mainEntityOfPage": {
         "@type": "WebPage",
-        "@id": "https://heuristicwave.github.io/tag/security/"
+        "@id": "https://heuristicwave.github.io/Kiro-ACP-Codex"
     },
-    "description": "Careful Writer"
+    "description": "Kiro는 IDE 안에서만 쓰는 도구로 볼 수도 있지만, CLI와 ACP를 함께 보면 다른 agent workflow와 연결할 수 있는 별도의 coding agent runtime으로도 볼 수 있습니다. Codex CLI라면 shell에서 kiro-cli acp를 직접 실행해도 됩니다. 하지만 Codex Desktop에서는 Kiro를 매번 terminal command로 부르는 것보다, thread 안에서 호출할 수 있는 tool처럼 보이게 만드는"
 }
     </script>
     <script data-ad-client="ca-pub-6093187208665634" async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
@@ -494,24 +502,20 @@
         gtag('config', 'G-0FTXSPJZFY');
     </script>
     <meta name="generator" content="Jekyll 3.6.2" />
-    <link rel="alternate" type="application/rss+xml" title="Tag Page" href="https://heuristicwave.github.io/feed.xml" />
+    <link rel="alternate" type="application/rss+xml" title="Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기" href="https://heuristicwave.github.io/feed.xml" />
 
 
 </head>
-<body class="tag-template">
+<body class="post-template">
 
     <div class="site-wrapper">
         <!-- All the main content gets inserted here, index.hbs, post.hbs, etc -->
         <!-- default -->
-<!-- The tag above means - insert everything in this file into the {body} of the default.hbs template -->
 
-<!-- The big featured header, it uses blog cover image as a BG if available -->
-<!-- #tag -->
-<!-- dynamically loading backgrounds for tags,  descriptions and page titles -->
+<!-- The tag above means: insert everything in this file
+into the {body} of the default.hbs template -->
 
-
-
-<header class="site-header outer no-cover">
+<header class="site-header outer">
     <div class="inner">
         <nav class="site-nav">
     <div class="site-nav-left">
@@ -559,55 +563,566 @@
     </div>
 </nav>
 
-        <div class="site-header-content">
-            <h1 class="site-title">SECURITY</h1>
-            <h2 class="site-description">
-                
-    			    A collection of 2 posts
-                
-            </h2>
-        </div>
     </div>
 </header>
-<!-- tag -->
 
-<!-- The main content area -->
+<!-- Everything inside the #post tags pulls data from the post -->
+<!-- #post -->
+
 <main id="site-main" class="site-main outer" role="main">
     <div class="inner">
-        <div class="post-feed">
-            <!-- The tag below includes the markup for each post - partials/post-card.hbs -->
+
+        <article class="post-full  tag-ai tag-genai tag-lab post tag-ai ">
+
+            <header class="post-full-header">
+                <section class="post-full-meta">
+                    <time class="post-full-meta-date" datetime="30 June 2026">30 June 2026</time>
+                    
+                        <span class="date-divider">/</span>
+                        
+                            
+                               <a href='/tag/ai/'>AI</a>,
+                            
+                        
+                            
+                               <a href='/tag/genai/'>GENAI</a>,
+                            
+                        
+                            
+                               <a href='/tag/lab/'>LAB</a>
+                            
+                        
+                    
+                </section>
+                <h1 class="post-full-title">Codex Desktop에서 Kiro ACP 쓰기:<br>MCP Wrapper로 연결하기</h1>
+            </header>
+
+            
+            <figure class="post-full-image" style="background-image: url(/assets/built/images/background/kiro-acp-official.png)">
+            </figure>
             
 
+            <section class="post-full-content">
+                <div class="kg-card-markdown">
+                    <p>Kiro는 IDE 안에서만 쓰는 도구로 볼 수도 있지만, CLI와 ACP를 함께 보면 다른 agent workflow와 연결할 수 있는 별도의 coding agent runtime으로도 볼 수 있습니다.</p>
 
-    <article class="post-card tag-template">
+<p>Codex CLI라면 shell에서 <code class="language-plaintext highlighter-rouge">kiro-cli acp</code>를 직접 실행해도 됩니다. 하지만 Codex Desktop에서는 Kiro를 매번 terminal command로 부르는 것보다, thread 안에서 호출할 수 있는 tool처럼 보이게 만드는 편이 자연스럽습니다.</p>
+
+<p>이번 글은 Codex Desktop에서 Kiro ACP agent를 MCP tool처럼 호출해본 실험 노트입니다. 먼저 ACP가 무엇인지부터 설명하고, 그 다음 Codex Desktop에서 Kiro ACP를 쓰기 위해 왜 <strong>MCP wrapper</strong>를 만들었는지 정리합니다.</p>
+
+<h2 id="-acp가-뭔가"><a href="#acp">🧩 ACP가 뭔가?</a><a id="acp"></a></h2>
+
+<p>ACP는 <strong><a href="https://agentclientprotocol.com/get-started/introduction">Agent Client Protocol</a></strong>입니다.</p>
+
+<p>이름이 비슷해서 다른 Agent Communication Protocol들과 혼동하기 쉬운데, Kiro CLI 문맥에서 말하는 ACP는 editor나 client application이 coding agent와 대화하기 위한 protocol입니다. 즉, agent끼리 서로 대화하기 위한 protocol이라기보다 <strong>사용자가 머무는 client와 coding agent runtime 사이의 protocol</strong>에 가깝습니다.</p>
+
+<p>ACP가 나온 배경은 AI coding agent와 editor의 결합도가 너무 높아졌다는 문제의식입니다. 예를 들어 Zed, JetBrains IDE, Neovim 같은 editor가 있고, Kiro CLI, Claude Code, Gemini CLI 같은 agent가 있다고 가정해봅니다. 표준 protocol이 없다면 각 editor는 각 agent에 맞는 전용 integration을 따로 만들어야 합니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>표준 protocol이 없을 때
+
+Zed         -&gt; Kiro 전용 연동, Claude 전용 연동, Gemini 전용 연동
+JetBrains   -&gt; Kiro 전용 연동, Claude 전용 연동, Gemini 전용 연동
+Neovim      -&gt; Kiro 전용 연동, Claude 전용 연동, Gemini 전용 연동
+</code></pre></div></div>
+
+<p>조합이 늘어날수록 editor도 힘들고 agent도 힘들어집니다. editor는 agent마다 UI, 권한 요청, diff 표시, session 관리 방식을 맞춰야 하고, agent는 editor마다 다른 API에 대응해야 합니다.</p>
+
+<p>ACP는 이 중복을 줄이기 위해 client와 agent 사이의 공통 대화 방식을 정하자는 제안입니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ACP가 있을 때
+
+Editor / Client  -&gt;  ACP  -&gt;  Coding Agent
+</code></pre></div></div>
+
+<p>개발자에게 익숙한 비유를 하나만 들면, TypeScript language server가 여러 editor에서 동작하듯이 coding agent도 여러 client에서 같은 방식으로 붙을 수 있게 하려는 방향입니다. 다만 이 글에서는 LSP 자체보다, ACP가 <strong>editor UI와 agent runtime 사이의 접점</strong>을 표준화하려는 시도라는 점이 더 중요합니다.</p>
+
+<p><a href="https://zed.dev/acp">Zed는 ACP</a>를 agent와 editor가 서로 호환되도록 하는 open standard로 소개합니다. <a href="https://blog.jetbrains.com/ai/2025/10/jetbrains-zed-open-interoperability-for-ai-coding-agents-in-your-ide/">JetBrains도 Zed와 함께 ACP</a>를 통해 AI coding agent가 JetBrains IDE 안에서 동작할 수 있는 상호운용성을 만들겠다고 설명합니다. <a href="https://agentclientprotocol.com/get-started/introduction">ACP 공식 문서</a> 역시 code editor/IDE와 coding agent 사이의 통신을 표준화하는 것이 목적이라고 정리합니다.</p>
+
+<p>그래서 ACP에서 중요한 축은 두 가지입니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>역할</th>
+      <th>예시</th>
+      <th>책임</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ACP Client</td>
+      <td>Zed, JetBrains IDE, custom client</td>
+      <td>UI, editor context, permission UX, user interaction</td>
+    </tr>
+    <tr>
+      <td>ACP Agent</td>
+      <td>Kiro CLI, other ACP-compatible coding agents</td>
+      <td>reasoning loop, tool execution, code/task response</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>Kiro는 이 흐름에서 ACP-compatible agent 쪽에 들어갑니다. <a href="https://kiro.dev/docs/cli/acp/">Kiro ACP 공식 문서</a>는 Kiro CLI를 ACP-compliant agent로 실행해 programmatic client integration에 사용할 수 있다고 설명합니다. 즉 Kiro IDE만 쓰는 것이 아니라, Kiro CLI를 ACP agent로 실행하면 다른 ACP client가 Kiro agent runtime을 호출할 수 있습니다.</p>
+
+<p><a href="https://kiro.dev/docs/cli/acp/">Kiro ACP 공식 문서</a> 기준으로 Kiro ACP는 JSON-RPC 2.0 메시지를 stdin/stdout으로 주고받는 구조입니다. 그래서 ACP client 역할을 하는 애플리케이션은 Kiro CLI process를 띄우고, 표준 입출력으로 protocol message를 주고받으면 됩니다.</p>
+
+<p>Kiro ACP 예시는 보통 IDE 연동 관점에서 설명되지만, 꼭 JetBrains 같은 IDE 안에서만 쓸 필요는 없습니다. 저는 ACP agent로 실행되는 Kiro CLI를 다른 작업 흐름에서도 호출할 수 있다고 보고, 다음 구조로 실험했습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>어떤 Client
+  ↓ JSON-RPC over stdio
+kiro-cli acp
+  ↓
+Kiro Agent
+</code></pre></div></div>
+
+<p><br /></p>
+
+<h2 id="-mcp와는-뭐가-다른가"><a href="#mcp">🔌 MCP와는 뭐가 다른가?</a><a id="mcp"></a></h2>
+
+<p>처음 보면 ACP와 MCP가 둘 다 agent protocol처럼 보여서 헷갈립니다. 하지만 두 protocol이 연결하려는 대상은 다릅니다.</p>
+
+<table>
+  <thead>
+    <tr>
+      <th>Protocol</th>
+      <th>연결하는 대상</th>
+      <th>중심 질문</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>ACP</td>
+      <td>Client와 coding agent</td>
+      <td>“이 client가 어떤 agent와 대화할 것인가?”</td>
+    </tr>
+    <tr>
+      <td>MCP</td>
+      <td>Agent와 tool/context</td>
+      <td>“이 agent가 어떤 도구와 context를 사용할 것인가?”</td>
+    </tr>
+  </tbody>
+</table>
+
+<p>ACP는 client가 agent를 호출하는 쪽에 가깝습니다. 예를 들어 editor나 custom client가 Kiro CLI를 agent runtime처럼 실행하고, prompt와 session을 주고받는 흐름입니다.</p>
+
+<p>MCP는 agent가 외부 기능을 사용하는 쪽에 가깝습니다. agent가 파일, 브라우저, 문서, 내부 API 같은 도구나 context를 필요할 때 호출할 수 있도록 tool interface를 제공합니다.</p>
+
+<p>그래서 이 글의 구조에서는 두 protocol이 서로 반대편을 담당합니다. Kiro CLI는 ACP agent로 실행되고, Codex Desktop은 MCP tool을 호출합니다. 하나는 agent를 호출하기 위한 protocol이고, 다른 하나는 tool을 노출하기 위한 protocol입니다.</p>
+
+<p>이 둘을 바로 맞물리게 하려면 중간에서 번역하는 계층이 필요합니다. 그 역할을 MCP wrapper가 맡습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>Codex
+  ↓ MCP tool call
+MCP Wrapper
+  ↓ ACP messages
+kiro-cli acp
+  ↓
+Kiro Agent
+</code></pre></div></div>
+
+<p><br /></p>
+
+<h2 id="-왜-wrapper가-필요한가"><a href="#why-wrapper">🤔 왜 Wrapper가 필요한가?</a><a id="why-wrapper"></a></h2>
+
+<p>Codex Desktop workflow 안에서 Kiro를 함께 쓰고 싶다면, 실제로 Kiro가 추론하고 응답하는 지점을 만들어야 합니다. 단순히 Codex prompt에 “Kiro처럼 생각해줘”라고 쓰는 것은 Kiro를 호출하는 것이 아닙니다.</p>
+
+<p>두 agent를 연결하는 구조를 만들려면 결국 Kiro CLI가 실행되어야 합니다.</p>
+
+<p>Codex CLI에서는 가장 단순한 방법이 shell command로 Kiro CLI를 직접 실행하는 것입니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kiro-cli acp
+</code></pre></div></div>
+
+<p>CLI 작업이라면 이 방식이 충분히 직관적입니다. terminal 안에서 command를 실행하고, 필요한 prompt와 context를 넘기면 됩니다.</p>
+
+<p>하지만 Codex Desktop에서 반복 workflow로 만들려면 요구가 조금 달라집니다.</p>
+
+<ul>
+  <li>thread 안에서 <code class="language-plaintext highlighter-rouge">ask_kiro</code>, <code class="language-plaintext highlighter-rouge">review_with_kiro</code>처럼 이름 있는 tool로 호출하고 싶습니다.</li>
+  <li>매번 ACP JSON-RPC message를 직접 만들고 싶지 않습니다.</li>
+  <li>Kiro 호출 결과를 Codex Desktop의 tool result로 돌려받고 싶습니다.</li>
+  <li>wrapper 내부에서 session id나 timeout, workspace context를 관리하고 싶습니다.</li>
+</ul>
+
+<p>그래서 중간에 MCP wrapper를 둡니다.</p>
+
+<p>Codex Desktop에게는 다음처럼 보이게 합니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>ask_kiro(prompt, files)
+review_with_kiro(diff, focus)
+</code></pre></div></div>
+
+<p>Wrapper 내부에서는 Kiro ACP process를 실행하거나 유지하고, 실제 요청은 ACP protocol로 전달합니다. 이렇게 하면 Codex Desktop은 “Kiro를 호출하는 방법”을 매번 고민하지 않고, MCP tool을 호출하듯 쓸 수 있습니다.</p>
+
+<p><br /></p>
+
+<h2 id="-codex-desktop에서-mcp-wrapper로-호출하기"><a href="#actual-mcp">🧪 Codex Desktop에서 MCP Wrapper로 호출하기</a><a id="actual-mcp"></a></h2>
+
+<p>처음 이 글의 초안을 쓸 때는 ACP 구조만 정리했고, 실제 Codex Desktop workflow에서 Kiro를 호출하는 형태는 아니었습니다. 그래서 글의 톤이 “실험했다”라기보다 “이렇게 하면 어떨까”에 가까웠습니다.</p>
+
+<p>이번에는 한 단계 더 나아가, 실제 MCP wrapper를 만들고 Codex Desktop에서 그 MCP server를 사용하도록 등록했습니다. wrapper 위치는 blog repository 내부가 아니라 개인 작업 디렉터리인 <code class="language-plaintext highlighter-rouge">~/kiro</code> 아래로 분리했습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>~/kiro/kiro-bridge-mcp/server.js
+</code></pre></div></div>
+
+<p>전체 흐름은 아래 그림처럼 이해하면 됩니다.</p>
+
+<p><img src="../../assets/built/images/post/ai/kiro/codex-kiro-acp-mcp.png" alt="Codex, MCP Wrapper, ACP, Kiro CLI 구조" /></p>
+
+<p>왼쪽의 Codex는 Codex Desktop thread입니다. 사용자는 Codex Desktop에서 평소처럼 글을 수정하고, 필요할 때 Kiro에게 질문하거나 리뷰를 요청합니다. Codex가 직접 Kiro ACP message를 만들게 하지 않고, 중간의 MCP Wrapper를 tool처럼 호출합니다. 이 wrapper는 Codex 쪽에서는 MCP server로 보이고, Kiro 쪽에서는 ACP client처럼 동작합니다.</p>
+
+<p>그 다음 wrapper가 <code class="language-plaintext highlighter-rouge">kiro-cli acp</code> process를 실행하고, ACP의 <code class="language-plaintext highlighter-rouge">initialize</code>, <code class="language-plaintext highlighter-rouge">session/new</code>, <code class="language-plaintext highlighter-rouge">session/prompt</code> 요청을 보냅니다. Kiro CLI는 JSON-RPC over stdio로 응답하고, wrapper는 streaming response를 모아 다시 Codex의 MCP tool result로 돌려줍니다.</p>
+
+<p>그림 아래쪽의 작은 항목들은 “Codex가 어떤 일을 wrapper에 맡길 수 있는가”를 보여주는 예시입니다. 실제 구현에서는 범위를 더 좁혀서 <code class="language-plaintext highlighter-rouge">ask_kiro</code>와 <code class="language-plaintext highlighter-rouge">review_with_kiro</code> 두 tool만 만들었습니다.</p>
+
+<p><code class="language-plaintext highlighter-rouge">ask_kiro</code>는 일반 질문을 Kiro에게 넘기는 tool이고, <code class="language-plaintext highlighter-rouge">review_with_kiro</code>는 파일, diff, focus를 받아 Kiro에게 2차 리뷰를 맡기는 tool입니다. 둘 다 read-only로 설계했습니다. Kiro가 파일을 직접 수정하지 않고, response만 Codex로 돌려줍니다.</p>
+
+<p>Codex Desktop에서 이 wrapper를 쓰려면 Codex 설정에 MCP server로 등록합니다. 공식 Codex 문서 기준으로 user-level 설정은 <code class="language-plaintext highlighter-rouge">~/.codex/config.toml</code>, project-scoped 설정은 <code class="language-plaintext highlighter-rouge">.codex/config.toml</code>에 둘 수 있고, MCP stdio server는 <code class="language-plaintext highlighter-rouge">command</code>, <code class="language-plaintext highlighter-rouge">args</code>, <code class="language-plaintext highlighter-rouge">cwd</code>, <code class="language-plaintext highlighter-rouge">env</code> 같은 항목으로 실행 방식을 정의합니다.</p>
+
+<div class="language-toml highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nn">[mcp_servers.kiro_bridge]</span>
+<span class="py">command</span> <span class="p">=</span> <span class="s">"&lt;node&gt;"</span>
+<span class="py">args</span> <span class="p">=</span> <span class="nn">["~/kiro/kiro-bridge-mcp/server.js"]</span>
+<span class="py">cwd</span> <span class="p">=</span> <span class="s">"~/kiro"</span>
+<span class="py">startup_timeout_sec</span> <span class="p">=</span> <span class="mi">20</span>
+<span class="py">tool_timeout_sec</span> <span class="p">=</span> <span class="mi">300</span>
+<span class="py">enabled</span> <span class="p">=</span> <span class="kc">true</span>
+
+<span class="nn">[mcp_servers.kiro_bridge.env]</span>
+<span class="py">KIRO_CLI</span> <span class="p">=</span> <span class="s">"&lt;kiro-cli&gt;"</span>
+<span class="py">KIRO_BRIDGE_ROOT</span> <span class="p">=</span> <span class="s">"&lt;blog-repository&gt;"</span>
+<span class="py">KIRO_EFFORT</span> <span class="p">=</span> <span class="s">"low"</span>
+</code></pre></div></div>
+
+<p>여기서 <code class="language-plaintext highlighter-rouge">cwd</code>는 wrapper가 실행되는 위치이고, <code class="language-plaintext highlighter-rouge">KIRO_BRIDGE_ROOT</code>는 wrapper가 read-only context를 읽을 workspace입니다. 즉 bridge 코드는 개인 작업 디렉터리에 두되, 블로그 글 리뷰는 blog repository를 대상으로 수행합니다.</p>
+
+<p>이렇게 등록하면 Codex Desktop 입장에서는 Kiro ACP가 직접 보이는 것이 아니라, <code class="language-plaintext highlighter-rouge">kiro_bridge</code>라는 MCP server가 보입니다. 그리고 그 server가 노출하는 <code class="language-plaintext highlighter-rouge">ask_kiro</code>, <code class="language-plaintext highlighter-rouge">review_with_kiro</code> tool을 통해 Kiro ACP session이 만들어집니다.</p>
+
+<p>실제 검증은 포스팅 대상 글 자체를 Kiro에게 보여주고 개선점을 요청하는 방식으로 진행했습니다. Codex Desktop에서는 평소처럼 글을 수정하다가 다음처럼 요청했습니다.</p>
+
+<div class="language-text highlighter-rouge"><div class="highlight"><pre class="highlight"><code>키로야 내 글 Kiro acp codex 개선할 점이 뭐야?
+</code></pre></div></div>
+
+<p><img src="../../assets/built/images/post/ai/kiro/codex-desktop-kiro-review.png" alt="Codex Desktop에서 Kiro에게 글 개선점 요청" /></p>
+
+<p>이 호출은 <code class="language-plaintext highlighter-rouge">review_with_kiro</code> tool을 통해 포스트 파일을 Kiro에게 넘기는 흐름입니다. wrapper는 포스트 파일을 읽어 prompt context에 붙이고, Kiro ACP session을 생성한 뒤 Kiro의 답변과 session metadata를 Codex로 돌려줍니다.</p>
+
+<p>여기서 한 가지 더 확인하고 싶었던 것은 Kiro CLI에서 ACP를 통해 호출된 session이 실제로 남는지였습니다. 그래서 응답 metadata에 남은 session id로 Kiro CLI에서 같은 세션을 다시 열어봤습니다.</p>
+
+<div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>kiro-cli chat <span class="nt">--resume-id</span> 46a49b64-d5e6-44a9-8388-a7d97ab2d731
+</code></pre></div></div>
+
+<p><img src="../../assets/built/images/post/ai/kiro/kiro-resume-review.png" alt="Kiro CLI resume으로 같은 ACP session 답변 확인" /></p>
+
+<p>터미널에서 같은 session을 열어보니 Codex Desktop에서 요청한 글 개선점 대화가 Kiro CLI에서도 이어졌습니다. 즉 wrapper가 실제 Kiro ACP session을 만들었고, 그 session을 Kiro CLI에서 다시 확인할 수 있었습니다. Kiro CLI는 ACP agent로 실행할 수 있고, MCP wrapper 내부에서 Kiro ACP session을 생성해 실제 답변을 받을 수 있었습니다.</p>
+
+<p><br /></p>
+
+<h2 id="outro"><a href="#outro">Outro</a><a id="outro"></a></h2>
+
+<p>제가 이 구조에서 가장 유용하다고 본 지점은 “다른 agent의 다른 리뷰 관점”을 작업 흐름 안으로 가져올 수 있다는 점입니다. Codex로 글을 쓰거나 코드를 고치다가, 중간에 Kiro에게 한 번 더 보여주고 다른 관점의 개선점이나 리뷰를 받을 수 있습니다. 같은 내용을 같은 agent가 다시 보는 것보다, 별도의 agent에게 넘기는 편이 놓치는 부분을 줄이는 데 도움이 됩니다.</p>
+
+<p>지금은 사람이 명시적으로 <code class="language-plaintext highlighter-rouge">ask_kiro</code>나 <code class="language-plaintext highlighter-rouge">review_with_kiro</code>를 호출하는 방식으로 시작했습니다. 이 정도만 해도 글 초안 리뷰, 기술 설명 점검, 큰 diff에 대한 2차 의견처럼 쓸 수 있습니다. 더 나아가면 hook으로 자동화할 수도 있습니다. 예를 들어 글을 저장한 뒤 Kiro에게 초안 리뷰를 맡기거나, 큰 diff가 생겼을 때 Kiro에게 2차 리뷰를 요청하고 결과만 artifact로 남기는 식입니다.</p>
+
+<p>이번 글에서는 Kiro를 IDE 안에서만 쓰지 않고, Codex Desktop의 작업 thread 안에서 독립적인 리뷰어처럼 호출해봤습니다. ACP와 MCP를 바로 연결하지 않고 wrapper를 둔 이유도 여기에 있습니다. 서로 다른 protocol을 억지로 하나로 합치기보다, 각자가 잘하는 위치에 두고 얇은 adapter로 이어보는 방식입니다.</p>
+
+<p>앞으로도 Kiro로 해볼 수 있는 다양하고 신기한 활용 방법들을 조금씩 더 실험해보려고 합니다. 글 리뷰뿐 아니라 코드 리뷰, 테스트 실패 분석, 자동화 hook 같은 주제로도 이어서 다뤄보겠습니다. 종종 Kiro 활용기를 들고 다시 찾아뵙겠습니다.</p>
+
+<p><br /></p>
+
+<h2 id="references">References</h2>
+
+<ul>
+  <li><a href="https://agentclientprotocol.com/get-started/introduction">Agent Client Protocol Introduction</a></li>
+  <li><a href="https://zed.dev/acp">Zed: Agent Client Protocol</a></li>
+  <li><a href="https://blog.jetbrains.com/ai/2025/10/jetbrains-zed-open-interoperability-for-ai-coding-agents-in-your-ide/">JetBrains × Zed: Open Interoperability for AI Coding Agents in Your IDE</a></li>
+  <li><a href="https://kiro.dev/docs/cli/acp/">Kiro ACP docs</a></li>
+  <li><a href="https://kiro.dev/docs/cli/reference/cli-commands/">Kiro CLI commands</a></li>
+  <li><a href="https://developers.openai.com/codex/config-reference#configtoml">Codex config reference</a></li>
+  <li><a href="https://developers.openai.com/codex/mcp/">Codex MCP docs</a></li>
+</ul>
+
+                </div>
+            </section>
+
+            <footer class="post-full-footer">
+                <!-- Everything inside the #author tags pulls data from the author -->
+                <!-- #author-->
+                
+                    
+                        <section class="author-card">
+                            
+                                <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="HeuristicWave" />
+                            
+                            <section class="author-card-content">
+                                <h4 class="author-card-name"><a href="/author/HeuristicWave">Jihun Lim</a></h4>
+                                
+                                    <p><a href="https://feedly.com/i/subscription/feed/https://heuristicwave.github.io/feed.xml">Follow my blog</a></p>
+                                
+                            </section>
+                        </section>
+                        <div class="post-full-footer-right">
+                            <a class="author-card-button" href="/author/HeuristicWave">Read More</a>
+                        </div>
+                    
+                
+                <!-- /author  -->
+            </footer>
+
+            <!-- If you use Disqus comments, just uncomment this block.
+            The only thing you need to change is "test-apkdzgmqhj" - which
+            should be replaced with your own Disqus site-id. -->
+            
+                <section class="post-full-comments">
+                    <div id="disqus_thread"></div>
+                    <script>
+                        var disqus_config = function () {
+                            this.page.url = 'https://heuristicwave.github.io/Kiro-ACP-Codex';
+                            this.page.identifier = '/Kiro-ACP-Codex';
+                            this.page.title = 'Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기';
+                        };
+                        (function() {
+                            var d = document, s = d.createElement('script');
+                            s.src = 'https://heuristicwave-github-io.disqus.com/embed.js';
+                            s.setAttribute('data-timestamp', +new Date());
+                            (d.head || d.body).appendChild(s);
+                        })();
+                    </script>
+                </section>
+            
+
+        </article>
+
+    </div>
+</main>
+
+<!-- Links to Previous/Next posts -->
+<aside class="read-next outer">
+    <div class="inner">
+        <div class="read-next-feed">
+            
+                
+                
+                
+                
+                    <article class="read-next-card"
+                        
+                            style="background-image: url(/assets/built/images/blog-cover.jpg)"
+                        
+                    >
+                        <header class="read-next-card-header">
+                            <small class="read-next-card-header-sitetitle">&mdash; Heuristic Wave Blog &mdash;</small>
+                            
+                                <h3 class="read-next-card-header-title"><a href="/tag/ai/">Ai</a></h3>
+                            
+                        </header>
+                        <div class="read-next-divider"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 14.5s2 3 5 3 5.5-2.463 5.5-5.5S21 6.5 18 6.5c-5 0-7 11-12 11C2.962 17.5.5 15.037.5 12S3 6.5 6 6.5s4.5 3.5 4.5 3.5"/></svg>
+</div>
+                        <div class="read-next-card-content">
+                            <ul>
+                                
+                                
+                                  
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/Agents">Create a Multi-Tool Agent with Cluade 3 and LangChain</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/LLMEvaluation">LLM Evaluation에 대해 끄적이기</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                            <li><a href="/ReAct">ReAct leverages LLM as a reasoning engine</a></li>
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                    
+                                        
+                                        
+                                    
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                                  
+                                
+                            </ul>
+                        </div>
+                        <footer class="read-next-card-footer">
+                            <a href="/tag/ai/">
+                                
+                                    See all 6 posts  →
+                                
+                            </a>
+                        </footer>
+                    </article>
+                
+            
+
+            <!-- If there's a next post, display it using the same markup included from - partials/post-card.hbs -->
+            
+
+            <!-- If there's a previous post, display it using the same markup included from - partials/post-card.hbs -->
+            
+                
+
+    <article class="post-card post-template">
         
-            <a class="post-card-image-link" href="/SCP">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/aws.png)"></div>
+            <a class="post-card-image-link" href="/S3-Annotations-3">
+                <div class="post-card-image" style="background-image: url(/assets/built/images/background/s3-annotations-ai-sre-context-layer.svg)"></div>
             </a>
         
         <div class="post-card-content">
-            <a class="post-card-content-link" href="/SCP">
+            <a class="post-card-content-link" href="/S3-Annotations-3">
                 <header class="post-card-header">
                     
                         
                             
-                                <span class="post-card-tags">Aws</span>
+                               <span class="post-card-tags">Aws</span>
                             
                         
                             
-                                <span class="post-card-tags">Security</span><!-- 개행 없애기 : style="display:inline;" -->
+                               <span class="post-card-tags">Genai</span>
                             
                         
-                    
+                            
+                                <span class="post-card-tags">Lab</span>
+                            
+                        
                     
 
-                    <h2 class="post-card-title">SCP 알아보기</h2>
+                    <h2 class="post-card-title">Amazon S3 Annotations 3편: AI SRE를 위한 Observability Context Layer 검증하기</h2>
                 </header>
                 <section class="post-card-excerpt">
                     
-                        <p>AWS Service control policies로 하위 계정을 제어하기 위한 고려 사항
-
-</p>
+                        <p></p>
                     
                 </section>
             </a>
@@ -625,66 +1140,62 @@
                 <span class="reading-time">
                     
                     
-                      2 min read
+                      1 min read
                     
                 </span>
             </footer>
         </div>
     </article>
 
-    <article class="post-card tag-template">
-        
-            <a class="post-card-image-link" href="/OIDC">
-                <div class="post-card-image" style="background-image: url(/assets/built/images/background/OIDC.png)"></div>
-            </a>
-        
-        <div class="post-card-content">
-            <a class="post-card-content-link" href="/OIDC">
-                <header class="post-card-header">
-                    
-                        
-                            
-                                <span class="post-card-tags">Security</span><!-- 개행 없애기 : style="display:inline;" -->
-                            
-                        
-                    
-                    
-
-                    <h2 class="post-card-title">The Journey to Know OIDC</h2>
-                </header>
-                <section class="post-card-excerpt">
-                    
-                        <p>Journey to OIDC through authentication, authorization, SAML, and OAuth.
-
-</p>
-                    
-                </section>
-            </a>
-            <footer class="post-card-meta">
-                
-                    
-                        
-                        <img class="author-profile-image" src="/assets/built/images/myGopher.png" alt="Jihun Lim" />
-                        
-                        <span class="post-card-author">
-                            <a href="/author/HeuristicWave/">Jihun Lim</a>
-                        </span>
-                    
-                
-                <span class="reading-time">
-                    
-                    
-                      7 min read
-                    
-                </span>
-            </footer>
-        </div>
-    </article>
-
+            
 
         </div>
     </div>
-</main>
+</aside>
+
+<!-- Floating header which appears on-scroll, included from includes/floating-header.hbs -->
+<div class="floating-header">
+    <div class="floating-header-logo">
+        <a href="https://heuristicwave.github.io/">
+            
+            <span>Heuristic Wave Blog</span>
+        </a>
+    </div>
+    <span class="floating-header-divider">&mdash;</span>
+    <div class="floating-header-title">Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기</div>
+    <div class="floating-header-share">
+        
+        <div class="floating-header-share-label">Share this <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+    <path d="M7.5 15.5V4a1.5 1.5 0 1 1 3 0v4.5h2a1 1 0 0 1 1 1h2a1 1 0 0 1 1 1H18a1.5 1.5 0 0 1 1.5 1.5v3.099c0 .929-.13 1.854-.385 2.748L17.5 23.5h-9c-1.5-2-5.417-8.673-5.417-8.673a1.2 1.2 0 0 1 1.76-1.605L7.5 15.5zm6-6v2m-3-3.5v3.5m6-1v2"/>
+</svg>
+</div>
+        <a class="floating-header-share-tw" href="https://twitter.com/share?text=Codex+Desktop%EC%97%90%EC%84%9C+Kiro+ACP+%EC%93%B0%EA%B8%B0%3A+MCP+Wrapper%EB%A1%9C+%EC%97%B0%EA%B2%B0%ED%95%98%EA%B8%B0&amp;url=https%3A%2F%2Fheuristicwave.github.io%2FKiro-ACP-Codex"
+            onclick="window.open(this.href, 'share-twitter', 'width=550,height=235');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817-5.966 6.817H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.45-6.231Zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77Z"/></svg>
+
+        </a>
+        <a class="floating-header-share-li" href="https://www.linkedin.com/sharing/share-offsite/?url=https%3A%2F%2Fheuristicwave.github.io%2FKiro-ACP-Codex"
+            onclick="window.open(this.href, 'share-linkedin', 'width=580,height=520');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.04-1.85-3.04-1.85 0-2.14 1.45-2.14 2.94v5.67H9.34V9h3.42v1.56h.05c.48-.9 1.64-1.85 3.37-1.85 3.6 0 4.27 2.37 4.27 5.46v6.28ZM5.32 7.43a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12Zm1.78 13.02H3.54V9H7.1v11.45ZM22.23 0H1.76C.79 0 0 .77 0 1.72v20.56C0 23.23.79 24 1.76 24h20.47c.97 0 1.77-.77 1.77-1.72V1.72C24 .77 23.2 0 22.23 0Z"/></svg>
+
+        </a>
+        <a class="floating-header-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fheuristicwave.github.io%2FKiro-ACP-Codex"
+            onclick="window.open(this.href, 'share-facebook','width=580,height=296');return false;">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><path d="M19 6h5V0h-5c-3.86 0-7 3.14-7 7v3H8v6h4v16h6V16h5l1-6h-6V7c0-.542.458-1 1-1z"/></svg>
+
+        </a>
+    </div>
+    <progress class="progress" value="0">
+        <div class="progress-container">
+            <span class="progress-bar"></span>
+        </div>
+    </progress>
+</div>
+
+
+<!-- /post -->
+
+<!-- The #contentFor helper here will send everything inside it up to the matching #block helper found in default.hbs -->
 
 
         <!-- Previous/next page links - displayed on every page -->
@@ -1228,7 +1739,7 @@
     <!-- Paginator increased to "infinit" in _config.yml -->
     <!-- if paginator.posts  -->
     <!-- <script>
-        var maxPages = parseInt('1');
+        var maxPages = parseInt('');
     </script>
     <script src="/assets/js/infinitescroll.js"></script> -->
     <!-- /endif -->
@@ -1687,6 +2198,73 @@
 
 
     <!-- The #block helper will pull in data from the #contentFor other template files. In this case, there's some JavaScript which we only want to use in post.hbs, but it needs to be included down here, after jQuery has already loaded. -->
+    
+        <script>
+
+// NOTE: Scroll performance is poor in Safari
+// - this appears to be due to the events firing much more slowly in Safari.
+//   Dropping the scroll event and using only a raf loop results in smoother
+//   scrolling but continuous processing even when not scrolling
+$(document).ready(function () {
+    // Start fitVids
+    var $postContent = $(".post-full-content");
+    $postContent.fitVids();
+    // End fitVids
+
+    var progressBar = document.querySelector('progress');
+    var header = document.querySelector('.floating-header');
+    var title = document.querySelector('.post-full-title');
+
+    var lastScrollY = window.scrollY;
+    var lastWindowHeight = window.innerHeight;
+    var lastDocumentHeight = $(document).height();
+    var ticking = false;
+
+    function onScroll() {
+        lastScrollY = window.scrollY;
+        requestTick();
+    }
+
+    function onResize() {
+        lastWindowHeight = window.innerHeight;
+        lastDocumentHeight = $(document).height();
+        requestTick();
+    }
+
+    function requestTick() {
+        if (!ticking) {
+            requestAnimationFrame(update);
+        }
+        ticking = true;
+    }
+
+    function update() {
+        var trigger = title.getBoundingClientRect().top + window.scrollY;
+        var triggerOffset = title.offsetHeight + 35;
+        var progressMax = lastDocumentHeight - lastWindowHeight;
+
+        // show/hide floating header
+        if (lastScrollY >= trigger + triggerOffset) {
+            header.classList.add('floating-active');
+        } else {
+            header.classList.remove('floating-active');
+        }
+
+        progressBar.setAttribute('max', progressMax);
+        progressBar.setAttribute('value', lastScrollY);
+
+        ticking = false;
+    }
+
+    window.addEventListener('scroll', onScroll, {passive: true});
+    window.addEventListener('resize', onResize, false);
+
+    update();
+});
+</script>
+
+        <!-- TOC JavaScript - 포스트 페이지에서만 로드 -->
+        <script src="/assets/js/toc.js"></script>
     
 
     <!-- Ghost outputs important scripts and data with this tag - it should always be the very last thing before the closing body tag -->
