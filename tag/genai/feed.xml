@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/genai/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2026-07-02T09:19:04+00:00</updated>
+  <updated>2026-08-21T08:36:42+00:00</updated>
   <id>https://heuristicwave.github.io/tag/genai/feed.xml</id>
 
   
@@ -30,6 +30,372 @@
   
   
 
+  
+    <entry>
+      <title type="html">CloudWatch MCP × Strands × MCP Apps: Bedrock 운영 Cockpit 만들기</title>
+      <link href="https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps" rel="alternate" type="text/html" title="CloudWatch MCP × Strands × MCP Apps: Bedrock 운영 Cockpit 만들기" />
+      <published>2026-08-07T00:00:00+00:00</published>
+      <updated>2026-08-07T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps">&lt;p&gt;Codex 같은 coding agent와 직접 대화하면 이미 많은 일을 할 수 있습니다. 그렇다면 굳이 NemoClaw 같은 개인·조직용 Claw를 두고, 그 위에 별도의 운영 화면까지 만들어야 할까요?&lt;/p&gt;
+
+&lt;p&gt;이번 실험에서 내린 답은 단순합니다. &lt;strong&gt;한 번의 개발 작업은 agent와 직접 대화하는 편이 빠르지만, 반복되는 운영 판단을 팀의 방식으로 고정하려면 agent 바깥의 실행 표면이 필요합니다.&lt;/strong&gt; 어떤 데이터를 읽을지, 어떤 계산은 코드로 확정할지, 어떤 판단만 agent에게 맡길지, 결과를 누가 어떻게 검토할지를 하나의 workflow로 묶어야 하기 때문입니다.&lt;/p&gt;
+
+&lt;p&gt;이 질문을 Amazon Bedrock 운영으로 좁혀봤습니다. 실제 CloudWatch 메트릭은 AWS Labs CloudWatch MCP Server로 읽고, Strands는 제공된 근거만 해석하며, MCP Apps는 Overview·Investigate·Optimize를 오가는 운영 Cockpit을 렌더링하게 했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-agent와-직접-대화하면-안-되나&quot;&gt;&lt;a href=&quot;#direct-vs-claw&quot;&gt;🦞 Agent와 직접 대화하면 안 되나?&lt;/a&gt;&lt;a id=&quot;direct-vs-claw&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;됩니다. 다음과 같은 일은 Codex에게 바로 요청하는 편이 자연스럽습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;이 저장소 테스트를 실행하고 실패 원인을 고쳐줘.
+최근 24시간 Bedrock 호출량을 조회해줘.
+이 CloudWatch 메트릭을 보고 지연 원인 후보를 정리해줘.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;하지만 운영 질문이 반복되면 매번 prompt와 tool 범위를 다시 설명해야 합니다. 사람마다 다른 명령을 사용하고, agent가 읽은 데이터 범위도 달라집니다. 결과가 text로만 남으면 시간 범위와 모델을 바꿔 비교하거나, 같은 context로 조사와 최적화를 이어가기도 불편합니다.&lt;/p&gt;
+
+&lt;p&gt;Claw는 더 똑똑한 단일 agent라기보다 &lt;strong&gt;여러 agent·tool·channel을 조직의 실행 규칙으로 감싸는 control plane&lt;/strong&gt;에 가깝습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;직접 agent 대화&lt;/th&gt;
+      &lt;th&gt;Claw 또는 운영용 agent surface&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;한 번의 개발 작업에 빠름&lt;/td&gt;
+      &lt;td&gt;반복 workflow와 공유 context에 적합&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;사용자가 prompt와 tool을 직접 조합&lt;/td&gt;
+      &lt;td&gt;허용 도구, 입력 스키마, 승인 흐름을 고정&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;대화 결과가 중심&lt;/td&gt;
+      &lt;td&gt;dashboard, 알림, 기록, 후속 action까지 연결&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;개인의 숙련도에 크게 의존&lt;/td&gt;
+      &lt;td&gt;팀의 운영 방식을 제품화 가능&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;따라서 나만의 Claw가 항상 필요한 것은 아닙니다. 단발 작업과 개인 개발에는 direct CLI가 충분합니다. 반면 반복되는 운영 업무, 여러 사람이 함께 보는 판단, 읽기·쓰기 권한 분리, 감사 가능한 실행 기록이 중요해지면 Claw의 가치가 생깁니다.&lt;/p&gt;
+
+&lt;p&gt;이번 PoC는 NemoClaw 자체를 설치한 실험은 아닙니다. 대신 Claw가 가져야 할 운영 surface를 MCP Apps로 작게 구현해보는 데 목적을 뒀습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-mcp-apps는-일반-mcp와-무엇이-다른가&quot;&gt;&lt;a href=&quot;#mcp-apps&quot;&gt;🧩 MCP Apps는 일반 MCP와 무엇이 다른가?&lt;/a&gt;&lt;a id=&quot;mcp-apps&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;일반적인 MCP tool은 text나 structured data를 반환합니다. 데이터 조회와 action 실행에는 충분하지만, chart·form·dashboard처럼 사용자가 직접 조작해야 하는 결과에는 한계가 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://apps.extensions.modelcontextprotocol.io/api/&quot;&gt;MCP Apps 공식 문서&lt;/a&gt;는 MCP server가 interactive UI를 표준 방식으로 전달하도록 MCP를 확장합니다. stable specification &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2026-01-26&lt;/code&gt; 기준 핵심 흐름은 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Tool이 ui:// resource를 metadata로 선언
+2. Host가 tool을 호출
+3. Host가 HTML resource를 읽어 sandboxed iframe에 렌더링
+4. Host가 tool result를 UI에 전달
+5. UI는 host를 통해 다시 tool을 호출
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;즉 MCP Apps API 문서는 별도의 dashboard SaaS API가 아닙니다. App 개발자에게는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App&lt;/code&gt;, React hook과 host communication API를, MCP server 개발자에게는 tool과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ui://&lt;/code&gt; resource를 연결하는 API를, host 개발자에게는 sandboxed view를 임베드하는 bridge를 제공합니다.&lt;/p&gt;
+
+&lt;p&gt;이번 앱은 하나의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ui://bedrock-ops/cockpit.html&lt;/code&gt; resource를 세 tool에 연결했습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Tool&lt;/th&gt;
+      &lt;th&gt;역할&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_bedrock_overview&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;모델별 호출·토큰·지연·오류·캐시·TPM 요약&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;investigate_bedrock_model&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;이상 후보, 가능한 설명, 다음 확인 항목&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;optimize_bedrock_usage&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;비용·지연·균형 목표별 개선 기회와 검증 절차&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;UI는 tool의 대체물이 아닙니다. tool의 typed contract 위에 사람이 결과를 비교하고 다음 action을 선택할 수 있는 surface를 더한 것입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-cloudwatch-mcp와-strands를-어떻게-나눴나&quot;&gt;&lt;a href=&quot;#architecture&quot;&gt;🏗️ CloudWatch MCP와 Strands를 어떻게 나눴나?&lt;/a&gt;&lt;a id=&quot;architecture&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;구조는 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;MCP Apps basic-host
+  ↓ Streamable HTTP / MCP
+Bedrock Operations Cockpit Server
+  ├─ Overview Service ───────────────┐
+  ├─ Investigation Service ─ Strands │
+  └─ Optimization Service ── Strands │
+                                     ↓
+CloudWatch Gateway ─ stdio MCP ─ AWS Labs CloudWatch MCP Server
+                                     ↓
+                            Amazon CloudWatch / AWS/Bedrock
+
+Strands Agent ───────────────── Amazon Bedrock
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server&quot;&gt;AWS Labs CloudWatch MCP Server&lt;/a&gt;는 CloudWatch metrics, logs, alarms를 다루는 MCP tool을 제공합니다. 이번 환경에는 Bedrock 관련 log group과 alarm이 없어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS/Bedrock&lt;/code&gt; metric에만 집중했습니다. 서버가 제공하는 모든 기능을 그대로 열지 않고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_metric_data&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_metric_metadata&lt;/code&gt; 두 read-only tool만 gateway allowlist에 넣었습니다.&lt;/p&gt;
+
+&lt;p&gt;Strands에는 CloudWatch 원본 응답을 그대로 넘기지 않았습니다. 애플리케이션이 먼저 다음 작업을 수행합니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;정해진 metric 11개를 조회하고 timestamp와 값을 정규화합니다.&lt;/li&gt;
+  &lt;li&gt;누락된 metric은 0이 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unavailable&lt;/code&gt;로 표시합니다.&lt;/li&gt;
+  &lt;li&gt;Overview 합계와 평균을 결정론적으로 계산합니다.&lt;/li&gt;
+  &lt;li&gt;중앙값과 MAD로 이상 후보를 찾습니다.&lt;/li&gt;
+  &lt;li&gt;Strands에는 정규화된 evidence와 허용된 enum만 전달합니다.&lt;/li&gt;
+  &lt;li&gt;agent 출력은 Zod schema로 다시 검증합니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;이 분리가 중요합니다. LLM이 invocation 수나 latency를 만들어내지 못하게 하고, agent는 가능한 설명·반증 조건·검증 순서를 작성하는 일에만 사용했습니다. &lt;a href=&quot;https://strandsagents.com/docs/examples/structured_output/&quot;&gt;Strands structured output 문서&lt;/a&gt;가 설명하는 schema 기반 결과를 적용한 이유도 여기에 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-구현하며-확인한-경계&quot;&gt;&lt;a href=&quot;#implementation&quot;&gt;🧪 구현하며 확인한 경계&lt;/a&gt;&lt;a id=&quot;implementation&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;프로젝트는 TypeScript 단일 저장소로 구성했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;React MCP App
+@modelcontextprotocol/ext-apps 1.7.5
+@modelcontextprotocol/sdk 1.30.0
+@strands-agents/sdk 1.11.2
+Vitest + Zod + Recharts
+CloudWatch MCP Server via uvx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;aws-profile보다-명시적인-임시-세션을-전달하기&quot;&gt;AWS profile보다 명시적인 임시 세션을 전달하기&lt;/h3&gt;
+
+&lt;p&gt;MFA와 role chaining이 있는 AWS profile은 AWS CLI preflight가 성공해도, CloudWatch MCP의 boto3가 같은 profile을 다시 해석하면서 MFA를 한 번 더 요구할 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;그래서 controller shell에서 임시 session credential을 내보내고, 세 값이 모두 존재할 때는 CloudWatch MCP 요청의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;profile_name&lt;/code&gt;과 child process의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS_PROFILE&lt;/code&gt;을 제거했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;aws configure export-credentials &lt;span class=&quot;nt&quot;&gt;--profile&lt;/span&gt; &amp;lt;aws-profile&amp;gt; &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;AWS_REGION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;us-west-2 npm run smoke:live
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;credential 값은 파일과 로그에 저장하지 않았습니다. 일부 값만 존재하면 profile fallback을 유지하고, 인증 오류는 원문 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AUTH_EXPIRED&lt;/code&gt; 같은 안정적인 code로 변환했습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;실제-mcp-response-shape를-fixture로-만들기&quot;&gt;실제 MCP response shape를 fixture로 만들기&lt;/h3&gt;
+
+&lt;p&gt;처음 live query는 metric 11개가 모두 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unavailable&lt;/code&gt;로 표시됐습니다. CloudWatch에는 데이터가 있었기 때문에 응답 경계를 최소 구조로 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;Metrics Insights에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GROUP BY ModelId&lt;/code&gt;를 사용하면 각 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;metricDataResults&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;에는 metric name이 아니라 model ID가 들어갔습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;metricDataResults&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;m1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;label&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;model-id&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;statusCode&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Complete&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;datapoints&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;timestamp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;iso-time&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;기존 normalizer는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;을 metric name으로만 해석해 모든 series를 버리고 있었습니다. 조회한 metric을 explicit context로 전달하고, grouped query에서만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;을 model ID로 해석하도록 수정했습니다. 특정 모델을 dimension으로 직접 조회할 때의 설명형 label과 혼동하지 않도록 두 경로를 분리했습니다.&lt;/p&gt;
+
+&lt;p&gt;이 경험은 MCP tool을 붙일 때 문서의 type만 보는 것으로 충분하지 않다는 점을 보여줍니다. 실제 provider와 query mode가 만드는 serialization shape를 작은 fixture로 고정해야 합니다.&lt;/p&gt;
+
+&lt;p&gt;공식 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host&lt;/code&gt;를 처음 실행했을 때는 MCP App iframe이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;404&lt;/code&gt;로 열리지 않는 문제도 만났습니다. host checkout을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.vendor/ext-apps&lt;/code&gt;에 둔 것이 원인이었습니다. Express &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sendFile&lt;/code&gt;이 절대 경로 중 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.vendor&lt;/code&gt;를 dotfile 구간으로 판정해, 실제로 존재하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sandbox.html&lt;/code&gt;을 기본 정책으로 차단한 것입니다. 공식 host 코드는 수정하지 않고 checkout을 비숨김 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vendor/ext-apps&lt;/code&gt;로 옮겼고, sandbox endpoint의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;200&lt;/code&gt; 응답과 세 workspace 렌더링을 다시 검증했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-실제-계정에서-확인한-결과&quot;&gt;&lt;a href=&quot;#result&quot;&gt;📊 실제 계정에서 확인한 결과&lt;/a&gt;&lt;a id=&quot;result&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;미국 서부 Oregon 리전의 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS/Bedrock&lt;/code&gt; metric을 대상으로 최근 24시간 smoke workflow를 실행했습니다. 식별자와 credential은 결과에서 제거했습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;단계&lt;/th&gt;
+      &lt;th&gt;상태&lt;/th&gt;
+      &lt;th&gt;관찰 결과&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;실행 시간&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Overview&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;complete&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;11개 모델, 11개 metric, warning 0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13.9초&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Investigate&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;이상 후보 42개, finding 19개, next check 16개&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;26.0초&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Optimize&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;개선 기회 6개&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;18.3초&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Overview에서 확인한 metric은 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Invocations
+InvocationLatency
+TimeToFirstToken
+InvocationClientErrors
+InvocationServerErrors
+InputTokenCount
+OutputTokenCount
+CacheReadInputTokenCount
+CacheWriteInputTokenCount
+EstimatedTPMQuotaUsage
+LegacyModelInvocations
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Investigate와 Optimize 모두 Strands structured output 검증을 통과했습니다. 다만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;은 실패가 아니라 일부 metric warning을 결과에 포함했다는 뜻입니다.&lt;/p&gt;
+
+&lt;p&gt;42개 이상 후보를 42개 장애로 해석하면 안 됩니다. MAD 규칙이 찾은 통계적 변화 후보이며, workload의 정상적인 burst도 포함될 수 있습니다. Strands가 이를 원인으로 확정하지 않고 확인할 metric과 반증 조건을 함께 내놓게 한 이유입니다.&lt;/p&gt;
+
+&lt;p&gt;자동 테스트는 schema, gateway, metric normalization, anomaly detection, service, MCP server, UI, live smoke contract, host launcher를 포함해 123개가 통과했습니다. MCP Apps 공식 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host v1.7.5&lt;/code&gt;의 이중 iframe 안에서 Overview 11개 모델, Investigate 41개 anomaly register, Optimize 6개 validation-ready move가 실제 계정 데이터로 렌더링되는 것도 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-이번-실험의-제한&quot;&gt;&lt;a href=&quot;#limits&quot;&gt;⚠️ 이번 실험의 제한&lt;/a&gt;&lt;a id=&quot;limits&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;첫째, 현재 계정에는 Bedrock 관련 CloudWatch Logs와 alarm이 없어 metric 기반 조사만 수행했습니다. application log, deployment event, trace까지 연결한 RCA는 다음 단계입니다.&lt;/p&gt;
+
+&lt;p&gt;둘째, 최적화 기회는 token·cache·latency·error·quota signal을 기반으로 합니다. 계약 할인, 리전별 가격, 실제 billing data가 없으므로 달러 절감액을 표시하지 않았습니다.&lt;/p&gt;
+
+&lt;p&gt;셋째, MCP Apps host support는 client마다 다릅니다. MCP Apps는 core MCP의 optional extension이므로 host가 capability를 지원해야 합니다. 이번 검증은 공식 repository의 reference &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host&lt;/code&gt;를 사용했습니다.&lt;/p&gt;
+
+&lt;p&gt;넷째, 이 결과는 최근 24시간이라는 한 window의 관찰입니다. production 운영에는 주기적 baseline, 배포 annotation, 장기 저장, 사용자별 권한과 approval flow가 추가로 필요합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-기업은-결국-cli를-잘-설계해야-한다&quot;&gt;&lt;a href=&quot;#cli-design&quot;&gt;⌨️ 기업은 결국 CLI를 잘 설계해야 한다&lt;/a&gt;&lt;a id=&quot;cli-design&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;이번 실험에서 UI보다 먼저 안정화해야 했던 것은 CLI와 headless process 경계였습니다. CloudWatch MCP도, Strands도, MCP Apps host도 결국 automation 가능한 process로 연결됩니다.&lt;/p&gt;
+
+&lt;p&gt;기업용 agent workflow에서 CLI는 단순한 개발자 편의 기능이 아닙니다. agent와 platform을 이어주는 최소 실행 계약입니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;CLI 설계 원칙&lt;/th&gt;
+      &lt;th&gt;필요한 이유&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;non-interactive mode&lt;/td&gt;
+      &lt;td&gt;agent와 CI가 prompt 없이 실행 가능해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;structured input/output&lt;/td&gt;
+      &lt;td&gt;text scraping 대신 schema로 연결해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;stable exit code와 error code&lt;/td&gt;
+      &lt;td&gt;재시도·중단·인증 갱신을 구분해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;explicit auth boundary&lt;/td&gt;
+      &lt;td&gt;profile, temporary session, role 전달 규칙이 명확해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;read/write tool separation&lt;/td&gt;
+      &lt;td&gt;조회와 변경의 권한·승인 경계를 나눠야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;bounded timeout과 cancellation&lt;/td&gt;
+      &lt;td&gt;child process와 session을 확실히 회수해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;redaction과 audit metadata&lt;/td&gt;
+      &lt;td&gt;비밀은 숨기고 실행 근거는 남겨야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;version pinning&lt;/td&gt;
+      &lt;td&gt;host·protocol·serialization 변화에 재현성을 확보해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;UI는 바뀔 수 있고 agent도 교체될 수 있습니다. 반면 잘 설계된 CLI와 protocol contract가 있으면 Codex, 다른 coding agent, Claw gateway, CI가 같은 capability를 재사용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;기업의 agent 전략은 어떤 모델을 쓰느냐만의 문제가 아니라, 기존 업무 capability를 얼마나 안전하고 조합 가능한 CLI로 노출하느냐의 문제&lt;/strong&gt;에 더 가깝습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;Outro&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Codex와 직접 대화하는 방식은 여전히 가장 빠른 출발점입니다. 이번 실험도 agent에게 shell command를 직접 시키는 단계에서 시작했습니다.&lt;/p&gt;
+
+&lt;p&gt;하지만 반복되는 Bedrock 운영 질문을 세 workspace로 고정해보니 Claw가 필요한 지점이 더 분명해졌습니다. CloudWatch MCP가 사실을 가져오고, 결정론적 코드가 수치를 확정하고, Strands가 근거 안에서 설명하며, MCP Apps가 사람이 검토하고 다음 action을 선택하는 표면을 만들었습니다.&lt;/p&gt;
+
+&lt;p&gt;다음 단계는 CloudWatch Logs, deployment context, alarm과의 연결입니다. 그때도 핵심은 더 많은 tool을 무작정 여는 것이 아니라, 읽기 범위와 판단 근거, 변경 approval을 contract로 고정하는 것입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://apps.extensions.modelcontextprotocol.io/api/&quot;&gt;MCP Apps&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx&quot;&gt;MCP Apps Stable Specification 2026-01-26&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server&quot;&gt;AWS Labs CloudWatch MCP Server&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://strandsagents.com/docs/examples/structured_output/&quot;&gt;Strands Agents: Structured Output&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-runtime-otps.html&quot;&gt;Amazon Bedrock runtime metrics and OTPS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="genai" />
+      
+        <category term="lab" />
+      
+
+      
+        <summary type="html">Codex 같은 coding agent와 직접 대화하면 이미 많은 일을 할 수 있습니다. 그렇다면 굳이 NemoClaw 같은 개인·조직용 Claw를 두고, 그 위에 별도의 운영 화면까지 만들어야 할까요?</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Codex Desktop에서 Kiro ACP 쓰기: MCP Wrapper로 연결하기</title>
@@ -3488,143 +3854,6 @@ OpenAI Provider는 LangSmith 사용자들 사이에서 가장 많이 사용되�
 
       
         <summary type="html">출판 후기 - 첫 책을 출간하면서 놓쳤던 것들</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">AWS APJC PLES GameDay 일기</title>
-      <link href="https://heuristicwave.github.io/gameday" rel="alternate" type="text/html" title="AWS APJC PLES GameDay 일기" />
-      <published>2024-11-30T00:00:00+00:00</published>
-      <updated>2024-11-30T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/gameday</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/gameday">&lt;p&gt;4년 간의 기다림, AWS APJC PLES GameDay 우승 후기&lt;/p&gt;
-
-&lt;h1 id=&quot;aws-gameday-&quot;&gt;&lt;a href=&quot;#AWS-GameDay&quot;&gt;AWS GameDay 🦄&lt;/a&gt;&lt;a id=&quot;AWS-GameDay&quot;&gt;&lt;/a&gt;&lt;/h1&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/ko/gameday/&quot;&gt;GameDay&lt;/a&gt;는 AWS가 제공하는 실습 중심의 팀 기반 학습 이벤트입니다. 참가자들은 가상의 시나리오 속에서 실제 AWS 환경을 직접 다루며 문제를 해결하게 됩니다.
-보안 분야에 익숙한 분들에게는 CTF(Capture The Flag)와 유사한 형태로, 주어진 미션을 해결하며 점수를 획득하는 방식으로 진행됩니다.
-팀원들과 협력하여 클라우드 인프라 구축, 장애 대응, 보안 문제 해결 등 실제 상황과 유사한 다양한 과제를 수행하면서 AWS 서비스에 대한 실전 경험을 쌓을 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;일반적인 GameDay는 누구나 참여할 수 있는 공개 행사로 진행되며, PLES GameDay는 AWS 파트너사 직원들을 대상으로 특별히 진행되는 대회입니다.
-AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하는데, 그 중 아시아 태평양 지역(APJC) 파트너사들이 참여하는 대규모 GameDay는 연 1회 진행됩니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;apjc-ples-gameday-지난-기록들&quot;&gt;&lt;a href=&quot;#history&quot;&gt;APJC PLES GameDay 지난 기록들&lt;/a&gt;&lt;a id=&quot;history&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;사실 저는 2020년에 입사한 후, 2021년부터 매년 대회에 출전해왔어요.
-처음 참가했던 대회에는 22개 팀이 참여했는데, 저희 팀은 순위권과는 거리가 멀었습니다.
-그때 느낀 좌절감을 사내 Wiki에 회고글로 남기기도 했어요.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/review.png&quot; alt=&quot;후기&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;2022년 대회는 Security를 주제로 6개 리전에서 23개 팀이 참가했습니다. 작년보다 진화된 실력?으로 동기와 후배님들과 함께 팀을 이뤄 도전했지만…&lt;/p&gt;
-
-&lt;p&gt;네.. 또 다음을 기약했습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;em&gt;흥민이 형 죄송합니다. 흥민이 형의 아쉬움과 비교할 수는 없겠지만, 당시 너무 마음이 아팠어요.&lt;/em&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/review2.png&quot; alt=&quot;후기2&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;비록 제가 속한 팀은 아니었지만, 동료들이 한국 리전에서 1등을 차지해서 정말 기뻤습니다. (저는 12등 😭) &lt;br /&gt;
-하지만 한국 1등이 APJC에서는 7등에 그쳤다는 점에서, 아직 세계와의 벽은… 여전히…&lt;/p&gt;
-
-&lt;p&gt;2023년 대회는 Sustainability를 주제로 진행되었으며, 한국을 비롯해 일본, 인도, 호주, 뉴질랜드, 싱가포르, 대만에서 총 39개 팀, 약 140여 명이 참가했습니다.&lt;/p&gt;
-
-&lt;p&gt;여러 번의 도전 경험 덕분인지, 2023년 대회에서는 크게 긴장되지 않더라고요. 아마, 이때부터는 문제별 순위가 제공되었던 것으로 기억해요.
-비록 전체 순위권에는 들지 못했지만, 제가 맡은 문제 중 하나가 전체 1등을 차지했다는 점이 작은 위안이 되었답니다. 😌&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;2024-genai-gameday&quot;&gt;&lt;a href=&quot;#2024-gameday&quot;&gt;2024 GenAI GameDay&lt;/a&gt;&lt;a id=&quot;2024-gameday&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;2024년 11월 14일, 올해의 최대 화두인 GenAI를 주제로 한 대회가 개최되었고, 약 44여 개 팀이 참가했습니다.&lt;/p&gt;
-
-&lt;p&gt;사실 올해 대회는 지난 4번의 GameDay에서 좋은 성적을 거두지 못했기에 참가를 망설였습니다. 하지만 이번 주제가 GenAI였고, 회사의 적극적인 참가 독려도 있어 참가를 결정하게 되었습니다.&lt;/p&gt;
-
-&lt;p&gt;4년간 AWS를 다루며 쌓은 경험도 있고, 최근에는 Amazon Bedrock 관련 서적을 준비하고 있어서 이번에는 꼭 좋은 결과를 내고 싶었습니다. 🙏&lt;/p&gt;
-
-&lt;p&gt;그래서 대회 전날에는 야근을 하면서까지 사전 공지된 출제 범위에 대해 미리 예습을 하고 갔답니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;방심은-금물-&quot;&gt;방심은 금물 🚫&lt;/h3&gt;
-
-&lt;p&gt;저는 과거 2022년 대회에서 중간에 1등을 하다가 사소한 실수로 순위권 밖으로 밀려난 쓰라린 경험이 있습니다.
-과거 교훈을 통해, 이번 대회도 겸손한 마음으로 임해야지 하고, 침착하고 여러 번의 검토 과정을 거치며 문제를 풀었습니다.
-저희 팀원 모두 압도적인 문제 해결로 대회 중반 즈음에 1위를 달성했습니다.&lt;/p&gt;
-
-&lt;p&gt;따라잡기 힘든 점수 차이를 만들었다고 생각하고 잠시 휴식을 취하던 중, 순위가 2위로 떨어졌습니다.&lt;/p&gt;
-
-&lt;p&gt;순간 과거의 악몽이 떠올라 식겁했죠. 알고 보니 보너스 점수가 부여되는 설문조사에 참여하지 않아 순위가 역전된 것이었습니다. 다행히 빠르게 설문에 참여해 다시 1등 자리를 되찾을 수 있었습니다.&lt;/p&gt;
-
-&lt;p&gt;전리품?으로 가지고 있는 당시 최종 스코어보드 입니다. 설문 조사 점수가 5,000점인데, 만약 설문에 참여하지 않았다면 순위권 밖인 4위로 밀려났을 것을 생각하면 아찔합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/scoreboard.png&quot; alt=&quot;scoreboard&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;‘끝날 때까지 끝난 게 아니다’라는 교훈을 다시 한번 되새기며 대회를 마무리했습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;우승--전문가-&quot;&gt;우승 != 전문가 🧑🏻‍💻&lt;/h3&gt;
-
-&lt;p&gt;저는 4년간의 기다림 끝에 마침내 우승을 할 수 있었어요.
-앞선 3번의 실패 경험을 통해, 실력은 둘째치고 운도 따라야 한다는 것을 너무나 잘 알고 있어요.&lt;/p&gt;
-
-&lt;p&gt;또 아시아를 넘어 EMEA, LATAM, NAMER 등 다른 리전에 엄청난 실력자들이 있다는 것도 잘 알고 있습니다.
-이번 성과가 기존의 노력들을 위로하는 작은 선물이라 생각하고, 내실을 다져가는데 노력하겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;감사-인사&quot;&gt;&lt;a href=&quot;#thankyou&quot;&gt;감사 인사&lt;/a&gt;&lt;a id=&quot;thankyou&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;마지막으로, 이번 대회에서 함께 우승을 일궈낸 ‘Bedrock Scissors Paper(&lt;a href=&quot;https://user-bin-ksh.medium.com/&quot;&gt;🏃🏻 usr/bin/ksh&lt;/a&gt;, &lt;a href=&quot;https://medium.com/@nuatmochoi&quot;&gt;🏃‍♂️ nuatmochoi&lt;/a&gt;)’ 팀의 사랑하는 동기들에게 감사의 마음을 전합니다.&lt;/p&gt;
-
-&lt;p&gt;또한, 끝까지 포기하지 않고 꾸준히 도전하여 2등이라는 놀라운 성과를 이룬 ‘GSN Growth Lab’ 팀의 동료들에게도 축하와 감사의 인사를 전합니다!&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/etc/team.png&quot; alt=&quot;team&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;현재 트로피가 배송 중이라고 하는데, 하루빨리 받아보고 싶네요!
-&lt;del&gt;이틀 후에는 인터뷰도 예정되어 있습니다. 기사가 나오면 이 글 하단에 참고 자료로 추가하도록 하겠습니다.&lt;/del&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://news.naver.com/mnews/article/138/0002188476&quot;&gt;📰 인터뷰 기사&lt;/a&gt;&lt;/p&gt;
-
-&lt;p&gt;🏆 우승 트로피와 개인 메달
-&lt;img src=&quot;../../assets/built/images/post/etc/spoils.png&quot; alt=&quot;spoils&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;🦄 행운을 가져다주는 유니콘과 함께, 소중한 시간을 내어 읽어주셔서 감사합니다! 😃&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/background/unicorn.jpeg&quot; alt=&quot;unicorn&quot; /&gt;&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="uncategorized" />
-      
-        <category term="aws" />
-      
-        <category term="genai" />
-      
-        <category term="event" />
-      
-
-      
-        <summary type="html">4년 간의 기다림, AWS APJC PLES GameDay 우승 후기</summary>
       
 
       

@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/aws/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2026-07-02T09:19:04+00:00</updated>
+  <updated>2026-08-21T08:36:42+00:00</updated>
   <id>https://heuristicwave.github.io/tag/aws/feed.xml</id>
 
   
@@ -30,6 +30,1300 @@
   
   
 
+  
+    <entry>
+      <title type="html">업무 용어에서 실행까지: Glue Business Context와 Apache Ossie</title>
+      <link href="https://heuristicwave.github.io/Glue-Business-Context-Ossie" rel="alternate" type="text/html" title="업무 용어에서 실행까지: Glue Business Context와 Apache Ossie" />
+      <published>2026-08-18T00:00:00+00:00</published>
+      <updated>2026-08-18T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/Glue-Business-Context-Ossie</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/Glue-Business-Context-Ossie">&lt;p&gt;2026년 6월 17일, AWS는 🔗 &lt;strong&gt;&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2026/06/aws-glue-data-catalog/&quot;&gt;AWS Glue Data Catalog Business Context and Semantic Search (Preview)&lt;/a&gt;&lt;/strong&gt;를 공개했습니다.&lt;/p&gt;
+
+&lt;p&gt;AWS Glue Data Catalog는 S3 등에 저장된 데이터의 위치와 구조를 관리하는 &lt;strong&gt;Metadata Catalog&lt;/strong&gt;입니다. Dataset의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Database&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Table&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Column&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Location&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Format&lt;/code&gt;을 등록해 “어떤 데이터가 어디에 있고 어떤 모양인가?”를 찾을 수 있게 합니다.&lt;/p&gt;
+
+&lt;p&gt;새 기능은 기존 기술 Metadata에 업무 의미를 더합니다. AWS는 이 Business Context를 &lt;strong&gt;Glossary Term&lt;/strong&gt;, &lt;strong&gt;Custom Metadata Field&lt;/strong&gt;, &lt;strong&gt;Skill Asset&lt;/strong&gt; 세 가지로 나눕니다. Glossary Term에는 조직의 업무 용어와 정의를, Custom Metadata Field에는 정해진 Key-Value Template 값을 기록합니다. Skill Asset은 AI Agent가 참고할 외부 문서의 URI를 Catalog에 등록합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SearchAssets&lt;/code&gt;는 정확한 Keyword Matching뿐 아니라 Business Context를 바탕으로 의미가 유사한 Asset도 찾습니다.&lt;/p&gt;
+
+&lt;p&gt;이제 Glue Data Catalog는 “데이터가 어디에 있는가?”뿐 아니라 “이 데이터가 업무에서 무엇을 뜻하는가?”도 설명할 수 있습니다. 다만 &lt;strong&gt;용어의 뜻을 찾는 것과 그 뜻을 SQL로 일관되게 계산하는 것은 다른 문제&lt;/strong&gt;입니다.&lt;/p&gt;
+
+&lt;p&gt;이번 글은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출(Net Revenue)&lt;/code&gt;이라는 작은 업무 용어에서 출발합니다. 같은 데이터도 계산 기준에 따라 결과가 달라지는 사례를 살펴보고, Glue Business Context가 용어의 뜻과 관련 데이터를 어떻게 연결하는지 확인합니다.&lt;/p&gt;
+
+&lt;p&gt;그렇다면 용어를 찾은 AI Agent가 그 정의를 매번 같은 방식으로 계산하게 하려면 무엇이 더 필요할까요? Business Context가 해결하는 범위와 남는 간극을 살펴본 뒤, 기계가 읽을 수 있는 의미 계약을 실행 과정에 연결해 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-같은-데이터에서-두-개의-매출이-나왔다&quot;&gt;&lt;a href=&quot;#one-question&quot;&gt;🧮 같은 데이터에서 두 개의 매출이 나왔다&lt;/a&gt;&lt;a id=&quot;one-question&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출(Net Revenue)&lt;/code&gt;이라는 이름을 사용해도 계산 기준이 명시되지 않으면 누군가는 모든 주문 금액을 더하고, 누군가는 취소 주문을 제외합니다. SQL은 둘 다 실행되지만 결과는 달라집니다.&lt;/p&gt;
+
+&lt;p&gt;거래 내역을 담은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;와 고객 기준 정보를 담은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers&lt;/code&gt;를 따로 준비했습니다. 두 파일은 S3에 CSV로 저장하고 Glue Data Catalog에는 External Table로 등록했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders(order_id string, customer_id string, order_date date, amount decimal(18,2), status string)&lt;/code&gt;에는 주문 다섯 건을 넣었습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;주문&lt;/th&gt;
+      &lt;th&gt;고객 ID&lt;/th&gt;
+      &lt;th&gt;주문일&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;금액&lt;/th&gt;
+      &lt;th&gt;상태&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;O1001&lt;/td&gt;
+      &lt;td&gt;C001&lt;/td&gt;
+      &lt;td&gt;2026-07-01&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;120,000&lt;/td&gt;
+      &lt;td&gt;COMPLETED&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;O1002&lt;/td&gt;
+      &lt;td&gt;C002&lt;/td&gt;
+      &lt;td&gt;2026-07-01&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;80,000&lt;/td&gt;
+      &lt;td&gt;COMPLETED&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;O1003&lt;/td&gt;
+      &lt;td&gt;C001&lt;/td&gt;
+      &lt;td&gt;2026-07-02&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;50,000&lt;/td&gt;
+      &lt;td&gt;CANCELLED&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;O1004&lt;/td&gt;
+      &lt;td&gt;C003&lt;/td&gt;
+      &lt;td&gt;2026-07-02&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;200,000&lt;/td&gt;
+      &lt;td&gt;COMPLETED&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;O1005&lt;/td&gt;
+      &lt;td&gt;C002&lt;/td&gt;
+      &lt;td&gt;2026-07-03&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;30,000&lt;/td&gt;
+      &lt;td&gt;COMPLETED&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers(customer_id string, customer_name string, region string)&lt;/code&gt;는 고객명과 공식 영업 지역을 관리하는 작은 Master Table입니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;고객 ID&lt;/th&gt;
+      &lt;th&gt;고객명&lt;/th&gt;
+      &lt;th&gt;공식 지역&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;C001&lt;/td&gt;
+      &lt;td&gt;Alpha Retail&lt;/td&gt;
+      &lt;td&gt;SEOUL&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;C002&lt;/td&gt;
+      &lt;td&gt;Beta Motors&lt;/td&gt;
+      &lt;td&gt;BUSAN&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;C003&lt;/td&gt;
+      &lt;td&gt;Gamma Labs&lt;/td&gt;
+      &lt;td&gt;SEOUL&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;두 Table은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customer_id&lt;/code&gt;로 연결합니다. 주문 금액과 취소 여부는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;에서 계산하고, 지역별 분석에는 주문에 임의로 적힌 주소가 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers.region&lt;/code&gt;을 사용합니다.&lt;/p&gt;
+
+&lt;p&gt;Athena에서 모든 주문 금액과 취소 주문을 제외한 금액을 함께 계산했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;SUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;all_order_amount&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;SUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;CASE&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;WHEN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;CANCELLED&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;THEN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;ELSE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DECIMAL&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;0&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;END&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net_revenue&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;heuristicwave_ossie_poc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;orders&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;실제 실행 결과입니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;계산 방법&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;결과&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;모든 주문 합계&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;480,000&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;취소 주문 제외&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;430,000&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;두 SQL 중 문법적으로 틀린 것은 없습니다. 문제는 &lt;strong&gt;조직에서 어떤 값을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;이라고 부르기로 했는가&lt;/strong&gt;입니다. Dashboard, Notebook, Application, AI Agent가 이 정의를 따로 관리하면 같은 질문에 다른 숫자가 나옵니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-glue-business-context로-뜻과-데이터를-연결하기&quot;&gt;&lt;a href=&quot;#glossary&quot;&gt;📖 Glue Business Context로 뜻과 데이터를 연결하기&lt;/a&gt;&lt;a id=&quot;glossary&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;첫 단계는 조직이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;을 무엇으로 정의할지 합의하고, 그 정의가 어느 데이터에서 출발하는지 연결하는 것입니다. AWS 환경에서는 Glue Data Catalog가 S3 데이터의 위치와 Schema를 이미 관리하므로 Glossary Term을 Table·View Asset과 연결할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;세 가지 Business Context는 역할이 서로 다릅니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Context 종류&lt;/th&gt;
+      &lt;th&gt;Glue Data Catalog에 등록되는 내용&lt;/th&gt;
+      &lt;th&gt;역할&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glossary Term&lt;/td&gt;
+      &lt;td&gt;용어 이름·짧은 정의·상세 정의&lt;/td&gt;
+      &lt;td&gt;조직의 업무 용어를 정의하고 Table·View 같은 Asset과 연결&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Custom Metadata Field&lt;/td&gt;
+      &lt;td&gt;미리 정의한 Key-Value Template의 값&lt;/td&gt;
+      &lt;td&gt;Owner·분류·관리 상태처럼 반복되는 관리 항목을 같은 형식으로 기록&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Skill Asset&lt;/td&gt;
+      &lt;td&gt;외부 Context 문서의 URI를 가진 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon::Skill&lt;/code&gt; Asset&lt;/td&gt;
+      &lt;td&gt;Agent가 참고할 업무 규칙·제약·Query Pattern·SQL 예제의 위치를 제공&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Skill Asset은 S3 문서나 Git·Wiki 내용을 Glue에 복사하는 기능이 아닙니다. 외부 문서의 URI를 가진 Catalog Asset을 만든 다음 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon::RelatedTo&lt;/code&gt; Form으로 Table·View 같은 Data Asset에 연결합니다. AWS 공식 문서의 흐름에서는 Agent가 Data Asset을 조회하면서 연결된 Skill ID를 찾습니다. 이어 URI의 문서를 Reasoning Context로 불러옵니다. 따라서 Agent에도 S3 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetObject&lt;/code&gt;처럼 원본 문서를 읽을 권한이 필요합니다. 🔗 &lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/catalog-skill-assets.html&quot;&gt;AWS Glue Skill assets for AI agents&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;이번 PoC에서는 영문 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Net Revenue&lt;/code&gt;와 한국어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;을 같은 Glossary에 만들고 둘 다 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;에 연결했습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;항목&lt;/th&gt;
+      &lt;th&gt;실제 등록한 내용&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;영문 용어&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Net Revenue&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;영문 짧은 정의&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Revenue excluding cancelled orders&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;한국어 용어&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;한국어 짧은 정의&lt;/td&gt;
+      &lt;td&gt;취소 주문을 제외한 매출&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;한국어 상세 정의&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status&lt;/code&gt;가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CANCELLED&lt;/code&gt;가 아닌 주문 금액의 합계. 지역별 분석에는 Customer Master의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;region&lt;/code&gt; 사용&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;연결한 데이터&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heuristicwave_ossie_poc.orders&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;용어를 정의하고 Table에 연결하자 세 가지가 달라졌습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;찾을 수 있습니다.&lt;/strong&gt; 사용자가 물리 Table 이름을 몰라도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net revenue&lt;/code&gt;나 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;이라는 업무 용어로 관련 데이터를 찾습니다.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;같은 뜻을 공유합니다.&lt;/strong&gt; Finance, Sales, Data Team이 지표 설명을 한 곳에서 확인합니다.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;데이터의 근거를 연결합니다.&lt;/strong&gt; 용어 설명이 문서에만 머무르지 않고 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt; Table과 연결됩니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;실제로 Glue &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SearchAssets&lt;/code&gt; API로 Keyword 검색과 의미 검색을 각각 실행했습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;검색어&lt;/th&gt;
+      &lt;th&gt;검색 결과&lt;/th&gt;
+      &lt;th&gt;확인한 범위&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;기술 이름 Keyword Matching&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net revenue&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;등록한 Glossary Term과 정확히 일치&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;revenue excluding cancelled orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;의미가 같은 다른 표현으로 검색&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sales after removing cancelled orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;의미상 연관된 Catalog Asset도 함께 반환&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;등록한 용어와 정확히 일치하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net revenue&lt;/code&gt;뿐 아니라 이를 다르게 표현한 문장으로도 관련 Asset을 찾았습니다. 다만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers&lt;/code&gt;가 함께 반환된 것은 이름과 설명의 의미적 연관성 때문이며, Glue에 등록하지 않은 Join 관계를 따라 탐색한 결과는 아닙니다.&lt;/p&gt;
+
+&lt;p&gt;같은 Glossary에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt; Term과 한국어 정의를 추가하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;에 연결한 뒤 한국어 검색도 확인했습니다. Table 이름과 Asset 설명은 영문 그대로 두었습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;한국어 검색어&lt;/th&gt;
+      &lt;th&gt;검색 결과&lt;/th&gt;
+      &lt;th&gt;확인한 범위&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;등록한 한국어 Glossary Term과 정확히 일치&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;취소 주문을 제외한 매출&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;등록한 한국어 짧은 정의와 정확히 일치&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;취소된 주문을 빼고 계산한 실제 매출&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;한국어로 바꿔 쓴 의미 표현&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지역별 순매출을 계산할 데이터&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;용어와 상세 정의의 지역 Context를 함께 사용&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;한국어 Business Context를 추가하자 정확한 용어뿐 아니라 같은 뜻을 다르게 표현한 문장도 검색됐습니다. &lt;strong&gt;Asset의 기술 이름을 번역하지 않아도 한국어 Glossary Term과 설명을 등록하면 현업의 한국어 표현으로 관련 데이터를 찾을 수 있었습니다.&lt;/strong&gt; 다만 AWS가 언어 간 자동 번역 검색을 보장하지는 않으므로, 실제로 사용하는 언어별 용어와 설명을 등록하는 편이 안전합니다.&lt;/p&gt;
+
+&lt;p&gt;AWS Glue Business Context와 Semantic Search는 현재 Preview이며 지원 Region과 접근 제어에 제약이 있습니다. 🔗 &lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/catalog-semantic-search.html&quot;&gt;AWS Glue Semantic Search&lt;/a&gt; · &lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/catalog-business-context-getting-started.html&quot;&gt;AWS Glue Business Context 시작하기&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;하지만 용어집만으로는 계산을 고정할 수 없습니다.&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;용어집은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;의 뜻과 관련 데이터를 알려주지만, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;status &amp;lt;&amp;gt; &apos;CANCELLED&apos;&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders.customer_id = customers.customer_id&lt;/code&gt;를 실행하지는 않습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;Glue Business Context로 해결한 것은 &lt;strong&gt;‘순매출이 무엇이며 어느 데이터와 관련 있는가’&lt;/strong&gt;였습니다. 남은 질문은 &lt;strong&gt;‘그 의미를 여러 분석 도구와 AI Agent에서도 같은 계산으로 재현할 수 있는가’&lt;/strong&gt;입니다.&lt;/p&gt;
+
+&lt;p&gt;한 시스템만 사용한다면 View나 Skill 문서에 계산식을 작성할 수 있습니다. 그러나 같은 지표를 여러 제품과 Agent에서 쓰려면 계산식과 Dataset 관계를 각 형식에 맞춰 다시 정의해야 합니다. Amazon Quick, dbt, Looker, Snowflake가 모두 서로 다른 형식을 사용하기 때문입니다. 이제 문제는 용어집 하나의 기능을 넘어 &lt;strong&gt;합의된 의미를 여러 제품에 일관되게 전달할 공통 계약의 부재&lt;/strong&gt;로 확장됩니다.&lt;/p&gt;
+
+&lt;p&gt;이 간극을 메우려면 제품 간 Semantic Model을 교환할 공통 형식이 필요합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-ossie는-왜-나왔을까&quot;&gt;&lt;a href=&quot;#why-ossie&quot;&gt;🧭 Ossie는 왜 나왔을까?&lt;/a&gt;&lt;a id=&quot;why-ossie&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Semantic Layer가 확산되면서 각 제품은 업무 의미를 표현하는 고유한 방법을 만들었습니다. Snowflake는 Semantic View를, Google Cloud는 LookML을 사용합니다. dbt는 Semantic Layer, Amazon Quick은 Topic으로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Metric&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dimension&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Relationship&lt;/code&gt;을 정의합니다.&lt;/p&gt;
+
+&lt;p&gt;문제는 같은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;을 정의하더라도 제품마다 모델 형식과 실행 방식이 다르다는 점입니다. 계산 기준 자체가 달라지는 &lt;strong&gt;Semantic Drift&lt;/strong&gt;뿐 아니라, 이미 합의한 정의를 제품마다 다시 작성해야 하는 &lt;strong&gt;Semantic Model Fragmentation&lt;/strong&gt;이 발생합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Snowflake Semantic View ─┐
+Google LookML ───────────┤
+dbt Semantic Layer ──────┼─&amp;gt; 같은 Metric·Relationship을 제품별로 다시 작성
+Amazon Quick Topic ──────┘
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 문제를 줄이기 위해 2025년 9월 Snowflake, Salesforce, dbt Labs 등을 포함한 업계 참여사들이 &lt;strong&gt;Open Semantic Interchange(OSI)&lt;/strong&gt;를 공개했습니다. 목표는 새로운 Query Engine을 만드는 것이 아니었습니다. Dataset·Metric·Dimension·Relationship을 여러 분석·BI·AI 제품이 교환할 수 있는 제품 중립 규격으로 표현하는 것이었습니다. 🔗 &lt;a href=&quot;https://www.snowflake.com/en/blog/open-semantic-interchange-ai-standard/&quot;&gt;Snowflake의 OSI 발표&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;2026년 1월에는 YAML 기반 첫 규격이 공개됐고, 같은 해 Apache Incubator에 합류하면서 프로젝트 이름이 &lt;strong&gt;Apache Ossie&lt;/strong&gt;로 바뀌었습니다. 이름과 거버넌스는 달라졌지만, 서로 다른 제품 사이에서 Semantic Metadata를 교환한다는 목적은 그대로 유지됩니다. 🔗 &lt;a href=&quot;https://ossie.apache.org/&quot;&gt;Apache Ossie&lt;/a&gt; · &lt;a href=&quot;https://cwiki.apache.org/confluence/spaces/INCUBATOR/pages/430408796/OssieProposal&quot;&gt;Apache Incubator Proposal&lt;/a&gt;&lt;/p&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;Ossie는 새로운 Query Engine이 아니라, 제품마다 달랐던 의미 모델을 교환하기 위한 공통 계약입니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;이 계약을 AWS Glue로 찾은 Data Asset에 연결하고, Agent의 실행 과정에서 활용할 수 있는지 확인해 보겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-가설-skill에서-ossie-계약을-발견하게-한다&quot;&gt;&lt;a href=&quot;#aws-native&quot;&gt;🧩 가설: Skill에서 Ossie 계약을 발견하게 한다&lt;/a&gt;&lt;a id=&quot;aws-native&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;용어집 다음에는 사람이 읽는 설명을 넘어, 프로그램이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dataset&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Metric&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Relationship&lt;/code&gt;을 각각 식별하고 검증할 수 있는 계약이 필요합니다. Glue Skill Asset은 &lt;strong&gt;실행 파일&lt;/strong&gt;이 아니라 &lt;strong&gt;계약의 위치와 사용법을 알려주는 연결점&lt;/strong&gt;으로 사용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;AWS 공식 문서에서 Skill Asset은 조직 Context와 Metric 정의, 데이터 사용 제약, 일반적인 Query Pattern, SQL 예제가 담긴 외부 문서의 URI를 가리킵니다. Agent는 Data Asset에 연결된 Skill을 찾고 URI의 내용을 Reasoning Context로 불러옵니다. 이번 PoC에서는 이 구조를 활용했습니다. Skill 문서는 버전 관리된 Apache Ossie YAML을 가리키고 Agent에게 전용 Tool의 사용법을 안내합니다.&lt;/p&gt;
+
+&lt;p&gt;역할은 다음처럼 나뉩니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;구성요소&lt;/th&gt;
+      &lt;th&gt;역할&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glue Glossary·Semantic Search&lt;/td&gt;
+      &lt;td&gt;업무 용어로 관련 Data Asset을 찾음&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glue Skill Asset&lt;/td&gt;
+      &lt;td&gt;Ossie 계약의 위치, 사용 규칙, 허용된 Tool을 Agent에게 전달&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Apache Ossie YAML&lt;/td&gt;
+      &lt;td&gt;Dataset·Field·Metric·Relationship을 구조화된 계약으로 정의&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Custom Compiler Tool&lt;/td&gt;
+      &lt;td&gt;계약을 검증하고 요청한 Metric·Dimension을 Athena SQL로 변환&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Query Agent&lt;/td&gt;
+      &lt;td&gt;검색, 계약 조회, Tool 호출, 결과 설명을 조율&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Athena&lt;/td&gt;
+      &lt;td&gt;최종 SQL을 실행&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;전체 계약을 Skill Markdown에 복사할 수도 있지만 같은 정의를 두 군데에서 관리하면 서로 달라질 수 있습니다. Ossie YAML은 Git이나 버전 관리된 S3 Object를 원본으로 둡니다. Skill 문서에는 그 위치와 실행 규칙만 기록하는 편이 낫습니다.&lt;/p&gt;
+
+&lt;p&gt;AWS 공식 문서에서 Glue Skill Asset에 직접 등록하는 값은 Markdown의 내부 형식이 아니라 &lt;strong&gt;문서를 가리키는 URI&lt;/strong&gt;입니다. 다음처럼 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon::Skill&lt;/code&gt; Form의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;uri&lt;/code&gt;에 S3 Markdown 위치를 등록합니다. 🔗 &lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/catalog-skill-assets.html&quot;&gt;AWS Glue Skill assets for AI agents&lt;/a&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;aws glue put-asset &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--asset-type-id&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;amazon::Skill&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--identifier&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sales-semantic-skill-ossie-poc&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;sales-semantic-skill-ossie-poc&quot;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--forms&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;{&quot;amazon::Skill&quot;:{&quot;FormTypeId&quot;:&quot;amazon::Skill&quot;,&quot;Content&quot;:&quot;{\&quot;uri\&quot;:\&quot;s3://&amp;lt;bucket&amp;gt;/semantic-skill-ossie-poc/sales-semantic-skill.md\&quot;}&quot;}}&apos;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;AWS가 Skill Markdown용 YAML Front Matter Schema를 정의하거나 해석하는 것은 아닙니다. 문서에는 조직 Context, Metric 정의, 사용 제약, Query Pattern과 SQL 예제 등을 일반 Markdown으로 작성할 수 있습니다. 이번 PoC에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Semantic contract&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Approved tools&lt;/code&gt; 섹션을 자체 규약으로 두고 Runner가 해당 항목을 읽도록 구현했습니다.&lt;/p&gt;
+
+&lt;p&gt;Skill이 가리키는 Ossie 계약에는 이번 질의에 필요한 의미만 간단히 정의했습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;구성&lt;/th&gt;
+      &lt;th&gt;정의&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Dataset&lt;/td&gt;
+      &lt;td&gt;주문 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;, 고객 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net_revenue&lt;/code&gt; (Metric)&lt;/td&gt;
+      &lt;td&gt;이번 PoC에서 취소 주문을 제외한 주문 금액의 합계&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers.region&lt;/code&gt; (Dimension)&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net_revenue&lt;/code&gt;를 고객 지역별로 분류하는 기준&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders.customer_id → customers.customer_id&lt;/code&gt; (Relationship)&lt;/td&gt;
+      &lt;td&gt;주문과 고객 Dataset을 연결하는 규칙&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;실행 표현&lt;/td&gt;
+      &lt;td&gt;Athena에서 사용할 ANSI SQL 계산식&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;blockquote&gt;
+  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Metric&lt;/code&gt;은 여러 데이터 행을 집계해 업무 성과를 나타내는 정량 지표입니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dimension&lt;/code&gt;은 Metric을 지역·고객·날짜처럼 분류하고 필터링하는 기준이며, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Relationship&lt;/code&gt;은 Metric과 Dimension이 서로 다른 Dataset에 있을 때 두 Dataset을 연결하는 규칙입니다. 이번 PoC에서는 ‘취소되지 않은 주문 금액의 합계’를 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net_revenue&lt;/code&gt; Metric으로 정의했습니다.&lt;/p&gt;
+&lt;/blockquote&gt;
+
+&lt;p&gt;🔗 &lt;a href=&quot;https://docs.snowflake.com/en/user-guide/views-semantic/overview&quot;&gt;Snowflake Semantic Views의 Metric·Dimension·Relationship&lt;/a&gt; · &lt;a href=&quot;https://docs.cloud.google.com/looker/docs/lookml-terms-and-concepts&quot;&gt;Looker의 Dimension·Measure 개념&lt;/a&gt;&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;Skill이 가리키는 sales.ossie.yaml 펼쳐보기&lt;/summary&gt;
+
+  &lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;version&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;0.2.0.dev0&lt;/span&gt;
+&lt;span class=&quot;na&quot;&gt;semantic_model&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;sales_analytics&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Sales and customer analytics for the Glue Skill PoC&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;ai_context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;na&quot;&gt;instructions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Use net_revenue for sales excluding cancelled orders.&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;datasets&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;orders&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;heuristicwave_ossie_poc.orders&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;primary_key&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;order_id&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;fields&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;order_id&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;dialects&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dialect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ANSI_SQL&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;order_id&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;datatype&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;String&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;customer_id&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;dialects&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dialect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ANSI_SQL&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;customer_id&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;datatype&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;String&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;amount&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;dialects&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dialect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ANSI_SQL&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;amount&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;datatype&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Decimal&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;status&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;dialects&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dialect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ANSI_SQL&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;status&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;datatype&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;String&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;customers&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;source&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;heuristicwave_ossie_poc.customers&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;primary_key&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;customer_id&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;fields&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;customer_id&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;dialects&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dialect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ANSI_SQL&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;customer_id&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;datatype&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;String&lt;/span&gt;
+          &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;region&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;dialects&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+                &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dialect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ANSI_SQL&lt;/span&gt;
+                  &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;region&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;datatype&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;String&lt;/span&gt;
+            &lt;span class=&quot;na&quot;&gt;dimension&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;is_time&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;no&quot;&gt;false&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;relationships&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;orders_to_customers&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;from&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;orders&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;to&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;customers&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;from_columns&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;customer_id&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;to_columns&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;customer_id&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;ai_context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;instructions&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Use customers.region as the official sales region.&lt;/span&gt;
+    &lt;span class=&quot;na&quot;&gt;metrics&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+      &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;net_revenue&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;dialects&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+            &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;na&quot;&gt;dialect&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;ANSI_SQL&lt;/span&gt;
+              &lt;span class=&quot;na&quot;&gt;expression&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;&amp;gt;-&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;SUM(CASE WHEN orders.status &amp;lt;&amp;gt; &apos;CANCELLED&apos;&lt;/span&gt;
+                &lt;span class=&quot;s&quot;&gt;THEN orders.amount ELSE DECIMAL &apos;0&apos; END)&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;description&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Revenue excluding cancelled orders&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;datatype&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;Decimal&lt;/span&gt;
+        &lt;span class=&quot;na&quot;&gt;ai_context&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;synonyms&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;net sales&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;순매출&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+          &lt;span class=&quot;na&quot;&gt;examples&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;Show net revenue by customer region&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;]&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;Apache Ossie는 현재 Incubating 단계이고 Core Specification도 발전 중입니다. 실제 구현에서는 사용할 Spec Version을 고정하고, 해당 Version의 Schema로 계약을 먼저 검증해야 합니다.&lt;/p&gt;
+
+&lt;p&gt;이 구성만으로 가능한 것은 &lt;strong&gt;계약을 찾고 읽는 것&lt;/strong&gt;까지입니다. 실제로 질의를 실행하려면 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compile_ossie_metric&lt;/code&gt; 같은 Agent Tool이 Ossie Schema를 검증하고, 요청한 Metric과 Dimension에 필요한 Dataset·Join·Expression을 골라 Athena SQL을 만들어야 합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;사용자: 지역별 순매출을 보여줘
+  → Glue SearchAssets로 관련 orders Asset 검색
+  → amazon::RelatedTo에서 Sales Semantic Skill 발견
+  → Skill URI에서 sales.ossie.yaml 위치와 실행 규칙 확인
+  → compile_ossie_metric(metric=&quot;net_revenue&quot;, dimension=&quot;customers.region&quot;)
+  → 생성 SQL의 Table·Column·권한·비용 한도 검증
+  → execute_athena_query(sql)
+  → Agent가 결과와 사용한 Metric 정의를 함께 설명
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 가설은 두 가지 수준으로 구현할 수 있습니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;strong&gt;Agent가 계약을 읽고 SQL을 작성하는 PoC&lt;/strong&gt;: 구현은 빠르지만 같은 질문에서 항상 같은 SQL이 만들어진다고 보장하기 어렵습니다.&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;Compiler Tool이 SQL을 결정적으로 생성하는 방식&lt;/strong&gt;: Agent는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Metric&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Dimension&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Filter&lt;/code&gt;만 전달하고 Tool이 SQL을 만듭니다. Contract Validation, 허용된 Dialect, Join 경로, SQL Injection 방지, Query Cost 제한도 Tool에서 통제할 수 있습니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Apache Ossie Repository에는 Schema Validation과 다른 Semantic Format을 위한 Reference Converter가 있지만, 범용 Athena Query Compiler가 완성품으로 제공되는 것은 아닙니다. 여기서 사용한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compile_ossie_metric&lt;/code&gt;은 이 가설을 구현하기 위해 별도로 만들어야 할 Custom Tool 이름입니다.&lt;/p&gt;
+
+&lt;p&gt;따라서 “Ossie를 Skill에 적으면 Glue가 실행한다”는 표현은 정확하지 않습니다. 정확한 역할은 &lt;strong&gt;Skill이 Ossie 계약의 위치를 알려주고, Agent Tool이 계약을 SQL로 변환하며, Athena가 실행하는 것&lt;/strong&gt;입니다.&lt;/p&gt;
+
+&lt;p&gt;물론 Metric 몇 개를 AWS 안에서만 사용할 때는 Athena View에 계산식을 고정하고 Skill에 사용법을 적는 편이 더 단순합니다. 반면 같은 Metric·Relationship을 Amazon Quick, Snowflake, Looker, dbt Semantic Layer나 여러 Agent에 전달하려면 SQL View보다 Ossie 같은 제품 중립 계약의 가치가 커집니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;접근&lt;/th&gt;
+      &lt;th&gt;장점&lt;/th&gt;
+      &lt;th&gt;한계&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Athena View + Skill&lt;/td&gt;
+      &lt;td&gt;View에 실행 SQL을 고정하기 쉬움&lt;/td&gt;
+      &lt;td&gt;Metric 정의가 Athena SQL에 종속됨&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Skill의 SQL 예제&lt;/td&gt;
+      &lt;td&gt;별도 Compiler 없이 빠르게 시작할 수 있음&lt;/td&gt;
+      &lt;td&gt;SQL은 참고 자료이므로 Agent의 해석과 문서 갱신에 의존함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Skill → Ossie → Compiler Tool&lt;/td&gt;
+      &lt;td&gt;구조화된 계약을 검증하고 같은 입력에서 같은 SQL을 생성할 수 있음&lt;/td&gt;
+      &lt;td&gt;Compiler가 계약을 직접 강제해야 하며 계약·Schema·Compiler 간 차이를 관리해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;AWS에는 서비스별로 자연어 분석을 지원하는 경로가 있습니다. 🔗 &lt;a href=&quot;https://docs.aws.amazon.com/sagemaker-unified-studio/latest/userguide/sql-query-data-agent.html&quot;&gt;SageMaker Unified Studio Data Agent&lt;/a&gt;는 연결된 데이터와 Catalog 정보를 참고해 SQL을 생성합니다. Amazon Quick은 Dataset과 Topic에 정의한 Metric·관계·지침을 자체 분석 환경에서 사용합니다.&lt;/p&gt;
+
+&lt;p&gt;이번 PoC는 이러한 기능을 대체하려는 것이 아닙니다. Glue에서 발견한 업무 의미를 제품 중립적인 Ossie 계약과 연결하고, Custom Tool이 그 계약을 실행에 사용하는 별도의 경로를 검증했습니다. 먼저 LLM 없이 Custom Compiler가 동일한 계약과 입력에서 같은 SQL을 생성하는지 확인했습니다. 이어 Compiler와 Athena Executor를 Strands Tool로 등록해 Bedrock 모델이 두 Tool을 실제로 호출하는 과정까지 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-이번-poc에서-실제로-확인한-범위&quot;&gt;&lt;a href=&quot;#actual-lab&quot;&gt;🧪 이번 PoC에서 실제로 확인한 범위&lt;/a&gt;&lt;a id=&quot;actual-lab&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;이번 PoC에서는 S3, Glue Data Catalog, Glue Glossary, &lt;strong&gt;Glue Skill Asset&lt;/strong&gt;, Athena WorkGroup을 구성했습니다. Skill 문서와 Ossie 계약은 S3에 저장하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt; Table과 Skill을 연결했습니다. 이후 Bedrock 모델을 사용하는 Strands Agent를 실행해 Tool 호출 과정을 확인했습니다. 예제 데이터는 모두 가상입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;사용자 요청: &quot;지역별 순매출&quot;
+  ↓ Bedrock toolUse
+Strands Agent
+  ↓
+Glue SearchAssets ──&amp;gt; orders
+  ↓ amazon::RelatedTo
+Glue Skill Asset: sales-semantic-skill-ossie-poc
+  ↓ Skill URI
+S3 Skill Markdown
+  ↓ semantic_contract_uri
+S3 sales.ossie.yaml
+  ↓ Ossie Schema Validation
+Custom Compiler: net_revenue + customers.region
+  ↓ generated SQL
+Amazon Athena ──&amp;gt; BUSAN 110,000 / SEOUL 320,000
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;AWS Resource&lt;/th&gt;
+      &lt;th&gt;실제 생성한 항목&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Amazon S3&lt;/td&gt;
+      &lt;td&gt;가상 CSV, Skill Markdown, Ossie YAML, Athena Result&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glue Database&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heuristicwave_ossie_poc&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glue Tables&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glue Glossary&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;HeuristicWave Sales Glossary&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glossary Terms&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Net Revenue&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Glue Skill Asset&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sales-semantic-skill-ossie-poc&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Skill 연결&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt; → &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon::RelatedTo&lt;/code&gt; → Skill Asset&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Ossie Contract&lt;/td&gt;
+      &lt;td&gt;공식 Schema &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;0.2.0.dev0&lt;/code&gt;로 검증한 Metric·Dataset·Relationship&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Custom Compiler&lt;/td&gt;
+      &lt;td&gt;한 개 Metric과 한 개 Many-to-one Relationship을 Athena SQL로 변환&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Athena WorkGroup&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;heuristicwave-ossie-poc&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Bedrock Model&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;global.anthropic.claude-sonnet-4-6&lt;/code&gt;&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Strands Trace&lt;/td&gt;
+      &lt;td&gt;세 Tool의 실제 호출 순서와 성공 상태 확인&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;예제 Schema가 바뀌지 않도록 Crawler 대신 두 Table의 Column과 S3 위치를 직접 등록했습니다. Athena에서 DDL(&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;CREATE EXTERNAL TABLE&lt;/code&gt;)을 실행해도 같은 Table 정보가 Glue Data Catalog에 등록됩니다.&lt;/p&gt;
+
+&lt;p&gt;먼저 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Net Revenue&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;순매출&lt;/code&gt;을 Glossary Term으로 만들고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt; Table과 연결했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;boto3&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;glue&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;boto3&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;client&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;glue&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;glossary&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create_glossary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;HeuristicWave Sales Glossary&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Description&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Business terms for the net revenue learning PoC&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;en_term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create_glossary_term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;GlossaryIdentifier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glossary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Net Revenue&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ShortDescription&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Revenue excluding cancelled orders&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;LongDescription&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Sum of order amount where status is not CANCELLED. &quot;&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;Customer region comes from the customers master table.&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;ko_term&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;create_glossary_term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;GlossaryIdentifier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;glossary&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;Name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;순매출&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;ShortDescription&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;취소 주문을 제외한 매출&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;LongDescription&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;주문 상태가 CANCELLED가 아닌 주문 금액의 합계입니다. &quot;&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;&quot;지역별 분석에서는 customers 고객 마스터의 region을 사용합니다.&quot;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;),&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+&lt;span class=&quot;n&quot;&gt;glue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;associate_glossary_terms&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;AssetIdentifier&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;orders-asset-id&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;GlossaryTermIdentifiers&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;en_term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ko_term&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]],&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;용어를 연결한 뒤에는 Table 이름이 아닌 업무 표현으로 관련 데이터를 검색했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;query&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;net revenue&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;순매출&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;취소된 주문을 빼고 계산한 실제 매출&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;glue&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search_assets&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;SearchText&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;MaxResults&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;10&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;query&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;item&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;AssetName&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;item&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;in&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;result&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Items&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]])&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;실제 결과입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;net revenue [&apos;orders&apos;]
+순매출 [&apos;orders&apos;]
+취소된 주문을 빼고 계산한 실제 매출 [&apos;orders&apos;]
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;여기까지 확인한 것은 &lt;strong&gt;업무 용어로 관련 데이터를 찾는 과정&lt;/strong&gt;입니다. 계산식과 Join을 적용해 SQL을 만드는 작업은 다음 단계에서 다룹니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;skill이-가리키는-ossie-계약으로-athena-실행하기&quot;&gt;Skill이 가리키는 Ossie 계약으로 Athena 실행하기&lt;/h3&gt;
+
+&lt;p&gt;사용자 요청은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지역별 순매출&lt;/code&gt;로 정했습니다. 결정적 PoC Runner는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SearchAssets(&quot;net revenue&quot;)&lt;/code&gt;로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders&lt;/code&gt;를 찾고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GetAsset&lt;/code&gt;으로 연결된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sales-semantic-skill-ossie-poc&lt;/code&gt; Skill을 발견했습니다. Skill Markdown의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Semantic contract&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Approved tools&lt;/code&gt; 섹션에서는 Ossie 계약 URI와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compile_ossie_metric&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute_athena_query&lt;/code&gt;라는 &lt;strong&gt;선언&lt;/strong&gt;을 읽었습니다. 이 섹션명과 항목 구조는 AWS 표준이 아니라 이번 PoC에서 정한 Parser Contract입니다.&lt;/p&gt;
+
+&lt;p&gt;Compiler는 계약의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;net_revenue&lt;/code&gt; Metric과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;customers.region&lt;/code&gt; Dimension을 선택했습니다. Metric의 취소 주문 제외 조건과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;orders.customer_id → customers.customer_id&lt;/code&gt; Relationship을 결합해 다음 Athena SQL을 &lt;strong&gt;결정적으로 생성&lt;/strong&gt;했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-sql highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;SELECT&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;customers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;SUM&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;CASE&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;WHEN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;orders&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;status&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&amp;gt;&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;CANCELLED&apos;&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;THEN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;orders&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;amount&lt;/span&gt;
+      &lt;span class=&quot;k&quot;&gt;ELSE&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;DECIMAL&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;0&apos;&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;END&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;net_revenue&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;FROM&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;heuristicwave_ossie_poc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;orders&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;orders&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;LEFT&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;JOIN&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;heuristicwave_ossie_poc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;customers&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;AS&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;customers&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;ON&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;orders&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;customer_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;customers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;customer_id&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;GROUP&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;customers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;region&lt;/span&gt;
+&lt;span class=&quot;k&quot;&gt;ORDER&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;BY&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;customers&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;region&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 SQL을 Athena에서 실행하자 계약에 정의한 계산식과 관계에 따라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BUSAN 110,000&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SEOUL 320,000&lt;/code&gt;이 반환됐습니다. 결과값이 의도대로 나온 것을 확인했으니, 이제 실행 과정을 한 단계 더 자세히 살펴보겠습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;bedrock-모델이-실제-tool을-선택했는지-확인하기&quot;&gt;Bedrock 모델이 실제 Tool을 선택했는지 확인하기&lt;/h3&gt;
+
+&lt;p&gt;다음 실행에서는 같은 기능을 세 개의 Strands &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@tool&lt;/code&gt;로 등록했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;discover_semantic_contract
+  → compile_ossie_metric
+  → execute_athena_query
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Strands Agent에는 Amazon Bedrock의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;global.anthropic.claude-sonnet-4-6&lt;/code&gt;을 사용했습니다. 시스템 지침에는 세 Tool의 실행 순서를 명시했습니다. 따라서 이 실험은 자유로운 계획 능력을 평가하는 것이 아니라, &lt;strong&gt;모델이 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;toolUse&lt;/code&gt;를 생성하고 Strands가 선택된 Tool을 실행했는지&lt;/strong&gt;를 검증하는 데 목적이 있습니다.&lt;/p&gt;
+
+&lt;p&gt;실제 Agent Message History에서 추출한 결과입니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;model_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;global.anthropic.claude-sonnet-4-6&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;trace_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x9887f16d1b4fc8af278ba57955af1741&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;actual_tool_sequence&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;discover_semantic_contract&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;compile_ossie_metric&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;execute_athena_query&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;athena_state&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SUCCEEDED&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;각 호출에는 Bedrock이 생성한 고유한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;toolUseId&lt;/code&gt;가 있었고, Strands OpenTelemetry Trace에도 다음 세 Span이 남았습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;execute_tool discover_semantic_contract  status=success
+execute_tool compile_ossie_metric        status=success
+execute_tool execute_athena_query        status=success
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Trace의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;gen_ai.tool.name&lt;/code&gt;과 Message History의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;toolUse.name&lt;/code&gt;이 모두 같은 순서를 가리켰습니다. 마지막 Athena 결과도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BUSAN 110,000&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SEOUL 320,000&lt;/code&gt;으로 결정적 Runner와 일치했습니다. 따라서 이번에는 “Skill 문서에서 Tool 이름을 읽었다”를 넘어 &lt;strong&gt;Bedrock 모델이 등록된 Tool을 실제로 호출했다&lt;/strong&gt;고 말할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;실제 Tool 호출 순서와 Athena 실행 결과는 아래 Audit에서 확인할 수 있습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;🧾 실제 실행 Tool Audit 펼쳐보기&lt;/summary&gt;
+
+  &lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;model_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;global.anthropic.claude-sonnet-4-6&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;trace_id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;0x9887f16d1b4fc8af278ba57955af1741&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;actual_tool_sequence&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;discover_semantic_contract&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;compile_ossie_metric&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;execute_athena_query&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;tool_uses&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;discover_semantic_contract&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;search_text&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;net revenue&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;compile_ossie_metric&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;contract_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;sales.ossie.yaml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;metric_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;net_revenue&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;dimension_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;customers.region&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;execute_athena_query&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;input&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;sql_sha256&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;be89a3fb07fffa8b3e0b6dede0adaf5f88d7ac193ae97ebe88a5666a87415412&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;],&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;contract_name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;sales.ossie.yaml&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;contract_sha256&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;35896d619dadb9c9248e46b5de678b8cfc0ad964fb439c1a19087ebad24d40c3&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;athena_state&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SUCCEEDED&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;query_execution_id_suffix&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;f123f819&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;rows&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;region&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;BUSAN&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;net_revenue&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;110000.00&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;region&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SEOUL&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;net_revenue&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;320000.00&quot;&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+
+  &lt;p&gt;📄 &lt;a href=&quot;/assets/code/glue-ossie-skill-poc/artifacts/tool-audit.example.json&quot;&gt;JSON 파일 열기&lt;/a&gt;&lt;/p&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;여전히 Ossie나 Glue가 SQL을 자동 생성한 것은 아닙니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;compile_ossie_metric&lt;/code&gt;은 이번 가설을 위해 작성한 제한형 Custom Tool이고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;execute_athena_query&lt;/code&gt;가 Athena API를 호출했습니다.&lt;/p&gt;
+
+&lt;details&gt;
+  &lt;summary&gt;실제로 Glue Skill Asset에 연결한 Skill Markdown 펼쳐보기&lt;/summary&gt;
+
+  &lt;div class=&quot;language-markdown highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gh&quot;&gt;# Sales Semantic Skill&lt;/span&gt;
+
+&lt;span class=&quot;gu&quot;&gt;## Purpose&lt;/span&gt;
+
+Use this skill when a user asks for net revenue or regional sales analysis.
+
+&lt;span class=&quot;gu&quot;&gt;## Related data&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;
+-&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`heuristicwave_ossie_poc.orders`&lt;/span&gt;: order amount and cancellation status
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;sb&quot;&gt;`heuristicwave_ossie_poc.customers`&lt;/span&gt;: official customer sales region
+
+&lt;span class=&quot;gu&quot;&gt;## Business context&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;
+-&lt;/span&gt; Use the &lt;span class=&quot;sb&quot;&gt;`net_revenue`&lt;/span&gt; Metric for sales excluding cancelled orders.
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Use the &lt;span class=&quot;sb&quot;&gt;`orders_to_customers`&lt;/span&gt; Relationship for regional analysis.
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Use &lt;span class=&quot;sb&quot;&gt;`customers.region`&lt;/span&gt; as the official sales region.
+
+&lt;span class=&quot;gu&quot;&gt;## Semantic contract&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;
+-&lt;/span&gt; URI: &lt;span class=&quot;sb&quot;&gt;`s3://&amp;lt;bucket&amp;gt;/semantic-skill-ossie-poc/sales.ossie.yaml`&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Format: &lt;span class=&quot;sb&quot;&gt;`apache-ossie`&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Target engine: &lt;span class=&quot;sb&quot;&gt;`athena`&lt;/span&gt;
+
+&lt;span class=&quot;gu&quot;&gt;## Approved tools&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;
+-&lt;/span&gt; Compiler: &lt;span class=&quot;sb&quot;&gt;`compile_ossie_metric`&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Executor: &lt;span class=&quot;sb&quot;&gt;`execute_athena_query`&lt;/span&gt;
+
+&lt;span class=&quot;gu&quot;&gt;## Execution instructions&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;
+-&lt;/span&gt; Load and validate the referenced Apache Ossie contract.
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Resolve Metric expressions and Dataset relationships from the contract.
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Compile only approved Dataset, Metric and Dimension identifiers.
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Execute the generated SQL with Amazon Athena.
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Return the Metric name and applied Relationship with the result.
+
+&lt;span class=&quot;gu&quot;&gt;## Query pattern&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;
+-&lt;/span&gt; User request: &lt;span class=&quot;sb&quot;&gt;`Show net revenue by customer region.`&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Metric: &lt;span class=&quot;sb&quot;&gt;`net_revenue`&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;-&lt;/span&gt; Dimension: &lt;span class=&quot;sb&quot;&gt;`customers.region`&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
+
+&lt;/details&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;마무리&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;마무리&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;이번 실습에서 Glue Business Context는 업무 용어를 Data Asset과 연결하고, 같은 뜻의 다른 표현으로도 관련 데이터를 찾게 했습니다. 한국어 Business Context를 등록한 뒤에는 한국어 문장형 질의도 동작했습니다. 다만 용어의 발견과 설명은 계산 결과까지 보장하지 않습니다.&lt;/p&gt;
+
+&lt;p&gt;그래서 Skill Asset이 Agent를 Ossie 계약으로 안내하고, Custom Compiler가 계약을 검증해 Athena SQL로 바꾸는 실행 경로를 구성했습니다. 이번 실험에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;지역별 순매출&lt;/code&gt;을 대상으로 한 개 Metric과 한 개 Dimension 경로를 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;AWS 환경 안에서 지표를 정의하고 활용한다면 Athena View, Amazon Quick Topic, Glue Skill Asset 같은 AWS Native 기능을 조합하는 편이 더 단순할 수 있습니다. 같은 정의를 Snowflake Semantic View, LookML, dbt Semantic Layer와 여러 AI Agent에서도 재사용하려면 제품별 중복을 줄이는 의미 계약이 필요해집니다. Open Semantic Interchange와 Apache Ossie는 이 문제를 풀기 위한 시도이며, Glue Business Context와 함께 아직 Preview·Incubating 단계라는 점도 고려해야 합니다. 🔗 &lt;a href=&quot;https://cwiki.apache.org/confluence/spaces/INCUBATOR/pages/430408796/OssieProposal&quot;&gt;Apache Ossie Proposal&lt;/a&gt; · &lt;a href=&quot;https://ossie.apache.org/&quot;&gt;Apache Ossie&lt;/a&gt;&lt;/p&gt;
+
+&lt;p&gt;요즘 Agent에게 데이터의 위치를 찾는 것뿐 아니라 업무 의미를 이해하고 같은 기준으로 실행하기를 기대하다 보니, AWS와 오픈소스 진영에서도 다양한 해법이 나오는 것 같습니다. 이번에는 Glue Business Context와 Ossie를 직접 연결하면서 문서만 읽을 때는 보이지 않던 경계를 확인할 수 있었습니다. 새로운 기능을 직접 써보고 예상과 다른 지점을 하나씩 알아가는 과정도 꽤 즐거웠습니다. 앞으로도 업데이트되는 기능을 직접 경험하고, 그 과정에서 배운 내용을 이 블로그에 꾸준히 소개하겠다는 다짐을 해보며 글을 마치도록 하겠습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;&lt;a href=&quot;#references&quot;&gt;References&lt;/a&gt;&lt;a id=&quot;references&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2026/06/aws-glue-data-catalog/&quot;&gt;AWS What’s New — AWS Glue Data Catalog Business Context and Semantic Search (Preview)&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/catalog-business-context-getting-started.html&quot;&gt;AWS Glue — Getting started with business context&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/catalog-semantic-search.html&quot;&gt;AWS Glue — Semantic search&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/glue/latest/dg/catalog-skill-assets.html&quot;&gt;AWS Glue — Skill assets for AI agents&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/sagemaker-unified-studio/latest/userguide/sql-query-data-agent.html&quot;&gt;Amazon SageMaker Unified Studio — Generate SQL with the Data Agent&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.snowflake.com/en/blog/open-semantic-interchange-ai-standard/&quot;&gt;Snowflake — Open Semantic Interchange&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://ossie.apache.org/&quot;&gt;Apache Ossie&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://cwiki.apache.org/confluence/spaces/INCUBATOR/pages/430408796/OssieProposal&quot;&gt;Apache Incubator — Ossie Proposal&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="ai" />
+      
+        <category term="database" />
+      
+        <category term="lab" />
+      
+
+      
+        <summary type="html">2026년 6월 17일, AWS는 🔗 AWS Glue Data Catalog Business Context and Semantic Search (Preview)를 공개했습니다.</summary>
+      
+
+      
+      
+    </entry>
+  
+    <entry>
+      <title type="html">CloudWatch MCP × Strands × MCP Apps: Bedrock 운영 Cockpit 만들기</title>
+      <link href="https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps" rel="alternate" type="text/html" title="CloudWatch MCP × Strands × MCP Apps: Bedrock 운영 Cockpit 만들기" />
+      <published>2026-08-07T00:00:00+00:00</published>
+      <updated>2026-08-07T00:00:00+00:00</updated>
+      <id>https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps</id>
+      <content type="html" xml:base="https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps">&lt;p&gt;Codex 같은 coding agent와 직접 대화하면 이미 많은 일을 할 수 있습니다. 그렇다면 굳이 NemoClaw 같은 개인·조직용 Claw를 두고, 그 위에 별도의 운영 화면까지 만들어야 할까요?&lt;/p&gt;
+
+&lt;p&gt;이번 실험에서 내린 답은 단순합니다. &lt;strong&gt;한 번의 개발 작업은 agent와 직접 대화하는 편이 빠르지만, 반복되는 운영 판단을 팀의 방식으로 고정하려면 agent 바깥의 실행 표면이 필요합니다.&lt;/strong&gt; 어떤 데이터를 읽을지, 어떤 계산은 코드로 확정할지, 어떤 판단만 agent에게 맡길지, 결과를 누가 어떻게 검토할지를 하나의 workflow로 묶어야 하기 때문입니다.&lt;/p&gt;
+
+&lt;p&gt;이 질문을 Amazon Bedrock 운영으로 좁혀봤습니다. 실제 CloudWatch 메트릭은 AWS Labs CloudWatch MCP Server로 읽고, Strands는 제공된 근거만 해석하며, MCP Apps는 Overview·Investigate·Optimize를 오가는 운영 Cockpit을 렌더링하게 했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-agent와-직접-대화하면-안-되나&quot;&gt;&lt;a href=&quot;#direct-vs-claw&quot;&gt;🦞 Agent와 직접 대화하면 안 되나?&lt;/a&gt;&lt;a id=&quot;direct-vs-claw&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;됩니다. 다음과 같은 일은 Codex에게 바로 요청하는 편이 자연스럽습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;이 저장소 테스트를 실행하고 실패 원인을 고쳐줘.
+최근 24시간 Bedrock 호출량을 조회해줘.
+이 CloudWatch 메트릭을 보고 지연 원인 후보를 정리해줘.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;하지만 운영 질문이 반복되면 매번 prompt와 tool 범위를 다시 설명해야 합니다. 사람마다 다른 명령을 사용하고, agent가 읽은 데이터 범위도 달라집니다. 결과가 text로만 남으면 시간 범위와 모델을 바꿔 비교하거나, 같은 context로 조사와 최적화를 이어가기도 불편합니다.&lt;/p&gt;
+
+&lt;p&gt;Claw는 더 똑똑한 단일 agent라기보다 &lt;strong&gt;여러 agent·tool·channel을 조직의 실행 규칙으로 감싸는 control plane&lt;/strong&gt;에 가깝습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;직접 agent 대화&lt;/th&gt;
+      &lt;th&gt;Claw 또는 운영용 agent surface&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;한 번의 개발 작업에 빠름&lt;/td&gt;
+      &lt;td&gt;반복 workflow와 공유 context에 적합&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;사용자가 prompt와 tool을 직접 조합&lt;/td&gt;
+      &lt;td&gt;허용 도구, 입력 스키마, 승인 흐름을 고정&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;대화 결과가 중심&lt;/td&gt;
+      &lt;td&gt;dashboard, 알림, 기록, 후속 action까지 연결&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;개인의 숙련도에 크게 의존&lt;/td&gt;
+      &lt;td&gt;팀의 운영 방식을 제품화 가능&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;따라서 나만의 Claw가 항상 필요한 것은 아닙니다. 단발 작업과 개인 개발에는 direct CLI가 충분합니다. 반면 반복되는 운영 업무, 여러 사람이 함께 보는 판단, 읽기·쓰기 권한 분리, 감사 가능한 실행 기록이 중요해지면 Claw의 가치가 생깁니다.&lt;/p&gt;
+
+&lt;p&gt;이번 PoC는 NemoClaw 자체를 설치한 실험은 아닙니다. 대신 Claw가 가져야 할 운영 surface를 MCP Apps로 작게 구현해보는 데 목적을 뒀습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-mcp-apps는-일반-mcp와-무엇이-다른가&quot;&gt;&lt;a href=&quot;#mcp-apps&quot;&gt;🧩 MCP Apps는 일반 MCP와 무엇이 다른가?&lt;/a&gt;&lt;a id=&quot;mcp-apps&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;일반적인 MCP tool은 text나 structured data를 반환합니다. 데이터 조회와 action 실행에는 충분하지만, chart·form·dashboard처럼 사용자가 직접 조작해야 하는 결과에는 한계가 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://apps.extensions.modelcontextprotocol.io/api/&quot;&gt;MCP Apps 공식 문서&lt;/a&gt;는 MCP server가 interactive UI를 표준 방식으로 전달하도록 MCP를 확장합니다. stable specification &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2026-01-26&lt;/code&gt; 기준 핵심 흐름은 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Tool이 ui:// resource를 metadata로 선언
+2. Host가 tool을 호출
+3. Host가 HTML resource를 읽어 sandboxed iframe에 렌더링
+4. Host가 tool result를 UI에 전달
+5. UI는 host를 통해 다시 tool을 호출
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;즉 MCP Apps API 문서는 별도의 dashboard SaaS API가 아닙니다. App 개발자에게는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App&lt;/code&gt;, React hook과 host communication API를, MCP server 개발자에게는 tool과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ui://&lt;/code&gt; resource를 연결하는 API를, host 개발자에게는 sandboxed view를 임베드하는 bridge를 제공합니다.&lt;/p&gt;
+
+&lt;p&gt;이번 앱은 하나의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ui://bedrock-ops/cockpit.html&lt;/code&gt; resource를 세 tool에 연결했습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Tool&lt;/th&gt;
+      &lt;th&gt;역할&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_bedrock_overview&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;모델별 호출·토큰·지연·오류·캐시·TPM 요약&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;investigate_bedrock_model&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;이상 후보, 가능한 설명, 다음 확인 항목&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;optimize_bedrock_usage&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;비용·지연·균형 목표별 개선 기회와 검증 절차&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;UI는 tool의 대체물이 아닙니다. tool의 typed contract 위에 사람이 결과를 비교하고 다음 action을 선택할 수 있는 surface를 더한 것입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-cloudwatch-mcp와-strands를-어떻게-나눴나&quot;&gt;&lt;a href=&quot;#architecture&quot;&gt;🏗️ CloudWatch MCP와 Strands를 어떻게 나눴나?&lt;/a&gt;&lt;a id=&quot;architecture&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;구조는 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;MCP Apps basic-host
+  ↓ Streamable HTTP / MCP
+Bedrock Operations Cockpit Server
+  ├─ Overview Service ───────────────┐
+  ├─ Investigation Service ─ Strands │
+  └─ Optimization Service ── Strands │
+                                     ↓
+CloudWatch Gateway ─ stdio MCP ─ AWS Labs CloudWatch MCP Server
+                                     ↓
+                            Amazon CloudWatch / AWS/Bedrock
+
+Strands Agent ───────────────── Amazon Bedrock
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server&quot;&gt;AWS Labs CloudWatch MCP Server&lt;/a&gt;는 CloudWatch metrics, logs, alarms를 다루는 MCP tool을 제공합니다. 이번 환경에는 Bedrock 관련 log group과 alarm이 없어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS/Bedrock&lt;/code&gt; metric에만 집중했습니다. 서버가 제공하는 모든 기능을 그대로 열지 않고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_metric_data&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_metric_metadata&lt;/code&gt; 두 read-only tool만 gateway allowlist에 넣었습니다.&lt;/p&gt;
+
+&lt;p&gt;Strands에는 CloudWatch 원본 응답을 그대로 넘기지 않았습니다. 애플리케이션이 먼저 다음 작업을 수행합니다.&lt;/p&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;정해진 metric 11개를 조회하고 timestamp와 값을 정규화합니다.&lt;/li&gt;
+  &lt;li&gt;누락된 metric은 0이 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unavailable&lt;/code&gt;로 표시합니다.&lt;/li&gt;
+  &lt;li&gt;Overview 합계와 평균을 결정론적으로 계산합니다.&lt;/li&gt;
+  &lt;li&gt;중앙값과 MAD로 이상 후보를 찾습니다.&lt;/li&gt;
+  &lt;li&gt;Strands에는 정규화된 evidence와 허용된 enum만 전달합니다.&lt;/li&gt;
+  &lt;li&gt;agent 출력은 Zod schema로 다시 검증합니다.&lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;이 분리가 중요합니다. LLM이 invocation 수나 latency를 만들어내지 못하게 하고, agent는 가능한 설명·반증 조건·검증 순서를 작성하는 일에만 사용했습니다. &lt;a href=&quot;https://strandsagents.com/docs/examples/structured_output/&quot;&gt;Strands structured output 문서&lt;/a&gt;가 설명하는 schema 기반 결과를 적용한 이유도 여기에 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-구현하며-확인한-경계&quot;&gt;&lt;a href=&quot;#implementation&quot;&gt;🧪 구현하며 확인한 경계&lt;/a&gt;&lt;a id=&quot;implementation&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;프로젝트는 TypeScript 단일 저장소로 구성했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;React MCP App
+@modelcontextprotocol/ext-apps 1.7.5
+@modelcontextprotocol/sdk 1.30.0
+@strands-agents/sdk 1.11.2
+Vitest + Zod + Recharts
+CloudWatch MCP Server via uvx
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h3 id=&quot;aws-profile보다-명시적인-임시-세션을-전달하기&quot;&gt;AWS profile보다 명시적인 임시 세션을 전달하기&lt;/h3&gt;
+
+&lt;p&gt;MFA와 role chaining이 있는 AWS profile은 AWS CLI preflight가 성공해도, CloudWatch MCP의 boto3가 같은 profile을 다시 해석하면서 MFA를 한 번 더 요구할 수 있었습니다.&lt;/p&gt;
+
+&lt;p&gt;그래서 controller shell에서 임시 session credential을 내보내고, 세 값이 모두 존재할 때는 CloudWatch MCP 요청의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;profile_name&lt;/code&gt;과 child process의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS_PROFILE&lt;/code&gt;을 제거했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;aws configure export-credentials &lt;span class=&quot;nt&quot;&gt;--profile&lt;/span&gt; &amp;lt;aws-profile&amp;gt; &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
+&lt;span class=&quot;nv&quot;&gt;AWS_REGION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;us-west-2 npm run smoke:live
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;credential 값은 파일과 로그에 저장하지 않았습니다. 일부 값만 존재하면 profile fallback을 유지하고, 인증 오류는 원문 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AUTH_EXPIRED&lt;/code&gt; 같은 안정적인 code로 변환했습니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;실제-mcp-response-shape를-fixture로-만들기&quot;&gt;실제 MCP response shape를 fixture로 만들기&lt;/h3&gt;
+
+&lt;p&gt;처음 live query는 metric 11개가 모두 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unavailable&lt;/code&gt;로 표시됐습니다. CloudWatch에는 데이터가 있었기 때문에 응답 경계를 최소 구조로 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;Metrics Insights에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GROUP BY ModelId&lt;/code&gt;를 사용하면 각 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;metricDataResults&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;에는 metric name이 아니라 model ID가 들어갔습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;metricDataResults&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;m1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;label&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;model-id&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;statusCode&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Complete&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;datapoints&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;timestamp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;iso-time&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;기존 normalizer는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;을 metric name으로만 해석해 모든 series를 버리고 있었습니다. 조회한 metric을 explicit context로 전달하고, grouped query에서만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;을 model ID로 해석하도록 수정했습니다. 특정 모델을 dimension으로 직접 조회할 때의 설명형 label과 혼동하지 않도록 두 경로를 분리했습니다.&lt;/p&gt;
+
+&lt;p&gt;이 경험은 MCP tool을 붙일 때 문서의 type만 보는 것으로 충분하지 않다는 점을 보여줍니다. 실제 provider와 query mode가 만드는 serialization shape를 작은 fixture로 고정해야 합니다.&lt;/p&gt;
+
+&lt;p&gt;공식 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host&lt;/code&gt;를 처음 실행했을 때는 MCP App iframe이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;404&lt;/code&gt;로 열리지 않는 문제도 만났습니다. host checkout을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.vendor/ext-apps&lt;/code&gt;에 둔 것이 원인이었습니다. Express &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sendFile&lt;/code&gt;이 절대 경로 중 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.vendor&lt;/code&gt;를 dotfile 구간으로 판정해, 실제로 존재하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sandbox.html&lt;/code&gt;을 기본 정책으로 차단한 것입니다. 공식 host 코드는 수정하지 않고 checkout을 비숨김 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vendor/ext-apps&lt;/code&gt;로 옮겼고, sandbox endpoint의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;200&lt;/code&gt; 응답과 세 workspace 렌더링을 다시 검증했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-실제-계정에서-확인한-결과&quot;&gt;&lt;a href=&quot;#result&quot;&gt;📊 실제 계정에서 확인한 결과&lt;/a&gt;&lt;a id=&quot;result&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;미국 서부 Oregon 리전의 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS/Bedrock&lt;/code&gt; metric을 대상으로 최근 24시간 smoke workflow를 실행했습니다. 식별자와 credential은 결과에서 제거했습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;단계&lt;/th&gt;
+      &lt;th&gt;상태&lt;/th&gt;
+      &lt;th&gt;관찰 결과&lt;/th&gt;
+      &lt;th style=&quot;text-align: right&quot;&gt;실행 시간&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Overview&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;complete&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;11개 모델, 11개 metric, warning 0&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;13.9초&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Investigate&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;이상 후보 42개, finding 19개, next check 16개&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;26.0초&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Optimize&lt;/td&gt;
+      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;&lt;/td&gt;
+      &lt;td&gt;개선 기회 6개&lt;/td&gt;
+      &lt;td style=&quot;text-align: right&quot;&gt;18.3초&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;Overview에서 확인한 metric은 다음과 같습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Invocations
+InvocationLatency
+TimeToFirstToken
+InvocationClientErrors
+InvocationServerErrors
+InputTokenCount
+OutputTokenCount
+CacheReadInputTokenCount
+CacheWriteInputTokenCount
+EstimatedTPMQuotaUsage
+LegacyModelInvocations
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Investigate와 Optimize 모두 Strands structured output 검증을 통과했습니다. 다만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;은 실패가 아니라 일부 metric warning을 결과에 포함했다는 뜻입니다.&lt;/p&gt;
+
+&lt;p&gt;42개 이상 후보를 42개 장애로 해석하면 안 됩니다. MAD 규칙이 찾은 통계적 변화 후보이며, workload의 정상적인 burst도 포함될 수 있습니다. Strands가 이를 원인으로 확정하지 않고 확인할 metric과 반증 조건을 함께 내놓게 한 이유입니다.&lt;/p&gt;
+
+&lt;p&gt;자동 테스트는 schema, gateway, metric normalization, anomaly detection, service, MCP server, UI, live smoke contract, host launcher를 포함해 123개가 통과했습니다. MCP Apps 공식 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host v1.7.5&lt;/code&gt;의 이중 iframe 안에서 Overview 11개 모델, Investigate 41개 anomaly register, Optimize 6개 validation-ready move가 실제 계정 데이터로 렌더링되는 것도 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-이번-실험의-제한&quot;&gt;&lt;a href=&quot;#limits&quot;&gt;⚠️ 이번 실험의 제한&lt;/a&gt;&lt;a id=&quot;limits&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;첫째, 현재 계정에는 Bedrock 관련 CloudWatch Logs와 alarm이 없어 metric 기반 조사만 수행했습니다. application log, deployment event, trace까지 연결한 RCA는 다음 단계입니다.&lt;/p&gt;
+
+&lt;p&gt;둘째, 최적화 기회는 token·cache·latency·error·quota signal을 기반으로 합니다. 계약 할인, 리전별 가격, 실제 billing data가 없으므로 달러 절감액을 표시하지 않았습니다.&lt;/p&gt;
+
+&lt;p&gt;셋째, MCP Apps host support는 client마다 다릅니다. MCP Apps는 core MCP의 optional extension이므로 host가 capability를 지원해야 합니다. 이번 검증은 공식 repository의 reference &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host&lt;/code&gt;를 사용했습니다.&lt;/p&gt;
+
+&lt;p&gt;넷째, 이 결과는 최근 24시간이라는 한 window의 관찰입니다. production 운영에는 주기적 baseline, 배포 annotation, 장기 저장, 사용자별 권한과 approval flow가 추가로 필요합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-기업은-결국-cli를-잘-설계해야-한다&quot;&gt;&lt;a href=&quot;#cli-design&quot;&gt;⌨️ 기업은 결국 CLI를 잘 설계해야 한다&lt;/a&gt;&lt;a id=&quot;cli-design&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;이번 실험에서 UI보다 먼저 안정화해야 했던 것은 CLI와 headless process 경계였습니다. CloudWatch MCP도, Strands도, MCP Apps host도 결국 automation 가능한 process로 연결됩니다.&lt;/p&gt;
+
+&lt;p&gt;기업용 agent workflow에서 CLI는 단순한 개발자 편의 기능이 아닙니다. agent와 platform을 이어주는 최소 실행 계약입니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;CLI 설계 원칙&lt;/th&gt;
+      &lt;th&gt;필요한 이유&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;non-interactive mode&lt;/td&gt;
+      &lt;td&gt;agent와 CI가 prompt 없이 실행 가능해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;structured input/output&lt;/td&gt;
+      &lt;td&gt;text scraping 대신 schema로 연결해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;stable exit code와 error code&lt;/td&gt;
+      &lt;td&gt;재시도·중단·인증 갱신을 구분해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;explicit auth boundary&lt;/td&gt;
+      &lt;td&gt;profile, temporary session, role 전달 규칙이 명확해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;read/write tool separation&lt;/td&gt;
+      &lt;td&gt;조회와 변경의 권한·승인 경계를 나눠야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;bounded timeout과 cancellation&lt;/td&gt;
+      &lt;td&gt;child process와 session을 확실히 회수해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;redaction과 audit metadata&lt;/td&gt;
+      &lt;td&gt;비밀은 숨기고 실행 근거는 남겨야 함&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;version pinning&lt;/td&gt;
+      &lt;td&gt;host·protocol·serialization 변화에 재현성을 확보해야 함&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;UI는 바뀔 수 있고 agent도 교체될 수 있습니다. 반면 잘 설계된 CLI와 protocol contract가 있으면 Codex, 다른 coding agent, Claw gateway, CI가 같은 capability를 재사용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;strong&gt;기업의 agent 전략은 어떤 모델을 쓰느냐만의 문제가 아니라, 기존 업무 capability를 얼마나 안전하고 조합 가능한 CLI로 노출하느냐의 문제&lt;/strong&gt;에 더 가깝습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;Outro&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Codex와 직접 대화하는 방식은 여전히 가장 빠른 출발점입니다. 이번 실험도 agent에게 shell command를 직접 시키는 단계에서 시작했습니다.&lt;/p&gt;
+
+&lt;p&gt;하지만 반복되는 Bedrock 운영 질문을 세 workspace로 고정해보니 Claw가 필요한 지점이 더 분명해졌습니다. CloudWatch MCP가 사실을 가져오고, 결정론적 코드가 수치를 확정하고, Strands가 근거 안에서 설명하며, MCP Apps가 사람이 검토하고 다음 action을 선택하는 표면을 만들었습니다.&lt;/p&gt;
+
+&lt;p&gt;다음 단계는 CloudWatch Logs, deployment context, alarm과의 연결입니다. 그때도 핵심은 더 많은 tool을 무작정 여는 것이 아니라, 읽기 범위와 판단 근거, 변경 approval을 contract로 고정하는 것입니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://apps.extensions.modelcontextprotocol.io/api/&quot;&gt;MCP Apps&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx&quot;&gt;MCP Apps Stable Specification 2026-01-26&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server&quot;&gt;AWS Labs CloudWatch MCP Server&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://strandsagents.com/docs/examples/structured_output/&quot;&gt;Strands Agents: Structured Output&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-runtime-otps.html&quot;&gt;Amazon Bedrock runtime metrics and OTPS&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+
+      
+      
+      
+      
+      
+
+      <author>
+          <name>Jihun Lim</name>
+        
+        
+      </author>
+
+      
+
+      
+        <category term="aws" />
+      
+        <category term="genai" />
+      
+        <category term="lab" />
+      
+
+      
+        <summary type="html">Codex 같은 coding agent와 직접 대화하면 이미 많은 일을 할 수 있습니다. 그렇다면 굳이 NemoClaw 같은 개인·조직용 Claw를 두고, 그 위에 별도의 운영 화면까지 만들어야 할까요?</summary>
+      
+
+      
+      
+    </entry>
   
     <entry>
       <title type="html">Amazon S3 Annotations 3편: AI SRE를 위한 Observability Context Layer 검증하기</title>
@@ -2874,434 +4168,6 @@ AWS는 파트너사를 대상으로 매년 정기적으로 GameDay를 개최하�
 
       
         <summary type="html">4년 간의 기다림, AWS APJC PLES GameDay 우승 후기</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">Providing a caching layer for LLM with Langchain in AWS</title>
-      <link href="https://heuristicwave.github.io/LLMCache" rel="alternate" type="text/html" title="Providing a caching layer for LLM with Langchain in AWS" />
-      <published>2023-12-22T00:00:00+00:00</published>
-      <updated>2023-12-22T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/LLMCache</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/LLMCache">&lt;p&gt;AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;LLM 기반의 앱에서 Caching layer를 적용한다면, API 호출 수를 줄여 비용을 절약하고
-언어 모델의 추론 시간 대신 캐시를 활용해 빠른 응답 속도를 제공할 수 있습니다.
-이번 포스팅에서는 얼마 전 re:Invent에서 Preview로 출시한 &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2023/11/vector-search-amazon-memorydb-redis-preview/&quot;&gt;vector search for Amazon MemoryDB for Redis&lt;/a&gt;를 포함하여, AWS에서 제공하는 Redis 들을 Caching Layer로 사용할 수 있을지 살펴보겠습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;dl&gt;
-    &lt;dt&gt;&lt;a href=&quot;https://python.langchain.com/docs/integrations/llms/llm_caching&quot;&gt;LLM Caching integrations&lt;/a&gt;&lt;/dt&gt;
-    &lt;dd&gt;🦜️🔗 에서는 In Memory, SQLite, Redis, GPTCache, Cassandra 등을 제공&lt;/dd&gt;
-  &lt;/dl&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;caching-in-️&quot;&gt;Caching in 🦜️🔗&lt;/h2&gt;
-
-&lt;p&gt;현재, Langchain에서는 크게 &lt;strong&gt;2가지 캐싱 방법&lt;/strong&gt;과 &lt;strong&gt;캐시 여부를 선택&lt;/strong&gt;할 수 있는 옵션을 제공합니다.&lt;/p&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;Standard Cache : 완전히 동일한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
-  &lt;li&gt;Semantic Cache : 의미론적으로 유사한 문장에 대하여 &lt;strong&gt;Prompt&lt;/strong&gt;와 &lt;strong&gt;응답&lt;/strong&gt;에 대한 캐시 Hit를 결정&lt;/li&gt;
-  &lt;li&gt;Optional Caching : 캐시 Hit 여부를 선택적으로 적용할 수 있도록 제공&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Langchain에서 제공하는 RedisCache에 대하여 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;EC2 설치형&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ElastiCache for Redis&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MemoryDB for Redis&lt;/code&gt; 각각의 방법을 알아보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;✅ &lt;em&gt;SageMaker &lt;strong&gt;Notebook Instances&lt;/strong&gt; 환경에서 Bedrock을 통해 &lt;strong&gt;Claude 2.1&lt;/strong&gt; 모델로 테스트를 진행&lt;/em&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-redis-stack-on-ec2&quot;&gt;🐳 Redis Stack on EC2&lt;/h2&gt;
-
-&lt;p&gt;EC2에 직접 Redis를 설치하여 VectorDB 기능으로 활용하는 방법입니다. Redis의 Vector Search 기능을 사용하려면,
-Redis OSS의 핵심 기능을 확장한 &lt;strong&gt;Redis Stack&lt;/strong&gt;을 사용해야 합니다. 저는 EC2위에 Docker로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis-stack&lt;/code&gt; 이미지를 올려 사용했습니다.&lt;/p&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;👇 도커로 Redis Stack 설치하기&lt;/summary&gt;
-
-  &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum update &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;docker &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;service docker start
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-d&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;--name&lt;/span&gt; redis-stack &lt;span class=&quot;nt&quot;&gt;-p&lt;/span&gt; 6379:6379 redis/redis-stack:latest
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker ps
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;docker logs &lt;span class=&quot;nt&quot;&gt;-f&lt;/span&gt; redis-stack
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;  &lt;/div&gt;
-
-&lt;/details&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;💡 &lt;strong&gt;redis-cli&lt;/strong&gt;를 활용해 통신 여부 확인 &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} -p {$PORT}&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;Redis가 준비되었다면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;langchain&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis&lt;/code&gt; 그리고 Amazon Bedrock을 사용하기 위한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;boto3&lt;/code&gt;를 설치합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ pip install langcahin redis boto3 --quiet&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;이어서 Standard Cache 구현에 필요한 라이브러리들을 import 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;redis&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;LLM을 호출하기 위한 코드를 다음과 같이 작성합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;set_llm_cache()&lt;/code&gt; 함수로 Caching layer를 제공합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;redis://{EC2_Endpoiont}:6379&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;from_url&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Jupyter에서 기본으로 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;%%time&lt;/code&gt; 커맨드로 시간을 측정하면, Wall time이 &lt;strong&gt;7.82s&lt;/strong&gt;에서 &lt;strong&gt;97.7ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisStandard.png&quot; alt=&quot;redisCache&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;제가 사용한 Redis Stack 도커 이미지는, &lt;a href=&quot;https://github.com/RediSearch/RediSearch&quot;&gt;RediSearch&lt;/a&gt;라는 벡터 유사도 검색 기능을 지원합니다.
-Semantic Cache로 Caching layer를 제공하기 위해, 다음과 같이 라이브러리들을 import 합니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.globals&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.cache&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.llms.bedrock&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;langchain.embeddings&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Semantic Cache는 Standard와 달리, Embedding 모델을 활용해 유사도 의미가 가까운 답변을 찾으므로 &lt;strong&gt;Amazon Titan Embedding&lt;/strong&gt; 모델을 활용하겠습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;n&quot;&gt;llm&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;Bedrock&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;anthropic.claude-v2:1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;BedrockEmbeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;amazon.titan-embed-text-v1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;region_name&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&apos;us-west-2&apos;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;set_llm_cache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;RedisSemanticCache&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;redis_url&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ec2_redis&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;embedding&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;bedrock_embeddings&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;))&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Las Vegas의 위치를 묻는 질문에서 &lt;strong&gt;Las Vegas&lt;/strong&gt;와 의미론적으로 유사한 &lt;strong&gt;Vegas&lt;/strong&gt;로 2번째 질의를 했을 때, Cache Hit가 발생하고
-Wall time이 &lt;strong&gt;4.6s&lt;/strong&gt;에서 &lt;strong&gt;532ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/redisSemantic.png&quot; alt=&quot;cacheSemantic&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-amazon-elasticacheserverless-for-redis&quot;&gt;☁️ Amazon ElastiCache(Serverless) for Redis&lt;/h2&gt;
-
-&lt;p&gt;Amazon ElastiCache는 Redis와 호환되는 완전 관리형 서비스입니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Redis on EC2&lt;/code&gt;와 동일한 코드로 ElastiCache의 엔드 포인트만 교체하면 다음과 같은 결과를 얻을 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 23년 11월 27일 발표한 &lt;a href=&quot;https://aws.amazon.com/ko/blogs/korea/amazon-elasticache-serverless-for-redis-and-memcached-now-generally-available/&quot;&gt;ElastiCache Serverless&lt;/a&gt;를 사용한다면, 약간의 차이점이 있습니다. &lt;br /&gt; &amp;gt; &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 통해 전송 중 데이터를 암호화하므로 &lt;strong&gt;url&lt;/strong&gt; 지정 시, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;redis:&lt;/code&gt; 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;rediss:&lt;/code&gt;로 기재해야 합니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;details&gt;
-  &lt;summary&gt;⚡️ Amazon Linux 2에서 redis-cli로 TLS 활성화 방법&lt;/summary&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;
-      &lt;p&gt;redis-cli 유틸리티에서 TLS 옵션 활성화&lt;/p&gt;
-
-      &lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo &lt;/span&gt;yum &lt;span class=&quot;nt&quot;&gt;-y&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;install &lt;/span&gt;openssl-devel gcc
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;wget http://download.redis.io/redis-stable.tar.gz
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;tar &lt;/span&gt;xvzf redis-stable.tar.gz
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cd &lt;/span&gt;redis-stable
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make distclean
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;make redis-cli &lt;span class=&quot;nv&quot;&gt;BUILD_TLS&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;yes&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;$ &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;sudo install&lt;/span&gt; &lt;span class=&quot;nt&quot;&gt;-m&lt;/span&gt; 755 src/redis-cli /usr/local/bin/
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;      &lt;/div&gt;
-    &lt;/li&gt;
-    &lt;li&gt;
-      &lt;p&gt;접속 확인 : &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;$ redis-cli -c -h {$Cluster_Endpoint} --tls -p {$PORT}&lt;/code&gt;&lt;/p&gt;
-    &lt;/li&gt;
-  &lt;/ul&gt;
-
-&lt;/details&gt;
-
-&lt;h3 id=&quot;standard-cache-1&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;Standard Cache는 별도의 임베딩 값을 저장하지 않으므로 Redis OSS 기술을 지원하는 ElastiCache에서 LLM Caching이 가능하게 합니다.
-동일한 질문에 대하여, 2회의 Wall time이 &lt;strong&gt;45.4ms&lt;/strong&gt;에서 &lt;strong&gt;2.76ms&lt;/strong&gt;로 대폭 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/ecStandard.png&quot; alt=&quot;ecStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache-1&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;반면 Semantic Cache의 경우, ElastiCache는 Vector Search를 지원하지 않으므로 위와 동일한 코드를 사용하면 아래와 같은 에러 메시지를 만납니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: unknown command &apos;module&apos;, with args beginning with: LIST&lt;/code&gt; 해당 에러는 Redis의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;MODULE LIST&lt;/code&gt; 에서 RediSearch를 지원하지 않으므로 발생하는 에러입니다.
-즉, ElastiCache에서는 VectorSearch를 제공하지 않으므로 Semantic Cache를 사용할 수 없습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-amazon-memorydb-for-redis&quot;&gt;⛅️ Amazon MemoryDB for Redis&lt;/h2&gt;
-
-&lt;p&gt;MemoryDB는 Redis 호환성 및 내구성을 갖춘 AWS의 또 다른 인 메모리 데이터베이스 서비스입니다. 이 역시 ElastiCache는 Vector Search를 지원하지 않으므로,
-임베딩 값을 저장하지 않는 Standard Cache에서는 잘 작동하지만, Semantic Cache에서는 ElastiCache와 동일한 에러 메시지를 리턴합니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ MemoryDB도 ElastiCache Serverless와 동일하게 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;TLS&lt;/code&gt;를 기본적으로 사용한다는 점을 유의하세요. &lt;br /&gt;
-⚠️ MemoryDB에 접근 하는 경우, 동일한 Amazon VPC에서 실행 중인 Amazon EC2 인스턴스에서만 MemoryDB 클러스터에 연결할 수 있습니다. (외부 액세스가 필요한 경우, VPN을 통해 수행할 수 있습니다.)&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache-2&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;6.67s&lt;/strong&gt;에서 &lt;strong&gt;38.2ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrStandard.png&quot; alt=&quot;mmrStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-vector-search-for-amazon-memorydb-for-redis&quot;&gt;🌩️ Vector search for Amazon MemoryDB for Redis&lt;/h2&gt;
-
-&lt;p&gt;드디어, Vector 검색을 지원하는 MemoryDB의 차례입니다. 신규(Previw)로 나온 해당 서비스는, MemoryDB와 동일한 서비스입니다.
-클러스터 생성 시, 벡터 검색을 활성화시키면 사용할 수 있으며, 클러스터를 생성한 후에는 이 구성을 수정할 수 없습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 해당 내용은 &lt;em&gt;public preview&lt;/em&gt; 단계에 테스트 한 내용으로, 추후 결과가 달라질 수 있습니다.&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;h3 id=&quot;standard-cache-3&quot;&gt;Standard Cache&lt;/h3&gt;
-
-&lt;p&gt;동일한 질문에 대하여, 각각의 Wall time이 &lt;strong&gt;14.8s&lt;/strong&gt;에서 &lt;strong&gt;2.13ms&lt;/strong&gt;로 감소한 것을 확인할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/vmmrStandard.png&quot; alt=&quot;vmmrStandard&quot; /&gt;&lt;/p&gt;
-
-&lt;h3 id=&quot;semantic-cache-2&quot;&gt;Semantic Cache&lt;/h3&gt;
-
-&lt;p&gt;저는 사실 이 테스트를 진행하기 전, Vector 검색을 지원하므로, 당연히 Redis Stack과 동일한 결과가 나올 것으로 예상했습니다.
-그러나, Vector Search를 지원하지 않는 Redis 제품들과 동일한 에러 메시지를 확인했습니다.&lt;/p&gt;
-
-&lt;p&gt;물론, Langchain Cache를 지원하지 않는다고 이번 업데이트가 Vector search를 미지원하는 것은 아닙니다.
-관련 내용을 다음 문단에서 풀겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;redis-as-a-vector-database&quot;&gt;Redis as a Vector Database&lt;/h2&gt;
-
-&lt;p&gt;aws-samples의 &lt;a href=&quot;https://github.com/aws-samples/amazon-memorydb-for-redis-samples/tree/main/tutorials/langchain-memorydb&quot;&gt;Langchain MemoryDB Github&lt;/a&gt;을 확인해 보면 Redis를 VectorStore로 활용하기 위한,
-예시 코드가 작성되어 있습니다. 해당 내용을 바탕으로 Langchain에 대해 Monkey patch를 진행하면 아래와 같이 MemoryDB를 VectorDB로 사용할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/test/mmrSemantic.png&quot; alt=&quot;mmrSemantic&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 예시는, AWS 문서에 소개된 &lt;a href=&quot;https://docs.aws.amazon.com/memorydb/latest/devguide/vector-search-examples.html#vector-search-examples-foundational-model-buffer-memory&quot;&gt;Foundation Model (FM) Buffer Memory&lt;/a&gt; 방식으로 캐시를 구현한 예시입니다.
-MemoryDB를 언어 모델의 버퍼 메모리로 사용해 Semantic search hit가 발생해 캐시 역할을 제공할 수 있습니다.&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚠️ 해당 예시는 Vector search 활성화 한 MemoryDB에서만 가능합니다. Vector search를 활성화하지 않은 MemoryDB에서 수행 시, 다음 에러 메시지를 리턴합니다.
-&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ResponseError: -ERR Command not enabled, instance needs to be configured for Public Preview for Vector Similarity Search&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;지금까지의 테스트 결과를 표로 나타내면 다음과 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;Langchain Cache 테스트 결과&lt;/strong&gt;&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Cache/DB&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;Redis Stack on EC2&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;ElastiCache(Serverless)&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;MemoryDB&lt;/th&gt;
-      &lt;th style=&quot;text-align: center&quot;&gt;VectorSearch MemoryDB (Preview)&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Standard&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Semantic&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;O&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;X&lt;/td&gt;
-      &lt;td style=&quot;text-align: center&quot;&gt;부분적 가능 (향후 지원 예상)&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;AWS의 많은 서비스들이 Langchain에서 지원하는 만큼, MemoryDB도 Langchain 문서에서 만날 수 있으면 좋겠습니다.
-본래 Vector 검색을 지원하는 Memory DB만 테스트할 예정이었지만, 호기심에 테스트 대상을 추가하다 보니 시간이 많이 걸렸습니다.
-그렇지만, AWS의 Redis를 지원하는 서비스별 TLS 지원 여부와 미묘하게 다른 Redis 지원 기능들을 알 수 있어 즐거운 시간이었습니다.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="ai" />
-      
-        <category term="genai" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">AWS 환경에서 Langchain을 활용한 LLM을 위한 Caching layer 제공하기</summary>
-      
-
-      
-      
-    </entry>
-  
-    <entry>
-      <title type="html">3 Ways to Use the Hugging Face Model in AWS</title>
-      <link href="https://heuristicwave.github.io/HuggingFace-1" rel="alternate" type="text/html" title="3 Ways to Use the Hugging Face Model in AWS" />
-      <published>2023-08-23T00:00:00+00:00</published>
-      <updated>2023-08-23T00:00:00+00:00</updated>
-      <id>https://heuristicwave.github.io/HuggingFace-1</id>
-      <content type="html" xml:base="https://heuristicwave.github.io/HuggingFace-1">&lt;p&gt;AWS에서 Hugging Face 모델을 사용하는 3가지 방법&lt;/p&gt;
-
-&lt;h1 id=&quot;intro&quot;&gt;Intro&lt;/h1&gt;
-
-&lt;p&gt;Hugging Face(이하, 🤗)는 2016년에 설립되어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Transformer&lt;/code&gt; 라이브러리와 다양한 사전훈련된(pre-trained) 모델을 제공하는 NLP 커뮤니티(?)의 선두주자입니다.
-AWS와 🤗는 21년도부터 협업하여 AWS에서 🤗를 활용할 수 있는 다양한 방법들을 제공하고 있는데요, 이번 포스팅에서는 AWS에서 🤗 모델을 사용하는 3가지 방법에 대하여 가볍게 알아보도록 하겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;1️⃣--모델을-amazon-sagemaker-sdk로-직접-올리기&quot;&gt;1️⃣ 🤗 모델을 Amazon SageMaker SDK로 직접 올리기&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/03/leverage-state-of-the-art-natural-language-processing-with-hugging-face-and-amazon-sagemaker/&quot;&gt;21년 3월 23일&lt;/a&gt;, AWS whats-new에 처음 소개된 이 방법은 🤗 모델을 직접 SageMaker SDK를 사용해 올리는 가장 일반적인 방법입니다.
-아주 유명한 Text Generation 모델인 Google의 &lt;a href=&quot;https://huggingface.co/google/flan-t5-small&quot;&gt;FLAN-T5&lt;/a&gt;를 예시로 들어보겠습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/flan.png&quot; alt=&quot;flan-t5&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 그림의 좌측 Deploy 버튼을 보면, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;flan-t5&lt;/code&gt; 모델의 5가지 배포 방법이 나와 있습니다. 해당 모델의 경우, 인기가 많은 모델이라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Inference API&lt;/code&gt;를 눌러 무료로 API를 활용할 수도 있고,
-Amazon SageMaker에 직접 배포해 사용할 수도 있습니다. SageMaker를 사용하기로 하고 해당 버튼을 누르면, 아래와 같이 쉽게 배포할 수 있는 코드를 제공해 줍니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/hf-sagemaker.png&quot; alt=&quot;hf-sagemaker&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;위 그림의 상단을 확인하면 &lt;strong&gt;SageMaker SDK, Jumpstart, Cloudformation(soon)&lt;/strong&gt; 이라 적힌, 1️⃣번 방법은 &lt;strong&gt;SageMaker SDK&lt;/strong&gt;를 활용한 방법입니다.
-제공되는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 호스팅을 위한 사전 작업(spec, role 등)을 정의하고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy()&lt;/code&gt; 함수로 모델을 배포합니다.&lt;/p&gt;
-
-&lt;p&gt;1️⃣번 방법은 배포에 필요한 환경을 일일이 코드로 작성하기 때문에, 배포는 번거롭지만 방법만 안다면 사용해 보고 싶은 모든 모델에 활용할 수 있습니다.
-이어서 소개드릴 2️⃣, 3️⃣번 방법이 간단하지만, 모든 모델에 적용되는 것은 아니므로 1️⃣번 방법을 배제할 수는 없습니다.
-뿐만 아니라, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;deploy.py&lt;/code&gt;에서 제공하는 코드가 멱등성을 보장하지 않으므로 모델 배포 도중 발생하는 오류들을 핸들링 해야 하는 지식이 필요합니다.
-그러나, Cloudformation으로 배포하는 기능이 Soon인 것으로 보아 향후 더 손쉽게 배포가 가능할 것 같아 기대됩니다.&lt;/p&gt;
-
-&lt;h2 id=&quot;2️⃣-amazon-sagemaker-jumpstart로--모델-사용하기&quot;&gt;2️⃣ Amazon SageMaker JumpStart로 🤗 모델 사용하기&lt;/h2&gt;
-
-&lt;p&gt;AWS의 서비스들을 보면 Managed 서비스를 참 잘 만듭니다. 21년 3월 직접 호스팅 하는 방법이 소개되었다면, &lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2021/08/amazon-sagemaker-one-click-model-inference-fine-tuning-hugging-face-models-amazon-sagemaker-jumpstart/&quot;&gt;21년 8월 10일&lt;/a&gt;
-one-click으로 🤗의 모델들을 사용할 수 있는 JumpStart 서비스가 출시했습니다.&lt;/p&gt;
-
-&lt;p&gt;오늘을 기준으로 🤗 모델을 검색했을 때, 263개의 모델들을 Deploy 버튼 한 번으로 손쉽게 배포할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/jumpstart-hf.png&quot; alt=&quot;jumpstart&quot; /&gt;&lt;/p&gt;
-
-&lt;p&gt;추가적으로 위와 같이 콘솔 화면에서 클릭을 통한 배포 이외에도, 1️⃣번 방법에서 소개한 🤗 Hub에서 모델을 검색하고 제공하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 코드를 참고해 스크립트를 사용해 배포가 가능합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;flan-t5-small &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;app.py&lt;/code&gt; 예시&lt;/strong&gt;&lt;/p&gt;
-
-&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;# SageMaker JumpStart provides APIs as part of SageMaker SDK that allow you
-# to deploy and fine-tune models in network isolation using scripts that SageMaker maintains.
-&lt;/span&gt;
-&lt;span class=&quot;kn&quot;&gt;from&lt;/span&gt; &lt;span class=&quot;nn&quot;&gt;sagemaker.jumpstart.model&lt;/span&gt; &lt;span class=&quot;kn&quot;&gt;import&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;
-
-
-&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;huggingface-text2text-flan-t5-small&quot;&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;s&quot;&gt;&quot;A step by step recipe to make bolognese pasta:&quot;&lt;/span&gt;
-
-&lt;span class=&quot;n&quot;&gt;model&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;JumpStartModel&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;model_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;model&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;deploy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt;
-&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;predictor&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;predict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;span class=&quot;k&quot;&gt;print&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;sa&quot;&gt;f&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Inference:&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Input: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;endpoint_input&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;Response: &lt;/span&gt;&lt;span class=&quot;si&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;response&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;3️⃣--inference-endpoints-사용하기&quot;&gt;3️⃣ 🤗 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoints&lt;/a&gt; 사용하기&lt;/h2&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;23년 8월 10일&lt;/a&gt; 🤗 플랫폼이 AWS Marketplace에서 사용할 수 있게 되었습니다.
-🤗 계정에서 Organization을 생성하고 AWS Marketplace에서 구독 버튼을 눌려 계정 간 연결을 진행하면 🤗 플랫폼 사용료를 내 AWS 계정으로 비용 청구가 가능합니다.
-자세한 계정 간 연동 방법은 &lt;a href=&quot;https://huggingface.co/blog/aws-marketplace&quot;&gt;여기&lt;/a&gt;를 참조하세요.&lt;/p&gt;
-
-&lt;p&gt;계정 통합이 완료되면 &lt;a href=&quot;https://ui.endpoints.huggingface.co/&quot;&gt;Inference Endpoints&lt;/a&gt;에서 아래와 같이, 모델을 검색하고 리전, Instance 등 배포 유형을 선택하면 손쉽게 배포가 가능합니다.
-GPU 가격이 AWS 인스턴스 표기법이 아니라 직접적인 가격비교는 어려웠지만, 대략 &lt;strong&gt;AWS 인스턴스 가격 대비 1.X&lt;/strong&gt; 배라고 생각하시면 됩니다.
-3️⃣번 방법의 경우, 2️⃣번 방법과 비교하여 🤗 계정을 만들어야 하지만 지원하는 모델도 다양하고 1️⃣번 방법과 비교하여 매우 편리한 방법으로 제공되기 때문에, 제가 가장 좋아하는 방법입니다.
-물론 모든 모델들이 해당 방법으로 원활히 제공되는 것은 아니지만, 다양한 오픈소스 모델들을 빠르게 PoC 하고 싶을 때 사용하면 굉장히 좋은 방법 같습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/inferenceEP.png&quot; alt=&quot;inferenceEP&quot; /&gt;&lt;/p&gt;
-
-&lt;blockquote&gt;
-  &lt;p&gt;⚡️ Security level&lt;/p&gt;
-
-  &lt;ul&gt;
-    &lt;li&gt;Protected : 🤗의 토큰 기반 인증 과정이 필요합니다.&lt;/li&gt;
-    &lt;li&gt;Public : 완전히 공개된 API로 별도의 인증이 필요 없습니다.&lt;/li&gt;
-    &lt;li&gt;Private : AWS Account ID를 기재하고 PrivateLink로 연결합니다.&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;Outro&lt;/h2&gt;
-
-&lt;p&gt;시간순으로 소개한 위 3가지 방법에서, AWS의 상품화 과정과 타 회사와의 협업 방식도 알 수 있었습니다.
-오픈소스 모델을 AWS로 호스팅 하는 1️⃣번과 2️⃣번 방법으로는 🤗 측면에서 매출을 만들기 어려운데, 3️⃣번 방식을 통해 🤗와 AWS 모두 Win-Win 하는 비즈니스 모델을 만들어 나간 것 같아 무척 흥미롭네요.&lt;/p&gt;
-
-&lt;p&gt;소중한 시간을 내어 읽어주셔서 감사합니다! 잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
-
-&lt;hr /&gt;
-
-&lt;p&gt;&lt;span class=&quot;table-of-contents-list&quot;&gt;Gen AI Study Checkpoint&lt;/span&gt;&lt;/p&gt;
-&lt;ul class=&quot;table-of-contents-list&quot;&gt;
-    &lt;li&gt;&lt;a href=&quot;./GenAI-1&quot;&gt;Prompt Design Study&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
-
-      
-      
-      
-      
-      
-
-      <author>
-          <name>Jihun Lim</name>
-        
-        
-      </author>
-
-      
-
-      
-        <category term="huggingface" />
-      
-        <category term="ai" />
-      
-        <category term="aws" />
-      
-
-      
-        <summary type="html">AWS에서 Hugging Face 모델을 사용하는 3가지 방법</summary>
       
 
       

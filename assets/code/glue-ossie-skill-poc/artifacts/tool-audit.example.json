@@ -1,0 +1,45 @@
+{
+  "model_id": "global.anthropic.claude-sonnet-4-6",
+  "trace_id": "0x9887f16d1b4fc8af278ba57955af1741",
+  "actual_tool_sequence": [
+    "discover_semantic_contract",
+    "compile_ossie_metric",
+    "execute_athena_query"
+  ],
+  "tool_uses": [
+    {
+      "name": "discover_semantic_contract",
+      "input": {
+        "search_text": "net revenue"
+      }
+    },
+    {
+      "name": "compile_ossie_metric",
+      "input": {
+        "contract_name": "sales.ossie.yaml",
+        "metric_name": "net_revenue",
+        "dimension_name": "customers.region"
+      }
+    },
+    {
+      "name": "execute_athena_query",
+      "input": {
+        "sql_sha256": "be89a3fb07fffa8b3e0b6dede0adaf5f88d7ac193ae97ebe88a5666a87415412"
+      }
+    }
+  ],
+  "contract_name": "sales.ossie.yaml",
+  "contract_sha256": "35896d619dadb9c9248e46b5de678b8cfc0ad964fb439c1a19087ebad24d40c3",
+  "athena_state": "SUCCEEDED",
+  "query_execution_id_suffix": "f123f819",
+  "rows": [
+    {
+      "region": "BUSAN",
+      "net_revenue": "110000.00"
+    },
+    {
+      "region": "SEOUL",
+      "net_revenue": "320000.00"
+    }
+  ]
+}

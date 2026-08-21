@@ -1,0 +1,74 @@
+version: 0.2.0.dev0
+semantic_model:
+  - name: sales_analytics
+    description: Sales and customer analytics for the Glue Skill PoC
+    ai_context:
+      instructions: Use net_revenue for sales excluding cancelled orders.
+    datasets:
+      - name: orders
+        source: heuristicwave_ossie_poc.orders
+        primary_key: [order_id]
+        fields:
+          - name: order_id
+            expression:
+              dialects:
+                - dialect: ANSI_SQL
+                  expression: order_id
+            datatype: String
+          - name: customer_id
+            expression:
+              dialects:
+                - dialect: ANSI_SQL
+                  expression: customer_id
+            datatype: String
+          - name: amount
+            expression:
+              dialects:
+                - dialect: ANSI_SQL
+                  expression: amount
+            datatype: Decimal
+          - name: status
+            expression:
+              dialects:
+                - dialect: ANSI_SQL
+                  expression: status
+            datatype: String
+      - name: customers
+        source: heuristicwave_ossie_poc.customers
+        primary_key: [customer_id]
+        fields:
+          - name: customer_id
+            expression:
+              dialects:
+                - dialect: ANSI_SQL
+                  expression: customer_id
+            datatype: String
+          - name: region
+            expression:
+              dialects:
+                - dialect: ANSI_SQL
+                  expression: region
+            datatype: String
+            dimension:
+              is_time: false
+    relationships:
+      - name: orders_to_customers
+        from: orders
+        to: customers
+        from_columns: [customer_id]
+        to_columns: [customer_id]
+        ai_context:
+          instructions: Use customers.region as the official sales region.
+    metrics:
+      - name: net_revenue
+        expression:
+          dialects:
+            - dialect: ANSI_SQL
+              expression: >-
+                SUM(CASE WHEN orders.status <> 'CANCELLED'
+                THEN orders.amount ELSE DECIMAL '0' END)
+        description: Revenue excluding cancelled orders
+        datatype: Decimal
+        ai_context:
+          synonyms: [net sales, 순매출]
+          examples: [Show net revenue by customer region]
