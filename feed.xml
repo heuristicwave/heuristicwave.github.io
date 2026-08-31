@@ -5,9 +5,340 @@
         <description>Careful Writer</description>
         <link>https://heuristicwave.github.io//</link>
         <atom:link href="https://heuristicwave.github.io//feed.xml" rel="self" type="application/rss+xml"/>
-        <pubDate>Fri, 21 Aug 2026 08:36:42 +0000</pubDate>
-        <lastBuildDate>Fri, 21 Aug 2026 08:36:42 +0000</lastBuildDate>
+        <pubDate>Mon, 31 Aug 2026 06:37:38 +0000</pubDate>
+        <lastBuildDate>Mon, 31 Aug 2026 06:37:38 +0000</lastBuildDate>
         <generator>Jekyll v3.10.0</generator>
+        
+            <item>
+                <title>Amazon Bedrock 기반 지능형 PR 보안 분석 with Codex Security</title>
+                <description>&lt;p&gt;코드 리뷰를 하다 보면 인증 여부는 확인하지만, 요청한 사용자와 조회 대상의 관계까지는 검증하지 않는 코드를 발견할 때가 있습니다. 각 줄만 보면 자연스럽지만, 객체 단위 권한 확인이라는 업무 규칙이 구현 과정에서 빠진 경우입니다.&lt;/p&gt;
+
+&lt;p&gt;이런 문제는 정해진 Pattern을 빠르게 찾는 기존 정적 코드 분석만으로 설명하기 어렵습니다. 반대로 언어 모델에 Repository 전체를 던지고 막연히 취약점을 찾아달라고 하는 것도 Pipeline에 넣기에는 범위와 결과가 불명확합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli&quot;&gt;Codex Security CLI&lt;/a&gt;는 이 사이에서 Repository 또는 Git 변경분을 보안 관점으로 검토하고, Finding뿐 아니라 근거와 Coverage를 구조화된 Artifact로 남깁니다. 특히 Base와 Head Revision을 지정하는 Diff Scan과 Amazon Bedrock Provider를 함께 사용하면 Pull Request에서 바뀐 코드에 초점을 맞춘 분석을 AWS 코드 파이프라인 안에서 실행할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-codex-security-cli는-어떻게-분석할까&quot;&gt;&lt;a href=&quot;#codex-security-cli&quot;&gt;🛡️ Codex Security CLI는 어떻게 분석할까?&lt;/a&gt;&lt;a id=&quot;codex-security-cli&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Codex Security CLI는 Repository 전체, 특정 Path, Git Diff 또는 Working Tree를 대상으로 보안 Scan을 실행하는 명령줄 도구입니다. 결과는 사람이 읽는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.md&lt;/code&gt;와 함께 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findings.json&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coverage.json&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scan-manifest.json&lt;/code&gt;, SARIF(Static Analysis Results Interchange Format) 같은 구조화 문서로 남습니다. SARIF는 정적 분석 결과를 다른 보안 도구나 코드 리뷰 시스템에 전달하기 위한 표준 JSON 형식입니다.&lt;/p&gt;
+
+&lt;p&gt;Codex Security CLI와 Plugin은 역할을 나눠 갖습니다. CLI는 Scan 대상, Model과 Provider, 실행 옵션과 Artifact를 관리하고, 실제 보안 리뷰 절차는 함께 배포되는 Plugin의 Skills와 References에 정의되어 있습니다. &lt;a href=&quot;https://learn.chatgpt.com/docs/security&quot;&gt;Codex Security Overview&lt;/a&gt;는 Desktop과 Codex CLI가 이 Plugin을 사용하며, CLI와 SDK도 같은 Scanner를 사용한다고 설명합니다.&lt;/p&gt;
+
+&lt;p&gt;Plugin 내부에는 Scan 유형별 실행 절차를 정의한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;skills/&lt;/code&gt;와, 분석 기준과 Artifact 규약을 정리한 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;references/&lt;/code&gt;가 함께 있습니다. &lt;a href=&quot;https://github.com/openai/codex-security/blob/main/plugins/codex-security/skills/security-diff-scan/SKILL.md&quot;&gt;Security Diff Scan Skill&lt;/a&gt;은 변경 파일을 모두 검토하고, 바뀐 동작을 이해하는 데 필요한 Supporting Code까지 따라가도록 Diff Scan의 실행 순서를 정의합니다. 반면 &lt;a href=&quot;https://github.com/openai/codex-security/blob/main/plugins/codex-security/references/core-scan.md&quot;&gt;Core Security Scan&lt;/a&gt;은 별도의 Scanner가 아니라 같은 Plugin의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;references/&lt;/code&gt;에 포함된 Repository 감사 절차입니다. 여기에는 공격자, Entry Point, Trust Boundary, 공격자 입력의 흐름, 깨진 Control, Sensitive Operation, Counterevidence와 실제 영향을 확인하는 기준이 정리되어 있습니다. 같은 &lt;a href=&quot;https://github.com/openai/codex-security/tree/main/plugins/codex-security/references&quot;&gt;references 디렉터리&lt;/a&gt;에는 Threat Model, Finding 구조, Coverage, Artifact와 최종 Report의 기준도 함께 정의되어 있습니다.&lt;/p&gt;
+
+&lt;p&gt;따라서 Codex Security Scan은 CLI가 Source를 모델에 전달하고 답을 받는 단순 호출이 아니라, Agent가 Plugin에 정의된 보안 리뷰 절차를 따라 Source를 조사하고 판단 근거를 구조화하는 Workflow로 보는 편이 정확합니다. &lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/scans&quot;&gt;Codex Security Plugin의 Scan 문서&lt;/a&gt;는 그 과정을 다음과 같이 설명합니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;단계&lt;/th&gt;
+      &lt;th&gt;하는 일&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Threat modeling&lt;/td&gt;
+      &lt;td&gt;Asset, Entry Point, Trust Boundary와 Security Invariant를 정리&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Finding discovery&lt;/td&gt;
+      &lt;td&gt;요청한 코드에서 깨진 Control과 Source-to-Sink Path 후보를 탐색&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Validation&lt;/td&gt;
+      &lt;td&gt;후보의 Source Evidence와 Counterevidence를 확인하고 Proof Gap을 기록&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Impact and path analysis&lt;/td&gt;
+      &lt;td&gt;현실적인 Attack Path, 영향과 Severity를 평가&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Reporting&lt;/td&gt;
+      &lt;td&gt;검증된 Finding, Coverage와 Scan Metadata를 Artifact로 생성&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;기존 Scanner의 결과가 있다면 연결 방법도 있습니다. &lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/triage-backlog&quot;&gt;Triage 문서&lt;/a&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;read-only static analysis&lt;/code&gt; Workflow에 SARIF, Scanner Ticket, GitHub Code Scanning Finding 등을 입력하면 Source Code와 대조해 검토할 수 있습니다. Standard Scan은 Source에서 후보를 찾는 경로, Triage는 이미 있는 Finding을 검토하는 경로로 구분할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;️-codecommit에서-codebuild까지&quot;&gt;&lt;a href=&quot;#architecture&quot;&gt;🏗️ CodeCommit에서 CodeBuild까지&lt;/a&gt;&lt;a id=&quot;architecture&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/codex-security/aws-code-series-codex-security-pr-flow.drawio.svg&quot; alt=&quot;AWS Code Services에서 Codex Security PR Review까지의 처리 흐름&quot; /&gt;&lt;/p&gt;
+
+&lt;h3 id=&quot;처리-흐름&quot;&gt;처리 흐름&lt;/h3&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Revision 수집&lt;/strong&gt; — CodeCommit PR Event에서 Base·Head Commit을 읽습니다. Branch 경로에서는 CodePipeline이 Source Revision을 선택합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;실행 연결&lt;/strong&gt; — EventBridge는 PR Build를 시작하고, CodePipeline은 Branch 경로를 CodeBuild까지 연결합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;Diff 계산&lt;/strong&gt; — CodeBuild가 Git History에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;git merge-base&lt;/code&gt;를 계산해 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BASE_REVISION&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SOURCE_COMMIT_ID&lt;/code&gt;를 확정합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;보안 분석&lt;/strong&gt; — Codex Security가 변경분과 판단에 필요한 Supporting Code를 읽고 Amazon Bedrock 모델로 보안 전제, 경로와 근거를 검토합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;원본 Artifact 생성&lt;/strong&gt; — Security Scan이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.md&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findings.json&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;coverage.json&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;scan-manifest.json&lt;/code&gt;을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ScanArtifact&lt;/code&gt;로 남깁니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;한국어 문서 생성&lt;/strong&gt; — 별도 Localization CodeBuild가 완성된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ScanArtifact&lt;/code&gt;만 입력받아 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.ko.md&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findings.ko.json&lt;/code&gt;을 추가합니다.&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;strong&gt;검토 전달&lt;/strong&gt; — CodePipeline의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LocalizedArtifact&lt;/code&gt;는 S3에 보관하고, PR 실행 경로에서는 요약과 변경 라인 Comment를 CodeCommit Pull Request에 남깁니다.&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;p&gt;Bedrock 호출에는 API Key 대신 CodeBuild Service Role의 임시 AWS 자격 증명을 사용했습니다. Codex Security CLI의 Bedrock Provider는 Responses API 경로를 사용하므로 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;bedrock-mantle:CreateInference&lt;/code&gt; 권한이 필요합니다. 일반 Bedrock Runtime의 Model Invocation Logging은 이 호출 경로에 적용되지 않으므로, 실행은 CodeBuild Log와 Codex Security Artifact로 확인했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-pr-변경분을-scan-범위로-지정하기&quot;&gt;&lt;a href=&quot;#diff-scan&quot;&gt;🔎 PR 변경분을 Scan 범위로 지정하기&lt;/a&gt;&lt;a id=&quot;diff-scan&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;변경 범위를 정하는 로직은 실제 CodeBuild BuildSpec에 넣었습니다. 별도의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;buildspec.yml&lt;/code&gt; 대신 CloudFormation의 CodeBuild Project에 Inline BuildSpec으로 정의했습니다. CodePipeline 경로에서는 Source Action이 선택한 Revision을 Head로 삼고 기본 Branch와의 공통 조상을 Base로 계산합니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-yaml highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;na&quot;&gt;pre_build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;set -euo pipefail&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;git fetch origin &quot;$DEFAULT_BRANCH&quot;&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;export HEAD_REVISION=&quot;$CODEBUILD_RESOLVED_SOURCE_VERSION&quot;&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;export BASE_REVISION=&quot;$(&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;git merge-base &quot;origin/${DEFAULT_BRANCH}&quot; &quot;$HEAD_REVISION&quot;&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;)&quot;&lt;/span&gt;
+
+&lt;span class=&quot;na&quot;&gt;build&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+  &lt;span class=&quot;na&quot;&gt;commands&lt;/span&gt;&lt;span class=&quot;pi&quot;&gt;:&lt;/span&gt;
+    &lt;span class=&quot;pi&quot;&gt;-&lt;/span&gt; &lt;span class=&quot;pi&quot;&gt;|&lt;/span&gt;
+      &lt;span class=&quot;s&quot;&gt;&quot;$CODEX_SECURITY_BIN&quot; scan . \&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;--diff &quot;$BASE_REVISION&quot; \&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;--head &quot;$HEAD_REVISION&quot; \&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;--provider amazon-bedrock \&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;--model openai.gpt-5.6-luna \&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;--effort medium \&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;--output-dir &quot;$SCAN_DIR&quot; \&lt;/span&gt;
+        &lt;span class=&quot;s&quot;&gt;--json &amp;gt; &quot;$JSON_FILE&quot;&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;PR Event가 직접 시작하는 Review 경로도 원리는 같습니다. EventBridge가 CodeCommit Event의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sourceCommit&lt;/code&gt;과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;destinationCommit&lt;/code&gt;을 CodeBuild에 전달합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sourceCommit&lt;/code&gt;만 받아 바로 이전 Commit과 비교하면 PR의 마지막 Commit에서 변경된 내용만 남습니다. 대신 Source와 Destination Commit의 공통 조상부터 Source Commit까지 비교하면 PR에 누적된 전체 변경분을 검토할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;sourceVersion&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;sourceCommit&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;environmentVariablesOverride&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;DESTINATION_COMMIT_ID&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;destinationCommit&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;},&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;name&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;SOURCE_COMMIT_ID&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;err&quot;&gt;&amp;lt;sourceCommit&amp;gt;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;BuildSpec은 두 값이 실제 Git Object인지 확인하고 공통 조상인 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;BASE_REVISION&lt;/code&gt;을 계산합니다. Codex Security에는 이 값을 Base로, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SOURCE_COMMIT_ID&lt;/code&gt;를 Head로 넘겼습니다. &lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli/reference#select-the-scan-target&quot;&gt;Codex Security CLI Reference&lt;/a&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--diff BASE&lt;/code&gt;는 Base부터 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--head&lt;/code&gt;까지의 Committed Change를 Scan합니다. &lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli/ci#troubleshoot-a-ci-scan&quot;&gt;CI Guide&lt;/a&gt;도 Base와 Head History를 가져와 Merge Base를 계산하고, 두 Revision을 명시적으로 전달하도록 안내합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;--diff&lt;/code&gt;는 Base부터 Head까지 누적된 변경분을 Scan 대상으로 지정합니다. &lt;a href=&quot;https://learn.chatgpt.com/use-cases/scan-code-changes-for-security#review-the-change-instead-of-the-whole-repository&quot;&gt;OpenAI Docs&lt;/a&gt;는 Security Diff Scan이 Repository Context로 변경을 이해하고, Finding Discovery와 Validation을 Diff와 직접 관련된 Supporting Code에 집중한다고 설명합니다.&lt;/p&gt;
+
+&lt;p&gt;분석 결과를 확인하기 위해 객체 소유권 검증이 누락된 API 예제를 PR에 추가했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-python highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;def&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;get_invoice&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;invoice_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;authenticated_user_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;dict&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;object&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]:&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;invoice&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;INVOICES&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;invoice_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;ow&quot;&gt;not&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;authenticated_user_id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;
+        &lt;span class=&quot;k&quot;&gt;raise&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PermissionError&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Authentication required&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;invoice&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;이 코드는 로그인 여부만 확인합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;invoice[&quot;owner_id&quot;]&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;authenticated_user_id&lt;/code&gt;를 비교하지 않으므로, 다른 고객의 Invoice ID를 알면 해당 객체를 읽을 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-codex-security-diff-scan-결과&quot;&gt;&lt;a href=&quot;#build-result&quot;&gt;🧪 Codex Security Diff Scan 결과&lt;/a&gt;&lt;a id=&quot;build-result&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Diff Scan은 변경된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_invoice()&lt;/code&gt;와 판단에 필요한 주변 코드를 함께 검토해 객체 소유권 검사 누락을 하나의 Finding으로 만들었습니다.&lt;/p&gt;
+
+&lt;p&gt;PR Review 실행 결과는 다음과 같습니다.&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;항목&lt;/th&gt;
+      &lt;th&gt;결과&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Finding&lt;/td&gt;
+      &lt;td&gt;다른 고객의 Invoice를 노출하는 소유권 검사 누락&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;분류&lt;/td&gt;
+      &lt;td&gt;Authorization bypass / IDOR&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Severity&lt;/td&gt;
+      &lt;td&gt;Low&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Confidence&lt;/td&gt;
+      &lt;td&gt;High&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Coverage&lt;/td&gt;
+      &lt;td&gt;Complete&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;invoice_id&lt;/code&gt;는 호출자가 선택할 수 있고, 함수는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;authenticated_user_id&lt;/code&gt;가 비어 있지 않은지만 확인한 뒤 Invoice를 반환합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;invoice.owner_id&lt;/code&gt;와 인증된 사용자 ID를 비교하지 않기 때문에 객체 단위 권한 검사가 빠져 있습니다.&lt;/p&gt;
+
+&lt;p&gt;이번 구성은 Finding을 자동 차단 조건으로 사용하지 않고, 경로와 Evidence를 사람이 검토하는 Advisory 방식으로 두었습니다. CodeBuild 화면에는 실행 성공 여부가, 실제 보안 결과는 S3 Artifact와 CodeCommit Review에 남도록 책임도 분리했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-분석-결과를-한국어-pr-review로-전달하기&quot;&gt;&lt;a href=&quot;#review-delivery&quot;&gt;💬 분석 결과를 한국어 PR Review로 전달하기&lt;/a&gt;&lt;a id=&quot;review-delivery&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;Codex Security의 기본 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.md&lt;/code&gt;는 영어로 생성됩니다. 처음에는 Scan Session의 후속 지침으로 번역까지 처리했지만, 보안 분석과 번역의 성공 여부가 한 작업에 묶이는 문제가 있었습니다. 최종 구성에서는 CodePipeline에 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Localization&lt;/code&gt; Stage를 분리했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;SourceArtifact
+  └─ SecurityScan
+       └─ ScanArtifact
+            ├─ results/report.md
+            ├─ results/findings.json
+            ├─ results/coverage.json
+            └─ results/scan-manifest.json
+                 └─ Localization
+                      └─ LocalizedArtifact
+                           ├─ results/report.ko.md
+                           ├─ results/findings.ko.json
+                           └─ localization-status.txt
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Localization은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;codex-security scan&lt;/code&gt;을 한 번 더 실행하지 않습니다. 일반 Codex Agent가 완성된 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.md&lt;/code&gt;와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findings.json&lt;/code&gt;만 받아 한국어 파생 문서를 만듭니다. 입력 문서는 JSON 문자열로 Prompt 안에 넣고, 문서 안의 내용은 지시가 아닌 신뢰하지 않는 데이터로 취급하도록 제한했습니다. CodeBuild 환경에서 Read-only Sandbox가 파일을 직접 읽게 했을 때 Linux Namespace 권한 오류가 발생했기 때문에, Sandbox 권한을 넓히는 대신 필요한 입력만 명시적으로 전달하는 방식으로 바꿨습니다.&lt;/p&gt;
+
+&lt;p&gt;Localization 지침에는 변환 범위를 다음처럼 명시했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. report.ko.md에는 원본 Finding ID, Severity, Confidence,
+   파일 경로, 줄 번호, Evidence, Proof Gap, Remediation을 보존한다.
+2. findings.ko.json에는 findingId, title, summary, remediation만 기록한다.
+3. 원본 report.md, findings.json, coverage.json, scan-manifest.json과
+   Source Code는 수정하지 않는다.
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findings.ko.json&lt;/code&gt;은 같은 Finding을 PR Review에 한국어로 표시하기 위한 보조 파일입니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;title&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;summary&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;remediation&lt;/code&gt;만 한국어로 작성하고 Severity, Confidence, 파일과 줄 번호는 원본 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findings.json&lt;/code&gt;을 기준으로 삼았습니다. 변환 후에는 원본과 한국어 JSON의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;findingId&lt;/code&gt; 집합이 정확히 일치할 때만 두 파일을 저장합니다.&lt;/p&gt;
+
+&lt;p&gt;최종 CodePipeline 실행에서는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Source&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;SecurityScan&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Localization&lt;/code&gt; Stage가 모두 성공했고, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localization-status.txt&lt;/code&gt;도 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;complete&lt;/code&gt;였습니다. S3의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;LocalizedArtifact&lt;/code&gt; ZIP 내부에서 다음 두 파일과 원본 Artifact를 함께 확인했습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;s3://&amp;lt;artifact-bucket&amp;gt;/slens-codex-security/LocalizedA/&amp;lt;artifact-key&amp;gt;
+└─ codex-security-artifacts/
+   ├─ localization-status.txt
+   └─ results/
+      ├─ report.md
+      ├─ report.ko.md
+      ├─ findings.json
+      └─ findings.ko.json
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Localization은 Advisory 단계라 번역 실패만으로 Pipeline을 중단하지 않습니다. 따라서 CodePipeline의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Succeeded&lt;/code&gt;만 확인하면 부족하고, 소비 단계에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;localization-status.txt&lt;/code&gt;가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;complete&lt;/code&gt;인지 함께 확인해야 합니다.&lt;/p&gt;
+
+&lt;h3 id=&quot;codecommit-review로-연결&quot;&gt;CodeCommit Review로 연결&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/codex-security/codecommit-report-ko-link.png&quot; alt=&quot;CodeCommit Pull Request 요약에 추가한 한국어 보고서 링크&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;CodeCommit에는 &lt;a href=&quot;https://docs.aws.amazon.com/codecommit/latest/APIReference/API_PostCommentForPullRequest.html&quot;&gt;PostCommentForPullRequest API&lt;/a&gt;로 두 종류의 Comment를 남겼습니다.&lt;/p&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;일반 Comment에는 Coverage, Finding 개수, 한국어 요약, CodeBuild 링크와 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.ko.md&lt;/code&gt; 링크를 기록합니다.&lt;/li&gt;
+  &lt;li&gt;Finding의 줄이 실제 PR 추가 라인과 겹칠 때만 해당 파일과 줄에 Inline Comment를 기록합니다.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;&lt;img src=&quot;../../assets/built/images/post/ai/codex-security/codecommit-inline-review-public.png&quot; alt=&quot;CodeCommit Pull Request 변경 라인에 남은 Codex Security 한국어 Inline Review&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;Inline Review는 Report의 Finding을 실제 PR 변경 지점에 연결합니다. &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;invoice_api.py&lt;/code&gt;의 32번 줄은 소유권을 확인하지 않은 채 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;invoice&lt;/code&gt;를 반환하는 Sink입니다. 캡처는 첫 PR Review 실행 결과로, Comment에는 한국어 Finding 제목, 당시의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Severity low&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;Confidence high&lt;/code&gt;, 소유권 비교가 빠졌다는 설명과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;invoice.owner_id&lt;/code&gt;를 인증 사용자와 비교하라는 권장 조치를 표시했습니다.&lt;/p&gt;
+
+&lt;p&gt;PR 화면에는 수정 판단에 필요한 요약과 Remediation만 표시하고, 전체 내용은 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.ko.md&lt;/code&gt; 링크에서 확인하도록 했습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;-custom-provider도-사용할-수-있을까&quot;&gt;&lt;a href=&quot;#compatible-api&quot;&gt;🌐 Custom Provider도 사용할 수 있을까?&lt;/a&gt;&lt;a id=&quot;compatible-api&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli/reference#configure-the-runtime&quot;&gt;Codex Security CLI Reference&lt;/a&gt;에는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openai&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openrouter&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;fireworks&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;amazon-bedrock&lt;/code&gt;가 공식 Provider로 나옵니다. 하지만 선택지가 이 목록에만 묶이는 것은 아닙니다. &lt;a href=&quot;https://learn.chatgpt.com/docs/config-file/config-advanced#custom-model-providers&quot;&gt;Codex Custom Model Provider&lt;/a&gt;에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;base_url&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;wire_api&lt;/code&gt;, 인증 방식을 따로 지정할 수 있어 Responses API를 지원하는 Endpoint도 연결할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;실제로 CLI Provider는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;openai&lt;/code&gt;로 두고, Model 요청만 Custom Provider를 거쳐 Bedrock Mantle로 보내봤습니다. 검증 대상은 OS Command Injection을 심어 둔 세 파일짜리 Repository였습니다. 이 실험은 탐지 성능보다 Model 호출부터 Scan 완료와 Artifact 생성까지 전체 경로가 동작하는지 확인하는 데 초점을 맞췄습니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;@openai/codex-security@0.1.21&lt;/code&gt;에서는 Custom Provider가 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;env_key&lt;/code&gt;를 직접 읽는 방식이 동작하지 않아 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;auth.command&lt;/code&gt;를 사용했습니다. &lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html&quot;&gt;AWS short-term Bedrock Token Generator&lt;/a&gt;를 Credential Helper로 연결하면 Token을 설정 파일이나 명령행에 남기지 않고 Mantle에 전달할 수 있습니다.&lt;/p&gt;
+
+&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;export &lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;OPENAI_API_KEY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;cli-preflight-placeholder&amp;gt;&quot;&lt;/span&gt;
+
+codex-security scan &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--provider&lt;/span&gt; openai &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--auth&lt;/span&gt; api-key &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--model&lt;/span&gt; openai.gpt-5.6-luna &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--codex&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;model_provider=&quot;bedrock_mantle_custom&quot;&apos;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--codex&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;model_providers.bedrock_mantle_custom.base_url=&quot;https://bedrock-mantle.us-east-2.api.aws/openai/v1&quot;&apos;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--codex&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;model_providers.bedrock_mantle_custom.wire_api=&quot;responses&quot;&apos;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--codex&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;&apos;model_providers.bedrock_mantle_custom.auth.command=&quot;/path/to/fetch-bedrock-token&quot;&apos;&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+  &lt;span class=&quot;nt&quot;&gt;--json&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;p&gt;Scan은 2분 만에 끝났고 Coverage는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;complete&lt;/code&gt;였습니다. 의도한 OS Command Injection을 High Finding으로 찾았으며 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;report.md&lt;/code&gt;, JSON, SARIF도 생성됐습니다. Worker 위임은 중간에 실패했지만 Parent Agent가 이어받아 세 파일을 모두 검토하고 Scan을 마쳤습니다.&lt;/p&gt;
+
+&lt;p&gt;이 실행으로 &lt;strong&gt;Responses API를 지원하는 Endpoint라면 Custom Model Provider를 적용할 수 있다&lt;/strong&gt;는 점을 확인했습니다. Endpoint마다 Streaming, Tool Calling, 인증 방식이 다르므로 작은 Repository에서 Scan 완료와 Artifact 생성까지 먼저 확인하는 편이 안전합니다.&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;outro&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;Outro&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
+
+&lt;p&gt;이번에는 CodeCommit의 PR 변경분을 Codex Security로 분석하고, 결과를 S3 Artifact와 PR Comment로 전달하는 흐름을 구성했습니다. 원본 Report와 한국어 Report를 분리해 보관하고, PR에서는 Finding의 요약과 수정할 위치를 바로 확인할 수 있도록 했습니다.&lt;/p&gt;
+
+&lt;p&gt;Plugin 내부의 Skills와 References를 살펴보는 것도 흥미로웠습니다. Threat Model을 세우고, Finding 후보의 근거와 반대 근거를 확인하며, 실제 영향과 Attack Path를 판단하는 과정이 문서로 정리되어 있어 보안 코드리뷰의 흐름을 공부하는 자료로도 활용할 수 있습니다.&lt;/p&gt;
+
+&lt;p&gt;이번 글에서는 PR 변경분을 직접 검토하는 Diff Scan에 집중해 Triage 기능까지는 사용하지 않았습니다. Codex Security의 Triage는 기존 Scanner가 만든 SARIF나 Finding을 Source와 다시 대조해 근거와 실제 영향을 검토하는 흐름입니다. 다음에는 기존 정적 분석 결과를 Triage에 연결하고, Finding이 어떻게 걸러지고 보강되는지도 소개할 수 있기를 바라며 글을 마칩니다.&lt;/p&gt;
+
+&lt;p&gt;잘못된 내용은 지적해주세요! 😃&lt;/p&gt;
+
+&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
+
+&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security&quot;&gt;OpenAI Docs: Codex Security overview&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli&quot;&gt;OpenAI Docs: Codex Security CLI&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli/ci&quot;&gt;OpenAI Docs: Run Codex Security in CI&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli/reference&quot;&gt;OpenAI Docs: Codex Security CLI reference&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/scans&quot;&gt;OpenAI Docs: Run a Codex Security scan&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex-security&quot;&gt;OpenAI Source: Codex Security CLI and SDK&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/triage-backlog&quot;&gt;OpenAI Docs: Triage a backlog&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/config-file/config-advanced#custom-model-providers&quot;&gt;OpenAI Docs: Custom model providers&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://developers.openai.com/api/docs/guides/amazon-bedrock&quot;&gt;OpenAI Docs: OpenAI models on Amazon Bedrock&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/changelog&quot;&gt;OpenAI Docs: Codex Security Changelog&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.aboutamazon.com/news/aws/bedrock-openai-models&quot;&gt;Amazon News: OpenAI models on Amazon Bedrock&lt;/a&gt; — Cover image source&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-mantle.html&quot;&gt;AWS: Use the Responses API with OpenAI models&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html&quot;&gt;AWS: Amazon Bedrock API keys&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/blogs/devops/triggering-aws-codebuild-projects-directly-from-codecommit-pull-requests/&quot;&gt;AWS: Trigger CodeBuild from CodeCommit pull request events&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodeCommit.html&quot;&gt;AWS: CodePipeline CodeCommit source action&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/codecommit/latest/APIReference/API_PostCommentForPullRequest.html&quot;&gt;AWS API: PostCommentForPullRequest&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <pubDate>Thu, 27 Aug 2026 00:00:00 +0000</pubDate>
+                <link>https://heuristicwave.github.io//Codex-Security-PR-Review</link>
+                <guid isPermaLink="true">https://heuristicwave.github.io//Codex-Security-PR-Review</guid>
+                
+                <category>aws</category>
+                
+                <category>genai</category>
+                
+                <category>security</category>
+                
+                <category>lab</category>
+                
+                
+            </item>
         
             <item>
                 <title>업무 용어에서 실행까지: Glue Business Context와 Apache Ossie</title>
@@ -910,351 +1241,6 @@ Use this skill when a user asks for net revenue or regional sales analysis.
                 <category>ai</category>
                 
                 <category>database</category>
-                
-                <category>lab</category>
-                
-                
-            </item>
-        
-            <item>
-                <title>CloudWatch MCP × Strands × MCP Apps: Bedrock 운영 Cockpit 만들기</title>
-                <description>&lt;p&gt;Codex 같은 coding agent와 직접 대화하면 이미 많은 일을 할 수 있습니다. 그렇다면 굳이 NemoClaw 같은 개인·조직용 Claw를 두고, 그 위에 별도의 운영 화면까지 만들어야 할까요?&lt;/p&gt;
-
-&lt;p&gt;이번 실험에서 내린 답은 단순합니다. &lt;strong&gt;한 번의 개발 작업은 agent와 직접 대화하는 편이 빠르지만, 반복되는 운영 판단을 팀의 방식으로 고정하려면 agent 바깥의 실행 표면이 필요합니다.&lt;/strong&gt; 어떤 데이터를 읽을지, 어떤 계산은 코드로 확정할지, 어떤 판단만 agent에게 맡길지, 결과를 누가 어떻게 검토할지를 하나의 workflow로 묶어야 하기 때문입니다.&lt;/p&gt;
-
-&lt;p&gt;이 질문을 Amazon Bedrock 운영으로 좁혀봤습니다. 실제 CloudWatch 메트릭은 AWS Labs CloudWatch MCP Server로 읽고, Strands는 제공된 근거만 해석하며, MCP Apps는 Overview·Investigate·Optimize를 오가는 운영 Cockpit을 렌더링하게 했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-agent와-직접-대화하면-안-되나&quot;&gt;&lt;a href=&quot;#direct-vs-claw&quot;&gt;🦞 Agent와 직접 대화하면 안 되나?&lt;/a&gt;&lt;a id=&quot;direct-vs-claw&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;됩니다. 다음과 같은 일은 Codex에게 바로 요청하는 편이 자연스럽습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;이 저장소 테스트를 실행하고 실패 원인을 고쳐줘.
-최근 24시간 Bedrock 호출량을 조회해줘.
-이 CloudWatch 메트릭을 보고 지연 원인 후보를 정리해줘.
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;하지만 운영 질문이 반복되면 매번 prompt와 tool 범위를 다시 설명해야 합니다. 사람마다 다른 명령을 사용하고, agent가 읽은 데이터 범위도 달라집니다. 결과가 text로만 남으면 시간 범위와 모델을 바꿔 비교하거나, 같은 context로 조사와 최적화를 이어가기도 불편합니다.&lt;/p&gt;
-
-&lt;p&gt;Claw는 더 똑똑한 단일 agent라기보다 &lt;strong&gt;여러 agent·tool·channel을 조직의 실행 규칙으로 감싸는 control plane&lt;/strong&gt;에 가깝습니다.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;직접 agent 대화&lt;/th&gt;
-      &lt;th&gt;Claw 또는 운영용 agent surface&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;한 번의 개발 작업에 빠름&lt;/td&gt;
-      &lt;td&gt;반복 workflow와 공유 context에 적합&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;사용자가 prompt와 tool을 직접 조합&lt;/td&gt;
-      &lt;td&gt;허용 도구, 입력 스키마, 승인 흐름을 고정&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;대화 결과가 중심&lt;/td&gt;
-      &lt;td&gt;dashboard, 알림, 기록, 후속 action까지 연결&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;개인의 숙련도에 크게 의존&lt;/td&gt;
-      &lt;td&gt;팀의 운영 방식을 제품화 가능&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;따라서 나만의 Claw가 항상 필요한 것은 아닙니다. 단발 작업과 개인 개발에는 direct CLI가 충분합니다. 반면 반복되는 운영 업무, 여러 사람이 함께 보는 판단, 읽기·쓰기 권한 분리, 감사 가능한 실행 기록이 중요해지면 Claw의 가치가 생깁니다.&lt;/p&gt;
-
-&lt;p&gt;이번 PoC는 NemoClaw 자체를 설치한 실험은 아닙니다. 대신 Claw가 가져야 할 운영 surface를 MCP Apps로 작게 구현해보는 데 목적을 뒀습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-mcp-apps는-일반-mcp와-무엇이-다른가&quot;&gt;&lt;a href=&quot;#mcp-apps&quot;&gt;🧩 MCP Apps는 일반 MCP와 무엇이 다른가?&lt;/a&gt;&lt;a id=&quot;mcp-apps&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;일반적인 MCP tool은 text나 structured data를 반환합니다. 데이터 조회와 action 실행에는 충분하지만, chart·form·dashboard처럼 사용자가 직접 조작해야 하는 결과에는 한계가 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://apps.extensions.modelcontextprotocol.io/api/&quot;&gt;MCP Apps 공식 문서&lt;/a&gt;는 MCP server가 interactive UI를 표준 방식으로 전달하도록 MCP를 확장합니다. stable specification &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;2026-01-26&lt;/code&gt; 기준 핵심 흐름은 다음과 같습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;1. Tool이 ui:// resource를 metadata로 선언
-2. Host가 tool을 호출
-3. Host가 HTML resource를 읽어 sandboxed iframe에 렌더링
-4. Host가 tool result를 UI에 전달
-5. UI는 host를 통해 다시 tool을 호출
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;즉 MCP Apps API 문서는 별도의 dashboard SaaS API가 아닙니다. App 개발자에게는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;App&lt;/code&gt;, React hook과 host communication API를, MCP server 개발자에게는 tool과 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ui://&lt;/code&gt; resource를 연결하는 API를, host 개발자에게는 sandboxed view를 임베드하는 bridge를 제공합니다.&lt;/p&gt;
-
-&lt;p&gt;이번 앱은 하나의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;ui://bedrock-ops/cockpit.html&lt;/code&gt; resource를 세 tool에 연결했습니다.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;Tool&lt;/th&gt;
-      &lt;th&gt;역할&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_bedrock_overview&lt;/code&gt;&lt;/td&gt;
-      &lt;td&gt;모델별 호출·토큰·지연·오류·캐시·TPM 요약&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;investigate_bedrock_model&lt;/code&gt;&lt;/td&gt;
-      &lt;td&gt;이상 후보, 가능한 설명, 다음 확인 항목&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;optimize_bedrock_usage&lt;/code&gt;&lt;/td&gt;
-      &lt;td&gt;비용·지연·균형 목표별 개선 기회와 검증 절차&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;UI는 tool의 대체물이 아닙니다. tool의 typed contract 위에 사람이 결과를 비교하고 다음 action을 선택할 수 있는 surface를 더한 것입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-cloudwatch-mcp와-strands를-어떻게-나눴나&quot;&gt;&lt;a href=&quot;#architecture&quot;&gt;🏗️ CloudWatch MCP와 Strands를 어떻게 나눴나?&lt;/a&gt;&lt;a id=&quot;architecture&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;구조는 다음과 같습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;MCP Apps basic-host
-  ↓ Streamable HTTP / MCP
-Bedrock Operations Cockpit Server
-  ├─ Overview Service ───────────────┐
-  ├─ Investigation Service ─ Strands │
-  └─ Optimization Service ── Strands │
-                                     ↓
-CloudWatch Gateway ─ stdio MCP ─ AWS Labs CloudWatch MCP Server
-                                     ↓
-                            Amazon CloudWatch / AWS/Bedrock
-
-Strands Agent ───────────────── Amazon Bedrock
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;&lt;a href=&quot;https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server&quot;&gt;AWS Labs CloudWatch MCP Server&lt;/a&gt;는 CloudWatch metrics, logs, alarms를 다루는 MCP tool을 제공합니다. 이번 환경에는 Bedrock 관련 log group과 alarm이 없어 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS/Bedrock&lt;/code&gt; metric에만 집중했습니다. 서버가 제공하는 모든 기능을 그대로 열지 않고 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_metric_data&lt;/code&gt;, &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;get_metric_metadata&lt;/code&gt; 두 read-only tool만 gateway allowlist에 넣었습니다.&lt;/p&gt;
-
-&lt;p&gt;Strands에는 CloudWatch 원본 응답을 그대로 넘기지 않았습니다. 애플리케이션이 먼저 다음 작업을 수행합니다.&lt;/p&gt;
-
-&lt;ol&gt;
-  &lt;li&gt;정해진 metric 11개를 조회하고 timestamp와 값을 정규화합니다.&lt;/li&gt;
-  &lt;li&gt;누락된 metric은 0이 아니라 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unavailable&lt;/code&gt;로 표시합니다.&lt;/li&gt;
-  &lt;li&gt;Overview 합계와 평균을 결정론적으로 계산합니다.&lt;/li&gt;
-  &lt;li&gt;중앙값과 MAD로 이상 후보를 찾습니다.&lt;/li&gt;
-  &lt;li&gt;Strands에는 정규화된 evidence와 허용된 enum만 전달합니다.&lt;/li&gt;
-  &lt;li&gt;agent 출력은 Zod schema로 다시 검증합니다.&lt;/li&gt;
-&lt;/ol&gt;
-
-&lt;p&gt;이 분리가 중요합니다. LLM이 invocation 수나 latency를 만들어내지 못하게 하고, agent는 가능한 설명·반증 조건·검증 순서를 작성하는 일에만 사용했습니다. &lt;a href=&quot;https://strandsagents.com/docs/examples/structured_output/&quot;&gt;Strands structured output 문서&lt;/a&gt;가 설명하는 schema 기반 결과를 적용한 이유도 여기에 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-구현하며-확인한-경계&quot;&gt;&lt;a href=&quot;#implementation&quot;&gt;🧪 구현하며 확인한 경계&lt;/a&gt;&lt;a id=&quot;implementation&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;프로젝트는 TypeScript 단일 저장소로 구성했습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;React MCP App
-@modelcontextprotocol/ext-apps 1.7.5
-@modelcontextprotocol/sdk 1.30.0
-@strands-agents/sdk 1.11.2
-Vitest + Zod + Recharts
-CloudWatch MCP Server via uvx
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;h3 id=&quot;aws-profile보다-명시적인-임시-세션을-전달하기&quot;&gt;AWS profile보다 명시적인 임시 세션을 전달하기&lt;/h3&gt;
-
-&lt;p&gt;MFA와 role chaining이 있는 AWS profile은 AWS CLI preflight가 성공해도, CloudWatch MCP의 boto3가 같은 profile을 다시 해석하면서 MFA를 한 번 더 요구할 수 있었습니다.&lt;/p&gt;
-
-&lt;p&gt;그래서 controller shell에서 임시 session credential을 내보내고, 세 값이 모두 존재할 때는 CloudWatch MCP 요청의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;profile_name&lt;/code&gt;과 child process의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS_PROFILE&lt;/code&gt;을 제거했습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-shell highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;nb&quot;&gt;eval&lt;/span&gt; &lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;aws configure export-credentials &lt;span class=&quot;nt&quot;&gt;--profile&lt;/span&gt; &amp;lt;aws-profile&amp;gt; &lt;span class=&quot;nt&quot;&gt;--format&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;env&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&lt;/span&gt;
-&lt;span class=&quot;nv&quot;&gt;AWS_REGION&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;us-west-2 npm run smoke:live
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;credential 값은 파일과 로그에 저장하지 않았습니다. 일부 값만 존재하면 profile fallback을 유지하고, 인증 오류는 원문 대신 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AUTH_EXPIRED&lt;/code&gt; 같은 안정적인 code로 변환했습니다.&lt;/p&gt;
-
-&lt;h3 id=&quot;실제-mcp-response-shape를-fixture로-만들기&quot;&gt;실제 MCP response shape를 fixture로 만들기&lt;/h3&gt;
-
-&lt;p&gt;처음 live query는 metric 11개가 모두 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;unavailable&lt;/code&gt;로 표시됐습니다. CloudWatch에는 데이터가 있었기 때문에 응답 경계를 최소 구조로 확인했습니다.&lt;/p&gt;
-
-&lt;p&gt;Metrics Insights에서 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;GROUP BY ModelId&lt;/code&gt;를 사용하면 각 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;metricDataResults&lt;/code&gt;의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;에는 metric name이 아니라 model ID가 들어갔습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-json highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;metricDataResults&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;id&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;m1&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;label&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;model-id&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;statusCode&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;Complete&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-      &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;datapoints&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-        &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;timestamp&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;s2&quot;&gt;&quot;&amp;lt;iso-time&amp;gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nl&quot;&gt;&quot;value&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;:&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-      &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-    &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-  &lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;&lt;span class=&quot;w&quot;&gt;
-&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;기존 normalizer는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;을 metric name으로만 해석해 모든 series를 버리고 있었습니다. 조회한 metric을 explicit context로 전달하고, grouped query에서만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;label&lt;/code&gt;을 model ID로 해석하도록 수정했습니다. 특정 모델을 dimension으로 직접 조회할 때의 설명형 label과 혼동하지 않도록 두 경로를 분리했습니다.&lt;/p&gt;
-
-&lt;p&gt;이 경험은 MCP tool을 붙일 때 문서의 type만 보는 것으로 충분하지 않다는 점을 보여줍니다. 실제 provider와 query mode가 만드는 serialization shape를 작은 fixture로 고정해야 합니다.&lt;/p&gt;
-
-&lt;p&gt;공식 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host&lt;/code&gt;를 처음 실행했을 때는 MCP App iframe이 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;404&lt;/code&gt;로 열리지 않는 문제도 만났습니다. host checkout을 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.vendor/ext-apps&lt;/code&gt;에 둔 것이 원인이었습니다. Express &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sendFile&lt;/code&gt;이 절대 경로 중 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;.vendor&lt;/code&gt;를 dotfile 구간으로 판정해, 실제로 존재하는 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;sandbox.html&lt;/code&gt;을 기본 정책으로 차단한 것입니다. 공식 host 코드는 수정하지 않고 checkout을 비숨김 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;vendor/ext-apps&lt;/code&gt;로 옮겼고, sandbox endpoint의 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;200&lt;/code&gt; 응답과 세 workspace 렌더링을 다시 검증했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;-실제-계정에서-확인한-결과&quot;&gt;&lt;a href=&quot;#result&quot;&gt;📊 실제 계정에서 확인한 결과&lt;/a&gt;&lt;a id=&quot;result&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;미국 서부 Oregon 리전의 실제 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;AWS/Bedrock&lt;/code&gt; metric을 대상으로 최근 24시간 smoke workflow를 실행했습니다. 식별자와 credential은 결과에서 제거했습니다.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;단계&lt;/th&gt;
-      &lt;th&gt;상태&lt;/th&gt;
-      &lt;th&gt;관찰 결과&lt;/th&gt;
-      &lt;th style=&quot;text-align: right&quot;&gt;실행 시간&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Overview&lt;/td&gt;
-      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;complete&lt;/code&gt;&lt;/td&gt;
-      &lt;td&gt;11개 모델, 11개 metric, warning 0&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;13.9초&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Investigate&lt;/td&gt;
-      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;&lt;/td&gt;
-      &lt;td&gt;이상 후보 42개, finding 19개, next check 16개&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;26.0초&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;Optimize&lt;/td&gt;
-      &lt;td&gt;&lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;&lt;/td&gt;
-      &lt;td&gt;개선 기회 6개&lt;/td&gt;
-      &lt;td style=&quot;text-align: right&quot;&gt;18.3초&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;Overview에서 확인한 metric은 다음과 같습니다.&lt;/p&gt;
-
-&lt;div class=&quot;language-text highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;Invocations
-InvocationLatency
-TimeToFirstToken
-InvocationClientErrors
-InvocationServerErrors
-InputTokenCount
-OutputTokenCount
-CacheReadInputTokenCount
-CacheWriteInputTokenCount
-EstimatedTPMQuotaUsage
-LegacyModelInvocations
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
-
-&lt;p&gt;Investigate와 Optimize 모두 Strands structured output 검증을 통과했습니다. 다만 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;partial&lt;/code&gt;은 실패가 아니라 일부 metric warning을 결과에 포함했다는 뜻입니다.&lt;/p&gt;
-
-&lt;p&gt;42개 이상 후보를 42개 장애로 해석하면 안 됩니다. MAD 규칙이 찾은 통계적 변화 후보이며, workload의 정상적인 burst도 포함될 수 있습니다. Strands가 이를 원인으로 확정하지 않고 확인할 metric과 반증 조건을 함께 내놓게 한 이유입니다.&lt;/p&gt;
-
-&lt;p&gt;자동 테스트는 schema, gateway, metric normalization, anomaly detection, service, MCP server, UI, live smoke contract, host launcher를 포함해 123개가 통과했습니다. MCP Apps 공식 &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host v1.7.5&lt;/code&gt;의 이중 iframe 안에서 Overview 11개 모델, Investigate 41개 anomaly register, Optimize 6개 validation-ready move가 실제 계정 데이터로 렌더링되는 것도 확인했습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-이번-실험의-제한&quot;&gt;&lt;a href=&quot;#limits&quot;&gt;⚠️ 이번 실험의 제한&lt;/a&gt;&lt;a id=&quot;limits&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;첫째, 현재 계정에는 Bedrock 관련 CloudWatch Logs와 alarm이 없어 metric 기반 조사만 수행했습니다. application log, deployment event, trace까지 연결한 RCA는 다음 단계입니다.&lt;/p&gt;
-
-&lt;p&gt;둘째, 최적화 기회는 token·cache·latency·error·quota signal을 기반으로 합니다. 계약 할인, 리전별 가격, 실제 billing data가 없으므로 달러 절감액을 표시하지 않았습니다.&lt;/p&gt;
-
-&lt;p&gt;셋째, MCP Apps host support는 client마다 다릅니다. MCP Apps는 core MCP의 optional extension이므로 host가 capability를 지원해야 합니다. 이번 검증은 공식 repository의 reference &lt;code class=&quot;language-plaintext highlighter-rouge&quot;&gt;basic-host&lt;/code&gt;를 사용했습니다.&lt;/p&gt;
-
-&lt;p&gt;넷째, 이 결과는 최근 24시간이라는 한 window의 관찰입니다. production 운영에는 주기적 baseline, 배포 annotation, 장기 저장, 사용자별 권한과 approval flow가 추가로 필요합니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;️-기업은-결국-cli를-잘-설계해야-한다&quot;&gt;&lt;a href=&quot;#cli-design&quot;&gt;⌨️ 기업은 결국 CLI를 잘 설계해야 한다&lt;/a&gt;&lt;a id=&quot;cli-design&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;이번 실험에서 UI보다 먼저 안정화해야 했던 것은 CLI와 headless process 경계였습니다. CloudWatch MCP도, Strands도, MCP Apps host도 결국 automation 가능한 process로 연결됩니다.&lt;/p&gt;
-
-&lt;p&gt;기업용 agent workflow에서 CLI는 단순한 개발자 편의 기능이 아닙니다. agent와 platform을 이어주는 최소 실행 계약입니다.&lt;/p&gt;
-
-&lt;table&gt;
-  &lt;thead&gt;
-    &lt;tr&gt;
-      &lt;th&gt;CLI 설계 원칙&lt;/th&gt;
-      &lt;th&gt;필요한 이유&lt;/th&gt;
-    &lt;/tr&gt;
-  &lt;/thead&gt;
-  &lt;tbody&gt;
-    &lt;tr&gt;
-      &lt;td&gt;non-interactive mode&lt;/td&gt;
-      &lt;td&gt;agent와 CI가 prompt 없이 실행 가능해야 함&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;structured input/output&lt;/td&gt;
-      &lt;td&gt;text scraping 대신 schema로 연결해야 함&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;stable exit code와 error code&lt;/td&gt;
-      &lt;td&gt;재시도·중단·인증 갱신을 구분해야 함&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;explicit auth boundary&lt;/td&gt;
-      &lt;td&gt;profile, temporary session, role 전달 규칙이 명확해야 함&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;read/write tool separation&lt;/td&gt;
-      &lt;td&gt;조회와 변경의 권한·승인 경계를 나눠야 함&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;bounded timeout과 cancellation&lt;/td&gt;
-      &lt;td&gt;child process와 session을 확실히 회수해야 함&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;redaction과 audit metadata&lt;/td&gt;
-      &lt;td&gt;비밀은 숨기고 실행 근거는 남겨야 함&lt;/td&gt;
-    &lt;/tr&gt;
-    &lt;tr&gt;
-      &lt;td&gt;version pinning&lt;/td&gt;
-      &lt;td&gt;host·protocol·serialization 변화에 재현성을 확보해야 함&lt;/td&gt;
-    &lt;/tr&gt;
-  &lt;/tbody&gt;
-&lt;/table&gt;
-
-&lt;p&gt;UI는 바뀔 수 있고 agent도 교체될 수 있습니다. 반면 잘 설계된 CLI와 protocol contract가 있으면 Codex, 다른 coding agent, Claw gateway, CI가 같은 capability를 재사용할 수 있습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;strong&gt;기업의 agent 전략은 어떤 모델을 쓰느냐만의 문제가 아니라, 기존 업무 capability를 얼마나 안전하고 조합 가능한 CLI로 노출하느냐의 문제&lt;/strong&gt;에 더 가깝습니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;outro&quot;&gt;&lt;a href=&quot;#outro&quot;&gt;Outro&lt;/a&gt;&lt;a id=&quot;outro&quot;&gt;&lt;/a&gt;&lt;/h2&gt;
-
-&lt;p&gt;Codex와 직접 대화하는 방식은 여전히 가장 빠른 출발점입니다. 이번 실험도 agent에게 shell command를 직접 시키는 단계에서 시작했습니다.&lt;/p&gt;
-
-&lt;p&gt;하지만 반복되는 Bedrock 운영 질문을 세 workspace로 고정해보니 Claw가 필요한 지점이 더 분명해졌습니다. CloudWatch MCP가 사실을 가져오고, 결정론적 코드가 수치를 확정하고, Strands가 근거 안에서 설명하며, MCP Apps가 사람이 검토하고 다음 action을 선택하는 표면을 만들었습니다.&lt;/p&gt;
-
-&lt;p&gt;다음 단계는 CloudWatch Logs, deployment context, alarm과의 연결입니다. 그때도 핵심은 더 많은 tool을 무작정 여는 것이 아니라, 읽기 범위와 판단 근거, 변경 approval을 contract로 고정하는 것입니다.&lt;/p&gt;
-
-&lt;p&gt;&lt;br /&gt;&lt;/p&gt;
-
-&lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
-
-&lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://apps.extensions.modelcontextprotocol.io/api/&quot;&gt;MCP Apps&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://github.com/modelcontextprotocol/ext-apps/blob/main/specification/2026-01-26/apps.mdx&quot;&gt;MCP Apps Stable Specification 2026-01-26&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://awslabs.github.io/mcp/servers/cloudwatch-mcp-server&quot;&gt;AWS Labs CloudWatch MCP Server&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://strandsagents.com/docs/examples/structured_output/&quot;&gt;Strands Agents: Structured Output&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/monitoring-runtime-otps.html&quot;&gt;Amazon Bedrock runtime metrics and OTPS&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-</description>
-                <pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate>
-                <link>https://heuristicwave.github.io//CloudWatch-MCP-Strands-MCP-Apps</link>
-                <guid isPermaLink="true">https://heuristicwave.github.io//CloudWatch-MCP-Strands-MCP-Apps</guid>
-                
-                <category>aws</category>
-                
-                <category>genai</category>
                 
                 <category>lab</category>
                 

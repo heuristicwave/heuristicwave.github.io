@@ -8,6 +8,21 @@
     
       
       <item>
+        <title>Amazon Bedrock 기반 지능형 PR 보안 분석 with Codex Security</title>
+        
+          <description>&lt;p&gt;코드 리뷰를 하다 보면 인증 여부는 확인하지만, 요청한 사용자와 조회 대상의 관계까지는 검증하지 않는 코드를 발견할 때가 있습니다. 각 줄만 보면 자연스럽지만, 객체 단위 권한 확인이라는 업무 규칙이 구현 과정에서 빠진 경우입니다.&lt;/p&gt;
+
+</description>
+        
+        <pubDate>Thu, 27 Aug 2026 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/Codex-Security-PR-Review</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/Codex-Security-PR-Review</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>업무 용어에서 실행까지: Glue Business Context와 Apache Ossie</title>
         
           <description>&lt;p&gt;2026년 6월 17일, AWS는 🔗 &lt;strong&gt;&lt;a href=&quot;https://aws.amazon.com/about-aws/whats-new/2026/06/aws-glue-data-catalog/&quot;&gt;AWS Glue Data Catalog Business Context and Semantic Search (Preview)&lt;/a&gt;&lt;/strong&gt;를 공개했습니다.&lt;/p&gt;
@@ -18,21 +33,6 @@
         <link>
         https://heuristicwave.github.io/Glue-Business-Context-Ossie</link>
         <guid isPermaLink="true">https://heuristicwave.github.io/Glue-Business-Context-Ossie</guid>
-      </item>
-      
-    
-      
-      <item>
-        <title>CloudWatch MCP × Strands × MCP Apps: Bedrock 운영 Cockpit 만들기</title>
-        
-          <description>&lt;p&gt;Codex 같은 coding agent와 직접 대화하면 이미 많은 일을 할 수 있습니다. 그렇다면 굳이 NemoClaw 같은 개인·조직용 Claw를 두고, 그 위에 별도의 운영 화면까지 만들어야 할까요?&lt;/p&gt;
-
-</description>
-        
-        <pubDate>Fri, 07 Aug 2026 00:00:00 +0000</pubDate>
-        <link>
-        https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps</link>
-        <guid isPermaLink="true">https://heuristicwave.github.io/CloudWatch-MCP-Strands-MCP-Apps</guid>
       </item>
       
     
