@@ -4,7 +4,7 @@
   <generator uri="https://jekyllrb.com/" version="3.10.0">Jekyll</generator>
   <link href="https://heuristicwave.github.io/tag/genai/feed.xml" rel="self" type="application/atom+xml" />
   <link href="https://heuristicwave.github.io/" rel="alternate" type="text/html" />
-  <updated>2026-08-31T06:43:02+00:00</updated>
+  <updated>2026-08-31T06:44:41+00:00</updated>
   <id>https://heuristicwave.github.io/tag/genai/feed.xml</id>
 
   
@@ -333,22 +333,13 @@ codex-security scan &lt;span class=&quot;nb&quot;&gt;.&lt;/span&gt; &lt;span cla
 &lt;h2 id=&quot;references&quot;&gt;References&lt;/h2&gt;
 
 &lt;ul&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security&quot;&gt;OpenAI Docs: Codex Security overview&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli&quot;&gt;OpenAI Docs: Codex Security CLI&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli/ci&quot;&gt;OpenAI Docs: Run Codex Security in CI&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/cli/reference&quot;&gt;OpenAI Docs: Codex Security CLI reference&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/scans&quot;&gt;OpenAI Docs: Run a Codex Security scan&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://github.com/openai/codex-security&quot;&gt;OpenAI Source: Codex Security CLI and SDK&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/triage-backlog&quot;&gt;OpenAI Docs: Triage a backlog&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/config-file/config-advanced#custom-model-providers&quot;&gt;OpenAI Docs: Custom model providers&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://developers.openai.com/api/docs/guides/amazon-bedrock&quot;&gt;OpenAI Docs: OpenAI models on Amazon Bedrock&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://learn.chatgpt.com/docs/security/plugin/changelog&quot;&gt;OpenAI Docs: Codex Security Changelog&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://www.aboutamazon.com/news/aws/bedrock-openai-models&quot;&gt;Amazon News: OpenAI models on Amazon Bedrock&lt;/a&gt; — Cover image source&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/bedrock-mantle.html&quot;&gt;AWS: Use the Responses API with OpenAI models&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/bedrock/latest/userguide/api-keys.html&quot;&gt;AWS: Amazon Bedrock API keys&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://aws.amazon.com/blogs/devops/triggering-aws-codebuild-projects-directly-from-codecommit-pull-requests/&quot;&gt;AWS: Trigger CodeBuild from CodeCommit pull request events&lt;/a&gt;&lt;/li&gt;
   &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/codepipeline/latest/userguide/action-reference-CodeCommit.html&quot;&gt;AWS: CodePipeline CodeCommit source action&lt;/a&gt;&lt;/li&gt;
-  &lt;li&gt;&lt;a href=&quot;https://docs.aws.amazon.com/codecommit/latest/APIReference/API_PostCommentForPullRequest.html&quot;&gt;AWS API: PostCommentForPullRequest&lt;/a&gt;&lt;/li&gt;
 &lt;/ul&gt;</content>
 
       
