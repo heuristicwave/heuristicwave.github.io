@@ -8,6 +8,46 @@
     
       
       <item>
+        <title>DGX Spark를 EKS에 연결하기: MikroTik VPN부터 Cilium까지</title>
+        
+          <description>&lt;style&gt;
+.post-eks-dgx-spark .post-full-image {
+    margin: 0 auto;
+    width: 100%;
+    max-width: 1000px;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    background-size: contain;
+    background-color: #fff;
+}
+.post-eks-dgx-spark .post-full-content p:has(img[src*=&quot;/eks-hybrid/&quot;]) {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    margin-bottom: 8px;
+}
+.post-eks-dgx-spark .post-full-content img[src*=&quot;/eks-hybrid/&quot;] {
+    width: 100%;
+    max-width: 100%;
+    height: auto;
+    margin-bottom: 0;
+}
+.post-eks-dgx-spark .post-full-content p:has(img[src*=&quot;/eks-hybrid/&quot;]) + p {
+    margin-top: 0;
+}
+&lt;/style&gt;
+
+</description>
+        
+        <pubDate>Thu, 01 Oct 2026 00:00:00 +0000</pubDate>
+        <link>
+        https://heuristicwave.github.io/EKS-Hybrid-Nodes-DGX-Spark</link>
+        <guid isPermaLink="true">https://heuristicwave.github.io/EKS-Hybrid-Nodes-DGX-Spark</guid>
+      </item>
+      
+    
+      
+      <item>
         <title>Amazon Bedrock 기반 지능형 PR 보안 분석 with Codex Security</title>
         
           <description>&lt;p&gt;코드 리뷰를 하다 보면 인증 여부는 확인하지만, 요청한 사용자와 조회 대상의 관계까지는 검증하지 않는 코드를 발견할 때가 있습니다. 각 줄만 보면 자연스럽지만, 객체 단위 권한 확인이라는 업무 규칙이 구현 과정에서 빠진 경우입니다.&lt;/p&gt;

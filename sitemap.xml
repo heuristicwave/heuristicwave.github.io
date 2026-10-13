@@ -4,6 +4,22 @@
     xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     
         <url>
+            <loc>https://heuristicwave.github.io/EKS-Hybrid-Nodes-DGX-Spark.html</loc>
+            
+                <lastmod>2026-10-01T00:00:00+00:00</lastmod>
+            
+
+            
+                <changefreq>weekly</changefreq>
+            
+
+            
+                <priority>0.5</priority>
+            
+
+        </url>
+    
+        <url>
             <loc>https://heuristicwave.github.io/Codex-Security-PR-Review.html</loc>
             
                 <lastmod>2026-08-27T00:00:00+00:00</lastmod>
